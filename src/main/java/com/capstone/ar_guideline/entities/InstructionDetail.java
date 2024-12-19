@@ -19,6 +19,6 @@ public class InstructionDetail {
     private Instruction instruction;
 
     private String triggerEvent;
-    private Integer order;
+    private Integer orderNumber;
     private String description;
 }

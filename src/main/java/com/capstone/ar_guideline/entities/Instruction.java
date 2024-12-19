@@ -24,7 +24,7 @@ public class Instruction {
     private List<InstructionDetail> instructionDetails;
 
     private String code;
-    private Integer order;
+    private Integer orderNumber;
     private String name;
     private String description;
 }
