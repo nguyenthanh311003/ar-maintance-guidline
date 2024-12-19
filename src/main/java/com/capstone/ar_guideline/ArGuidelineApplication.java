@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ArGuidelineApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ArGuidelineApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(ArGuidelineApplication.class, args);
+  }
 }

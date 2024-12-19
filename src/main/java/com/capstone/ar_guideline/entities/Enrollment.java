@@ -2,7 +2,6 @@ package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -11,19 +10,19 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Entity
 public class Enrollment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
+  @ManyToOne
+  @JoinColumn(name = "course_id", nullable = false)
+  private Course course;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    private String enrollmentDate;
-    private Boolean isCompleted;
-    private String completionDate;
+  private String enrollmentDate;
+  private Boolean isCompleted;
+  private String completionDate;
 }

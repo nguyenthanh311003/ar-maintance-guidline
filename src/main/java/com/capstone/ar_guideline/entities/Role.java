@@ -1,10 +1,8 @@
 package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.util.List;
+import lombok.*;
 
 @Getter
 @Setter
@@ -13,12 +11,12 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-    private List<User> users;
+  @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+  private List<User> users;
 
-    private String roleName;
+  private String roleName;
 }

@@ -1,9 +1,8 @@
 package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.List;
+import lombok.*;
 
 @Getter
 @Setter
@@ -12,15 +11,15 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 public class Company {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
-    private List<User> users;
+  @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+  private List<User> users;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
-    private List<CompanySubscription> companySubscriptions;
+  @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+  private List<CompanySubscription> companySubscriptions;
 
-    private String companyName;
+  private String companyName;
 }

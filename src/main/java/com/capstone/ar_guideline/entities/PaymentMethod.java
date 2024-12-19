@@ -1,10 +1,8 @@
 package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.util.List;
+import lombok.*;
 
 @Getter
 @Setter
@@ -13,13 +11,13 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 public class PaymentMethod {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL)
-    private List<OrderTransaction> orderTransactions;
+  @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL)
+  private List<OrderTransaction> orderTransactions;
 
-    private String methodName;
-    private String methodCode;
+  private String methodName;
+  private String methodCode;
 }

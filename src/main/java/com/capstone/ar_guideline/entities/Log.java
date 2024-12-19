@@ -10,14 +10,14 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 public class Log {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    private String modelCode;
-    private String scanTime;
+  private String modelCode;
+  private String scanTime;
 }

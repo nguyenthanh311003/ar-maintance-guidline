@@ -10,18 +10,18 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 public class LessonProcess {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "lesson_id", nullable = false)
-    private Lesson lesson;
+  @ManyToOne
+  @JoinColumn(name = "lesson_id", nullable = false)
+  private Lesson lesson;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    private Boolean isCompleted;
-    private String completeDate;
+  private Boolean isCompleted;
+  private String completeDate;
 }

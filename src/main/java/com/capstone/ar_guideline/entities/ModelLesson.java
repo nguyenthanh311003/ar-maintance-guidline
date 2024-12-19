@@ -10,13 +10,13 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 public class ModelLesson {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "lesson_id", nullable = false)
-    private Lesson lesson;
+  @ManyToOne
+  @JoinColumn(name = "lesson_id", nullable = false)
+  private Lesson lesson;
 
-    private String instructionCode;
+  private String instructionCode;
 }
