@@ -2,6 +2,10 @@ package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -26,4 +30,12 @@ public class OrderTransaction {
   private String orderCode;
   private String status;
   private Double amount;
+
+  @Column(nullable = false, updatable = false)
+  @CreationTimestamp
+  private LocalDateTime createdDate;
+
+  @Column(nullable = false)
+  @UpdateTimestamp
+  private LocalDateTime updatedDate;
 }
