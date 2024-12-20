@@ -2,6 +2,10 @@ package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,4 +24,12 @@ public class Log {
 
   private String modelCode;
   private String scanTime;
+
+  @Column(nullable = false, updatable = false)
+  @CreationTimestamp
+  private LocalDateTime createdDate;
+
+  @Column(nullable = false)
+  @UpdateTimestamp
+  private LocalDateTime updatedDate;
 }

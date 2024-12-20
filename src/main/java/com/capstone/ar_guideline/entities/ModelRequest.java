@@ -1,9 +1,13 @@
 package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Getter
 @Setter
@@ -33,4 +37,12 @@ public class ModelRequest {
   private String notes;
   private Double price;
   private Boolean companyApproval;
+
+  @Column(nullable = false, updatable = false)
+  @CreationTimestamp
+  private LocalDateTime createdDate;
+
+  @Column(nullable = false)
+  @UpdateTimestamp
+  private LocalDateTime updatedDate;
 }
