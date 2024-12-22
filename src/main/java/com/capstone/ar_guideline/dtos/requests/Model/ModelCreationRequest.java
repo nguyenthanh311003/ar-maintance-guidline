@@ -9,17 +9,17 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ModelCreationRequest {
-    String modelTypeId;
-    String modelCode;
-    String status;
-    String name;
-    String description;
-    String image;
-    String documentUrl;
-    String aRUrl;
-    String version;
-    String rotation;
-    String scale;
-    String fileType;
-    Long fileSize;
+  String modelTypeId;
+  String modelCode;
+  String status;
+  String name;
+  String description;
+  String image;
+  String documentUrl;
+  String aRUrl;
+  String version;
+  String rotation;
+  String scale;
+  String fileType;
+  Long fileSize;
 }

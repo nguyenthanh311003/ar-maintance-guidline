@@ -5,8 +5,11 @@ import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.entities.Model;
 
 public interface IModelService {
-    ModelResponse create(ModelCreationRequest request);
-    ModelResponse update(String id, ModelCreationRequest request);
-    void delete(String id);
-    Model findById(String id);
+  ModelResponse create(ModelCreationRequest request);
+
+  ModelResponse update(String id, ModelCreationRequest request);
+
+  void delete(String id);
+
+  Model findById(String id);
 }

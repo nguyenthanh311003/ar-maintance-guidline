@@ -23,6 +23,10 @@ public enum ErrorCode {
   MODEL_UPDATE_FAILED(1014, "Model update fail", HttpStatus.BAD_REQUEST),
   MODEL_DELETE_FAILED(1015, "Model delete fail", HttpStatus.BAD_REQUEST),
   MODEL_NOT_EXISTED(1016, "Model not existed", HttpStatus.NOT_FOUND),
+  ROLE_CREATE_FAILED(2706, "Create role failed", HttpStatus.INTERNAL_SERVER_ERROR),
+  ROLE_NOT_EXISTED(2707, "Role not existed", HttpStatus.NOT_FOUND),
+  USER_DISABLED(2708, "User disabled", HttpStatus.NOT_FOUND),
+  ROLE_FIND_ALL_FAILED(2709, "Find all role failed", HttpStatus.NOT_FOUND),
   ;
 
   private final int code;

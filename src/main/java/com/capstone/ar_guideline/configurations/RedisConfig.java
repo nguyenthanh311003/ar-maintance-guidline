@@ -13,43 +13,43 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
-    @Value("${redis.host}")
-    private String redisHost;
+  @Value("${redis.host}")
+  private String redisHost;
 
-    @Value("${redis.port}")
-    private int redisPort;
+  @Value("${redis.port}")
+  private int redisPort;
 
-    @Value("${redis.username}")
-    private String redisUsername;
+  @Value("${redis.username}")
+  private String redisUsername;
 
-    @Value("${redis.password}")
-    private String redisPassword;
+  @Value("${redis.password}")
+  private String redisPassword;
 
-    @Value("${redis.usessl}")
-    private boolean useSsl;
+  @Value("${redis.usessl}")
+  private boolean useSsl;
 
+  @Bean
+  public LettuceConnectionFactory redisConnectionFactory() {
+    RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
+    config.setUsername(redisUsername);
+    config.setPassword(redisPassword);
 
-    @Bean
-    public LettuceConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
-        config.setUsername(redisUsername);
-        config.setPassword(redisPassword);
+    LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(config);
+    lettuceConnectionFactory.setUseSsl(useSsl);
 
-        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(config);
-        lettuceConnectionFactory.setUseSsl(useSsl);
+    return lettuceConnectionFactory;
+  }
 
-        return lettuceConnectionFactory;
-    }
-
-    @Bean
-    @Primary
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new JdkSerializationRedisSerializer());
-        template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(new JdkSerializationRedisSerializer());
-        template.setConnectionFactory(redisConnectionFactory);
-        return template;
-    }
+  @Bean
+  @Primary
+  public RedisTemplate<String, Object> redisTemplate(
+      RedisConnectionFactory redisConnectionFactory) {
+    RedisTemplate<String, Object> template = new RedisTemplate<>();
+    template.setKeySerializer(new StringRedisSerializer());
+    template.setValueSerializer(new JdkSerializationRedisSerializer());
+    template.setHashKeySerializer(new StringRedisSerializer());
+    template.setHashValueSerializer(new JdkSerializationRedisSerializer());
+    template.setConnectionFactory(redisConnectionFactory);
+    return template;
+  }
 }

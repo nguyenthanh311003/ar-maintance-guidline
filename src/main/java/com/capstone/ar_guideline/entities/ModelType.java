@@ -1,7 +1,6 @@
 package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;

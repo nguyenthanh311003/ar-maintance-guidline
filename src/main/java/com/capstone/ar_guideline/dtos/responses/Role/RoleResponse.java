@@ -1,4 +1,4 @@
-package com.capstone.ar_guideline.dtos.responses.ModelType;
+package com.capstone.ar_guideline.dtos.responses.Role;
 
 import java.io.Serializable;
 import lombok.*;
@@ -9,9 +9,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ModelTypeResponse implements Serializable {
+public class RoleResponse implements Serializable {
   String id;
-  String name;
-  String image;
-  String description;
+  String roleName;
 }

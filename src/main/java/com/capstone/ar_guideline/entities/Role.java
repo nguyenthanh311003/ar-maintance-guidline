@@ -1,7 +1,7 @@
 package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
-
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.*;
@@ -14,7 +14,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Role {
+public class Role implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;

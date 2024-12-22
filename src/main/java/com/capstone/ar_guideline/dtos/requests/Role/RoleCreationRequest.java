@@ -1,4 +1,4 @@
-package com.capstone.ar_guideline.dtos.requests.ModelType;
+package com.capstone.ar_guideline.dtos.requests.Role;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,8 +8,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ModelTypeCreationRequest {
-  String name;
-  String image;
-  String description;
+public class RoleCreationRequest {
+  String roleName;
 }

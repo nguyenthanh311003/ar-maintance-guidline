@@ -17,25 +17,24 @@ import org.springframework.web.bind.annotation.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class ModelController {
-    IModelService modelService;
+  IModelService modelService;
 
-    @PostMapping(value = ConstAPI.ModelAPI.CREATE_MODEL)
-    ApiResponse<ModelResponse> createModel(@RequestBody @Valid ModelCreationRequest request) {
-        return ApiResponse.<ModelResponse>builder()
-                .result(modelService.create(request))
-                .build();
-    }
+  @PostMapping(value = ConstAPI.ModelAPI.CREATE_MODEL)
+  ApiResponse<ModelResponse> createModel(@RequestBody @Valid ModelCreationRequest request) {
+    return ApiResponse.<ModelResponse>builder().result(modelService.create(request)).build();
+  }
 
-    @PutMapping(value = ConstAPI.ModelAPI.UPDATE_MODEL + "{modelId}")
-    ApiResponse<ModelResponse> updateModel(@PathVariable String modelId, @RequestBody ModelCreationRequest request) {
-        return ApiResponse.<ModelResponse>builder()
-                .result(modelService.update(modelId, request))
-                .build();
-    }
+  @PutMapping(value = ConstAPI.ModelAPI.UPDATE_MODEL + "{modelId}")
+  ApiResponse<ModelResponse> updateModel(
+      @PathVariable String modelId, @RequestBody ModelCreationRequest request) {
+    return ApiResponse.<ModelResponse>builder()
+        .result(modelService.update(modelId, request))
+        .build();
+  }
 
-    @DeleteMapping(value = ConstAPI.ModelAPI.DELETE_MODEL + "{modelId}")
-    ApiResponse<String> deleteModel(@PathVariable String modelId) {
-        modelService.delete(modelId);
-        return ApiResponse.<String>builder().result("Model has been deleted").build();
-    }
+  @DeleteMapping(value = ConstAPI.ModelAPI.DELETE_MODEL + "{modelId}")
+  ApiResponse<String> deleteModel(@PathVariable String modelId) {
+    modelService.delete(modelId);
+    return ApiResponse.<String>builder().result("Model has been deleted").build();
+  }
 }
