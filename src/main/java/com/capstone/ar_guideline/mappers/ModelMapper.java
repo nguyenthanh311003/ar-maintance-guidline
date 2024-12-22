@@ -42,23 +42,4 @@ public class ModelMapper {
                 .fileSize(model.getFileSize())
                 .build();
     }
-
-    public static Model fromModelResponseToEntity(ModelResponse response, ModelType modelType) {
-        return Model.builder()
-                .id(response.getId())
-                .modelType(modelType)
-                .modelCode(response.getModelCode())
-                .status(response.getStatus())
-                .name(response.getName())
-                .description(response.getDescription())
-                .image(response.getImage())
-                .documentUrl(response.getDocumentUrl())
-                .aRUrl(response.getARUrl())
-                .version(response.getVersion())
-                .rotation(response.getRotation())
-                .scale(response.getScale())
-                .fileType(response.getFileType())
-                .fileSize(response.getFileSize())
-                .build();
-    }
 }

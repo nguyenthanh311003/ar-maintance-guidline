@@ -2,10 +2,8 @@ package com.capstone.ar_guideline.controllers;
 
 import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
-import com.capstone.ar_guideline.dtos.requests.ModelType.ModelTypeCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
-import com.capstone.ar_guideline.dtos.responses.ModelType.ModelTypeResponse;
 import com.capstone.ar_guideline.services.IModelService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
