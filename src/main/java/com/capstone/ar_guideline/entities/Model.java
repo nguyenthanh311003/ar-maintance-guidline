@@ -2,6 +2,7 @@ package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.*;
@@ -14,7 +15,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Model {
+public class Model implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
@@ -35,7 +36,7 @@ public class Model {
   private String description;
   private String image;
   private String documentUrl;
-  private String ARUrl;
+  private String aRUrl;
   private String version;
   private String rotation;
   private String scale;

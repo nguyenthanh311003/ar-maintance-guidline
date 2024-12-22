@@ -28,54 +28,111 @@ public class ModelTypeServiceImpl implements IModelTypeService {
 
     @Override
     public ModelTypeResponse create(ModelTypeCreationRequest request) {
-        ModelType newModelType = ModelTypeMapper.fromModelTypeCreationRequestToEntity(request);
-        newModelType = modelTypeRepository.save(newModelType);
-        redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL_TYPE, newModelType.getId(), newModelType);
-        return ModelTypeMapper.fromEntityToModelTypeResponse(newModelType);
+        try {
+            ModelType newModelType = ModelTypeMapper.fromModelTypeCreationRequestToEntity(request);
+            newModelType = modelTypeRepository.save(newModelType);
+            redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL_TYPE, newModelType.getId(), newModelType);
+            return ModelTypeMapper.fromEntityToModelTypeResponse(newModelType);
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_TYPE_CREATE_FAILED);
+        }
     }
 
     @Override
     public ModelTypeResponse update(String id, ModelTypeCreationRequest request) {
-        ModelType modelTypeByIdWithRedis = (ModelType) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_MODEL_TYPE, id);
+        try {
+            ModelType modelTypeByIdWithRedis = (ModelType) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_MODEL_TYPE, id);
 
-        if (!Objects.isNull(modelTypeByIdWithRedis)) {
-            modelTypeByIdWithRedis.setName(request.getName());
-            modelTypeByIdWithRedis.setImage(request.getImage());
-            modelTypeByIdWithRedis.setDescription(request.getDescription());
+            if (!Objects.isNull(modelTypeByIdWithRedis)) {
+                modelTypeByIdWithRedis.setName(request.getName());
+                modelTypeByIdWithRedis.setImage(request.getImage());
+                modelTypeByIdWithRedis.setDescription(request.getDescription());
 
-            redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL_TYPE, id, modelTypeByIdWithRedis);
+                modelTypeRepository.save(modelTypeByIdWithRedis);
 
-            modelTypeRepository.save(modelTypeByIdWithRedis);
+                redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL_TYPE, id, modelTypeByIdWithRedis);
 
-            return ModelTypeMapper.fromEntityToModelTypeResponse(modelTypeByIdWithRedis);
+                return ModelTypeMapper.fromEntityToModelTypeResponse(modelTypeByIdWithRedis);
+            }
+
+            ModelType modelTypeById = ModelTypeMapper.fromModelTypeResponseToEntity(findModelTypeResponseById(id));
+
+            modelTypeById.setName(request.getName());
+            modelTypeById.setImage(request.getImage());
+            modelTypeById.setDescription(request.getDescription());
+
+            modelTypeById = modelTypeRepository.save(modelTypeById);
+
+            redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL_TYPE, id, modelTypeById);
+
+            return ModelTypeMapper.fromEntityToModelTypeResponse(modelTypeById);
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_TYPE_UPDATE_FAILED);
         }
-
-        ModelType modelTypeById = ModelTypeMapper.fromModelTypeResponseToEntity(findById(id));
-
-        modelTypeById.setName(request.getName());
-        modelTypeById.setImage(request.getImage());
-        modelTypeById.setDescription(request.getDescription());
-
-        modelTypeById = modelTypeRepository.save(modelTypeById);
-        return ModelTypeMapper.fromEntityToModelTypeResponse(modelTypeById);
     }
 
     @Override
     public void delete(String id) {
-        ModelType modelTypeById = ModelTypeMapper.fromModelTypeResponseToEntity(findById(id));
-        redisTemplate.opsForHash().delete(ConstHashKey.HASH_KEY_MODEL_TYPE, id);
-        modelTypeRepository.deleteById(modelTypeById.getId());
+        try {
+            ModelType modelTypeById = ModelTypeMapper.fromModelTypeResponseToEntity(findModelTypeResponseById(id));
+            redisTemplate.opsForHash().delete(ConstHashKey.HASH_KEY_MODEL_TYPE, id);
+            modelTypeRepository.deleteById(modelTypeById.getId());
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_TYPE_DELETE_FAILED);
+        }
     }
 
-    private ModelTypeResponse findById(String id) {
-        ModelType modelTypeByIdWithRedis = (ModelType) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_MODEL_TYPE, id);
+    @Override
+    public ModelType findById(String id) {
+        try {
+            ModelType modelTypeByIdWithRedis = (ModelType) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_MODEL_TYPE, id);
 
-        if (!Objects.isNull(modelTypeByIdWithRedis)) {
-            return ModelTypeMapper.fromEntityToModelTypeResponse(modelTypeByIdWithRedis);
+            if (!Objects.isNull(modelTypeByIdWithRedis)) {
+                return modelTypeByIdWithRedis;
+            }
+
+            ModelType modelTypeById = modelTypeRepository.findById(id)
+                    .orElseThrow(() -> new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED));
+
+            redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL_TYPE, id, modelTypeById);
+
+            return modelTypeById;
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED);
         }
+    }
 
-        ModelType modelTypeById = modelTypeRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED));
-        return ModelTypeMapper.fromEntityToModelTypeResponse(modelTypeById);
+    private ModelTypeResponse findModelTypeResponseById(String id) {
+        try {
+            ModelType modelTypeByIdWithRedis = (ModelType) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_MODEL_TYPE, id);
+
+            if (!Objects.isNull(modelTypeByIdWithRedis)) {
+                return ModelTypeMapper.fromEntityToModelTypeResponse(modelTypeByIdWithRedis);
+            }
+
+            ModelType modelTypeById = modelTypeRepository.findById(id)
+                    .orElseThrow(() -> new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED));
+
+            redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL_TYPE, id, modelTypeById);
+
+            return ModelTypeMapper.fromEntityToModelTypeResponse(modelTypeById);
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED);
+        }
     }
 }

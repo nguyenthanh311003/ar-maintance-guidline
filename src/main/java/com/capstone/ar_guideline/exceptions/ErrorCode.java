@@ -16,6 +16,13 @@ public enum ErrorCode {
   UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
   INVALID_DOB(1008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
   MODEL_TYPE_NOT_EXISTED(1009, "Model Type not existed", HttpStatus.NOT_FOUND),
+  MODEL_TYPE_CREATE_FAILED(1010, "Model Type create fail", HttpStatus.BAD_REQUEST),
+  MODEL_TYPE_UPDATE_FAILED(1011, "Model Type update fail", HttpStatus.BAD_REQUEST),
+  MODEL_TYPE_DELETE_FAILED(1012, "Model Type delete fail", HttpStatus.BAD_REQUEST),
+  MODEL_CREATE_FAILED(1013, "Model create fail", HttpStatus.BAD_REQUEST),
+  MODEL_UPDATE_FAILED(1014, "Model update fail", HttpStatus.BAD_REQUEST),
+  MODEL_DELETE_FAILED(1015, "Model delete fail", HttpStatus.BAD_REQUEST),
+  MODEL_NOT_EXISTED(1016, "Model not existed", HttpStatus.NOT_FOUND),
   ;
 
   private final int code;
