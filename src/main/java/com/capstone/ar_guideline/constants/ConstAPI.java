@@ -31,4 +31,10 @@ public class ConstAPI {
     public static final String UPDATE_INSTRUCTION = "api/v1/instruction/";
     public static final String DELETE_INSTRUCTION = "api/v1/instruction/";
   }
+
+  public static class InstructionDetailAPI {
+    public static final String CREATE_INSTRUCTION_DETAIL = "api/v1/instruction-detail";
+    public static final String UPDATE_INSTRUCTION_DETAIL = "api/v1/instruction-detail/";
+    public static final String DELETE_INSTRUCTION_DETAIL = "api/v1/instruction-detail/";
+  }
 }

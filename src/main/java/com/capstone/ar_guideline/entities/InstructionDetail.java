@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,7 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class InstructionDetail {
+public class InstructionDetail implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
