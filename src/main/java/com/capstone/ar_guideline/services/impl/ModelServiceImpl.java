@@ -95,7 +95,7 @@ public class ModelServiceImpl implements IModelService {
       modelById.setFileSize(request.getFileSize());
       modelById.setFileType(request.getFileType());
 
-      modelById = modelRepository.save(modelByIdWithRedis);
+      modelById = modelRepository.save(modelById);
 
       redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL, id, modelById);
 

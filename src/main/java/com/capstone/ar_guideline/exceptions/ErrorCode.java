@@ -27,6 +27,10 @@ public enum ErrorCode {
   ROLE_NOT_EXISTED(2707, "Role not existed", HttpStatus.NOT_FOUND),
   USER_DISABLED(2708, "User disabled", HttpStatus.NOT_FOUND),
   ROLE_FIND_ALL_FAILED(2709, "Find all role failed", HttpStatus.NOT_FOUND),
+  INSTRUCTION_CREATE_FAILED(1029, "Instruction create fail", HttpStatus.BAD_REQUEST),
+  INSTRUCTION_UPDATE_FAILED(1030, "Instruction update fail", HttpStatus.BAD_REQUEST),
+  INSTRUCTION_DELETE_FAILED(1031, "Instruction delete fail", HttpStatus.BAD_REQUEST),
+  INSTRUCTION_NOT_EXISTED(1032, "Instruction not existed", HttpStatus.NOT_FOUND),
   ;
 
   private final int code;
