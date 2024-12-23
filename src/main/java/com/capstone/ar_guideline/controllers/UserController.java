@@ -2,8 +2,9 @@ package com.capstone.ar_guideline.controllers;
 
 import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.User.LoginRequest;
+import com.capstone.ar_guideline.dtos.requests.User.SignUpRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
-import com.capstone.ar_guideline.dtos.responses.User.LoginResponse;
+import com.capstone.ar_guideline.dtos.responses.User.AuthenticationResponse;
 import com.capstone.ar_guideline.services.IUserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,15 +23,28 @@ public class UserController {
   IUserService userService;
 
   @PostMapping(value = ConstAPI.UserAPI.LOGIN)
-  ApiResponse<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+  ApiResponse<AuthenticationResponse> login(@RequestBody LoginRequest loginRequest) {
     try {
-      return ApiResponse.<LoginResponse>builder()
+      return ApiResponse.<AuthenticationResponse>builder()
           .message("Login successfully")
           .result(userService.login(loginRequest))
           .build();
     } catch (AuthenticationException exception) {
       log.error("Login failed: {}", exception.getMessage());
-      return ApiResponse.<LoginResponse>builder().message("Login failed").build();
+      return ApiResponse.<AuthenticationResponse>builder().message("Login failed").build();
+    }
+  }
+
+  @PostMapping(value = ConstAPI.UserAPI.REGISTER)
+  ApiResponse<AuthenticationResponse> register(@RequestBody SignUpRequest signUpRequest) {
+    try {
+      return ApiResponse.<AuthenticationResponse>builder()
+          .message("Register successfully")
+          .result(userService.create(signUpRequest))
+          .build();
+    } catch (AuthenticationException exception) {
+      log.error("Register failed: {}", exception.getMessage());
+      return ApiResponse.<AuthenticationResponse>builder().message("Register failed").build();
     }
   }
 }

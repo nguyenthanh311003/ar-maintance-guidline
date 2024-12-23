@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -17,7 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;

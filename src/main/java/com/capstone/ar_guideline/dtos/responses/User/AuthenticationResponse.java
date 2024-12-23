@@ -8,7 +8,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @Builder
-public class LoginResponse implements Serializable {
+public class AuthenticationResponse implements Serializable {
   private String token;
   private String message;
+  private UserResponse user;
 }

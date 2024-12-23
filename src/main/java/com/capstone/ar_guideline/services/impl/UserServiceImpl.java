@@ -3,14 +3,17 @@ package com.capstone.ar_guideline.services.impl;
 import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.User.LoginRequest;
-import com.capstone.ar_guideline.dtos.responses.User.LoginResponse;
+import com.capstone.ar_guideline.dtos.requests.User.SignUpRequest;
+import com.capstone.ar_guideline.dtos.responses.User.AuthenticationResponse;
 import com.capstone.ar_guideline.dtos.responses.User.UserResponse;
 import com.capstone.ar_guideline.entities.User;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
+import com.capstone.ar_guideline.mappers.RoleMapper;
 import com.capstone.ar_guideline.mappers.UserMapper;
 import com.capstone.ar_guideline.repositories.UserRepository;
 import com.capstone.ar_guideline.services.IJWTService;
+import com.capstone.ar_guideline.services.IRoleService;
 import com.capstone.ar_guideline.services.IUserService;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,6 +26,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,9 +38,11 @@ public class UserServiceImpl implements IUserService {
   RedisTemplate<String, Object> redisTemplate;
   AuthenticationManager authenticationManager;
   IJWTService jwtService;
+  PasswordEncoder passwordEncoder;
+  IRoleService roleService;
 
   @Override
-  public LoginResponse login(LoginRequest loginRequest) {
+  public AuthenticationResponse login(LoginRequest loginRequest) {
     try {
       UserResponse userResponseByEmail = getUserResponseByEmail(loginRequest.getEmail());
       if (Objects.isNull(userResponseByEmail)) {
@@ -55,11 +61,44 @@ public class UserServiceImpl implements IUserService {
 
       // Set the authentication in the SecurityContext
       SecurityContextHolder.getContext().setAuthentication(authentication);
+      UserResponse userResponse = getUserResponseByEmail(loginRequest.getEmail());
       var jwt = jwtService.generateToken(userRepository.findByEmail(loginRequest.getEmail()).get());
-      return LoginResponse.builder().message("Login successfully").token(jwt).build();
+
+      return AuthenticationResponse.builder()
+          .message("Login successfully")
+          .token(jwt)
+          .user(userResponse)
+          .build();
     } catch (Exception e) {
       log.error("Login failed: {}", e.getMessage());
-      return LoginResponse.builder().message("Login failed").build();
+      return AuthenticationResponse.builder().message("Login failed").build();
+    }
+  }
+
+  @Override
+  public <T> AuthenticationResponse create(SignUpRequest signUpWitRoleRequest) {
+    try {
+      // Validate the role name
+      var role = roleService.findByName(signUpWitRoleRequest.getRoleName());
+      var company = signUpWitRoleRequest.getCompany();
+      if (Objects.isNull(role)) {
+        throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
+      }
+      User user = UserMapper.fromSignUpRequestToEntity(signUpWitRoleRequest);
+      user.setRole(RoleMapper.fromRoleResponseToEntity(role));
+      user.setPassword(passwordEncoder.encode(user.getPassword()));
+      user = userRepository.save(user);
+      var jwt = jwtService.generateToken(user);
+      UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
+
+      return AuthenticationResponse.builder()
+          .message("User created successfully")
+          .token(jwt)
+          .user(userResponse)
+          .build();
+    } catch (Exception e) {
+      log.error("Error when create user: {}", e.getMessage());
+      return AuthenticationResponse.builder().message("Create user failed").build();
     }
   }
 
@@ -75,6 +114,7 @@ public class UserServiceImpl implements IUserService {
         log.warn("User not found by email: {}", email);
         throw new AppException(ErrorCode.USER_NOT_EXISTED);
       }
+
       return UserMapper.fromEntityToUserResponse(userByEmail.get());
     } catch (Exception e) {
       log.error("Error when get user by email: {}", e.getMessage());

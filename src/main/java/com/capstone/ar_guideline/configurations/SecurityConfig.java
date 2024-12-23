@@ -22,6 +22,23 @@ public class SecurityConfig implements WebMvcConfigurer {
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final AuthenticationProvider authenticationProvider;
 
+  //  @Bean
+  //  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  //    http.csrf(AbstractHttpConfigurer::disable)
+  //        .authorizeHttpRequests(
+  //            request ->
+  //                request
+  //                    .requestMatchers(ConstAPI.UserAPI.LOGIN)
+  //                    .permitAll()
+  //                    .anyRequest()
+  //                    .authenticated())
+  //        .sessionManagement(
+  //            manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+  //        .authenticationProvider(authenticationProvider)
+  //        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+  //    return http.build();
+  //  }
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
