@@ -25,4 +25,10 @@ public class ConstAPI {
     public static final String LOGIN = "api/v1/login";
     public static final String REGISTER = "api/v1/register";
   }
+
+  public static class InstructionAPI {
+    public static final String CREATE_INSTRUCTION = "api/v1/instruction";
+    public static final String UPDATE_INSTRUCTION = "api/v1/instruction/";
+    public static final String DELETE_INSTRUCTION = "api/v1/instruction/";
+  }
 }
