@@ -128,6 +128,6 @@ public class InstructionServiceImpl implements IInstructionService {
             .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED));
 
     redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_INSTRUCTION, id, instructionById);
-    return null;
+    return instructionById;
   }
 }
