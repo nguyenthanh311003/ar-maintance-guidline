@@ -7,6 +7,10 @@ public class ConstAPI {
     public static final String DELETE_MODEL_TYPE = "api/v1/model-types/";
   }
 
+  public static class CourseAPI {
+    public static final String COURSE = "api/v1/course";
+  }
+
   public static class ModelAPI {
     public static final String CREATE_MODEL = "api/v1/model";
     public static final String UPDATE_MODEL = "api/v1/model/";

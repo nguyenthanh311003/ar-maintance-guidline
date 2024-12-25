@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.*;
@@ -13,12 +14,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Course {
+public class Course implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "company_id", nullable = false)
   private Company company;
 
@@ -33,6 +34,7 @@ public class Course {
   private Integer duration;
   private Boolean isMandatory;
   private String type;
+  private String status = "INACTIVE";
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
