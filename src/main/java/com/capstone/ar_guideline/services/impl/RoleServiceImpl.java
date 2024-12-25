@@ -109,4 +109,13 @@ public class RoleServiceImpl implements IRoleService {
             .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
     return RoleMapper.fromEntityToRoleResponse(roleByName);
   }
+
+  @Override
+  public Role findRoleEntityByName(String name) {
+    Role roleByName =
+        roleRepository
+            .findByRoleName(name)
+            .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+    return roleByName;
+  }
 }

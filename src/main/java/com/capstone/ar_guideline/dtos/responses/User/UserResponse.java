@@ -1,5 +1,7 @@
 package com.capstone.ar_guideline.dtos.responses.User;
 
+import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponse;
+import com.capstone.ar_guideline.dtos.responses.Role.RoleResponse;
 import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.entities.Role;
 import java.io.Serializable;
@@ -14,8 +16,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse implements Serializable {
   private String id;
-  private Role role;
-  private Company company;
+  private RoleResponse role;
+  private CompanyResponse company;
   private String email;
   private String avatar;
   private String username;

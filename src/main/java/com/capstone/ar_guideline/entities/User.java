@@ -46,7 +46,9 @@ public class User implements UserDetails, Serializable {
   @JoinColumn(name = "company_id", nullable = false)
   private Company company;
 
+  @Column(unique = true, nullable = false)
   private String email;
+
   private String avatar;
   private String username;
   private String password;

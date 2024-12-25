@@ -26,7 +26,7 @@ public class UserController {
   ApiResponse<AuthenticationResponse> login(@RequestBody LoginRequest loginRequest) {
     try {
       return ApiResponse.<AuthenticationResponse>builder()
-          .message("Login successfully")
+          .message("Login process")
           .result(userService.login(loginRequest))
           .build();
     } catch (AuthenticationException exception) {
@@ -39,7 +39,7 @@ public class UserController {
   ApiResponse<AuthenticationResponse> register(@RequestBody SignUpRequest signUpRequest) {
     try {
       return ApiResponse.<AuthenticationResponse>builder()
-          .message("Register successfully")
+          .message("Register process")
           .result(userService.create(signUpRequest))
           .build();
     } catch (AuthenticationException exception) {

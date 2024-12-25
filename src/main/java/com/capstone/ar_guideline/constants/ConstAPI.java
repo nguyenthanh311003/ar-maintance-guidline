@@ -22,7 +22,7 @@ public class ConstAPI {
     public static final String GET_ROLE_BY_ID = "api/v1/role/id";
     public static final String GET_ROLE_BY_NAME = "api/v1/role/name";
     public static final String CREATE_ROLE = "api/v1/role";
-    public static final String DELETE_MODEL_TYPE = "api/v1/role/";
+    public static final String DELETE_ROLE = "api/v1/role/";
   }
 
   public static class UserAPI {
@@ -40,5 +40,13 @@ public class ConstAPI {
     public static final String CREATE_INSTRUCTION_DETAIL = "api/v1/instruction-detail";
     public static final String UPDATE_INSTRUCTION_DETAIL = "api/v1/instruction-detail/";
     public static final String DELETE_INSTRUCTION_DETAIL = "api/v1/instruction-detail/";
+  }
+
+  public static class CompanyAPI {
+    public static final String GET_COMPANIES = "api/v1/companies";
+    public static final String GET_COMPANY_BY_ID = "api/v1/company/id";
+    public static final String GET_COMPANY_BY_NAME = "api/v1/company/name";
+    public static final String CREATE_COMPANY = "api/v1/company";
+    public static final String DELETE_COMPANY = "api/v1/company/";
   }
 }

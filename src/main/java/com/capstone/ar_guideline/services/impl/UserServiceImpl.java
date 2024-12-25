@@ -12,6 +12,7 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.RoleMapper;
 import com.capstone.ar_guideline.mappers.UserMapper;
 import com.capstone.ar_guideline.repositories.UserRepository;
+import com.capstone.ar_guideline.services.ICompanyService;
 import com.capstone.ar_guideline.services.IJWTService;
 import com.capstone.ar_guideline.services.IRoleService;
 import com.capstone.ar_guideline.services.IUserService;
@@ -40,6 +41,7 @@ public class UserServiceImpl implements IUserService {
   IJWTService jwtService;
   PasswordEncoder passwordEncoder;
   IRoleService roleService;
+  ICompanyService companyService;
 
   @Override
   public AuthenticationResponse login(LoginRequest loginRequest) {
@@ -79,13 +81,14 @@ public class UserServiceImpl implements IUserService {
   public <T> AuthenticationResponse create(SignUpRequest signUpWitRoleRequest) {
     try {
       // Validate the role name
-      var role = roleService.findByName(signUpWitRoleRequest.getRoleName());
-      var company = signUpWitRoleRequest.getCompany();
+      var role = roleService.findRoleEntityByName(signUpWitRoleRequest.getRoleName());
+      var company = companyService.findCompanyEntityByName(signUpWitRoleRequest.getCompany());
       if (Objects.isNull(role)) {
         throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
       }
       User user = UserMapper.fromSignUpRequestToEntity(signUpWitRoleRequest);
-      user.setRole(RoleMapper.fromRoleResponseToEntity(role));
+      user.setRole(role);
+      user.setCompany(company);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
       var jwt = jwtService.generateToken(user);

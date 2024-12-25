@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.configurations;
 
+import com.capstone.ar_guideline.constants.ConstAPI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,33 +23,33 @@ public class SecurityConfig implements WebMvcConfigurer {
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final AuthenticationProvider authenticationProvider;
 
-  //  @Bean
-  //  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-  //    http.csrf(AbstractHttpConfigurer::disable)
-  //        .authorizeHttpRequests(
-  //            request ->
-  //                request
-  //                    .requestMatchers(ConstAPI.UserAPI.LOGIN)
-  //                    .permitAll()
-  //                    .anyRequest()
-  //                    .authenticated())
-  //        .sessionManagement(
-  //            manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-  //        .authenticationProvider(authenticationProvider)
-  //        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-  //    return http.build();
-  //  }
-
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(request -> request.anyRequest().permitAll())
+        .authorizeHttpRequests(
+            request ->
+                request
+                    .requestMatchers(ConstAPI.UserAPI.LOGIN)
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
         .sessionManagement(
             manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
+
+//  @Bean
+//  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//    http.csrf(AbstractHttpConfigurer::disable)
+//        .authorizeHttpRequests(request -> request.anyRequest().permitAll())
+//        .sessionManagement(
+//            manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//        .authenticationProvider(authenticationProvider)
+//        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//    return http.build();
+//  }
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {

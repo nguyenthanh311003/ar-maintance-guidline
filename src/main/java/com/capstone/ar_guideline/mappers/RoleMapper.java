@@ -14,6 +14,6 @@ public class RoleMapper {
   }
 
   public static Role fromRoleResponseToEntity(RoleResponse response) {
-    return Role.builder().roleName(response.getRoleName()).build();
+    return Role.builder().id(response.getId()).roleName(response.getRoleName()).build();
   }
 }

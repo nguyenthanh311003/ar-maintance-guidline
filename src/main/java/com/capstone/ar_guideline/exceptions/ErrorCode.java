@@ -39,6 +39,11 @@ public enum ErrorCode {
   INSTRUCTION_DETAIL_UPDATE_FAILED(1034, "Instruction detail update fail", HttpStatus.BAD_REQUEST),
   INSTRUCTION_DETAIL_DELETE_FAILED(1035, "Instruction detail delete fail", HttpStatus.BAD_REQUEST),
   INSTRUCTION_DETAIL_NOT_EXISTED(1036, "Instruction detail not existed", HttpStatus.NOT_FOUND),
+  COMPANY_NOT_EXISTED(2710, "Company", HttpStatus.NOT_FOUND),
+  COMPANY_CREATE_FAILED(2711, "Create Company failed", HttpStatus.INTERNAL_SERVER_ERROR),
+  COMPANY_FIND_ALL_FAILED(2712, "Find all Company failed", HttpStatus.NOT_FOUND),
+
+
   ;
 
   private final int code;
