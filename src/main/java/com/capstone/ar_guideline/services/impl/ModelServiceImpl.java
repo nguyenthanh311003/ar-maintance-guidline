@@ -11,7 +11,8 @@ import com.capstone.ar_guideline.mappers.ModelMapper;
 import com.capstone.ar_guideline.repositories.ModelRepository;
 import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.services.IModelTypeService;
-import java.util.Objects;
+import com.capstone.ar_guideline.util.UtilService;
+import java.util.Arrays;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,6 +28,11 @@ public class ModelServiceImpl implements IModelService {
   ModelRepository modelRepository;
   IModelTypeService modelTypeService;
   RedisTemplate<String, Object> redisTemplate;
+  private final String[] keysToRemove = {
+    ConstHashKey.HASH_KEY_MODEL,
+    ConstHashKey.HASH_KEY_INSTRUCTION,
+    ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL
+  };
 
   @Override
   public ModelResponse create(ModelCreationRequest request) {
@@ -35,7 +41,11 @@ public class ModelServiceImpl implements IModelService {
 
       Model newModel = ModelMapper.fromModelCreationRequestToEntity(request, modelTypeById);
       newModel = modelRepository.save(newModel);
-      redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL, newModel.getId(), newModel);
+
+      Arrays.stream(keysToRemove)
+          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+
       return ModelMapper.fromEntityToModelResponse(newModel);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
@@ -48,36 +58,6 @@ public class ModelServiceImpl implements IModelService {
   @Override
   public ModelResponse update(String id, ModelCreationRequest request) {
     try {
-      Model modelByIdWithRedis =
-          (Model) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_MODEL, id);
-      ModelType modelTypeByIdWithRedis =
-          (ModelType)
-              redisTemplate
-                  .opsForHash()
-                  .get(ConstHashKey.HASH_KEY_MODEL_TYPE, request.getModelTypeId());
-
-      if (!Objects.isNull(modelByIdWithRedis) && !Objects.isNull(modelTypeByIdWithRedis)) {
-        modelByIdWithRedis.setModelType(modelTypeByIdWithRedis);
-        modelByIdWithRedis.setModelCode(request.getModelCode());
-        modelByIdWithRedis.setStatus(request.getStatus());
-        modelByIdWithRedis.setName(request.getName());
-        modelByIdWithRedis.setDescription(request.getDescription());
-        modelByIdWithRedis.setImage(request.getImage());
-        modelByIdWithRedis.setDocumentUrl(request.getDocumentUrl());
-        modelByIdWithRedis.setARUrl(request.getARUrl());
-        modelByIdWithRedis.setVersion(request.getVersion());
-        modelByIdWithRedis.setRotation(request.getRotation());
-        modelByIdWithRedis.setScale(request.getScale());
-        modelByIdWithRedis.setFileSize(request.getFileSize());
-        modelByIdWithRedis.setFileType(request.getFileType());
-
-        modelRepository.save(modelByIdWithRedis);
-
-        redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL, id, modelByIdWithRedis);
-
-        return ModelMapper.fromEntityToModelResponse(modelByIdWithRedis);
-      }
-
       Model modelById = findById(id);
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
@@ -97,7 +77,13 @@ public class ModelServiceImpl implements IModelService {
 
       modelById = modelRepository.save(modelById);
 
-      redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL, id, modelById);
+      Arrays.stream(keysToRemove)
+          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+
+      Arrays.stream(keysToRemove)
+          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return ModelMapper.fromEntityToModelResponse(modelById);
     } catch (Exception exception) {
@@ -112,8 +98,12 @@ public class ModelServiceImpl implements IModelService {
   public void delete(String id) {
     try {
       Model modelById = findById(id);
-      redisTemplate.opsForHash().delete(ConstHashKey.HASH_KEY_MODEL, id);
       modelRepository.deleteById(modelById.getId());
+
+      Arrays.stream(keysToRemove)
+          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -124,20 +114,8 @@ public class ModelServiceImpl implements IModelService {
 
   @Override
   public Model findById(String id) {
-    Model modelByIdWithRedis =
-        (Model) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_MODEL, id);
-
-    if (!Objects.isNull(modelByIdWithRedis)) {
-      return modelByIdWithRedis;
-    }
-
-    Model modelById =
-        modelRepository
-            .findById(id)
-            .orElseThrow(() -> new AppException(ErrorCode.MODEL_NOT_EXISTED));
-
-    redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL, id, modelById);
-
-    return modelById;
+    return modelRepository
+        .findById(id)
+        .orElseThrow(() -> new AppException(ErrorCode.MODEL_NOT_EXISTED));
   }
 }

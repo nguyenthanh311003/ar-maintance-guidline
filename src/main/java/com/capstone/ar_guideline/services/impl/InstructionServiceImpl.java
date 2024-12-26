@@ -11,7 +11,8 @@ import com.capstone.ar_guideline.mappers.InstructionMapper;
 import com.capstone.ar_guideline.repositories.InstructionRepository;
 import com.capstone.ar_guideline.services.IInstructionService;
 import com.capstone.ar_guideline.services.IModelService;
-import java.util.Objects;
+import com.capstone.ar_guideline.util.UtilService;
+import java.util.Arrays;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,6 +28,9 @@ public class InstructionServiceImpl implements IInstructionService {
   InstructionRepository instructionRepository;
   RedisTemplate<String, Object> redisTemplate;
   IModelService modelService;
+  private final String[] keysToRemove = {
+    ConstHashKey.HASH_KEY_INSTRUCTION, ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL
+  };
 
   @Override
   public InstructionResponse create(InstructionCreationRequest request) {
@@ -38,9 +42,9 @@ public class InstructionServiceImpl implements IInstructionService {
 
       newInstruction = instructionRepository.save(newInstruction);
 
-      redisTemplate
-          .opsForHash()
-          .put(ConstHashKey.HASH_KEY_INSTRUCTION, newInstruction.getId(), newInstruction);
+      Arrays.stream(keysToRemove)
+          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return InstructionMapper.fromEntityToInstructionResponse(newInstruction);
     } catch (Exception exception) {
@@ -54,28 +58,6 @@ public class InstructionServiceImpl implements IInstructionService {
   @Override
   public InstructionResponse update(String id, InstructionCreationRequest request) {
     try {
-      Instruction instructionByIdWithRedis =
-          (Instruction) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_INSTRUCTION, id);
-
-      Model modelByIdWithRedis =
-          (Model) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_MODEL, id);
-
-      if (!Objects.isNull(instructionByIdWithRedis) && !Objects.isNull(modelByIdWithRedis)) {
-        instructionByIdWithRedis.setModel(modelByIdWithRedis);
-        instructionByIdWithRedis.setName(request.getName());
-        instructionByIdWithRedis.setCode(request.getCode());
-        instructionByIdWithRedis.setOrderNumber(request.getOrderNumber());
-        instructionByIdWithRedis.setDescription(request.getDescription());
-
-        instructionByIdWithRedis = instructionRepository.save(instructionByIdWithRedis);
-
-        redisTemplate
-            .opsForHash()
-            .put(ConstHashKey.HASH_KEY_INSTRUCTION, id, instructionByIdWithRedis);
-
-        return InstructionMapper.fromEntityToInstructionResponse(instructionByIdWithRedis);
-      }
-
       Instruction instructionById = findById(id);
 
       Model modelById = modelService.findById(request.getModelId());
@@ -88,7 +70,13 @@ public class InstructionServiceImpl implements IInstructionService {
 
       instructionById = instructionRepository.save(instructionById);
 
-      redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_INSTRUCTION, id, instructionById);
+      Arrays.stream(keysToRemove)
+          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+
+      Arrays.stream(keysToRemove)
+          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return InstructionMapper.fromEntityToInstructionResponse(instructionById);
     } catch (Exception exception) {
@@ -103,8 +91,12 @@ public class InstructionServiceImpl implements IInstructionService {
   public void delete(String id) {
     try {
       Instruction instructionById = findById(id);
-      redisTemplate.opsForHash().delete(ConstHashKey.HASH_KEY_INSTRUCTION, id);
       instructionRepository.deleteById(instructionById.getId());
+
+      Arrays.stream(keysToRemove)
+          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -115,19 +107,8 @@ public class InstructionServiceImpl implements IInstructionService {
 
   @Override
   public Instruction findById(String id) {
-    Instruction instructionByIdWithRedis =
-        (Instruction) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_INSTRUCTION, id);
-
-    if (!Objects.isNull(instructionByIdWithRedis)) {
-      return instructionByIdWithRedis;
-    }
-
-    Instruction instructionById =
-        instructionRepository
-            .findById(id)
-            .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED));
-
-    redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_INSTRUCTION, id, instructionById);
-    return instructionById;
+    return instructionRepository
+        .findById(id)
+        .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED));
   }
 }
