@@ -9,7 +9,8 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.ModelTypeMapper;
 import com.capstone.ar_guideline.repositories.ModelTypeRepository;
 import com.capstone.ar_guideline.services.IModelTypeService;
-import java.util.Objects;
+import com.capstone.ar_guideline.util.UtilService;
+import java.util.Arrays;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,15 +25,23 @@ import org.springframework.stereotype.Service;
 public class ModelTypeServiceImpl implements IModelTypeService {
   ModelTypeRepository modelTypeRepository;
   RedisTemplate<String, Object> redisTemplate;
+  private final String[] keysToRemove = {
+    ConstHashKey.HASH_KEY_MODEL_TYPE,
+    ConstHashKey.HASH_KEY_MODEL,
+    ConstHashKey.HASH_KEY_INSTRUCTION,
+    ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL
+  };
 
   @Override
   public ModelTypeResponse create(ModelTypeCreationRequest request) {
     try {
       ModelType newModelType = ModelTypeMapper.fromModelTypeCreationRequestToEntity(request);
       newModelType = modelTypeRepository.save(newModelType);
-      redisTemplate
-          .opsForHash()
-          .put(ConstHashKey.HASH_KEY_MODEL_TYPE, newModelType.getId(), newModelType);
+
+      Arrays.stream(keysToRemove)
+          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+
       return ModelTypeMapper.fromEntityToModelTypeResponse(newModelType);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
@@ -45,23 +54,6 @@ public class ModelTypeServiceImpl implements IModelTypeService {
   @Override
   public ModelTypeResponse update(String id, ModelTypeCreationRequest request) {
     try {
-      ModelType modelTypeByIdWithRedis =
-          (ModelType) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_MODEL_TYPE, id);
-
-      if (!Objects.isNull(modelTypeByIdWithRedis)) {
-        modelTypeByIdWithRedis.setName(request.getName());
-        modelTypeByIdWithRedis.setImage(request.getImage());
-        modelTypeByIdWithRedis.setDescription(request.getDescription());
-
-        modelTypeRepository.save(modelTypeByIdWithRedis);
-
-        redisTemplate
-            .opsForHash()
-            .put(ConstHashKey.HASH_KEY_MODEL_TYPE, id, modelTypeByIdWithRedis);
-
-        return ModelTypeMapper.fromEntityToModelTypeResponse(modelTypeByIdWithRedis);
-      }
-
       ModelType modelTypeById =
           ModelTypeMapper.fromModelTypeResponseToEntity(findModelTypeResponseById(id));
 
@@ -71,7 +63,13 @@ public class ModelTypeServiceImpl implements IModelTypeService {
 
       modelTypeById = modelTypeRepository.save(modelTypeById);
 
-      redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL_TYPE, id, modelTypeById);
+      Arrays.stream(keysToRemove)
+          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+
+      Arrays.stream(keysToRemove)
+          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return ModelTypeMapper.fromEntityToModelTypeResponse(modelTypeById);
     } catch (Exception exception) {
@@ -87,8 +85,19 @@ public class ModelTypeServiceImpl implements IModelTypeService {
     try {
       ModelType modelTypeById =
           ModelTypeMapper.fromModelTypeResponseToEntity(findModelTypeResponseById(id));
-      redisTemplate.opsForHash().delete(ConstHashKey.HASH_KEY_MODEL_TYPE, id);
       modelTypeRepository.deleteById(modelTypeById.getId());
+
+      String[] keys = {
+        ConstHashKey.HASH_KEY_MODEL_TYPE,
+        ConstHashKey.HASH_KEY_MODEL,
+        ConstHashKey.HASH_KEY_INSTRUCTION,
+        ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL
+      };
+
+      Arrays.stream(keys)
+          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -100,21 +109,9 @@ public class ModelTypeServiceImpl implements IModelTypeService {
   @Override
   public ModelType findById(String id) {
     try {
-      ModelType modelTypeByIdWithRedis =
-          (ModelType) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_MODEL_TYPE, id);
-
-      if (!Objects.isNull(modelTypeByIdWithRedis)) {
-        return modelTypeByIdWithRedis;
-      }
-
-      ModelType modelTypeById =
-          modelTypeRepository
-              .findById(id)
-              .orElseThrow(() -> new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED));
-
-      redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL_TYPE, id, modelTypeById);
-
-      return modelTypeById;
+      return modelTypeRepository
+          .findById(id)
+          .orElseThrow(() -> new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED));
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -125,19 +122,10 @@ public class ModelTypeServiceImpl implements IModelTypeService {
 
   private ModelTypeResponse findModelTypeResponseById(String id) {
     try {
-      ModelType modelTypeByIdWithRedis =
-          (ModelType) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_MODEL_TYPE, id);
-
-      if (!Objects.isNull(modelTypeByIdWithRedis)) {
-        return ModelTypeMapper.fromEntityToModelTypeResponse(modelTypeByIdWithRedis);
-      }
-
       ModelType modelTypeById =
           modelTypeRepository
               .findById(id)
               .orElseThrow(() -> new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED));
-
-      redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_MODEL_TYPE, id, modelTypeById);
 
       return ModelTypeMapper.fromEntityToModelTypeResponse(modelTypeById);
     } catch (Exception exception) {
