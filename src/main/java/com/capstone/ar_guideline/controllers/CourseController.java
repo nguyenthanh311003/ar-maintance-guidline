@@ -2,7 +2,6 @@ package com.capstone.ar_guideline.controllers;
 
 import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
-import com.capstone.ar_guideline.dtos.requests.Course.CourseListRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
@@ -18,41 +17,50 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
+@RequestMapping(ConstAPI.CourseAPI.COURSE)
 public class CourseController {
+
   ICourseService courseService;
 
-  @GetMapping(value = ConstAPI.CourseAPI.COURSE)
-  ApiResponse<PagingModel<CourseResponse>> getAllCourses(@RequestBody CourseListRequest request) {
+  @GetMapping
+  public ApiResponse<PagingModel<CourseResponse>> getAllCourses(
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "10") int size,
+          @RequestParam(required = false) String searchTemp,
+          @RequestParam(required = false) String status) {
     return ApiResponse.<PagingModel<CourseResponse>>builder()
-        .result(
-            courseService.findAll(
-                request.getPage(), request.getSize(), request.getSearchTemp(), request.getStatus()))
-        .build();
+            .result(courseService.findAll(page, size, searchTemp, status))
+            .build();
   }
 
-  //    @GetMapping(value = ConstAPI.CourseAPI.COURSE + "/{courseId}")
-  //    ApiResponse<CourseResponse> getCourse(@PathVariable String courseId) {
-  //        return ApiResponse.<CourseResponse>builder()
-  //                .result(courseService.findById(courseId))
-  //                .build();
-  //    }
+//  @GetMapping("/{courseId}")
+//  public ApiResponse<CourseResponse> getCourse(@PathVariable String courseId) {
+//    return ApiResponse.<CourseResponse>builder()
+//            .result(courseService.findById(courseId))
+//            .build();
+//  }
 
-  @PostMapping(value = ConstAPI.CourseAPI.COURSE)
-  ApiResponse<CourseResponse> createCourse(@RequestBody @Valid CourseCreationRequest request) {
-    return ApiResponse.<CourseResponse>builder().result(courseService.create(request)).build();
-  }
-
-  @PutMapping(value = ConstAPI.CourseAPI.COURSE + "/{courseId}")
-  ApiResponse<CourseResponse> updateCourse(
-      @PathVariable String courseId, @RequestBody CourseCreationRequest request) {
+  @PostMapping
+  public ApiResponse<CourseResponse> createCourse(@RequestBody @Valid CourseCreationRequest request) {
     return ApiResponse.<CourseResponse>builder()
-        .result(courseService.update(courseId, request))
-        .build();
+            .result(courseService.create(request))
+            .build();
   }
 
-  @DeleteMapping(value = ConstAPI.CourseAPI.COURSE + "/{courseId}")
-  ApiResponse<String> deleteCourse(@PathVariable String courseId) {
+  @PutMapping("/{courseId}")
+  public ApiResponse<CourseResponse> updateCourse(
+          @PathVariable String courseId,
+          @RequestBody @Valid CourseCreationRequest request) {
+    return ApiResponse.<CourseResponse>builder()
+            .result(courseService.update(courseId, request))
+            .build();
+  }
+
+  @DeleteMapping("/{courseId}")
+  public ApiResponse<String> deleteCourse(@PathVariable String courseId) {
     courseService.delete(courseId);
-    return ApiResponse.<String>builder().result("Course has been deleted").build();
+    return ApiResponse.<String>builder()
+            .result("Course has been deleted successfully")
+            .build();
   }
 }

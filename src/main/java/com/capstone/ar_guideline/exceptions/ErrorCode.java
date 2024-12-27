@@ -42,7 +42,10 @@ public enum ErrorCode {
   COMPANY_NOT_EXISTED(2710, "Company", HttpStatus.NOT_FOUND),
   COMPANY_CREATE_FAILED(2711, "Create Company failed", HttpStatus.INTERNAL_SERVER_ERROR),
   COMPANY_FIND_ALL_FAILED(2712, "Find all Company failed", HttpStatus.NOT_FOUND),
-
+  LESSON_CREATE_FAILED(1025, "Lesson create fail", HttpStatus.BAD_REQUEST),
+    LESSON_UPDATE_FAILED(1026, "Lesson update fail", HttpStatus.BAD_REQUEST),
+    LESSON_DELETE_FAILED(1027, "Lesson delete fail", HttpStatus.BAD_REQUEST),
+    LESSON_NOT_EXISTED(10289, "Lesson not existed", HttpStatus.NOT_FOUND),
 
   ;
 

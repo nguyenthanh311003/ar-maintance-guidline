@@ -32,6 +32,7 @@ public class Lesson {
   private Integer orderInCourse;
   private String description;
   private Integer duration;
+  private String status;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

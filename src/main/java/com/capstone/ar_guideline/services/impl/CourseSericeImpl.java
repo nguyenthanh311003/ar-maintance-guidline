@@ -13,6 +13,7 @@ import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.services.ICourseService;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,6 +35,13 @@ public class CourseSericeImpl implements ICourseService {
 
   CourseRepository courseRepository;
   @Autowired RedisTemplate<String, Object> redisTemplate;
+
+  private final String[] keysToRemove = {
+          ConstHashKey.HASH_KEY_MODEL_TYPE,
+          ConstHashKey.HASH_KEY_MODEL,
+          ConstHashKey.HASH_KEY_INSTRUCTION,
+          ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL
+  };
 
   @Override
   public PagingModel<CourseResponse> findAll(int page, int size, String searchTemp, String status) {
@@ -91,12 +99,11 @@ public class CourseSericeImpl implements ICourseService {
 
       newCourse.setCompany(company);
       newCourse = courseRepository.save(newCourse);
-      Set<String> keysToDelete =
-          redisTemplate.keys(ConstHashKey.HASH_KEY_COURSE + ConstHashKey.HASH_KEY_ALL);
+      Arrays.stream(keysToRemove)
+              .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+              .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       // delete all cache of course
-      UtilService.deleteCache(redisTemplate, keysToDelete);
-      //  redisTemplate.delete(keysToDelete);
       return CourseMapper.fromEntityToCourseResponse(newCourse);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
@@ -116,6 +123,13 @@ public class CourseSericeImpl implements ICourseService {
       // delete all cache of course
       //   utilService.deleteCache(keysToDelete);
       redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_COURSE, id, courseById);
+      Arrays.stream(keysToRemove)
+              .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+              .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+
+      Arrays.stream(keysToRemove)
+              .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
+              .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
       return CourseMapper.fromEntityToCourseResponse(courseById);
 
     } catch (Exception exception) {
@@ -132,10 +146,9 @@ public class CourseSericeImpl implements ICourseService {
       Course courseById = findById(id);
       courseRepository.deleteById(courseById.getId());
       // delete all cache of course
-      UtilService.deleteCache(
-          redisTemplate,
-          redisTemplate.keys(ConstHashKey.HASH_KEY_COURSE + ConstHashKey.HASH_KEY_ALL));
-
+      Arrays.stream(keysToRemove)
+              .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+              .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
