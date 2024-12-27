@@ -52,4 +52,8 @@ public class ConstAPI {
   public static class LessonAPI {
     public static final String LESSON = "api/v1/lesson";
   }
+  public static class LessonProcessAPI {
+    public static final String LESSON_PROCESS = "api/v1/lesson-process";
+
+  }
 }
