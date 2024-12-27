@@ -49,4 +49,7 @@ public class ConstAPI {
     public static final String CREATE_COMPANY = "api/v1/company";
     public static final String DELETE_COMPANY = "api/v1/company/";
   }
+  public static class LessonAPI {
+    public static final String LESSON = "api/v1/lesson";
+  }
 }

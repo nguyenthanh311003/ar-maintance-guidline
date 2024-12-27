@@ -26,19 +26,29 @@ public class SecurityConfig implements WebMvcConfigurer {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(
-            request ->
-                request
-                    .requestMatchers(ConstAPI.UserAPI.LOGIN)
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated())
-        .sessionManagement(
-            manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authenticationProvider(authenticationProvider)
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .authorizeHttpRequests(request -> request.anyRequest().permitAll())
+            .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
+
+//  @Bean
+//  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//    http.csrf(AbstractHttpConfigurer::disable)
+//        .authorizeHttpRequests(
+//            request ->
+//                request
+//                    .requestMatchers(ConstAPI.UserAPI.LOGIN)
+//                    .permitAll()
+//                    .anyRequest()
+//                    .authenticated())
+//        .sessionManagement(
+//            manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//        .authenticationProvider(authenticationProvider)
+//        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//    return http.build();
+//  }
 
 //  @Bean
 //  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
