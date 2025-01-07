@@ -50,6 +50,10 @@ public enum ErrorCode {
     LESSON_PROCESS_CREATE_FAILED(1038, "Lesson Process create fail", HttpStatus.BAD_REQUEST),
     LESSON_PROCESS_UPDATE_FAILED(1039, "Lesson Process update fail", HttpStatus.BAD_REQUEST),
     LESSON_PROCESS_DELETE_FAILED(1040, "Lesson Process delete fail", HttpStatus.BAD_REQUEST),
+    MODEL_LESSON_CREATE_FAILED(1041, "Model Lesson create fail", HttpStatus.BAD_REQUEST),
+    MODEL_LESSON_UPDATE_FAILED(1042, "Model Lesson update fail", HttpStatus.BAD_REQUEST),
+    MODEL_LESSON_DELETE_FAILED(1043, "Model Lesson delete fail", HttpStatus.BAD_REQUEST),
+    MODEL_LESSON_NOT_EXISTED(1044, "Model Lesson not existed", HttpStatus.NOT_FOUND),
     ;
 
     private final int code;
