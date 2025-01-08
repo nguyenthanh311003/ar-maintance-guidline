@@ -23,8 +23,7 @@ public class Subscription {
 
   private String subscriptionCode;
   private Integer duration;
-  private String scanTime;
-  private String subscriptionStatus;
+  private Integer scanTime;
   private String status;
 
   @Column(nullable = false, updatable = false)
