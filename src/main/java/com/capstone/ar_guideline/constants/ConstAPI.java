@@ -49,13 +49,23 @@ public class ConstAPI {
     public static final String CREATE_COMPANY = "api/v1/company";
     public static final String DELETE_COMPANY = "api/v1/company/";
   }
+
   public static class LessonAPI {
     public static final String LESSON = "api/v1/lesson";
   }
+
   public static class LessonProcessAPI {
     public static final String LESSON_PROCESS = "api/v1/lesson-process";
   }
+
   public static class ModelLessonAPI {
     public static final String MODELLESSON = "api/v1/model-lesson";
+  }
+
+  public static class EnrollmentAPI {
+    public static final String CREATE_ENROLLMENT = "api/v1/enrollment";
+    public static final String UPDATE_ENROLLMENT = "api/v1/enrollment/";
+    public static final String DELETE_ENROLLMENT = "api/v1/enrollment/";
+    public static final String UPDATE_STATUS_ENROLLMENT = "api/v1/enrollment/status/";
   }
 }

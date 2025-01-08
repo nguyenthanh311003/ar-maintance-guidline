@@ -1,0 +1,50 @@
+package com.capstone.ar_guideline.controllers;
+
+import com.capstone.ar_guideline.constants.ConstAPI;
+import com.capstone.ar_guideline.dtos.requests.Enrollment.EnrollmentCreationRequest;
+import com.capstone.ar_guideline.dtos.responses.ApiResponse;
+import com.capstone.ar_guideline.dtos.responses.Enrollment.EnrollmentResponse;
+import com.capstone.ar_guideline.services.IEnrollmentService;
+import jakarta.validation.Valid;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
+public class EnrollmentController {
+  IEnrollmentService enrollmentService;
+
+  @PostMapping(value = ConstAPI.EnrollmentAPI.CREATE_ENROLLMENT)
+  ApiResponse<EnrollmentResponse> createEnrollment(
+      @RequestBody @Valid EnrollmentCreationRequest request) {
+    return ApiResponse.<EnrollmentResponse>builder()
+        .result(enrollmentService.create(request))
+        .build();
+  }
+
+  @PutMapping(value = ConstAPI.EnrollmentAPI.UPDATE_ENROLLMENT + "{enrollmentId}")
+  ApiResponse<EnrollmentResponse> updateEnrollment(
+      @PathVariable String enrollmentId, @RequestBody EnrollmentCreationRequest request) {
+    return ApiResponse.<EnrollmentResponse>builder()
+        .result(enrollmentService.update(enrollmentId, request))
+        .build();
+  }
+
+  @DeleteMapping(value = ConstAPI.EnrollmentAPI.DELETE_ENROLLMENT + "{enrollmentId}")
+  ApiResponse<String> deleteEnrollment(@PathVariable String enrollmentId) {
+    enrollmentService.delete(enrollmentId);
+    return ApiResponse.<String>builder().result("Enrollment has been deleted").build();
+  }
+
+  @PutMapping(value = ConstAPI.EnrollmentAPI.UPDATE_STATUS_ENROLLMENT + "{enrollmentId}")
+  ApiResponse<EnrollmentResponse> updateEnrollmentStatus(@PathVariable String enrollmentId) {
+    return ApiResponse.<EnrollmentResponse>builder()
+        .result(enrollmentService.changeStatusToTrue(enrollmentId))
+        .build();
+  }
+}

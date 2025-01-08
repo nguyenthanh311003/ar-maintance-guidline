@@ -24,43 +24,39 @@ public class CourseController {
 
   @GetMapping
   public ApiResponse<PagingModel<CourseResponse>> getAllCourses(
-          @RequestParam(defaultValue = "1") int page,
-          @RequestParam(defaultValue = "10") int size,
-          @RequestParam(required = false) String searchTemp,
-          @RequestParam(required = false) String status) {
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(required = false) String searchTemp,
+      @RequestParam(required = false) String status) {
     return ApiResponse.<PagingModel<CourseResponse>>builder()
-            .result(courseService.findAll(page, size, searchTemp, status))
-            .build();
+        .result(courseService.findAll(page, size, searchTemp, status))
+        .build();
   }
 
-//  @GetMapping("/{courseId}")
-//  public ApiResponse<CourseResponse> getCourse(@PathVariable String courseId) {
-//    return ApiResponse.<CourseResponse>builder()
-//            .result(courseService.findById(courseId))
-//            .build();
-//  }
+  //  @GetMapping("/{courseId}")
+  //  public ApiResponse<CourseResponse> getCourse(@PathVariable String courseId) {
+  //    return ApiResponse.<CourseResponse>builder()
+  //            .result(courseService.findById(courseId))
+  //            .build();
+  //  }
 
   @PostMapping
-  public ApiResponse<CourseResponse> createCourse(@RequestBody @Valid CourseCreationRequest request) {
-    return ApiResponse.<CourseResponse>builder()
-            .result(courseService.create(request))
-            .build();
+  public ApiResponse<CourseResponse> createCourse(
+      @RequestBody @Valid CourseCreationRequest request) {
+    return ApiResponse.<CourseResponse>builder().result(courseService.create(request)).build();
   }
 
   @PutMapping("/{courseId}")
   public ApiResponse<CourseResponse> updateCourse(
-          @PathVariable String courseId,
-          @RequestBody @Valid CourseCreationRequest request) {
+      @PathVariable String courseId, @RequestBody @Valid CourseCreationRequest request) {
     return ApiResponse.<CourseResponse>builder()
-            .result(courseService.update(courseId, request))
-            .build();
+        .result(courseService.update(courseId, request))
+        .build();
   }
 
   @DeleteMapping("/{courseId}")
   public ApiResponse<String> deleteCourse(@PathVariable String courseId) {
     courseService.delete(courseId);
-    return ApiResponse.<String>builder()
-            .result("Course has been deleted successfully")
-            .build();
+    return ApiResponse.<String>builder().result("Course has been deleted successfully").build();
   }
 }

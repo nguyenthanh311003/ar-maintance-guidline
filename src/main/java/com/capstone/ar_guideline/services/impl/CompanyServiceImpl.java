@@ -9,15 +9,14 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CompanyMapper;
 import com.capstone.ar_guideline.repositories.CompanyRepository;
 import com.capstone.ar_guideline.services.ICompanyService;
+import java.util.List;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +58,8 @@ public class CompanyServiceImpl implements ICompanyService {
 
   @Override
   public CompanyResponse update(String id, CompanyCreationRequest request) {
-    Company companyByIdWithRedis = (Company) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_COMPANY, id);
+    Company companyByIdWithRedis =
+        (Company) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_COMPANY, id);
 
     if (!Objects.isNull(companyByIdWithRedis)) {
       companyByIdWithRedis.setCompanyName(request.getCompanyName());
@@ -84,14 +84,17 @@ public class CompanyServiceImpl implements ICompanyService {
 
   @Override
   public CompanyResponse findById(String id) {
-    Company companyByIdWithRedis = (Company) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_COMPANY, id);
+    Company companyByIdWithRedis =
+        (Company) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_COMPANY, id);
 
     if (!Objects.isNull(companyByIdWithRedis)) {
       return CompanyMapper.fromEntityToCompanyResponse(companyByIdWithRedis);
     }
 
     Company companyById =
-        companyRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_EXISTED));
+        companyRepository
+            .findById(id)
+            .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_EXISTED));
     return CompanyMapper.fromEntityToCompanyResponse(companyById);
   }
 

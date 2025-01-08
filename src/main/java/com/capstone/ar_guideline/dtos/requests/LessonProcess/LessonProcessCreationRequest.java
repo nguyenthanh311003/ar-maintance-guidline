@@ -9,8 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LessonProcessCreationRequest {
-    private String lessonId;
-    private String userId;
-    private Boolean isCompleted;
-    private String completeDate;
+  private String lessonId;
+  private String userId;
+  private Boolean isCompleted;
+  private String completeDate;
 }

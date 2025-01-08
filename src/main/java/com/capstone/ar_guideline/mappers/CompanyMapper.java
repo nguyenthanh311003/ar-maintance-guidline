@@ -10,7 +10,10 @@ public class CompanyMapper {
   }
 
   public static CompanyResponse fromEntityToCompanyResponse(Company company) {
-    return CompanyResponse.builder().id(company.getId()).companyName(company.getCompanyName()).build();
+    return CompanyResponse.builder()
+        .id(company.getId())
+        .companyName(company.getCompanyName())
+        .build();
   }
 
   public static Company fromCompanyResponseToEntity(CompanyResponse response) {
