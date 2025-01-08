@@ -13,4 +13,5 @@ public class InstructionDetailCreationRequest {
   String triggerEvent;
   Integer orderNumber;
   String description;
+  String type;
 }

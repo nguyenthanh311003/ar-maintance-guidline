@@ -2,8 +2,6 @@ package com.capstone.ar_guideline.dtos.responses.User;
 
 import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponse;
 import com.capstone.ar_guideline.dtos.responses.Role.RoleResponse;
-import com.capstone.ar_guideline.entities.Company;
-import com.capstone.ar_guideline.entities.Role;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.*;

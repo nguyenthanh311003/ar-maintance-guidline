@@ -14,4 +14,5 @@ public class InstructionDetailResponse {
   String triggerEvent;
   Integer orderNumber;
   String description;
+  String type;
 }

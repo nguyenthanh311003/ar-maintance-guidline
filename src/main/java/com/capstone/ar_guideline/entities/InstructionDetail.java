@@ -25,6 +25,7 @@ public class InstructionDetail implements Serializable {
   private String triggerEvent;
   private Integer orderNumber;
   private String description;
+  private String type;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

@@ -9,7 +9,6 @@ import com.capstone.ar_guideline.dtos.responses.User.UserResponse;
 import com.capstone.ar_guideline.entities.User;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
-import com.capstone.ar_guideline.mappers.RoleMapper;
 import com.capstone.ar_guideline.mappers.UserMapper;
 import com.capstone.ar_guideline.repositories.UserRepository;
 import com.capstone.ar_guideline.services.ICompanyService;
@@ -102,6 +101,20 @@ public class UserServiceImpl implements IUserService {
     } catch (Exception e) {
       log.error("Error when create user: {}", e.getMessage());
       return AuthenticationResponse.builder().message("Create user failed").build();
+    }
+  }
+
+  @Override
+  public User findById(String id) {
+    try {
+      return userRepository
+          .findById(id)
+          .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_NOT_EXISTED);
     }
   }
 

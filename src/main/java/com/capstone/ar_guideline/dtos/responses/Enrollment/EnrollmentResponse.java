@@ -1,6 +1,6 @@
-package com.capstone.ar_guideline.dtos.responses.LessonProcess;
+package com.capstone.ar_guideline.dtos.responses.Enrollment;
 
-import java.io.Serializable;
+import java.time.LocalDateTime;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,10 +9,10 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LessonProcessResponse implements Serializable {
+public class EnrollmentResponse {
   String id;
-  String lessonId;
+  String courseId;
   String userId;
   Boolean isCompleted;
-  String completeDate;
+  LocalDateTime completionDate;
 }

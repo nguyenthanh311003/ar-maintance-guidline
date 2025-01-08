@@ -13,6 +13,7 @@ public class InstructionDetailMapper {
         .triggerEvent(request.getTriggerEvent())
         .orderNumber(request.getOrderNumber())
         .description(request.getDescription())
+        .type(request.getType())
         .build();
   }
 
@@ -24,6 +25,7 @@ public class InstructionDetailMapper {
         .triggerEvent(instructionDetail.getTriggerEvent())
         .orderNumber(instructionDetail.getOrderNumber())
         .description(instructionDetail.getDescription())
+        .type(instructionDetail.getType())
         .build();
   }
 }

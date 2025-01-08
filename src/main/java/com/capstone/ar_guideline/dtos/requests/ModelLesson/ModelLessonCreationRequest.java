@@ -9,9 +9,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ModelLessonCreationRequest {
-    private String id;
+  private String id;
 
-    private String lessonId;
+  private String lessonId;
 
-    private String instructionCode;
+  private String instructionCode;
 }

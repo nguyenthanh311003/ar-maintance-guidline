@@ -5,11 +5,11 @@ import com.capstone.ar_guideline.dtos.responses.LessonProcess.LessonProcessRespo
 import com.capstone.ar_guideline.entities.LessonProcess;
 
 public interface ILessonProcessService {
-    LessonProcessResponse create(LessonProcessCreationRequest request);
+  LessonProcessResponse create(LessonProcessCreationRequest request);
 
-    LessonProcessResponse update(String id, LessonProcessCreationRequest request);
+  LessonProcessResponse update(String id, LessonProcessCreationRequest request);
 
-    void delete(String id);
+  void delete(String id);
 
-    LessonProcess findById(String id);
+  LessonProcess findById(String id);
 }

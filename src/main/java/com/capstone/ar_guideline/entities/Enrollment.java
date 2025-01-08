@@ -27,7 +27,7 @@ public class Enrollment {
 
   private String enrollmentDate;
   private Boolean isCompleted;
-  private String completionDate;
+  private LocalDateTime completionDate;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
