@@ -58,6 +58,10 @@ public enum ErrorCode {
   ENROLLMENT_UPDATE_FAILED(1046, "Enrollment update fail", HttpStatus.BAD_REQUEST),
   ENROLLMENT_DELETE_FAILED(1047, "Enrollment delete fail", HttpStatus.BAD_REQUEST),
   ENROLLMENT_NOT_EXISTED(1048, "Enrollment not existed", HttpStatus.NOT_FOUND),
+  SUBSCRIPTION_CREATE_FAILED(1049, "Subscription create fail", HttpStatus.BAD_REQUEST),
+  SUBSCRIPTION_UPDATE_FAILED(1050, "Subscription update fail", HttpStatus.BAD_REQUEST),
+  SUBSCRIPTION_DELETE_FAILED(1051, "Subscription delete fail", HttpStatus.BAD_REQUEST),
+  SUBSCRIPTION_NOT_EXISTED(1052, "Subscription not existed", HttpStatus.NOT_FOUND),
   ;
 
   private final int code;
