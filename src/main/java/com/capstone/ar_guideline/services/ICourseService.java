@@ -17,4 +17,5 @@ public interface ICourseService {
 
   Course findById(String id);
   CourseResponse findByIdResponse(String id);
+  CourseResponse findByTitleResponse(String title);
 }

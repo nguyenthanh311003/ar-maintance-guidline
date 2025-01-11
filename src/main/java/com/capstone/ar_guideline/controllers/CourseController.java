@@ -17,12 +17,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-@RequestMapping(ConstAPI.CourseAPI.COURSE)
 public class CourseController {
 
   ICourseService courseService;
 
-  @GetMapping
+  @GetMapping(value = ConstAPI.CourseAPI.COURSE)
   public ApiResponse<PagingModel<CourseResponse>> getAllCourses(
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int size,
@@ -35,12 +34,18 @@ public class CourseController {
         .build();
   }
 
-    @GetMapping("/{courseId}")
-    public ApiResponse<CourseResponse> getCourse(@PathVariable String courseId) {
+    @GetMapping(value = ConstAPI.CourseAPI.COURSE+"/{courseId}")
+    public ApiResponse<CourseResponse> getCourseById(@PathVariable String courseId) {
       return ApiResponse.<CourseResponse>builder()
               .result(courseService.findByIdResponse(courseId))
               .build();
     }
+  @GetMapping(value = ConstAPI.CourseAPI.COURSE_FIND_BY_TITILE+"/{title}")
+  public ApiResponse<CourseResponse> getCourseByTitle(@PathVariable String title) {
+    return ApiResponse.<CourseResponse>builder()
+            .result(courseService.findByTitleResponse(title))
+            .build();
+  }
 
   @PostMapping
   public ApiResponse<CourseResponse> createCourse(
