@@ -191,4 +191,20 @@ public class CourseSericeImpl implements ICourseService {
       throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
     }
   }
+
+  @Override
+  public CourseResponse findByTitleResponse(String title) {
+    try {
+      Course courseByTitle =
+              courseRepository
+                      .findByTitle(title)
+                      .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_EXISTED));
+      return CourseMapper.fromEntityToCourseResponse(courseByTitle);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+    }
+  }
 }
