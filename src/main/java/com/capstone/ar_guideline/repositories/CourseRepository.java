@@ -15,4 +15,8 @@ public interface CourseRepository extends JpaRepository<Course, String> {
       "SELECT c FROM Course c WHERE (c.title = :searchTemp OR c.description = :searchTemp OR :searchTemp IS NULL) AND (c.status = :status OR :status IS NULL)")
   List<Course> findAllBy(
       Pageable pageable, @Param("searchTemp") String searchTemp, @Param("status") String status);
+  @Query(
+          "SELECT e.course FROM Enrollment e WHERE e.user.id = :userId AND (e.course.title = :searchTemp OR e.course.description = :searchTemp OR :searchTemp IS NULL) AND (e.course.status = :status OR :status IS NULL)")
+  List<Course> findAllCourseEnrolledBy(
+          Pageable pageable,@Param("userId") String userId, @Param("searchTemp") String searchTemp, @Param("status") String status);
 }

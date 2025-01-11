@@ -34,45 +34,50 @@ import org.springframework.stereotype.Service;
 public class CourseSericeImpl implements ICourseService {
 
   CourseRepository courseRepository;
-  @Autowired RedisTemplate<String, Object> redisTemplate;
+  @Autowired
+  RedisTemplate<String, Object> redisTemplate;
 
   private final String[] keysToRemove = {
-    ConstHashKey.HASH_KEY_MODEL_TYPE,
-    ConstHashKey.HASH_KEY_MODEL,
-    ConstHashKey.HASH_KEY_INSTRUCTION,
-    ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL
+          ConstHashKey.HASH_KEY_MODEL_TYPE,
+          ConstHashKey.HASH_KEY_MODEL,
+          ConstHashKey.HASH_KEY_INSTRUCTION,
+          ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL
   };
 
   @Override
-  public PagingModel<CourseResponse> findAll(int page, int size, String searchTemp, String status) {
+  public PagingModel<CourseResponse> findAll(int page, int size, boolean isEnrolled, String userId, String searchTemp, String status) {
     try {
       PagingModel<CourseResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
       List<Course> courses = new ArrayList<>();
       // create key for redis
-      String hashKeyForCourse = page + ":" + size;
+      String hashKeyForCourse = page + ":" + size + ":" + isEnrolled + ":" + userId + ":" + searchTemp + ":" + status;
       List<CourseResponse> courseResponses = new ArrayList<>();
 
       // check if key exist in redis
       if (redisTemplate.opsForHash().hasKey(ConstHashKey.HASH_KEY_COURSE, hashKeyForCourse)) {
         // get data from redis
         courses =
-            (List<Course>)
-                redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_COURSE, hashKeyForCourse);
+                (List<Course>)
+                        redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_COURSE, hashKeyForCourse);
         courseResponses =
-            courses.stream()
-                .map(CourseMapper::fromEntityToCourseResponse)
-                .collect(Collectors.toList());
+                courses.stream()
+                        .map(CourseMapper::fromEntityToCourseResponse)
+                        .collect(Collectors.toList());
       } else {
         // get data from database
-        courses = courseRepository.findAllBy(pageable, searchTemp, status);
+        if (isEnrolled) {
+          courses = courseRepository.findAllCourseEnrolledBy(pageable, userId, searchTemp, status);
+        } else {
+          courses = courseRepository.findAllBy(pageable, searchTemp, status);
+        }
         courseResponses =
-            courses.stream()
-                .map(CourseMapper::fromEntityToCourseResponse)
-                .collect(Collectors.toList());
+                courses.stream()
+                        .map(CourseMapper::fromEntityToCourseResponse)
+                        .collect(Collectors.toList());
         redisTemplate
-            .opsForHash()
-            .put(ConstHashKey.HASH_KEY_COURSE + ":all", hashKeyForCourse, courseResponses);
+                .opsForHash()
+                .put(ConstHashKey.HASH_KEY_COURSE + ":all", hashKeyForCourse, courseResponses);
       }
 
       pagingModel.setPage(page);
@@ -100,8 +105,8 @@ public class CourseSericeImpl implements ICourseService {
       newCourse.setCompany(company);
       newCourse = courseRepository.save(newCourse);
       Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+              .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+              .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       // delete all cache of course
       return CourseMapper.fromEntityToCourseResponse(newCourse);
@@ -124,12 +129,12 @@ public class CourseSericeImpl implements ICourseService {
       //   utilService.deleteCache(keysToDelete);
       redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_COURSE, id, courseById);
       Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+              .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+              .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+              .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
+              .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
       return CourseMapper.fromEntityToCourseResponse(courseById);
 
     } catch (Exception exception) {
@@ -147,8 +152,8 @@ public class CourseSericeImpl implements ICourseService {
       courseRepository.deleteById(courseById.getId());
       // delete all cache of course
       Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+              .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+              .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -162,10 +167,23 @@ public class CourseSericeImpl implements ICourseService {
     try {
 
       Course courseById =
-          courseRepository
-              .findById(id)
-              .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_EXISTED));
+              courseRepository
+                      .findById(id)
+                      .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_EXISTED));
       return courseById;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public CourseResponse findByIdResponse(String id) {
+    try {
+      Course courseById = findById(id);
+      return CourseMapper.fromEntityToCourseResponse(courseById);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
