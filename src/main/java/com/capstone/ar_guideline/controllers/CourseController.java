@@ -26,19 +26,21 @@ public class CourseController {
   public ApiResponse<PagingModel<CourseResponse>> getAllCourses(
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false) boolean isEnrolled,
+        @RequestParam(required = false) String userId,
       @RequestParam(required = false) String searchTemp,
       @RequestParam(required = false) String status) {
     return ApiResponse.<PagingModel<CourseResponse>>builder()
-        .result(courseService.findAll(page, size, searchTemp, status))
+        .result(courseService.findAll(page, size,isEnrolled, userId, searchTemp, status))
         .build();
   }
 
-  //  @GetMapping("/{courseId}")
-  //  public ApiResponse<CourseResponse> getCourse(@PathVariable String courseId) {
-  //    return ApiResponse.<CourseResponse>builder()
-  //            .result(courseService.findById(courseId))
-  //            .build();
-  //  }
+    @GetMapping("/{courseId}")
+    public ApiResponse<CourseResponse> getCourse(@PathVariable String courseId) {
+      return ApiResponse.<CourseResponse>builder()
+              .result(courseService.findByIdResponse(courseId))
+              .build();
+    }
 
   @PostMapping
   public ApiResponse<CourseResponse> createCourse(
