@@ -45,7 +45,7 @@ public class CourseSericeImpl implements ICourseService {
   };
 
   @Override
-  public PagingModel<CourseResponse> findAll(int page, int size, boolean isEnrolled, String userId, String searchTemp, String status) {
+  public PagingModel<CourseResponse> findAll(int page, int size, boolean isEnrolled,Boolean isMandatory ,String userId, String searchTemp, String status) {
     try {
       PagingModel<CourseResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
@@ -67,7 +67,7 @@ public class CourseSericeImpl implements ICourseService {
       } else {
         // get data from database
         if (isEnrolled) {
-          courses = courseRepository.findAllCourseEnrolledBy(pageable, userId, searchTemp, status);
+          courses = courseRepository.findAllCourseEnrolledBy(pageable,isMandatory ,userId, searchTemp, status);
         } else {
           courses = courseRepository.findAllBy(pageable, searchTemp, status);
         }

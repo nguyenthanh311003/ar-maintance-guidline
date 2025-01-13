@@ -62,6 +62,7 @@ public enum ErrorCode {
   SUBSCRIPTION_UPDATE_FAILED(1050, "Subscription update fail", HttpStatus.BAD_REQUEST),
   SUBSCRIPTION_DELETE_FAILED(1051, "Subscription delete fail", HttpStatus.BAD_REQUEST),
   SUBSCRIPTION_NOT_EXISTED(1052, "Subscription not existed", HttpStatus.NOT_FOUND),
+  AWS_S3_BUCKET_FAILED_TO_STORE_FILE(1053, "Failed to store file to s3", HttpStatus.INTERNAL_SERVER_ERROR),
   ;
 
   private final int code;
