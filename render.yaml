@@ -1,18 +1,24 @@
 services:
   - name: ar-guideline-app
     type: web
-    env: java
+    runtime: java
     buildCommand: ./mvnw clean install
     startCommand: java -jar target/ar-guideline-0.0.1-SNAPSHOT.jar
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
       - key: DB_URL
-        fromDatabase: ar-capstone-db
+        fromDatabase:
+          name: ar-capstone-db
+          property: connectionString
       - key: DB_USERNAME
-        fromDatabase: ar-capstone-db
+        fromDatabase:
+          name: ar-capstone-db
+          property: username
       - key: DB_PASSWORD
-        fromDatabase: ar-capstone-db
+        fromDatabase:
+          name: ar-capstone-db
+          property: password
       - key: REDIS_HOST
         value: singapore-redis.render.com
       - key: REDIS_PORT
@@ -34,3 +40,5 @@ databases:
     plan: starter
     region: singapore
     diskSizeGB: 5
+    databaseName: ar_capstone
+    user: sa
