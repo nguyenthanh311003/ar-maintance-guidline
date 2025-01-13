@@ -35,6 +35,7 @@ public class Course implements Serializable {
   private Boolean isMandatory;
   private String type;
   private String status = "INACTIVE";
+  private String imageUrl;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
