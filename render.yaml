@@ -1,7 +1,7 @@
 services:
   - name: ar-guideline-app
     type: web
-    runtime: java
+    runtime: java17  # Specify Java 17 runtime
     buildCommand: ./mvnw clean install
     startCommand: java -jar target/ar-guideline-0.0.1-SNAPSHOT.jar
     envVars:
@@ -14,7 +14,7 @@ services:
       - key: DB_USERNAME
         fromDatabase:
           name: ar-capstone-db
-          property: username
+          property: user
       - key: DB_PASSWORD
         fromDatabase:
           name: ar-capstone-db
@@ -32,6 +32,7 @@ services:
     healthCheckPath: /
     autoDeploy: true
     disk:
+      name: ar-guideline-app-disk  # Added disk name
       sizeGB: 5
       mountPath: /data
 
