@@ -8,11 +8,11 @@ services:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
       - key: DB_URL
-        value: jdbc:mysql://103.48.193.165:3406/ar_capstone
+        fromDatabase: ar-capstone-db
       - key: DB_USERNAME
-        value: sa
+        fromDatabase: ar-capstone-db
       - key: DB_PASSWORD
-        value: sa_password
+        fromDatabase: ar-capstone-db
       - key: REDIS_HOST
         value: singapore-redis.render.com
       - key: REDIS_PORT
@@ -32,6 +32,5 @@ services:
 databases:
   - name: ar-capstone-db
     plan: starter
-    engine: mysql
     region: singapore
     diskSizeGB: 5
