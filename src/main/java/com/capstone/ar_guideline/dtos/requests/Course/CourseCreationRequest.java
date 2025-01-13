@@ -16,6 +16,7 @@ public class CourseCreationRequest {
   private String title;
   private String description;
   private Integer duration;
+  private String imageUrl;
   private String status;
   private Boolean isMandatory;
   private String type;
