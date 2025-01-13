@@ -1,7 +1,7 @@
 services:
   - name: ar-guideline-app
     type: web
-    runtime: java17  # Use java17 instead of java21
+    runtime: java # Use java17 instead of java21
     buildCommand: ./mvnw clean install
     startCommand: java -jar target/ar-guideline-0.0.1-SNAPSHOT.jar
     envVars:
