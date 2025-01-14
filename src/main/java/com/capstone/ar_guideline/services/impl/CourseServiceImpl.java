@@ -11,6 +11,7 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CourseMapper;
 import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.services.ICourseService;
+import com.capstone.ar_guideline.services.ILessonService;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -31,10 +33,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class CourseSericeImpl implements ICourseService {
+public class CourseServiceImpl implements ICourseService {
 
   CourseRepository courseRepository;
   @Autowired RedisTemplate<String, Object> redisTemplate;
+
+  @Autowired @Lazy MiddleEnrollmentServiceImpl middleService;
+  @Autowired ILessonService lessonService;
 
   private final String[] keysToRemove = {
     ConstHashKey.HASH_KEY_MODEL_TYPE,
@@ -82,7 +87,14 @@ public class CourseSericeImpl implements ICourseService {
         }
         courseResponses =
             courses.stream()
-                .map(CourseMapper::fromEntityToCourseResponse)
+                .map(
+                    course -> {
+                      CourseResponse response = CourseMapper.fromEntityToCourseResponse(course);
+                      response.setNumberOfParticipants(
+                          middleService.countByCourseId(course.getId()));
+                      response.setNumberOfLessons(lessonService.countByCourseId(course.getId()));
+                      return response;
+                    })
                 .collect(Collectors.toList());
         redisTemplate
             .opsForHash()

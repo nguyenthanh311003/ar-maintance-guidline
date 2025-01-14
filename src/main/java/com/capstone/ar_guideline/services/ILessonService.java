@@ -12,4 +12,6 @@ public interface ILessonService {
   void delete(String id);
 
   Lesson findById(String id);
+
+  Integer countByCourseId(String courseId);
 }
