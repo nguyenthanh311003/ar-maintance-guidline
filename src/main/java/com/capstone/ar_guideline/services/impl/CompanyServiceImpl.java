@@ -122,4 +122,18 @@ public class CompanyServiceImpl implements ICompanyService {
             .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_EXISTED));
     return companyByName;
   }
+
+  @Override
+  public Company findByIdReturnEntity(String id) {
+    try {
+      return companyRepository
+          .findById(id)
+          .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_EXISTED));
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_NOT_EXISTED);
+    }
+  }
 }

@@ -19,4 +19,6 @@ public interface ICompanyService {
   void delete(String id);
 
   Company findCompanyEntityByName(String name);
+
+  Company findByIdReturnEntity(String id);
 }

@@ -75,4 +75,10 @@ public class ConstAPI {
     public static final String UPDATE_SUBSCRIPTION = "api/v1/subscription/";
     public static final String DELETE_SUBSCRIPTION = "api/v1/subscription/";
   }
+
+  public static class CompanySubscriptionAPI {
+    public static final String CREATE_COMPANY_SUBSCRIPTION = "api/v1/company-subscription";
+    public static final String UPDATE_COMPANY_SUBSCRIPTION = "api/v1/company-subscription/";
+    public static final String DELETE_COMPANY_SUBSCRIPTION = "api/v1/company-subscription/";
+  }
 }

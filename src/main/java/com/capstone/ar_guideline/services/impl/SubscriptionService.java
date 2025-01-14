@@ -116,4 +116,18 @@ public class SubscriptionService implements ISubscriptionService {
       throw new AppException(ErrorCode.SUBSCRIPTION_NOT_EXISTED);
     }
   }
+
+  @Override
+  public Subscription findByIdAndStatus(String id, String status) {
+    try {
+      return subscriptionRepository
+          .findByIdAndStatus(id, status)
+          .orElseThrow(() -> new AppException(ErrorCode.SUBSCRIPTION_NOT_EXISTED));
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.SUBSCRIPTION_NOT_EXISTED);
+    }
+  }
 }

@@ -18,15 +18,15 @@ public class CompanySubscription {
   private String id;
 
   @ManyToOne
-  @JoinColumn(name = "companySubscription_id", nullable = false)
+  @JoinColumn(name = "company_id", nullable = false)
   private Company company;
 
   @ManyToOne
   @JoinColumn(name = "subscription_id", nullable = false)
   private Subscription subscription;
 
-  private String subscriptionStartDate;
-  private String subscriptionExpireDate;
+  private LocalDateTime subscriptionStartDate;
+  private LocalDateTime subscriptionExpireDate;
   private String status;
 
   @Column(nullable = false, updatable = false)
