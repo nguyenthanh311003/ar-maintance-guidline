@@ -50,13 +50,13 @@ public class CourseController {
         .build();
   }
 
-  @PostMapping
+  @PostMapping(value = ConstAPI.CourseAPI.COURSE)
   public ApiResponse<CourseResponse> createCourse(
       @RequestBody @Valid CourseCreationRequest request) {
     return ApiResponse.<CourseResponse>builder().result(courseService.create(request)).build();
   }
 
-  @PutMapping("/{courseId}")
+  @PutMapping(value = ConstAPI.CourseAPI.COURSE + "/{courseId}")
   public ApiResponse<CourseResponse> updateCourse(
       @PathVariable String courseId, @RequestBody @Valid CourseCreationRequest request) {
     return ApiResponse.<CourseResponse>builder()
