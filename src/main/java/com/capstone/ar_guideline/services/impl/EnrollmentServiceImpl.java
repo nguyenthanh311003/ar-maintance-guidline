@@ -10,7 +10,6 @@ import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.EnrollmentMapper;
 import com.capstone.ar_guideline.repositories.EnrollmentRepository;
-import com.capstone.ar_guideline.services.ICourseService;
 import com.capstone.ar_guideline.services.IEnrollmentService;
 import com.capstone.ar_guideline.services.IUserService;
 import com.capstone.ar_guideline.util.UtilService;
@@ -20,6 +19,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,11 @@ import org.springframework.stereotype.Service;
 public class EnrollmentServiceImpl implements IEnrollmentService {
   EnrollmentRepository enrollmentRepository;
   RedisTemplate<String, Object> redisTemplate;
-  ICourseService courseService;
+
+@Autowired
+        @Lazy
+MiddleCourseServiceImpl middleService;
+
   IUserService userService;
 
   private final String[] keysToRemove = {ConstHashKey.HASH_KEY_ENROLLMENT};
@@ -38,7 +43,7 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
   @Override
   public EnrollmentResponse create(EnrollmentCreationRequest request) {
     try {
-      Course course = courseService.findById(request.getCourseId());
+      Course course = middleService.findById(request.getCourseId());
 
       User user = userService.findById(request.getUserId());
 
@@ -66,7 +71,7 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
     try {
       Enrollment enrollmentById = findById(id);
 
-      Course courseById = courseService.findById(request.getCourseId());
+      Course courseById = middleService.findById(request.getCourseId());
 
       User userById = userService.findById(request.getUserId());
 
@@ -142,5 +147,10 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
       }
       throw new AppException(ErrorCode.ENROLLMENT_NOT_EXISTED);
     }
+  }
+
+  @Override
+  public Integer countByCourseId(String courseId) {
+    return enrollmentRepository.countByCourseId(courseId);
   }
 }

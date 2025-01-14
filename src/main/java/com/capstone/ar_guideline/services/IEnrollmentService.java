@@ -14,4 +14,5 @@ public interface IEnrollmentService {
   void delete(String id);
 
   Enrollment findById(String id);
+  Integer countByCourseId(String courseId);
 }

@@ -19,6 +19,8 @@ public class CourseResponse implements Serializable {
   private Integer duration;
   private Boolean isMandatory;
   private String imageUrl;
+  private Integer numberOfLessons;
+  private Integer numberOfParticipants;
   private String status;
   private String type;
 }
