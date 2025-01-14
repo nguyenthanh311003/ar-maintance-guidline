@@ -32,9 +32,7 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
   EnrollmentRepository enrollmentRepository;
   RedisTemplate<String, Object> redisTemplate;
 
-@Autowired
-        @Lazy
-MiddleCourseServiceImpl middleService;
+  @Autowired @Lazy MiddleCourseServiceImpl middleService;
 
   IUserService userService;
 

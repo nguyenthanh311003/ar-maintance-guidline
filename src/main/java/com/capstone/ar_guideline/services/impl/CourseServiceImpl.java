@@ -38,11 +38,8 @@ public class CourseServiceImpl implements ICourseService {
   CourseRepository courseRepository;
   @Autowired RedisTemplate<String, Object> redisTemplate;
 
-  @Autowired
-  @Lazy
-  MiddleEnrollmentServiceImpl middleService;
-    @Autowired
-    ILessonService lessonService;
+  @Autowired @Lazy MiddleEnrollmentServiceImpl middleService;
+  @Autowired ILessonService lessonService;
 
   private final String[] keysToRemove = {
     ConstHashKey.HASH_KEY_MODEL_TYPE,
@@ -89,14 +86,16 @@ public class CourseServiceImpl implements ICourseService {
           courses = courseRepository.findAllBy(pageable, searchTemp, status);
         }
         courseResponses =
-                courses.stream()
-                        .map(course -> {
-                          CourseResponse response = CourseMapper.fromEntityToCourseResponse(course);
-                          response.setNumberOfParticipants(middleService.countByCourseId(course.getId()));
-                          response.setNumberOfLessons(lessonService.countByCourseId(course.getId()));
-                          return response;
-                        })
-                        .collect(Collectors.toList());
+            courses.stream()
+                .map(
+                    course -> {
+                      CourseResponse response = CourseMapper.fromEntityToCourseResponse(course);
+                      response.setNumberOfParticipants(
+                          middleService.countByCourseId(course.getId()));
+                      response.setNumberOfLessons(lessonService.countByCourseId(course.getId()));
+                      return response;
+                    })
+                .collect(Collectors.toList());
         redisTemplate
             .opsForHash()
             .put(ConstHashKey.HASH_KEY_COURSE + ":all", hashKeyForCourse, courseResponses);

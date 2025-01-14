@@ -1,19 +1,17 @@
 package com.capstone.ar_guideline.util;
 
-import java.io.IOException;
-import java.util.*;
-
 import com.capstone.ar_guideline.constants.ConstS3Bucket;
 import com.capstone.ar_guideline.exceptions.AppException;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.IOException;
+import java.util.*;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UtilService {
-//  @Autowired
- // FileStore fileStore;
+  //  @Autowired
+  // FileStore fileStore;
   public static boolean IsNotNull(Object obj) {
     return obj != null;
   }
@@ -60,8 +58,13 @@ public class UtilService {
       String path = String.format("%s/%s", ConstS3Bucket.PROFILE_IMAGE, id);
       String originalFilename = file.getOriginalFilename();
       String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
-      String filename = String.format("%s-%s%s", UUID.randomUUID(), originalFilename.substring(0, originalFilename.lastIndexOf('.')), extension);
-   //   fileStore.save(path, filename, Optional.of(metadata), file.getInputStream());
+      String filename =
+          String.format(
+              "%s-%s%s",
+              UUID.randomUUID(),
+              originalFilename.substring(0, originalFilename.lastIndexOf('.')),
+              extension);
+      //   fileStore.save(path, filename, Optional.of(metadata), file.getInputStream());
       return filename;
     } catch (Exception baseException) {
       if (baseException instanceof AppException) {
@@ -90,8 +93,13 @@ public class UtilService {
       String path = String.format("%s/%s", ConstS3Bucket.PROFILE_IMAGE, id);
       String originalFilename = file.getOriginalFilename();
       String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
-      String filename = String.format("%s-%s%s", UUID.randomUUID(), originalFilename.substring(0, originalFilename.lastIndexOf('.')), extension);
-    //  fileStore.save(path, filename, Optional.of(metadata), file.getInputStream());
+      String filename =
+          String.format(
+              "%s-%s%s",
+              UUID.randomUUID(),
+              originalFilename.substring(0, originalFilename.lastIndexOf('.')),
+              extension);
+      //  fileStore.save(path, filename, Optional.of(metadata), file.getInputStream());
 
       return filename;
     } catch (Exception baseException) {
@@ -100,6 +108,5 @@ public class UtilService {
       }
       throw baseException;
     }
-
   }
 }

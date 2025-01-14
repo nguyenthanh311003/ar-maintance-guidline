@@ -9,10 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class MiddleCourseServiceImpl {
 
-    @Autowired
-            @Lazy
-    ICourseService courseService;
-    public Course findById(String id) {
-        return courseService.findById(id);
-    }
+  @Autowired @Lazy ICourseService courseService;
+
+  public Course findById(String id) {
+    return courseService.findById(id);
+  }
 }

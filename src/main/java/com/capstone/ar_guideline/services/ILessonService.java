@@ -13,5 +13,5 @@ public interface ILessonService {
 
   Lesson findById(String id);
 
-    Integer countByCourseId(String courseId);
+  Integer countByCourseId(String courseId);
 }

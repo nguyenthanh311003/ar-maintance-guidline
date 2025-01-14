@@ -10,7 +10,6 @@ public class ConstAPI {
   public static class CourseAPI {
     public static final String COURSE = "api/v1/course";
     public static final String COURSE_FIND_BY_TITILE = "api/v1/course/title";
-
   }
 
   public static class ModelAPI {

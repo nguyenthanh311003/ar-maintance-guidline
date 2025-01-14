@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LessonRepository extends JpaRepository<Lesson, String> {
-    Integer countByCourseId(String courseId);
+  Integer countByCourseId(String courseId);
 }
