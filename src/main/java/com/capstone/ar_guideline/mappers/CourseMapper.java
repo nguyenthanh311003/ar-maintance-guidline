@@ -28,7 +28,7 @@ public class CourseMapper {
         .title(course.getTitle())
         .description(course.getDescription())
         .duration(course.getDuration())
-            .imageUrl(course.getImageUrl())
+        .imageUrl(course.getImageUrl())
         .isMandatory(course.getIsMandatory())
         .status(course.getStatus())
         .type(course.getType())

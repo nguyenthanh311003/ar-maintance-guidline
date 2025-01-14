@@ -7,7 +7,14 @@ import com.capstone.ar_guideline.entities.Course;
 
 public interface ICourseService {
 
-  PagingModel<CourseResponse> findAll(int page, int size, boolean isEnrolled,Boolean isMandatory ,String userId,String searchTemp, String status);
+  PagingModel<CourseResponse> findAll(
+      int page,
+      int size,
+      boolean isEnrolled,
+      Boolean isMandatory,
+      String userId,
+      String searchTemp,
+      String status);
 
   CourseResponse create(CourseCreationRequest request);
 
@@ -16,6 +23,8 @@ public interface ICourseService {
   void delete(String id);
 
   Course findById(String id);
+
   CourseResponse findByIdResponse(String id);
+
   CourseResponse findByTitleResponse(String title);
 }

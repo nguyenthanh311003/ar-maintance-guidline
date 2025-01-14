@@ -25,27 +25,29 @@ public class CourseController {
   public ApiResponse<PagingModel<CourseResponse>> getAllCourses(
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int size,
-        @RequestParam(required = false) boolean isEnrolled,
+      @RequestParam(required = false) boolean isEnrolled,
       @RequestParam(required = false) Boolean isMandatory,
       @RequestParam(required = false) String userId,
       @RequestParam(required = false) String searchTemp,
       @RequestParam(required = false) String status) {
     return ApiResponse.<PagingModel<CourseResponse>>builder()
-        .result(courseService.findAll(page, size,isEnrolled, isMandatory ,userId, searchTemp, status))
+        .result(
+            courseService.findAll(page, size, isEnrolled, isMandatory, userId, searchTemp, status))
         .build();
   }
 
-    @GetMapping(value = ConstAPI.CourseAPI.COURSE+"/{courseId}")
-    public ApiResponse<CourseResponse> getCourseById(@PathVariable String courseId) {
-      return ApiResponse.<CourseResponse>builder()
-              .result(courseService.findByIdResponse(courseId))
-              .build();
-    }
-  @GetMapping(value = ConstAPI.CourseAPI.COURSE_FIND_BY_TITILE+"/{title}")
+  @GetMapping(value = ConstAPI.CourseAPI.COURSE + "/{courseId}")
+  public ApiResponse<CourseResponse> getCourseById(@PathVariable String courseId) {
+    return ApiResponse.<CourseResponse>builder()
+        .result(courseService.findByIdResponse(courseId))
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.CourseAPI.COURSE_FIND_BY_TITILE + "/{title}")
   public ApiResponse<CourseResponse> getCourseByTitle(@PathVariable String title) {
     return ApiResponse.<CourseResponse>builder()
-            .result(courseService.findByTitleResponse(title))
-            .build();
+        .result(courseService.findByTitleResponse(title))
+        .build();
   }
 
   @PostMapping

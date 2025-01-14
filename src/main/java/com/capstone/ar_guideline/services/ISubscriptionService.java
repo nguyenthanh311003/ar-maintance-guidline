@@ -12,4 +12,6 @@ public interface ISubscriptionService {
   void delete(String id);
 
   Subscription findById(String id);
+
+  Subscription findByIdAndStatus(String id, String status);
 }
