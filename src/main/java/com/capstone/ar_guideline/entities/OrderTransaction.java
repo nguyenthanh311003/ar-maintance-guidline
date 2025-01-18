@@ -21,10 +21,6 @@ public class OrderTransaction {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  @ManyToOne
-  @JoinColumn(name = "paymentMethod_id", nullable = false)
-  private PaymentMethod paymentMethod;
-
   private String itemCode;
   private String orderCode;
   private String status;

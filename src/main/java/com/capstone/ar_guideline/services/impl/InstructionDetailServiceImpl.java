@@ -97,6 +97,10 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
           .map(k -> k + ConstHashKey.HASH_KEY_ALL)
           .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
+      Arrays.stream(keysToRemove)
+          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
+          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

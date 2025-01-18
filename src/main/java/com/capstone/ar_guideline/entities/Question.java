@@ -1,9 +1,11 @@
 package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
-
+import java.time.LocalDateTime;
 import java.util.List;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Getter
 @Setter
@@ -11,21 +13,28 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "questions")
 public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  String id;
 
-    @ManyToOne
-    @JoinColumn(name = "quiz_id", nullable = false)
-    private Quiz quiz;
+  @ManyToOne
+  @JoinColumn(name = "quiz_id", nullable = false)
+  Quiz quiz;
 
-    private String question;
+  @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+  List<Option> options;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private List<Option> options;
+  @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+  List<ResultDetail> resultDetails;
 
-    // Getters and Setters
+  String question;
+
+  @Column(nullable = false, updatable = false)
+  @CreationTimestamp
+  LocalDateTime createdDate;
+
+  @Column(nullable = false)
+  @UpdateTimestamp
+  LocalDateTime updatedDate;
 }
-

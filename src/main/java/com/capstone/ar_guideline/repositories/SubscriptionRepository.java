@@ -11,4 +11,9 @@ import org.springframework.stereotype.Repository;
 public interface SubscriptionRepository extends JpaRepository<Subscription, String> {
   @Query(value = "SELECT s FROM Subscription s WHERE s.id = :id AND s.status = :status")
   Optional<Subscription> findByIdAndStatus(@Param("id") String id, @Param("status") String status);
+
+  @Query(
+      value =
+          "SELECT s FROM Subscription s WHERE s.subscriptionCode = :code AND s.status = 'ACTIVE'")
+  Optional<Subscription> findByCode(@Param("code") String code);
 }
