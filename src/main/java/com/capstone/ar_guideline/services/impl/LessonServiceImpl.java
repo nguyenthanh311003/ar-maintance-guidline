@@ -82,4 +82,9 @@ public class LessonServiceImpl implements ILessonService {
               return new AppException(ErrorCode.LESSON_NOT_EXISTED);
             });
   }
+
+  @Override
+  public Integer countByCourseId(String courseId) {
+    return lessonRepository.countByCourseId(courseId);
+  }
 }
