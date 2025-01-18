@@ -2,6 +2,7 @@ package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -12,25 +13,25 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class OrderTransaction {
+public class Quiz {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private String id;
+  String id;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
+  List<Question> questions;
 
-  private String itemCode;
-  private String orderCode;
-  private String status;
-  private Double amount;
+  @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
+  List<Result> results;
+
+  String description;
+  String title;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
-  private LocalDateTime createdDate;
+  LocalDateTime createdDate;
 
   @Column(nullable = false)
   @UpdateTimestamp
-  private LocalDateTime updatedDate;
+  LocalDateTime updatedDate;
 }

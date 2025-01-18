@@ -14,4 +14,6 @@ public interface ISubscriptionService {
   Subscription findById(String id);
 
   Subscription findByIdAndStatus(String id, String status);
+
+  Subscription findByCode(String code);
 }

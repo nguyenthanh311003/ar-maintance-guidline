@@ -130,4 +130,18 @@ public class SubscriptionService implements ISubscriptionService {
       throw new AppException(ErrorCode.SUBSCRIPTION_NOT_EXISTED);
     }
   }
+
+  @Override
+  public Subscription findByCode(String code) {
+    try {
+      return subscriptionRepository
+          .findByCode(code)
+          .orElseThrow(() -> new AppException(ErrorCode.SUBSCRIPTION_NOT_EXISTED));
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.SUBSCRIPTION_NOT_EXISTED);
+    }
+  }
 }

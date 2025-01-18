@@ -27,6 +27,9 @@ public class User implements UserDetails, Serializable {
   private List<Enrollment> enrollments;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  private List<Result> results;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private List<LessonProcess> lessonProcesses;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

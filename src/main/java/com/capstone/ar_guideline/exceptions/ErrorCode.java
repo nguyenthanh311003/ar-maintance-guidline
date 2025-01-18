@@ -70,7 +70,12 @@ public enum ErrorCode {
       1055, "Company Subscription update fail", HttpStatus.BAD_REQUEST),
   COMPANY_SUBSCRIPTION_DELETE_FAILED(
       1056, "Company Subscription delete fail", HttpStatus.BAD_REQUEST),
-  COMPANY_SUBSCRIPTION_NOT_EXISTED(1057, "Company Subscription not existed", HttpStatus.NOT_FOUND);
+  COMPANY_SUBSCRIPTION_NOT_EXISTED(1057, "Company Subscription not existed", HttpStatus.NOT_FOUND),
+  ORDER_TRANSACTION_CREATE_FAILED(1058, "Order Transaction create fail", HttpStatus.BAD_REQUEST),
+  ORDER_TRANSACTION_UPDATE_FAILED(1059, "Order Transaction update fail", HttpStatus.BAD_REQUEST),
+  ORDER_TRANSACTION_DELETE_FAILED(1060, "Order Transaction delete fail", HttpStatus.BAD_REQUEST),
+  ORDER_TRANSACTION_NOT_EXISTED(1061, "Order Transaction not existed", HttpStatus.NOT_FOUND),
+  ;
 
   private final int code;
   private final String message;
