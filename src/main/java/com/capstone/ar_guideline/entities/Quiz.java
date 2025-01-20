@@ -24,6 +24,7 @@ public class Quiz {
   @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
   List<Result> results;
 
+  String courseId;
   String description;
   String title;
 

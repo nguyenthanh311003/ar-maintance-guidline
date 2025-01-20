@@ -1,17 +1,15 @@
 package com.capstone.ar_guideline.dtos.requests.Quiz;
 
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class QuizCreationRequest {
-
-    private String courseId;
-    private String title;
-    private String description;
-
+  String courseId;
+  String title;
+  String description;
 }

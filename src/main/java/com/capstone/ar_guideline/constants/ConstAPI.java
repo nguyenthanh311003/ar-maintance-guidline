@@ -87,4 +87,16 @@ public class ConstAPI {
     public static final String UPDATE_ORDER_TRANSACTION = "api/v1/order-transaction/";
     public static final String DELETE_ORDER_TRANSACTION = "api/v1/order-transaction/";
   }
+
+  public static class QuizAPI {
+    public static final String CREATE_QUIZ = "api/v1/quiz";
+    public static final String UPDATE_QUIZ = "api/v1/quiz/";
+    public static final String DELETE_QUIZ = "api/v1/quiz/";
+  }
+
+  public static class ResultAPI {
+    public static final String CREATE_RESULT = "api/v1/result";
+    public static final String UPDATE_RESULT = "api/v1/result/";
+    public static final String DELETE_RESULT = "api/v1/result/";
+  }
 }

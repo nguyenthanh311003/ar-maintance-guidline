@@ -16,4 +16,6 @@ public class ConstHashKey {
   public static final String HASH_KEY_SUBSCRIPTION = "Subscription";
   public static final String HASH_KEY_COMPANY_SUBSCRIPTION = "CompanySubscription";
   public static final String HASH_KEY_ORDER_TRANSACTION = "OrderTransaction";
+  public static final String HASH_KEY_QUIZ = "Quiz";
+  public static final String HASH_KEY_RESULT = "Result";
 }

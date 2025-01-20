@@ -38,7 +38,7 @@ public class OrderTransactionController {
   }
 
   @DeleteMapping(
-      value = ConstAPI.OrderTransactionAPI.UPDATE_ORDER_TRANSACTION + "{orderTransactionId}")
+      value = ConstAPI.OrderTransactionAPI.DELETE_ORDER_TRANSACTION + "{orderTransactionId}")
   ApiResponse<String> deleteOrderTransaction(@PathVariable String orderTransactionId) {
     orderTransactionService.delete(orderTransactionId);
     return ApiResponse.<String>builder().result("Order transaction has been deleted").build();
