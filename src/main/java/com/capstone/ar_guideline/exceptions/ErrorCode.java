@@ -75,6 +75,14 @@ public enum ErrorCode {
   ORDER_TRANSACTION_UPDATE_FAILED(1059, "Order Transaction update fail", HttpStatus.BAD_REQUEST),
   ORDER_TRANSACTION_DELETE_FAILED(1060, "Order Transaction delete fail", HttpStatus.BAD_REQUEST),
   ORDER_TRANSACTION_NOT_EXISTED(1061, "Order Transaction not existed", HttpStatus.NOT_FOUND),
+  QUIZ_CREATE_FAILED(1062, "Quiz create fail", HttpStatus.BAD_REQUEST),
+  QUIZ_UPDATE_FAILED(1063, "Quiz update fail", HttpStatus.BAD_REQUEST),
+  QUIZ_DELETE_FAILED(1064, "Quiz delete fail", HttpStatus.BAD_REQUEST),
+  QUIZ_NOT_EXISTED(1065, "Quiz not existed", HttpStatus.NOT_FOUND),
+  RESULT_CREATE_FAILED(1066, "Results create fail", HttpStatus.BAD_REQUEST),
+  RESULT_UPDATE_FAILED(1067, "Results update fail", HttpStatus.BAD_REQUEST),
+  RESULT_DELETE_FAILED(1068, "Results delete fail", HttpStatus.BAD_REQUEST),
+  RESULT_NOT_EXISTED(1069, "Results not existed", HttpStatus.NOT_FOUND),
   ;
 
   private final int code;

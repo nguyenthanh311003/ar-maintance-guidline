@@ -1,4 +1,4 @@
-package com.capstone.ar_guideline.dtos.requests.Result;
+package com.capstone.ar_guideline.dtos.responses.Result;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +8,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ResultCreationRequest {
+public class ResultResponse {
+  String id;
   String quizId;
-  String useId;
+  String userId;
 }
