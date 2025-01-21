@@ -7,12 +7,12 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "options")
 public class Option {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -25,7 +25,9 @@ public class Option {
   @OneToMany(mappedBy = "option", cascade = CascadeType.ALL)
   List<ResultDetail> resultDetails;
 
+  @Column(name = "`option`")
   String option;
+
   Boolean isRight;
 
   @Column(nullable = false, updatable = false)

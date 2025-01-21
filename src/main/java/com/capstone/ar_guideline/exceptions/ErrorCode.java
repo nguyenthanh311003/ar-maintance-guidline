@@ -83,6 +83,8 @@ public enum ErrorCode {
   RESULT_UPDATE_FAILED(1067, "Results update fail", HttpStatus.BAD_REQUEST),
   RESULT_DELETE_FAILED(1068, "Results delete fail", HttpStatus.BAD_REQUEST),
   RESULT_NOT_EXISTED(1069, "Results not existed", HttpStatus.NOT_FOUND),
+  QUESTION_CREATE_FAILED(1070, "Question create fail", HttpStatus.BAD_REQUEST),
+  QUESTION_UPDATE_FAILED(1071, "Question update fail", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;

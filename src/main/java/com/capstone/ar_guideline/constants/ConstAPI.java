@@ -94,6 +94,14 @@ public class ConstAPI {
     public static final String DELETE_QUIZ = "api/v1/quiz/";
   }
 
+  public static class QuestionAPI {
+    public static final String QUESTION = "api/v1/question";
+  }
+
+  public static class OptionAPI {
+    public static final String OPTION = "api/v1/option";
+  }
+
   public static class ResultAPI {
     public static final String CREATE_RESULT = "api/v1/result";
     public static final String UPDATE_RESULT = "api/v1/result/";
