@@ -102,7 +102,7 @@ public class CourseServiceImpl implements ICourseService {
       pagingModel.setSize(size);
       pagingModel.setTotalItems(courseResponses.size());
       pagingModel.setTotalPages(UtilService.getTotalPage(courseResponses.size(), size));
-      pagingModel.setObject(courseResponses);
+      pagingModel.setObjectList(courseResponses);
       return pagingModel;
     } catch (Exception exception) {
       if (exception instanceof AppException) {

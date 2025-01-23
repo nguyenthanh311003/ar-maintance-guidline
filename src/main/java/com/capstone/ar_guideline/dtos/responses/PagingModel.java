@@ -11,5 +11,5 @@ public class PagingModel<T> {
   private int size;
   private int totalItems;
   private int totalPages;
-  private List<T> object;
+  private List<T> objectList;
 }
