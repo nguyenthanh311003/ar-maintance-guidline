@@ -1,4 +1,4 @@
-package com.capstone.ar_guideline.dtos.requests.ModelLesson;
+package com.capstone.ar_guideline.dtos.responses.InstructionLesson;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ModelLessonCreationRequest {
+public class InstructionLessonResponse {
   private String id;
 
   private String lessonId;

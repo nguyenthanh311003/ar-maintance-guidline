@@ -11,7 +11,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CourseCreationRequest {
 
-  private String id;
   private String companyId;
   private String title;
   private String description;

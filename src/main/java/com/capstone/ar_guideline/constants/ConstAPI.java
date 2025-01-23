@@ -59,8 +59,8 @@ public class ConstAPI {
     public static final String LESSON_PROCESS = "api/v1/lesson-process";
   }
 
-  public static class ModelLessonAPI {
-    public static final String MODELLESSON = "api/v1/model-lesson";
+  public static class InstructionLessonAPI {
+    public static final String INSTRUCTION_LESSON = "api/v1/instruction-lesson";
   }
 
   public static class EnrollmentAPI {

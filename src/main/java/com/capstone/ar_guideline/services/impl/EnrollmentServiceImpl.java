@@ -30,13 +30,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EnrollmentServiceImpl implements IEnrollmentService {
   EnrollmentRepository enrollmentRepository;
-  RedisTemplate<String, Object> redisTemplate;
 
   @Autowired @Lazy MiddleCourseServiceImpl middleService;
 
   IUserService userService;
 
-  private final String[] keysToRemove = {ConstHashKey.HASH_KEY_ENROLLMENT};
 
   @Override
   public EnrollmentResponse create(EnrollmentCreationRequest request) {
@@ -51,9 +49,6 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
       newEnrollment.setCompletionDate(null);
       newEnrollment = enrollmentRepository.save(newEnrollment);
 
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return EnrollmentMapper.FromEntityToEnrollmentResponse(newEnrollment);
     } catch (Exception exception) {
@@ -77,14 +72,6 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
       enrollmentById.setUser(userById);
 
       enrollmentById = enrollmentRepository.save(enrollmentById);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return EnrollmentMapper.FromEntityToEnrollmentResponse(enrollmentById);
     } catch (Exception exception) {
@@ -122,9 +109,6 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
 
       enrollmentRepository.deleteById(enrollmentById.getId());
 
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

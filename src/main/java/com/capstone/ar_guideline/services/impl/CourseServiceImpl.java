@@ -42,10 +42,7 @@ public class CourseServiceImpl implements ICourseService {
   @Autowired ILessonService lessonService;
 
   private final String[] keysToRemove = {
-    ConstHashKey.HASH_KEY_MODEL_TYPE,
-    ConstHashKey.HASH_KEY_MODEL,
-    ConstHashKey.HASH_KEY_INSTRUCTION,
-    ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL
+    ConstHashKey.HASH_KEY_COURSE,
   };
 
   @Override

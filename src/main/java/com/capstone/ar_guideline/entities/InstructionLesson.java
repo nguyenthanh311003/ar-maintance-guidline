@@ -12,15 +12,16 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class ModelLesson {
+public class InstructionLesson {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
   @ManyToOne
-  @JoinColumn(name = "lesson_id", nullable = false)
+  @JoinColumn(name = "lesson_id", nullable = false,unique = true)
   private Lesson lesson;
 
+  @Column(unique = true)
   private String instructionCode;
 
   @Column(nullable = false, updatable = false)
