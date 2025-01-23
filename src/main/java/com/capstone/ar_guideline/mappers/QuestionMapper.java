@@ -11,7 +11,7 @@ public class QuestionMapper {
 
   public static Question fromQuestionCreationRequestToEntity(QuestionCreationRequest request) {
     return Question.builder()
-        .quiz(new Quiz().builder().id(request.getQuizId()).build())
+        .quiz(Quiz.builder().id(request.getQuizId()).build())
         .question(request.getQuestion())
         .build();
   }
@@ -19,7 +19,7 @@ public class QuestionMapper {
   public static QuestionResponse fromEntityToQuestionResponse(Question question) {
     return QuestionResponse.builder()
         .id(question.getId())
-        .quizId(question.getId())
+        .quizId(question.getQuiz().getId())
         .question(question.getQuestion())
         .build();
   }
