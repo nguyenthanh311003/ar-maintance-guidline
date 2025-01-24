@@ -10,8 +10,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuestionCreationRequest {
-  String quizId;
+public class QuestionModifyRequest {
+  String questionId;
   String question;
   List<OptionCreationRequest> optionCreationRequests;
 }

@@ -19,6 +19,11 @@ import org.springframework.web.bind.annotation.*;
 public class QuizController {
   IQuizService quizService;
 
+  @GetMapping(value = ConstAPI.QuizAPI.FIND_QUIZ_BY_COURSE_ID + "{courseId}")
+  ApiResponse<QuizResponse> find(@PathVariable String courseId) {
+    return ApiResponse.<QuizResponse>builder().result(quizService.findByCourseId(courseId)).build();
+  }
+
   @PostMapping(value = ConstAPI.QuizAPI.CREATE_QUIZ)
   ApiResponse<QuizResponse> createQuiz(@RequestBody @Valid QuizCreationRequest request) {
     return ApiResponse.<QuizResponse>builder().result(quizService.create(request)).build();

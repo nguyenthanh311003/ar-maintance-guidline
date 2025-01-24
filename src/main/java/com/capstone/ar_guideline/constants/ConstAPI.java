@@ -92,10 +92,14 @@ public class ConstAPI {
     public static final String CREATE_QUIZ = "api/v1/quiz";
     public static final String UPDATE_QUIZ = "api/v1/quiz/";
     public static final String DELETE_QUIZ = "api/v1/quiz/";
+    public static final String FIND_QUIZ_BY_COURSE_ID = "api/v1/quiz/course/";
   }
 
   public static class QuestionAPI {
     public static final String QUESTION = "api/v1/question";
+    public static final String UPDATE_QUESTION = "api/v1/question/";
+    public static final String FIND_QUESTION_BY_QUIZ_ID = "api/v1/question/quiz/";
+    public static final String DELETE_QUESTION = "api/v1/question/";
   }
 
   public static class OptionAPI {

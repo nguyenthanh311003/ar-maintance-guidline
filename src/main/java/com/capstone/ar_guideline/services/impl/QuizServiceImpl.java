@@ -116,4 +116,18 @@ public class QuizServiceImpl implements IQuizService {
       throw new AppException(ErrorCode.QUIZ_NOT_EXISTED);
     }
   }
+
+  @Override
+  public QuizResponse findByCourseId(String courseId) {
+    try {
+      Quiz quizById = quizRepository.findByCourseId(courseId);
+
+      return QuizMapper.fromEntityToQuizResponse(quizById);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.QUIZ_NOT_EXISTED);
+    }
+  }
 }

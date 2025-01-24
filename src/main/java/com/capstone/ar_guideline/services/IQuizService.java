@@ -12,4 +12,6 @@ public interface IQuizService {
   void delete(String id);
 
   Quiz findById(String id);
+
+  QuizResponse findByCourseId(String courseId);
 }

@@ -5,7 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ResultDetailRepository extends JpaRepository<ResultDetail, String> {
-    
-
-}
+public interface ResultDetailRepository extends JpaRepository<ResultDetail, String> {}

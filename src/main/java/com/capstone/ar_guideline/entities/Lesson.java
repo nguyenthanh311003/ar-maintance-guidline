@@ -35,7 +35,7 @@ public class Lesson {
   private String status;
 
   @PrePersist
-    public void prePersist() {
+  public void prePersist() {
     this.status = "ACTIVE";
   }
 

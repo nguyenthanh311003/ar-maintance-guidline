@@ -85,6 +85,12 @@ public enum ErrorCode {
   RESULT_NOT_EXISTED(1069, "Results not existed", HttpStatus.NOT_FOUND),
   QUESTION_CREATE_FAILED(1070, "Question create fail", HttpStatus.BAD_REQUEST),
   QUESTION_UPDATE_FAILED(1071, "Question update fail", HttpStatus.BAD_REQUEST),
+  QUESTION_DELETE_FAILED(1072, "Question delete fail", HttpStatus.BAD_REQUEST),
+  QUESTION_NOT_EXISTED(1073, "Question not existed", HttpStatus.NOT_FOUND),
+  OPTION_CREATE_FAILED(1074, "Option create fail", HttpStatus.BAD_REQUEST),
+  OPTION_UPDATE_FAILED(1075, "Option update fail", HttpStatus.BAD_REQUEST),
+  OPTION_DELETE_FAILED(1076, "Option delete fail", HttpStatus.BAD_REQUEST),
+  OPTION_NOT_EXISTED(1077, "Option not existed", HttpStatus.NOT_FOUND),
   ;
 
   private final int code;
