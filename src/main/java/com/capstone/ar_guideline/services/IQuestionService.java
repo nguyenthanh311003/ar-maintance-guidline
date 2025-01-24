@@ -4,6 +4,7 @@ import com.capstone.ar_guideline.dtos.requests.Question.QuestionCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Question.QuestionModifyRequest;
 import com.capstone.ar_guideline.dtos.responses.Question.QuestionResponse;
 import com.capstone.ar_guideline.entities.Question;
+import java.util.List;
 
 public interface IQuestionService {
 
@@ -14,4 +15,6 @@ public interface IQuestionService {
   void delete(String id);
 
   Question findById(String id);
+
+  List<QuestionResponse> findByQuizId(String quizId);
 }

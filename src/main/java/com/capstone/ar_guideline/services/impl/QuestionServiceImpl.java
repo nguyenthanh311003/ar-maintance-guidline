@@ -95,8 +95,7 @@ public class QuestionServiceImpl implements IQuestionService {
       Question questionById = findById(id);
 
       List<Option> options = optionService.findByQuestionId(questionById.getId());
-      options.forEach(
-          option -> optionService.delete(option.getId()));
+      options.forEach(option -> optionService.delete(option.getId()));
 
       questionRepository.deleteById(questionById.getId());
     } catch (Exception exception) {
@@ -113,6 +112,35 @@ public class QuestionServiceImpl implements IQuestionService {
       return questionRepository
           .findById(id)
           .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_EXISTED));
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.QUESTION_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<QuestionResponse> findByQuizId(String quizId) {
+    try {
+      List<Question> questionsByQuizId = questionRepository.findByQuizId(quizId);
+
+      return questionsByQuizId.stream()
+          .map(
+              q -> {
+                List<OptionResponse> optionResponses =
+                    optionService.findByQuestionId(q.getId()).stream()
+                        .map(OptionMapper::fromEntityToOptionResponse)
+                        .toList();
+                return QuestionResponse.builder()
+                    .id(q.getId())
+                    .question(q.getQuestion())
+                    .quizId(q.getQuiz().getId())
+                    .optionResponses(optionResponses)
+                    .build();
+              })
+          .toList();
+
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

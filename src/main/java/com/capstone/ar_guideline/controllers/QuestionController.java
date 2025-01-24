@@ -7,6 +7,7 @@ import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Question.QuestionResponse;
 import com.capstone.ar_guideline.services.IQuestionService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +22,13 @@ public class QuestionController {
 
   IQuestionService questionService;
 
+  @GetMapping(value = ConstAPI.QuestionAPI.FIND_QUESTION_BY_QUIZ_ID + "{quizId}")
+  ApiResponse<List<QuestionResponse>> find(@PathVariable String quizId) {
+    return ApiResponse.<List<QuestionResponse>>builder()
+        .result(questionService.findByQuizId(quizId))
+        .build();
+  }
+
   @PostMapping(value = ConstAPI.QuestionAPI.QUESTION)
   ApiResponse<QuestionResponse> create(@RequestBody @Valid QuestionCreationRequest request) {
     return ApiResponse.<QuestionResponse>builder()
@@ -29,7 +37,7 @@ public class QuestionController {
   }
 
   @PutMapping(value = ConstAPI.QuestionAPI.UPDATE_QUESTION + "{questionId}")
-  ApiResponse<QuestionResponse> updateInstructionDetail(
+  ApiResponse<QuestionResponse> update(
       @PathVariable String questionId, @RequestBody QuestionModifyRequest request) {
     return ApiResponse.<QuestionResponse>builder()
         .result(questionService.update(questionId, request))
@@ -37,7 +45,7 @@ public class QuestionController {
   }
 
   @DeleteMapping(value = ConstAPI.QuestionAPI.DELETE_QUESTION + "{questionId}")
-  ApiResponse<String> deleteInstructionDetail(@PathVariable String questionId) {
+  ApiResponse<String> delete(@PathVariable String questionId) {
     questionService.delete(questionId);
     return ApiResponse.<String>builder().result("Question has been deleted").build();
   }
