@@ -6,8 +6,13 @@ import com.capstone.ar_guideline.entities.Option;
 import com.capstone.ar_guideline.entities.Question;
 
 public class OptionMapper {
-  public static Option fromOptionCreationRequestToEntity(OptionCreationRequest request) {
-    return Option.builder().question(new Question().builder().id(request.getQuestionId()).build()).option(request.getOption()).isRight(request.getIsRight()).build();
+  public static Option fromOptionCreationRequestToEntity(
+      OptionCreationRequest request, Question question) {
+    return Option.builder()
+        .question(question)
+        .option(request.getOption())
+        .isRight(request.getIsRight())
+        .build();
   }
 
   public static OptionResponse fromEntityToOptionResponse(Option option) {

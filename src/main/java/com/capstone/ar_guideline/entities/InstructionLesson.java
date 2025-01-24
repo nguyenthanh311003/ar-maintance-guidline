@@ -18,7 +18,7 @@ public class InstructionLesson {
   private String id;
 
   @ManyToOne
-  @JoinColumn(name = "lesson_id", nullable = false,unique = true)
+  @JoinColumn(name = "lesson_id", nullable = false, unique = true)
   private Lesson lesson;
 
   @Column(unique = true)

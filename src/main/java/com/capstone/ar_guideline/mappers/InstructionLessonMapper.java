@@ -6,7 +6,8 @@ import com.capstone.ar_guideline.entities.InstructionLesson;
 import com.capstone.ar_guideline.entities.Lesson;
 
 public class InstructionLessonMapper {
-  public static InstructionLessonResponse toInstructionLessonResponse(InstructionLesson modelLesson) {
+  public static InstructionLessonResponse toInstructionLessonResponse(
+      InstructionLesson modelLesson) {
     return InstructionLessonResponse.builder()
         .id(modelLesson.getId())
         .lessonId(modelLesson.getLesson().getId())
@@ -14,7 +15,8 @@ public class InstructionLessonMapper {
         .build();
   }
 
-  public static InstructionLesson toInstructionLesson(InstructionLessonCreationRequest modelLessonCreationRequest) {
+  public static InstructionLesson toInstructionLesson(
+      InstructionLessonCreationRequest modelLessonCreationRequest) {
     return InstructionLesson.builder()
         .lesson(Lesson.builder().id(modelLessonCreationRequest.getLessonId()).build())
         .instructionCode(modelLessonCreationRequest.getInstructionCode())

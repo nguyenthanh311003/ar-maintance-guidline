@@ -29,7 +29,8 @@ public class InstructionLessonController {
 
   @PutMapping(value = ConstAPI.InstructionLessonAPI.INSTRUCTION_LESSON + "{id}")
   ApiResponse<InstructionLessonResponse> updateModelLesson(
-      @PathVariable String modelLessonId, @RequestBody @Valid InstructionLessonCreationRequest request) {
+      @PathVariable String modelLessonId,
+      @RequestBody @Valid InstructionLessonCreationRequest request) {
     return ApiResponse.<InstructionLessonResponse>builder()
         .result(instructionLessonService.update(modelLessonId, request))
         .build();
@@ -40,5 +41,4 @@ public class InstructionLessonController {
     instructionLessonService.delete(id);
     return ApiResponse.<String>builder().result("ModelLesson has been deleted").build();
   }
-
 }

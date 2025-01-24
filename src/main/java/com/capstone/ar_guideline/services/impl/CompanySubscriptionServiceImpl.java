@@ -14,13 +14,10 @@ import com.capstone.ar_guideline.repositories.CompanySubscriptionRepository;
 import com.capstone.ar_guideline.services.ICompanyService;
 import com.capstone.ar_guideline.services.ICompanySubscriptionService;
 import com.capstone.ar_guideline.services.ISubscriptionService;
-import com.capstone.ar_guideline.util.UtilService;
-import java.util.Arrays;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -79,7 +76,6 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
       companySubscriptionById.setStatus(request.getStatus());
 
       companySubscriptionById = companySubscriptionRepository.save(companySubscriptionById);
-
 
       return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(
           companySubscriptionById);

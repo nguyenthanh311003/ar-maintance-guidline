@@ -1,7 +1,6 @@
 package com.capstone.ar_guideline.dtos.requests.Question;
 
 import com.capstone.ar_guideline.dtos.requests.Option.OptionCreationRequest;
-import jakarta.persistence.*;
 import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -11,8 +10,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuestionCreationRequest {
-  String quizId;
+public class QuestionModifyRequest {
+  String questionId;
   String question;
   List<OptionCreationRequest> optionCreationRequests;
 }

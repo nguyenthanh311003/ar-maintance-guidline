@@ -28,7 +28,8 @@ public class InstructionLessonServiceImpl implements IInstructionLessonService {
     try {
       // Map request to entity
       InstructionLesson newInstructionLesson = InstructionLessonMapper.toInstructionLesson(request);
-      InstructionLesson savedInstructionLesson = instructionLessonRepository.save(newInstructionLesson);
+      InstructionLesson savedInstructionLesson =
+          instructionLessonRepository.save(newInstructionLesson);
 
       // Invalidate cache
       UtilService.deleteCache(redisTemplate, redisTemplate.keys(MODEL_LESSON_CACHE_KEY));
@@ -47,8 +48,10 @@ public class InstructionLessonServiceImpl implements IInstructionLessonService {
       InstructionLesson existingInstructionLesson = findById(id);
 
       // Update entity with new data
-      InstructionLesson updatedInstructionLesson = InstructionLessonMapper.toInstructionLesson(request);
-      InstructionLesson savedInstructionLesson = instructionLessonRepository.save(updatedInstructionLesson);
+      InstructionLesson updatedInstructionLesson =
+          InstructionLessonMapper.toInstructionLesson(request);
+      InstructionLesson savedInstructionLesson =
+          instructionLessonRepository.save(updatedInstructionLesson);
 
       // Invalidate cache
       UtilService.deleteCache(redisTemplate, redisTemplate.keys(MODEL_LESSON_CACHE_KEY));

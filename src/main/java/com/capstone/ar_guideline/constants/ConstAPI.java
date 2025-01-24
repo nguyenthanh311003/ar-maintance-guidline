@@ -96,6 +96,8 @@ public class ConstAPI {
 
   public static class QuestionAPI {
     public static final String QUESTION = "api/v1/question";
+    public static final String UPDATE_QUESTION = "api/v1/question/";
+    public static final String DELETE_QUESTION = "api/v1/question/";
   }
 
   public static class OptionAPI {
