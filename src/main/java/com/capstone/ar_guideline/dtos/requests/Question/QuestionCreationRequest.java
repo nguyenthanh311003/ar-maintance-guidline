@@ -1,10 +1,10 @@
 package com.capstone.ar_guideline.dtos.requests.Question;
 
 import com.capstone.ar_guideline.dtos.requests.Option.OptionCreationRequest;
-import jakarta.persistence.*;
-import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Data
 @Builder

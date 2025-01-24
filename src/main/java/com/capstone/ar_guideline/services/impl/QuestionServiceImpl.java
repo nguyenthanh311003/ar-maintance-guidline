@@ -96,9 +96,7 @@ public class QuestionServiceImpl implements IQuestionService {
 
       List<Option> options = optionService.findByQuestionId(questionById.getId());
       options.forEach(
-          option -> {
-            optionService.delete(option.getId());
-          });
+          option -> optionService.delete(option.getId()));
 
       questionRepository.deleteById(questionById.getId());
     } catch (Exception exception) {
