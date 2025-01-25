@@ -3,7 +3,6 @@ package com.capstone.ar_guideline.services;
 import com.capstone.ar_guideline.dtos.requests.Enrollment.EnrollmentCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Enrollment.EnrollmentResponse;
 import com.capstone.ar_guideline.entities.Enrollment;
-
 import java.util.List;
 
 public interface IEnrollmentService {

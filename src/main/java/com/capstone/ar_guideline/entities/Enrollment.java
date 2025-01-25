@@ -30,7 +30,6 @@ public class Enrollment {
   private LocalDateTime completionDate;
   private LocalDateTime deadline;
 
-
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
   private LocalDateTime createdDate;

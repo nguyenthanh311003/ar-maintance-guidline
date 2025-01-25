@@ -6,13 +6,12 @@ import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Enrollment.EnrollmentResponse;
 import com.capstone.ar_guideline.services.IEnrollmentService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,5 +48,4 @@ public class EnrollmentController {
         .result(enrollmentService.changeStatusToTrue(enrollmentId))
         .build();
   }
-
 }

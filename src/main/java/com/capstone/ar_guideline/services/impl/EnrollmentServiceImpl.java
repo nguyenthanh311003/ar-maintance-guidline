@@ -14,7 +14,6 @@ import com.capstone.ar_guideline.services.IUserService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -56,7 +55,6 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
       throw new AppException(ErrorCode.ENROLLMENT_CREATE_FAILED);
     }
   }
-
 
   @Override
   public EnrollmentResponse update(String id, EnrollmentCreationRequest request) {
@@ -143,7 +141,7 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
       for (EnrollmentCreationRequest request : requests) {
         responses.add(create(request));
       }
-       return responses;
+      return responses;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
