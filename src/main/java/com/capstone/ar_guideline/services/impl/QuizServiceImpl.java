@@ -35,6 +35,12 @@ public class QuizServiceImpl implements IQuizService {
     try {
       courseService.findById(request.getCourseId());
 
+      boolean isExist = quizRepository.existsByCourseId(request.getCourseId());
+
+      if (isExist) {
+        throw new AppException(ErrorCode.QUIZ_EXISTED);
+      }
+
       Quiz newQuiz = QuizMapper.fromQuizCreationRequestToEntity(request);
 
       newQuiz = quizRepository.save(newQuiz);

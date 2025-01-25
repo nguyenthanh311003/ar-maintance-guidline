@@ -91,6 +91,7 @@ public enum ErrorCode {
   OPTION_UPDATE_FAILED(1075, "Option update fail", HttpStatus.BAD_REQUEST),
   OPTION_DELETE_FAILED(1076, "Option delete fail", HttpStatus.BAD_REQUEST),
   OPTION_NOT_EXISTED(1077, "Option not existed", HttpStatus.NOT_FOUND),
+  QUIZ_EXISTED(1078, "Quiz existed", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;
