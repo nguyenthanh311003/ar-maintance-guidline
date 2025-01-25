@@ -12,6 +12,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -20,10 +22,10 @@ public class EnrollmentController {
   IEnrollmentService enrollmentService;
 
   @PostMapping(value = ConstAPI.EnrollmentAPI.CREATE_ENROLLMENT)
-  ApiResponse<EnrollmentResponse> createEnrollment(
-      @RequestBody @Valid EnrollmentCreationRequest request) {
-    return ApiResponse.<EnrollmentResponse>builder()
-        .result(enrollmentService.create(request))
+  ApiResponse<List<EnrollmentResponse>> createEnrollment(
+      @RequestBody @Valid List<EnrollmentCreationRequest> request) {
+    return ApiResponse.<List<EnrollmentResponse>>builder()
+        .result(enrollmentService.createAll(request))
         .build();
   }
 
@@ -47,4 +49,5 @@ public class EnrollmentController {
         .result(enrollmentService.changeStatusToTrue(enrollmentId))
         .build();
   }
+
 }

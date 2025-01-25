@@ -12,6 +12,9 @@ import com.capstone.ar_guideline.repositories.EnrollmentRepository;
 import com.capstone.ar_guideline.services.IEnrollmentService;
 import com.capstone.ar_guideline.services.IUserService;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -42,6 +45,7 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
           EnrollmentMapper.fromEnrolmentCreationRequestToEntity(request, course, user);
       newEnrollment.setIsCompleted(false);
       newEnrollment.setCompletionDate(null);
+      newEnrollment.setEnrollmentDate(null);
       newEnrollment = enrollmentRepository.save(newEnrollment);
 
       return EnrollmentMapper.FromEntityToEnrollmentResponse(newEnrollment);
@@ -52,6 +56,7 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
       throw new AppException(ErrorCode.ENROLLMENT_CREATE_FAILED);
     }
   }
+
 
   @Override
   public EnrollmentResponse update(String id, EnrollmentCreationRequest request) {
@@ -128,5 +133,22 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
   @Override
   public Integer countByCourseId(String courseId) {
     return enrollmentRepository.countByCourseId(courseId);
+  }
+
+  @Override
+  public List<EnrollmentResponse> createAll(List<EnrollmentCreationRequest> requests) {
+
+    try {
+      List<EnrollmentResponse> responses = new ArrayList<>();
+      for (EnrollmentCreationRequest request : requests) {
+        responses.add(create(request));
+      }
+       return responses;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.ENROLLMENT_CREATE_FAILED);
+    }
   }
 }

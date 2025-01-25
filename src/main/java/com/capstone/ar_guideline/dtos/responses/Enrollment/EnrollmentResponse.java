@@ -13,6 +13,8 @@ public class EnrollmentResponse {
   String id;
   String courseId;
   String userId;
+  LocalDateTime enrollmentDate;
+  LocalDateTime deadline;
   Boolean isCompleted;
   LocalDateTime completionDate;
 }

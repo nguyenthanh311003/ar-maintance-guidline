@@ -16,6 +16,8 @@ public class EnrollmentMapper {
     return EnrollmentResponse.builder()
         .id(enrollment.getId())
         .courseId(enrollment.getCourse().getId())
+            .deadline(enrollment.getDeadline())
+        .enrollmentDate(enrollment.getEnrollmentDate())
         .userId(enrollment.getUser().getId())
         .isCompleted(enrollment.getIsCompleted())
         .completionDate(enrollment.getCompletionDate())
