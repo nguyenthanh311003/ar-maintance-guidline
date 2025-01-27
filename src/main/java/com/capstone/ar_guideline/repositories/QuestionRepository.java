@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, String> {
-  @Query(value = "SELECT q FROM Question q WHERE q.quiz.id = :quizId")
+  @Query(value = "SELECT q FROM Question q WHERE q.quiz.id = :quizId ORDER BY q.createdDate ASC")
   List<Question> findByQuizId(@Param("quizId") String quizId);
 }
