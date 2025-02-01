@@ -18,15 +18,14 @@ public class LessonProcess {
   private String id;
 
   @ManyToOne
-  @JoinColumn(name = "lesson_id", nullable = false)
-  private Lesson lesson;
+  @JoinColumn(name = "lesson_detail_id", nullable = false)
+  private LessonDetail lessonDetail;
 
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
   private Boolean isCompleted;
-  private String completeDate;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

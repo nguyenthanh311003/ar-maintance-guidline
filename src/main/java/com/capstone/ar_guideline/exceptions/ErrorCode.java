@@ -92,6 +92,11 @@ public enum ErrorCode {
   OPTION_DELETE_FAILED(1076, "Option delete fail", HttpStatus.BAD_REQUEST),
   OPTION_NOT_EXISTED(1077, "Option not existed", HttpStatus.NOT_FOUND),
   QUIZ_EXISTED(1078, "Quiz existed", HttpStatus.BAD_REQUEST),
+  INSTRUCTION_PROCESS_NOT_EXISTED(1079,"Instruction process not existed", HttpStatus.BAD_REQUEST),
+  LESSON_DETAIL(1080,"Lesson detail not existed", HttpStatus.BAD_REQUEST),
+  LESSON_DETAIL_CREATE_FAILED(1081,"Lesson detail create failed", HttpStatus.BAD_REQUEST),
+    LESSON_DETAIL_UPDATE_FAILED(1082,"Lesson detail update failed", HttpStatus.BAD_REQUEST),
+
   ;
 
   private final int code;

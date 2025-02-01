@@ -9,20 +9,16 @@ public class LessonProcessMapper {
       LessonProcess lessonProcess) {
     return LessonProcessResponse.builder()
         .id(lessonProcess.getId())
-        .lessonId(lessonProcess.getLesson().getId())
         .userId(lessonProcess.getUser().getId())
         .isCompleted(lessonProcess.getIsCompleted())
-        .completeDate(lessonProcess.getCompleteDate())
         .build();
   }
 
   public static LessonProcess fromLessonProcessCreationRequestToEntity(
       LessonProcessCreationRequest request) {
     return LessonProcess.builder()
-        .lesson(Lesson.builder().id(request.getLessonId()).build())
         .user(User.builder().id(request.getUserId()).build())
         .isCompleted(request.getIsCompleted())
-        .completeDate(request.getCompleteDate())
         .build();
   }
 }

@@ -23,21 +23,13 @@ public class Lesson {
   private Course course;
 
   @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
-  private List<InstructionLesson> modelLessons;
-
-  @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
-  private List<LessonProcess> lessonProcesses;
+  private List<LessonDetail> lessonDetail;
 
   private String title;
   private Integer orderInCourse;
   private String description;
   private Integer duration;
   private String status;
-
-  @PrePersist
-  public void prePersist() {
-    this.status = "ACTIVE";
-  }
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

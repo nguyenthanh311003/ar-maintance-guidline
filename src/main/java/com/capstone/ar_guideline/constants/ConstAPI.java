@@ -111,4 +111,11 @@ public class ConstAPI {
     public static final String UPDATE_RESULT = "api/v1/result/";
     public static final String DELETE_RESULT = "api/v1/result/";
   }
+
+  public static class InstructionProcessAPI{
+    public static final String InstructionProcess ="api/v1/instruction-process";
+  }
+  public static class LessonDetailAPI{
+    public static final String LESSON_DETAIL ="api/v1/lesson-detail";
+  }
 }

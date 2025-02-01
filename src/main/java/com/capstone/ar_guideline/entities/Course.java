@@ -37,11 +37,6 @@ public class Course implements Serializable {
   private String status;
   private String imageUrl;
 
-  @PrePersist
-  public void prePersist() {
-    this.status = "ACTIVE";
-  }
-
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
   private LocalDateTime createdDate;

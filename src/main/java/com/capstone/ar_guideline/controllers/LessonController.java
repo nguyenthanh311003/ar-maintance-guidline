@@ -12,6 +12,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -20,25 +22,13 @@ public class LessonController {
 
   ILessonService lessonService;
 
-  //    @GetMapping
-  //    public ApiResponse<PagingModel<LessonResponse>> getAllLessons(
-  //            @RequestParam(defaultValue = "0") int page,
-  //            @RequestParam(defaultValue = "10") int size,
-  //            @RequestParam(required = false) String searchTemp) {
-  //        log.info("Fetching lessons with page: {}, size: {}, searchTemp: {}", page, size,
-  // searchTemp);
-  //        return ApiResponse.<PagingModel<LessonResponse>>builder()
-  //                .result(lessonService.findAll(page, size, searchTemp))
-  //                .build();
-  //    }
 
-  //    @GetMapping("/{lessonId}")
-  //    public ApiResponse<LessonResponse> getLessonById(@PathVariable String lessonId) {
-  //        log.info("Fetching lesson with ID: {}", lessonId);
-  //        return ApiResponse.<LessonResponse>builder()
-  //                .result(lessonService.findById(lessonId))
-  //                .build();
-  //    }
+
+ @GetMapping(value = ConstAPI.LessonAPI.LESSON + "/course/{courseId}")
+    public ApiResponse<List<LessonResponse>> getAllByCourseId(@PathVariable String courseId) {
+        log.info("get all by course id: {}", courseId);
+        return ApiResponse.<List<LessonResponse>>builder().result(lessonService.findByCourseId(courseId)).build();
+    }
 
   @PostMapping(value = ConstAPI.LessonAPI.LESSON)
   public ApiResponse<LessonResponse> createLesson(

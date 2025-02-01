@@ -64,7 +64,7 @@ public class CourseController {
         .build();
   }
 
-  @DeleteMapping("/{courseId}")
+  @DeleteMapping(value = ConstAPI.CourseAPI.COURSE+"/{courseId}")
   public ApiResponse<String> deleteCourse(@PathVariable String courseId) {
     courseService.delete(courseId);
     return ApiResponse.<String>builder().result("Course has been deleted successfully").build();
