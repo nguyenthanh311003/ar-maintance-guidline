@@ -19,4 +19,5 @@ public interface ILessonDetailService {
 
     List<LessonDetailResponse> findAllByLessonId(String lessonId);
 
+    void swapOrder(String id1, String id2);
 }

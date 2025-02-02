@@ -11,7 +11,6 @@ import lombok.experimental.FieldDefaults;
 public class LessonCreationRequest {
   private String courseId;
   private String title;
-  private Integer orderInCourse;
   private String description;
   private Integer duration;
   private String status;

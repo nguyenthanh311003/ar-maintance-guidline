@@ -31,7 +31,6 @@ public class LessonDetailMapper {
             .duration(request.getDuration())
             .videoUrl(request.getVideoUrl())
             .type(request.getType())
-            .orderInLesson(request.getOrderInLesson())
             .status(request.getStatus())
             .build();
     }

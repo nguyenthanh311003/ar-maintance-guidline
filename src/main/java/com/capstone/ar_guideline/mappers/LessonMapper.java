@@ -13,7 +13,6 @@ public class LessonMapper {
         .title(request.getTitle())
         .description(request.getDescription())
         .duration(request.getDuration())
-        .orderInCourse(request.getOrderInCourse())
         .status(request.getStatus())
         .course(Course.builder().id(request.getCourseId()).build())
         .build();

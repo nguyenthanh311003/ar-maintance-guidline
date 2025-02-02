@@ -1,14 +1,12 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.dtos.requests.LessonDetail.LessonDetailCreationRequest;
-import com.capstone.ar_guideline.dtos.requests.LessonProcess.LessonProcessCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.LessonDetail.LessonDetailResponse;
 import com.capstone.ar_guideline.entities.Lesson;
 import com.capstone.ar_guideline.entities.LessonDetail;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.LessonDetailMapper;
-import com.capstone.ar_guideline.mappers.LessonMapper;
 import com.capstone.ar_guideline.repositories.LessonDetailRepository;
 import com.capstone.ar_guideline.services.ILessonDetailService;
 import com.capstone.ar_guideline.services.ILessonService;
@@ -38,8 +36,8 @@ public class lessonDetailServiceImpl implements ILessonDetailService {
           } else {
               orderInLesson++;
           }
-         lessonProcessCreationRequest.setOrderInLesson(orderInLesson);
           LessonDetail lessonDetail = LessonDetailMapper.fromLessonDetailCreationRequestToEntity(lessonProcessCreationRequest);
+          lessonDetail.setOrderInLesson(orderInLesson);
           lessonDetail = lessonDetailRepository.save(lessonDetail);
           Integer lessonDuration = lesson.getDuration()+lessonProcessCreationRequest.getDuration();
           lessonService.updateDuration(lesson.getId(), lessonDuration);
@@ -73,7 +71,17 @@ public class lessonDetailServiceImpl implements ILessonDetailService {
     public void delete(String id) {
        LessonDetail lessonDetail = findById(id);
         lessonDetailRepository.delete(lessonDetail);
+        updateOrderInLesson(lessonDetail.getLesson().getId());
     }
+
+    private void updateOrderInLesson(String lessonId) {
+        List<LessonDetail> lessonDetails = lessonDetailRepository.findLessonDetailsByLessonId(lessonId);
+        for (int i = 0; i < lessonDetails.size(); i++) {
+            lessonDetails.get(i).setOrderInLesson(i + 1);
+            lessonDetailRepository.save(lessonDetails.get(i));
+        }
+    }
+
 
     @Override
     public List<LessonDetailResponse> findAllByLessonId(String lessonId) {
@@ -87,5 +95,19 @@ public class lessonDetailServiceImpl implements ILessonDetailService {
         }
         lessonDetailResponses.sort(Comparator.comparing(LessonDetailResponse::getOrderInLesson));
         return lessonDetailResponses;
+    }
+
+    @Override
+    public void swapOrder(String id1, String id2) {
+        LessonDetail lessonDetail1 = findById(id1);
+        LessonDetail lessonDetail2 = findById(id2);
+
+        Integer tempOrder = lessonDetail1.getOrderInLesson();
+
+        lessonDetail1.setOrderInLesson(lessonDetail2.getOrderInLesson());
+        lessonDetail2.setOrderInLesson(tempOrder);
+
+        lessonDetailRepository.save(lessonDetail1);
+        lessonDetailRepository.save(lessonDetail2);
     }
 }

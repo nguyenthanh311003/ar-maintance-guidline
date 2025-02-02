@@ -28,7 +28,6 @@ import java.util.List;
 public class LessonServiceImpl implements ILessonService {
 
   private final LessonRepository lessonRepository;
-  private final RedisTemplate<String, Object> redisTemplate;
   @Autowired
   @Lazy
   private ILessonDetailService lessonDetailService;
@@ -52,8 +51,8 @@ public class LessonServiceImpl implements ILessonService {
 
       request.setDuration(0);
 
-      request.setOrderInCourse(orderInCourse);
       Lesson newLesson = LessonMapper.fromLessonCreationRequestToEntity(request);
+        newLesson.setOrderInCourse(orderInCourse);
       Lesson savedLesson = lessonRepository.save(newLesson);
 
       return LessonMapper.FromEntityToLessonResponse(savedLesson);
@@ -82,6 +81,7 @@ public class LessonServiceImpl implements ILessonService {
     try {
       Lesson existingLesson = findById(id);
       lessonRepository.deleteById(existingLesson.getId());
+        updateOrderInCourse(existingLesson.getCourse().getId());
 
     } catch (Exception e) {
       log.error("Failed to delete lesson with ID {}: {}", id, e.getMessage(), e);
@@ -135,6 +135,27 @@ public class LessonServiceImpl implements ILessonService {
     } catch (Exception e) {
       log.error("Failed to update lesson duration with ID {}: {}", lessonId, e.getMessage(), e);
       throw new AppException(ErrorCode.LESSON_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public void swapOrder(String id1, String id2) {
+      Lesson lesson1 = findById(id1);
+      Lesson lesson2 = findById(id2);
+
+      Integer tempOrder = lesson1.getOrderInCourse();
+      lesson1.setOrderInCourse(lesson2.getOrderInCourse());
+      lesson2.setOrderInCourse(tempOrder);
+
+      lessonRepository.save(lesson1);
+      lessonRepository.save(lesson2);
+  }
+
+  private void updateOrderInCourse(String courseId) {
+    List<Lesson> lessons = lessonRepository.findAllByCourseId(courseId);
+    for (int i = 0; i < lessons.size(); i++) {
+      lessons.get(i).setOrderInCourse(i + 1);
+      lessonRepository.save(lessons.get(i));
     }
   }
 }

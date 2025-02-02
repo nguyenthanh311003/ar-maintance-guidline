@@ -20,4 +20,6 @@ public interface ILessonService {
   Integer countByCourseId(String courseId);
 
   void updateDuration(String lessonId, Integer duration);
+
+    void swapOrder(String id1, String id2);
 }

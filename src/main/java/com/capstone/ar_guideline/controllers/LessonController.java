@@ -52,4 +52,12 @@ public class LessonController {
     lessonService.delete(lessonId);
     return ApiResponse.<String>builder().result("Lesson has been deleted successfully").build();
   }
+
+    @PutMapping(value = ConstAPI.LessonAPI.LESSON + "/swap")
+    public ApiResponse<String> swapOrder(
+            @RequestParam String id1, @RequestParam String id2) {
+        log.info("Swapping order of lessons with ID: {} and {}", id1, id2);
+        lessonService.swapOrder(id1, id2);
+        return ApiResponse.<String>builder().result("Lesson order has been swapped successfully").build();
+    }
 }

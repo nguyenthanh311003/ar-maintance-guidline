@@ -19,7 +19,6 @@ public class LessonDetailCreationRequest {
 
     private String lessonId;
     private String title;
-    private Integer orderInLesson;
     private String description;
     private Integer duration;
     private String status;
