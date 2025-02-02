@@ -43,7 +43,7 @@ public class LessonProcessController {
   //    // Endpoint to get a LessonProcess by id
   //    @GetMapping("/{id}")
   //    public ApiResponse<LessonProcessResponse> getLessonProcess(@PathVariable String id) {
-  //        LessonProcessResponse response = lessonProcessService.findById(id);
+  //        LessonProcessResponse response = lessonProcessService.findCourseById(id);
   //        return ApiResponse.<LessonProcessResponse>builder()
   //                .result(response)
   //                .build();

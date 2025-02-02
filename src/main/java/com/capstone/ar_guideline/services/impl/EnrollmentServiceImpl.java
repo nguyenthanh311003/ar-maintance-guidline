@@ -10,6 +10,8 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.EnrollmentMapper;
 import com.capstone.ar_guideline.repositories.EnrollmentRepository;
 import com.capstone.ar_guideline.services.IEnrollmentService;
+import com.capstone.ar_guideline.services.ILessonProcessService;
+import com.capstone.ar_guideline.services.ILessonService;
 import com.capstone.ar_guideline.services.IUserService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,12 +33,16 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
 
   @Autowired @Lazy MiddleCourseServiceImpl middleService;
 
+  @Autowired
   IUserService userService;
+
+  @Autowired
+  ILessonProcessService lessonProcessService;
 
   @Override
   public EnrollmentResponse create(EnrollmentCreationRequest request) {
     try {
-      Course course = middleService.findById(request.getCourseId());
+      Course course = middleService.findCourseById(request.getCourseId());
 
       User user = userService.findById(request.getUserId());
 
@@ -61,7 +67,7 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
     try {
       Enrollment enrollmentById = findById(id);
 
-      Course courseById = middleService.findById(request.getCourseId());
+      Course courseById = middleService.findCourseById(request.getCourseId());
 
       User userById = userService.findById(request.getUserId());
 
@@ -140,6 +146,7 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
       List<EnrollmentResponse> responses = new ArrayList<>();
       for (EnrollmentCreationRequest request : requests) {
         responses.add(create(request));
+        lessonProcessService.createAll(request.getCourseId(), request.getUserId());
       }
       return responses;
     } catch (Exception exception) {

@@ -11,7 +11,7 @@ public class MiddleCourseServiceImpl {
 
   @Autowired @Lazy ICourseService courseService;
 
-  public Course findById(String id) {
+  public Course findCourseById(String id) {
     return courseService.findById(id);
   }
 }

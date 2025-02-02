@@ -197,7 +197,11 @@ public class CourseServiceImpl implements ICourseService {
   public CourseResponse findByIdResponse(String id) {
     try {
       Course courseById = findById(id);
-      return CourseMapper.fromEntityToCourseResponse(courseById);
+      CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(courseById);
+      courseResponse.setNumberOfParticipants(middleService.countByCourseId(courseById.getId()));
+      courseResponse.setNumberOfLessons(lessonService.countByCourseId(courseById.getId()));
+      courseResponse.setLessons(lessonService.findByCourseId(courseById.getId()));
+      return courseResponse;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

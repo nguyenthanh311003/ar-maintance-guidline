@@ -9,6 +9,7 @@ public class LessonProcessMapper {
       LessonProcess lessonProcess) {
     return LessonProcessResponse.builder()
         .id(lessonProcess.getId())
+        .lessonDetailId(lessonProcess.getLessonDetail().getId())
         .userId(lessonProcess.getUser().getId())
         .isCompleted(lessonProcess.getIsCompleted())
         .build();
@@ -18,6 +19,7 @@ public class LessonProcessMapper {
       LessonProcessCreationRequest request) {
     return LessonProcess.builder()
         .user(User.builder().id(request.getUserId()).build())
+        .lessonDetail(LessonDetail.builder().id(request.getLessonDetailId()).build())
         .isCompleted(request.getIsCompleted())
         .build();
   }
