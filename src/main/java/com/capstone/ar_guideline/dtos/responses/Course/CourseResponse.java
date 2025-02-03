@@ -1,11 +1,10 @@
 package com.capstone.ar_guideline.dtos.responses.Course;
 
 import com.capstone.ar_guideline.dtos.responses.Lesson.LessonResponse;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.io.Serializable;
 import java.util.List;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @Builder
