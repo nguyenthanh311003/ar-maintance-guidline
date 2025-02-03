@@ -11,7 +11,6 @@ import com.capstone.ar_guideline.mappers.EnrollmentMapper;
 import com.capstone.ar_guideline.repositories.EnrollmentRepository;
 import com.capstone.ar_guideline.services.IEnrollmentService;
 import com.capstone.ar_guideline.services.ILessonProcessService;
-import com.capstone.ar_guideline.services.ILessonService;
 import com.capstone.ar_guideline.services.IUserService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,11 +32,9 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
 
   @Autowired @Lazy MiddleCourseServiceImpl middleService;
 
-  @Autowired
-  IUserService userService;
+  @Autowired IUserService userService;
 
-  @Autowired
-  ILessonProcessService lessonProcessService;
+  @Autowired ILessonProcessService lessonProcessService;
 
   @Override
   public EnrollmentResponse create(EnrollmentCreationRequest request) {

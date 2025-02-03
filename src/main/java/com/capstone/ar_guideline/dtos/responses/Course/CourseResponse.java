@@ -4,7 +4,6 @@ import com.capstone.ar_guideline.dtos.responses.Lesson.LessonResponse;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

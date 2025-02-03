@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class InstructionProcessResponse {
-    private String id;
-    private String instructionId;
-    private String userId;
-    private Boolean isDone;
+  private String id;
+  private String instructionId;
+  private String userId;
+  private Boolean isDone;
 }

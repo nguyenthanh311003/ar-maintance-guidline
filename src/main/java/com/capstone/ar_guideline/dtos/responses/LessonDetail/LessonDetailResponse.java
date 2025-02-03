@@ -10,14 +10,13 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LessonDetailResponse {
 
-    private String id;
-    private String lessonId;
-    private String title;
-    private Integer orderInLesson;
-    private String description;
-    private Integer duration;
-    private String status;
-    private String videoUrl;
-    private String type;
-
+  private String id;
+  private String lessonId;
+  private String title;
+  private Integer orderInLesson;
+  private String description;
+  private Integer duration;
+  private String status;
+  private String videoUrl;
+  private String type;
 }
