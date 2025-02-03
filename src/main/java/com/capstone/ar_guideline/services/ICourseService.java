@@ -30,4 +30,6 @@ public interface ICourseService {
   CourseResponse findByTitleResponse(String title);
 
   List<CourseResponse> findByCompanyId(String companyId);
+
+  List<CourseResponse> findCourseNoMandatory();
 }

@@ -96,6 +96,8 @@ public enum ErrorCode {
   LESSON_DETAIL(1080, "Lesson detail not existed", HttpStatus.BAD_REQUEST),
   LESSON_DETAIL_CREATE_FAILED(1081, "Lesson detail create failed", HttpStatus.BAD_REQUEST),
   LESSON_DETAIL_UPDATE_FAILED(1082, "Lesson detail update failed", HttpStatus.BAD_REQUEST),
+  FIND_COURSE_MANDATORY_FAILED(1083, "Find course mandatory failed", HttpStatus.BAD_REQUEST),
+  FIND_COURSE_NO_MANDATORY_FAILED(1084, "Find course no mandatory failed", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;
