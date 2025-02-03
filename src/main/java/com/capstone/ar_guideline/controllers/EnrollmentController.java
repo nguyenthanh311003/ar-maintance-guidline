@@ -28,6 +28,14 @@ public class EnrollmentController {
         .build();
   }
 
+  @GetMapping(value = ConstAPI.EnrollmentAPI.FIND_COURSE_MANDATORY + "{userId}")
+  ApiResponse<List<EnrollmentResponse>> findCourseMandatory(
+      @PathVariable String userId, @RequestParam Boolean isRequiredCourse) {
+    return ApiResponse.<List<EnrollmentResponse>>builder()
+        .result(enrollmentService.findCourseIsRequiredForUser(userId, isRequiredCourse))
+        .build();
+  }
+
   @PutMapping(value = ConstAPI.EnrollmentAPI.UPDATE_ENROLLMENT + "{enrollmentId}")
   ApiResponse<EnrollmentResponse> updateEnrollment(
       @PathVariable String enrollmentId, @RequestBody EnrollmentCreationRequest request) {

@@ -51,6 +51,13 @@ public class CourseController {
         .build();
   }
 
+  @GetMapping(value = ConstAPI.CourseAPI.NO_MANDATORY_COURSE)
+  public ApiResponse<List<CourseResponse>> getNoMandatoryCourse() {
+    return ApiResponse.<List<CourseResponse>>builder()
+        .result(courseService.findCourseNoMandatory())
+        .build();
+  }
+
   @GetMapping(value = ConstAPI.CourseAPI.COURSE_FIND_BY_TITLE + "/{title}")
   public ApiResponse<CourseResponse> getCourseByTitle(@PathVariable String title) {
     return ApiResponse.<CourseResponse>builder()
