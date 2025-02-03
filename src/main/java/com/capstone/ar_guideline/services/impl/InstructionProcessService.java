@@ -12,61 +12,62 @@ import com.capstone.ar_guideline.repositories.InstructionProcessRepository;
 import com.capstone.ar_guideline.services.IInstructionProcessService;
 import com.capstone.ar_guideline.services.IInstructionService;
 import com.capstone.ar_guideline.services.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class InstructionProcessService implements IInstructionProcessService {
 
-    @Autowired
-    private InstructionProcessRepository instructionProcessRepository;
+  @Autowired private InstructionProcessRepository instructionProcessRepository;
 
-    @Autowired
-    private IInstructionService instructionService;
+  @Autowired private IInstructionService instructionService;
 
-    @Autowired
-    private IUserService userService;
+  @Autowired private IUserService userService;
 
-    @Override
-    public InstructionProcessResponse createInstructionProcess(InstructionProcessCreationRequest instructionProcessCreationRequest) {
+  @Override
+  public InstructionProcessResponse createInstructionProcess(
+      InstructionProcessCreationRequest instructionProcessCreationRequest) {
 
-        Instruction instruction = instructionService.findById(instructionProcessCreationRequest.getInstructionId());
-        User user = userService.findById(instructionProcessCreationRequest.getUserId());
+    Instruction instruction =
+        instructionService.findById(instructionProcessCreationRequest.getInstructionId());
+    User user = userService.findById(instructionProcessCreationRequest.getUserId());
 
-        InstructionProcess instructionProcess = InstructionProcessMapper.fromCreationRequest(instructionProcessCreationRequest);
+    InstructionProcess instructionProcess =
+        InstructionProcessMapper.fromCreationRequest(instructionProcessCreationRequest);
 
-        instructionProcessRepository.save(instructionProcess);
+    instructionProcessRepository.save(instructionProcess);
 
-        return InstructionProcessMapper.toResponse(instructionProcess);
+    return InstructionProcessMapper.toResponse(instructionProcess);
+  }
+
+  @Override
+  public List<InstructionProcessResponse> getInstructionProcessesByUserId(
+      String userId, String courseId) {
+    List<InstructionProcess> instructionProcesses =
+        instructionProcessRepository.findByUserIdAndInstruction(userId, courseId);
+    List<InstructionProcessResponse> instructionProcessResponses = new ArrayList<>();
+    for (InstructionProcess instructionProcess : instructionProcesses) {
+      InstructionProcessResponse instructionProcessResponse =
+          InstructionProcessMapper.toResponse(instructionProcess);
+      instructionProcessResponses.add(instructionProcessResponse);
     }
+    return instructionProcessResponses;
+  }
 
-    @Override
-    public List<InstructionProcessResponse> getInstructionProcessesByUserId(String userId, String courseId) {
-        List<InstructionProcess> instructionProcesses = instructionProcessRepository.findByUserIdAndInstruction(userId, courseId);
-        List<InstructionProcessResponse> instructionProcessResponses = new ArrayList<>();
-        for (InstructionProcess instructionProcess : instructionProcesses) {
-            InstructionProcessResponse instructionProcessResponse = InstructionProcessMapper.toResponse(instructionProcess);
-            instructionProcessResponses.add(instructionProcessResponse);
-        }
-        return instructionProcessResponses;
-    }
+  @Override
+  public InstructionProcessResponse markCompleted(String instructionProcessId) {
+    InstructionProcess instructionProcess = findById(instructionProcessId);
+    instructionProcess.setIsDone(true);
+    return InstructionProcessMapper.toResponse(instructionProcess);
+  }
 
-    @Override
-    public InstructionProcessResponse markCompleted(String instructionProcessId) {
-InstructionProcess instructionProcess = findById(instructionProcessId);
-instructionProcess.setIsDone(true);
-return InstructionProcessMapper.toResponse(instructionProcess);
-    }
+  @Override
+  public InstructionProcess findById(String instructionProcessId) {
 
-    @Override
-    public InstructionProcess findById(String instructionProcessId) {
-
-        return instructionProcessRepository
-                .findById(instructionProcessId)
-                .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTION_PROCESS_NOT_EXISTED));
-
-    }
+    return instructionProcessRepository
+        .findById(instructionProcessId)
+        .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTION_PROCESS_NOT_EXISTED));
+  }
 }

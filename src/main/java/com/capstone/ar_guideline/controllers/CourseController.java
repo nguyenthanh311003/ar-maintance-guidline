@@ -7,6 +7,7 @@ import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.ICourseService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -43,7 +44,14 @@ public class CourseController {
         .build();
   }
 
-  @GetMapping(value = ConstAPI.CourseAPI.COURSE_FIND_BY_TITILE + "/{title}")
+  @GetMapping(value = ConstAPI.CourseAPI.COURSE_FIND_BY_COMPANY_ID + "{companyId}")
+  public ApiResponse<List<CourseResponse>> getCourseByCompanyId(@PathVariable String companyId) {
+    return ApiResponse.<List<CourseResponse>>builder()
+        .result(courseService.findByCompanyId(companyId))
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.CourseAPI.COURSE_FIND_BY_TITLE + "/{title}")
   public ApiResponse<CourseResponse> getCourseByTitle(@PathVariable String title) {
     return ApiResponse.<CourseResponse>builder()
         .result(courseService.findByTitleResponse(title))
@@ -64,7 +72,7 @@ public class CourseController {
         .build();
   }
 
-  @DeleteMapping(value = ConstAPI.CourseAPI.COURSE+"/{courseId}")
+  @DeleteMapping(value = ConstAPI.CourseAPI.COURSE + "/{courseId}")
   public ApiResponse<String> deleteCourse(@PathVariable String courseId) {
     courseService.delete(courseId);
     return ApiResponse.<String>builder().result("Course has been deleted successfully").build();
