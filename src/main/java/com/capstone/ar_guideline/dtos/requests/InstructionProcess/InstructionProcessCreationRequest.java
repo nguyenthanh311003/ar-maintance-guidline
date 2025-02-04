@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InstructionProcessCreationRequest {
-    private String instructionId;
-    private String userId;
+  private String instructionId;
+  private String userId;
 }

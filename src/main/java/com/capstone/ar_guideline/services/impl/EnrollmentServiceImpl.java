@@ -7,11 +7,11 @@ import com.capstone.ar_guideline.entities.Enrollment;
 import com.capstone.ar_guideline.entities.User;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
+import com.capstone.ar_guideline.mappers.CourseMapper;
 import com.capstone.ar_guideline.mappers.EnrollmentMapper;
 import com.capstone.ar_guideline.repositories.EnrollmentRepository;
 import com.capstone.ar_guideline.services.IEnrollmentService;
 import com.capstone.ar_guideline.services.ILessonProcessService;
-import com.capstone.ar_guideline.services.ILessonService;
 import com.capstone.ar_guideline.services.IUserService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,11 +33,9 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
 
   @Autowired @Lazy MiddleCourseServiceImpl middleService;
 
-  @Autowired
-  IUserService userService;
+  @Autowired IUserService userService;
 
-  @Autowired
-  ILessonProcessService lessonProcessService;
+  @Autowired ILessonProcessService lessonProcessService;
 
   @Override
   public EnrollmentResponse create(EnrollmentCreationRequest request) {
@@ -154,6 +152,32 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
         throw exception;
       }
       throw new AppException(ErrorCode.ENROLLMENT_CREATE_FAILED);
+    }
+  }
+
+  @Override
+  public List<EnrollmentResponse> findCourseIsRequiredForUser(
+      String userId, Boolean isRequiredCourse) {
+    try {
+      userService.findById(userId);
+      List<Enrollment> enrollments =
+          enrollmentRepository.findByUserIdAndEnrollmentDate(userId, isRequiredCourse);
+
+      return enrollments.stream()
+          .map(
+              e -> {
+                EnrollmentResponse enrollmentResponse =
+                    EnrollmentMapper.FromEntityToEnrollmentResponse(e);
+                enrollmentResponse.setCourseResponse(
+                    CourseMapper.fromEntityToCourseResponse(e.getCourse()));
+                return enrollmentResponse;
+              })
+          .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.FIND_COURSE_MANDATORY_FAILED);
     }
   }
 

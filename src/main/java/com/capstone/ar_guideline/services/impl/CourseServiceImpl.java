@@ -10,7 +10,9 @@ import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CourseMapper;
+import com.capstone.ar_guideline.mappers.LessonMapper;
 import com.capstone.ar_guideline.repositories.CourseRepository;
+import com.capstone.ar_guideline.services.ICompanyService;
 import com.capstone.ar_guideline.services.ICourseService;
 import com.capstone.ar_guideline.services.ILessonService;
 import com.capstone.ar_guideline.util.UtilService;
@@ -37,7 +39,8 @@ import org.springframework.stereotype.Service;
 public class CourseServiceImpl implements ICourseService {
 
   CourseRepository courseRepository;
-  @Autowired RedisTemplate<String, Object> redisTemplate;
+  RedisTemplate<String, Object> redisTemplate;
+  ICompanyService companyService;
 
   @Autowired @Lazy MiddleEnrollmentServiceImpl middleService;
   @Autowired @Lazy ILessonService lessonService;
@@ -180,11 +183,9 @@ public class CourseServiceImpl implements ICourseService {
   public Course findById(String id) {
     try {
 
-      Course courseById =
-          courseRepository
-              .findById(id)
-              .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_EXISTED));
-      return courseById;
+      return courseRepository
+          .findById(id)
+          .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_EXISTED));
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -223,6 +224,54 @@ public class CourseServiceImpl implements ICourseService {
         throw exception;
       }
       throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<CourseResponse> findByCompanyId(String companyId) {
+    try {
+      companyService.findByIdReturnEntity(companyId);
+
+      List<Course> coursesByCompanyId = courseRepository.findByCompanyId(companyId);
+
+      return coursesByCompanyId.stream()
+          .map(
+              course -> {
+                CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(course);
+                courseResponse.setLessons(
+                    course.getLessons().stream()
+                        .map(LessonMapper::FromEntityToLessonResponse)
+                        .toList());
+                return courseResponse;
+              })
+          .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<CourseResponse> findCourseNoMandatory() {
+    try {
+      List<Course> coursesNoMandatory = courseRepository.findCourseNoMandatory();
+
+      return coursesNoMandatory.stream()
+          .map(
+              c -> {
+                CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(c);
+                courseResponse.setLessons(
+                    c.getLessons().stream().map(LessonMapper::FromEntityToLessonResponse).toList());
+                return courseResponse;
+              })
+          .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.FIND_COURSE_NO_MANDATORY_FAILED);
     }
   }
 }

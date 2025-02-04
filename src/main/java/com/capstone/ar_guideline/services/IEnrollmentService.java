@@ -20,5 +20,7 @@ public interface IEnrollmentService {
 
   List<EnrollmentResponse> createAll(List<EnrollmentCreationRequest> requests);
 
+  List<EnrollmentResponse> findCourseIsRequiredForUser(String userId, Boolean isMandatory);
+
   void enroll(String courseId, String userId);
 }

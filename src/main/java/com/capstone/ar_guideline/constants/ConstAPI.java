@@ -9,7 +9,9 @@ public class ConstAPI {
 
   public static class CourseAPI {
     public static final String COURSE = "api/v1/course";
-    public static final String COURSE_FIND_BY_TITILE = "api/v1/course/title";
+    public static final String COURSE_FIND_BY_TITLE = "api/v1/course/title";
+    public static final String COURSE_FIND_BY_COMPANY_ID = "api/v1/course/company/";
+    public static final String NO_MANDATORY_COURSE = "api/v1/course/no-mandatory";
   }
 
   public static class ModelAPI {
@@ -68,6 +70,7 @@ public class ConstAPI {
     public static final String UPDATE_ENROLLMENT = "api/v1/enrollment/";
     public static final String DELETE_ENROLLMENT = "api/v1/enrollment/";
     public static final String UPDATE_STATUS_ENROLLMENT = "api/v1/enrollment/status/";
+    public static final String FIND_COURSE_MANDATORY = "api/v1/enrollment/user/";
   }
 
   public static class SubscriptionAPI {
@@ -112,10 +115,11 @@ public class ConstAPI {
     public static final String DELETE_RESULT = "api/v1/result/";
   }
 
-  public static class InstructionProcessAPI{
-    public static final String InstructionProcess ="api/v1/instruction-process";
+  public static class InstructionProcessAPI {
+    public static final String InstructionProcess = "api/v1/instruction-process";
   }
-  public static class LessonDetailAPI{
-    public static final String LESSON_DETAIL ="api/v1/lesson-detail";
+
+  public static class LessonDetailAPI {
+    public static final String LESSON_DETAIL = "api/v1/lesson-detail";
   }
 }
