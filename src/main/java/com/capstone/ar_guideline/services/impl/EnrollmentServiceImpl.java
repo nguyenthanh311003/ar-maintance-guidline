@@ -156,4 +156,18 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
       throw new AppException(ErrorCode.ENROLLMENT_CREATE_FAILED);
     }
   }
+
+  @Override
+  public void enroll(String courseId, String userId) {
+    try {
+      Enrollment enrollment = enrollmentRepository.findByCourseIdAndUserId(courseId, userId);
+      enrollment.setEnrollmentDate(LocalDateTime.now());
+      enrollmentRepository.save(enrollment);
+
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+    }
+  }
 }

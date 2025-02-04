@@ -19,4 +19,6 @@ public interface IEnrollmentService {
   Integer countByCourseId(String courseId);
 
   List<EnrollmentResponse> createAll(List<EnrollmentCreationRequest> requests);
+
+  void enroll(String courseId, String userId);
 }
