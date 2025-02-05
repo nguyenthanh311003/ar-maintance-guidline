@@ -57,6 +57,7 @@ public class CourseServiceImpl implements ICourseService {
       Boolean isMandatory,
       String userId,
       String searchTemp,
+      String companyId,
       String status) {
     try {
       PagingModel<CourseResponse> pagingModel = new PagingModel<>();
@@ -84,7 +85,7 @@ public class CourseServiceImpl implements ICourseService {
               courseRepository.findAllCourseEnrolledBy(
                   pageable, isMandatory, userId, searchTemp, status);
         } else {
-          courses = courseRepository.findAllBy(pageable, searchTemp, status);
+          courses = courseRepository.findAllBy(pageable, searchTemp, status,companyId);
         }
         courseResponses =
             courses.stream()
@@ -94,6 +95,8 @@ public class CourseServiceImpl implements ICourseService {
                       response.setNumberOfParticipants(
                           middleService.countByCourseId(course.getId()));
                       response.setNumberOfLessons(lessonService.countByCourseId(course.getId()));
+                      response.setDuration(
+                          middleService.getDurationOfCourseByCourseId(course.getId()));
                       return response;
                     })
                 .collect(Collectors.toList());
@@ -121,6 +124,7 @@ public class CourseServiceImpl implements ICourseService {
     try {
       Course newCourse = CourseMapper.fromCourseCreationRequestToEntity(request);
       newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
+      newCourse.setDuration(0);
       Company company = new Company();
       company.setId(request.getCompanyId());
 
@@ -130,7 +134,6 @@ public class CourseServiceImpl implements ICourseService {
           .map(k -> k + ConstHashKey.HASH_KEY_ALL)
           .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
-      // delete all cache of course
       return CourseMapper.fromEntityToCourseResponse(newCourse);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
@@ -272,6 +275,18 @@ public class CourseServiceImpl implements ICourseService {
         throw exception;
       }
       throw new AppException(ErrorCode.FIND_COURSE_NO_MANDATORY_FAILED);
+    }
+  }
+
+  @Override
+  public Course save(Course course) {
+    try {
+      return courseRepository.save(course);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_UPDATE_FAILED);
     }
   }
 }

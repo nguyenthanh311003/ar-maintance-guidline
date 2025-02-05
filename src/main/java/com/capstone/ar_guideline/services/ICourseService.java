@@ -15,6 +15,7 @@ public interface ICourseService {
       Boolean isMandatory,
       String userId,
       String searchTemp,
+      String companyId,
       String status);
 
   CourseResponse create(CourseCreationRequest request);
@@ -32,4 +33,6 @@ public interface ICourseService {
   List<CourseResponse> findByCompanyId(String companyId);
 
   List<CourseResponse> findCourseNoMandatory();
+
+  Course save(Course course);
 }

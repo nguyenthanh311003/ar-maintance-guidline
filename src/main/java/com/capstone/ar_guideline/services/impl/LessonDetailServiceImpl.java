@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class lessonDetailServiceImpl implements ILessonDetailService {
+public class LessonDetailServiceImpl implements ILessonDetailService {
 
   @Autowired private LessonDetailRepository lessonDetailRepository;
 
@@ -90,7 +90,7 @@ public class lessonDetailServiceImpl implements ILessonDetailService {
     List<LessonDetail> lessonDetails = lessonDetailRepository.findLessonDetailsByLessonId(lessonId);
     List<LessonDetailResponse> lessonDetailResponses = new ArrayList<>();
     for (LessonDetail lessonDetail : lessonDetails) {
-      LessonDetailResponse lessonDetailResponse = new LessonDetailResponse();
+      LessonDetailResponse lessonDetailResponse;
       lessonDetailResponse = LessonDetailMapper.fromEntityToLessonDetailResponse(lessonDetail);
       lessonDetailResponses.add(lessonDetailResponse);
     }

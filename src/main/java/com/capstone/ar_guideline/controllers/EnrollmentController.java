@@ -56,4 +56,10 @@ public class EnrollmentController {
         .result(enrollmentService.changeStatusToTrue(enrollmentId))
         .build();
   }
+
+  @PutMapping(value = ConstAPI.EnrollmentAPI.ENROLL)
+    void enroll(@RequestBody EnrollmentCreationRequest request) {
+    enrollmentService.enroll(request.getCourseId(), request.getUserId());
+  }
+
 }

@@ -30,10 +30,11 @@ public class CourseController {
       @RequestParam(required = false) Boolean isMandatory,
       @RequestParam(required = false) String userId,
       @RequestParam(required = false) String searchTemp,
+      @RequestParam(required = false) String companyId,
       @RequestParam(required = false) String status) {
     return ApiResponse.<PagingModel<CourseResponse>>builder()
         .result(
-            courseService.findAll(page, size, isEnrolled, isMandatory, userId, searchTemp, status))
+            courseService.findAll(page, size, isEnrolled, isMandatory, userId, searchTemp, companyId,status))
         .build();
   }
 

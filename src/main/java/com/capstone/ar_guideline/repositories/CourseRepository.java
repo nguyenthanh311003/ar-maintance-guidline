@@ -13,9 +13,9 @@ import org.springframework.stereotype.Repository;
 public interface CourseRepository extends JpaRepository<Course, String> {
 
   @Query(
-      "SELECT c FROM Course c WHERE (c.title = :searchTemp OR c.description = :searchTemp OR :searchTemp IS NULL) AND (c.status = :status OR :status IS NULL)")
+      "SELECT c FROM Course c WHERE (c.title = :searchTemp OR c.description = :searchTemp OR :searchTemp IS NULL) AND (c.status = :status OR :status IS NULL) AND (c.company.id = :companyId OR :companyId IS NULL)")
   List<Course> findAllBy(
-      Pageable pageable, @Param("searchTemp") String searchTemp, @Param("status") String status);
+      Pageable pageable, @Param("searchTemp") String searchTemp, @Param("status") String status, @Param("companyId") String companyId);
 
   @Query(
       "SELECT e.course FROM Enrollment e WHERE e.user.id = :userId AND (e.course.isMandatory = :isMandatory or e.course.isMandatory IS NULL) AND (e.course.title = :searchTemp OR e.course.description = :searchTemp OR :searchTemp IS NULL) AND (e.course.status = :status OR :status IS NULL)")
