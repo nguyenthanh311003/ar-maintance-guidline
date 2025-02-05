@@ -11,7 +11,7 @@ public class ConstAPI {
     public static final String COURSE = "api/v1/course";
     public static final String COURSE_FIND_BY_TITLE = "api/v1/course/title";
     public static final String COURSE_FIND_BY_COMPANY_ID = "api/v1/course/company/";
-    public static final String NO_MANDATORY_COURSE = "api/v1/course/no-mandatory";
+    public static final String NO_MANDATORY_COURSE = "api/v1/course/no-mandatory/company/";
   }
 
   public static class ModelAPI {

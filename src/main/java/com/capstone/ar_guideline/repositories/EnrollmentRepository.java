@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.repositories;
 import com.capstone.ar_guideline.entities.Enrollment;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +18,7 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, String> 
           + "AND (:isNull = true AND e.enrollmentDate IS NULL OR :isNull = false AND e.enrollmentDate IS NOT NULL) "
           + "ORDER BY e.createdDate ASC")
   List<Enrollment> findByUserIdAndEnrollmentDate(
-      @Param("userId") String userId, @Param("isNull") boolean isNull);
+      Pageable pageable, @Param("userId") String userId, @Param("isNull") boolean isNull);
 
   @Query(value = "SELECT e FROM Enrollment e WHERE e.user.id = :userId AND e.course.id = :courseId")
   Optional<Enrollment> findByUserId(
