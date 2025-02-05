@@ -34,7 +34,8 @@ public class CourseController {
       @RequestParam(required = false) String status) {
     return ApiResponse.<PagingModel<CourseResponse>>builder()
         .result(
-            courseService.findAll(page, size, isEnrolled, isMandatory, userId, searchTemp, companyId,status))
+            courseService.findAll(
+                page, size, isEnrolled, isMandatory, userId, searchTemp, companyId, status))
         .build();
   }
 
@@ -52,10 +53,13 @@ public class CourseController {
         .build();
   }
 
-  @GetMapping(value = ConstAPI.CourseAPI.NO_MANDATORY_COURSE)
-  public ApiResponse<List<CourseResponse>> getNoMandatoryCourse() {
-    return ApiResponse.<List<CourseResponse>>builder()
-        .result(courseService.findCourseNoMandatory())
+  @GetMapping(value = ConstAPI.CourseAPI.NO_MANDATORY_COURSE + "{companyId}")
+  public ApiResponse<PagingModel<CourseResponse>> getNoMandatoryCourse(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @PathVariable String companyId) {
+    return ApiResponse.<PagingModel<CourseResponse>>builder()
+        .result(courseService.findCourseNoMandatory(page, size, companyId))
         .build();
   }
 

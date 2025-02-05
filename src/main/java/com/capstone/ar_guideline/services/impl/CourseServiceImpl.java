@@ -85,7 +85,7 @@ public class CourseServiceImpl implements ICourseService {
               courseRepository.findAllCourseEnrolledBy(
                   pageable, isMandatory, userId, searchTemp, status);
         } else {
-          courses = courseRepository.findAllBy(pageable, searchTemp, status,companyId);
+          courses = courseRepository.findAllBy(pageable, searchTemp, status, companyId);
         }
         courseResponses =
             courses.stream()
@@ -257,19 +257,31 @@ public class CourseServiceImpl implements ICourseService {
   }
 
   @Override
-  public List<CourseResponse> findCourseNoMandatory() {
+  public PagingModel<CourseResponse> findCourseNoMandatory(int page, int size, String companyId) {
     try {
-      List<Course> coursesNoMandatory = courseRepository.findCourseNoMandatory();
+      PagingModel<CourseResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+      List<Course> coursesNoMandatory = courseRepository.findCourseNoMandatory(pageable, companyId);
 
-      return coursesNoMandatory.stream()
-          .map(
-              c -> {
-                CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(c);
-                courseResponse.setLessons(
-                    c.getLessons().stream().map(LessonMapper::FromEntityToLessonResponse).toList());
-                return courseResponse;
-              })
-          .toList();
+      List<CourseResponse> courseResponses =
+          coursesNoMandatory.stream()
+              .map(
+                  c -> {
+                    CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(c);
+                    courseResponse.setLessons(
+                        c.getLessons().stream()
+                            .map(LessonMapper::FromEntityToLessonResponse)
+                            .toList());
+                    return courseResponse;
+                  })
+              .toList();
+
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems(courseResponses.size());
+      pagingModel.setTotalPages(UtilService.getTotalPage(courseResponses.size(), size));
+      pagingModel.setObjectList(courseResponses);
+      return pagingModel;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
