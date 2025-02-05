@@ -27,4 +27,6 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, String> 
   List<Enrollment> findByCourseId(@Param("courseId") String courseId);
 
   Integer countByCourseIdAndEnrollmentDateIsNotNull(String courseId);
+
+  Enrollment findByCourseIdAndUserId(String courseId, String userId);
 }

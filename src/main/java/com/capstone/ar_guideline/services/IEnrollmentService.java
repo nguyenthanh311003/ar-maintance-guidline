@@ -28,4 +28,6 @@ public interface IEnrollmentService {
   @Query(
       "SELECT COUNT(e) FROM Enrollment e WHERE e.course.id = :courseId AND e.enrollmentDate IS NOT NULL")
   Integer countByCourseIdAndEnrollmentDateNotNull(String courseId);
+
+  void enroll(String courseId, String userId);
 }
