@@ -136,7 +136,7 @@ public class UserServiceImpl implements IUserService {
         return userByEmailWithRedis;
       }
       Optional<User> userByEmail = userRepository.findByEmail(email);
-      if (!userByEmail.isPresent()) {
+      if (userByEmail.isEmpty()) {
         log.warn("User not found by email: {}", email);
         throw new AppException(ErrorCode.USER_NOT_EXISTED);
       }

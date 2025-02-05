@@ -40,12 +40,4 @@ public class UpdateDurationService implements IUpdateDurationService {
       throw new AppException(ErrorCode.COURSE_UPDATE_FAILED);
     }
   }
-
-  @Override
-  public int getDurationOfCourseByCourseId(String courseId) {
-    Course courseById = courseService.findById(courseId);
-    List<Lesson> lessonsByCourseId = lessonService.findByCourseIdReturnEntity(courseById.getId());
-
-    return lessonsByCourseId.stream().mapToInt(Lesson::getDuration).sum();
-  }
 }

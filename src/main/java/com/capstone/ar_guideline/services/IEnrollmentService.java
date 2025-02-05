@@ -17,8 +17,6 @@ public interface IEnrollmentService {
 
   Enrollment findById(String id);
 
-  Integer countByCourseId(String courseId);
-
   List<EnrollmentResponse> createAll(List<EnrollmentCreationRequest> requests);
 
   List<EnrollmentResponse> findCourseIsRequiredForUser(String userId, Boolean isMandatory);

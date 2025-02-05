@@ -90,7 +90,7 @@ public class LessonDetailServiceImpl implements ILessonDetailService {
     List<LessonDetail> lessonDetails = lessonDetailRepository.findLessonDetailsByLessonId(lessonId);
     List<LessonDetailResponse> lessonDetailResponses = new ArrayList<>();
     for (LessonDetail lessonDetail : lessonDetails) {
-      LessonDetailResponse lessonDetailResponse = new LessonDetailResponse();
+      LessonDetailResponse lessonDetailResponse;
       lessonDetailResponse = LessonDetailMapper.fromEntityToLessonDetailResponse(lessonDetail);
       lessonDetailResponses.add(lessonDetailResponse);
     }
