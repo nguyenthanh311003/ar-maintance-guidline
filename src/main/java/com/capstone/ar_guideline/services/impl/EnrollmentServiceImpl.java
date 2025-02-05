@@ -16,11 +16,11 @@ import com.capstone.ar_guideline.services.IUserService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -31,11 +31,11 @@ import org.springframework.stereotype.Service;
 public class EnrollmentServiceImpl implements IEnrollmentService {
   EnrollmentRepository enrollmentRepository;
 
-  @Autowired @Lazy MiddleCourseServiceImpl middleService;
+  @Lazy MiddleCourseServiceImpl middleService;
 
-  @Autowired IUserService userService;
+  IUserService userService;
 
-  @Autowired ILessonProcessService lessonProcessService;
+  ILessonProcessService lessonProcessService;
 
   @Override
   public EnrollmentResponse create(EnrollmentCreationRequest request) {
@@ -178,6 +178,45 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
         throw exception;
       }
       throw new AppException(ErrorCode.FIND_COURSE_MANDATORY_FAILED);
+    }
+  }
+
+  @Override
+  public boolean checkUserIsAssign(String userId, String courseId) {
+    try {
+      Optional<Enrollment> enrollmentByUserId = enrollmentRepository.findByUserId(userId, courseId);
+
+      return enrollmentByUserId.isPresent();
+
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.ENROLLMENT_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<Enrollment> findByCourseId(String courseId) {
+    try {
+      return enrollmentRepository.findByCourseId(courseId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.ENROLLMENT_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public Integer countByCourseIdAndEnrollmentDateNotNull(String courseId) {
+    try {
+      return enrollmentRepository.countByCourseIdAndEnrollmentDateIsNotNull(courseId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.ENROLLMENT_NOT_EXISTED);
     }
   }
 }

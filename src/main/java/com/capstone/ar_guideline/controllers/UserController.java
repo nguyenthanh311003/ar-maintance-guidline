@@ -5,15 +5,16 @@ import com.capstone.ar_guideline.dtos.requests.User.LoginRequest;
 import com.capstone.ar_guideline.dtos.requests.User.SignUpRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.User.AuthenticationResponse;
+import com.capstone.ar_guideline.dtos.responses.User.UserToAssignResponse;
+import com.capstone.ar_guideline.services.IUserAssignmentService;
 import com.capstone.ar_guideline.services.IUserService;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class UserController {
   IUserService userService;
+  IUserAssignmentService userAssignmentService;
+
+  @GetMapping(value = ConstAPI.UserAPI.PREFIX_USER + "company/{companyId}/" + "course/{courseId}")
+  public ApiResponse<List<UserToAssignResponse>> getUserToAssign(
+      @PathVariable String companyId, @PathVariable String courseId) {
+    return ApiResponse.<List<UserToAssignResponse>>builder()
+        .result(userAssignmentService.getUsersToAssign(companyId, courseId))
+        .build();
+  }
 
   @PostMapping(value = ConstAPI.UserAPI.LOGIN)
   ApiResponse<AuthenticationResponse> login(@RequestBody LoginRequest loginRequest) {

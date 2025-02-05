@@ -2,6 +2,7 @@ package com.capstone.ar_guideline.repositories;
 
 import com.capstone.ar_guideline.entities.Enrollment;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +18,13 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, String> 
           + "ORDER BY e.createdDate ASC")
   List<Enrollment> findByUserIdAndEnrollmentDate(
       @Param("userId") String userId, @Param("isNull") boolean isNull);
+
+  @Query(value = "SELECT e FROM Enrollment e WHERE e.user.id = :userId AND e.course.id = :courseId")
+  Optional<Enrollment> findByUserId(
+      @Param("userId") String userId, @Param("courseId") String courseId);
+
+  @Query(value = "SELECT e FROM Enrollment e WHERE e.course.id = :courseId")
+  List<Enrollment> findByCourseId(@Param("courseId") String courseId);
+
+  Integer countByCourseIdAndEnrollmentDateIsNotNull(String courseId);
 }

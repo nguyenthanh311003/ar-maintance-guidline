@@ -11,10 +11,8 @@ import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.UserMapper;
 import com.capstone.ar_guideline.repositories.UserRepository;
-import com.capstone.ar_guideline.services.ICompanyService;
-import com.capstone.ar_guideline.services.IJWTService;
-import com.capstone.ar_guideline.services.IRoleService;
-import com.capstone.ar_guideline.services.IUserService;
+import com.capstone.ar_guideline.services.*;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.AccessLevel;
@@ -110,6 +108,18 @@ public class UserServiceImpl implements IUserService {
       return userRepository
           .findById(id)
           .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<User> getUserByCompanyId(String companyId) {
+    try {
+      return userRepository.getUserByCompanyId(companyId);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

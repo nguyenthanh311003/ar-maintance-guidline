@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class lessonDetailServiceImpl implements ILessonDetailService {
+public class LessonDetailServiceImpl implements ILessonDetailService {
 
   @Autowired private LessonDetailRepository lessonDetailRepository;
 

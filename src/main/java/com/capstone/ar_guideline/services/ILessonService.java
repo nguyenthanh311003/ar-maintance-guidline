@@ -14,6 +14,8 @@ public interface ILessonService {
 
   List<LessonResponse> findByCourseId(String courseId);
 
+  List<Lesson> findByCourseIdReturnEntity(String courseId);
+
   Lesson findById(String id);
 
   Integer countByCourseId(String courseId);
