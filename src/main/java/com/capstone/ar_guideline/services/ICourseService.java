@@ -32,7 +32,7 @@ public interface ICourseService {
 
   List<CourseResponse> findByCompanyId(String companyId);
 
-  List<CourseResponse> findCourseNoMandatory();
+  PagingModel<CourseResponse> findCourseNoMandatory(int page, int size, String companyId);
 
   Course save(Course course);
 }
