@@ -15,6 +15,7 @@ public interface ICourseService {
       Boolean isMandatory,
       String userId,
       String searchTemp,
+      String companyId,
       String status);
 
   CourseResponse create(CourseCreationRequest request);

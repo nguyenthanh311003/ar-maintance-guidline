@@ -57,6 +57,7 @@ public class CourseServiceImpl implements ICourseService {
       Boolean isMandatory,
       String userId,
       String searchTemp,
+      String companyId,
       String status) {
     try {
       PagingModel<CourseResponse> pagingModel = new PagingModel<>();
@@ -84,7 +85,7 @@ public class CourseServiceImpl implements ICourseService {
               courseRepository.findAllCourseEnrolledBy(
                   pageable, isMandatory, userId, searchTemp, status);
         } else {
-          courses = courseRepository.findAllBy(pageable, searchTemp, status);
+          courses = courseRepository.findAllBy(pageable, searchTemp, status,companyId);
         }
         courseResponses =
             courses.stream()
