@@ -32,4 +32,6 @@ public interface ICourseService {
   List<CourseResponse> findByCompanyId(String companyId);
 
   List<CourseResponse> findCourseNoMandatory();
+
+  Course save(Course course);
 }

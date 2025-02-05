@@ -10,6 +10,7 @@ import com.capstone.ar_guideline.repositories.LessonRepository;
 import com.capstone.ar_guideline.services.ICourseService;
 import com.capstone.ar_guideline.services.ILessonDetailService;
 import com.capstone.ar_guideline.services.ILessonService;
+import com.capstone.ar_guideline.services.IUpdateDurationService;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -29,6 +30,8 @@ public class LessonServiceImpl implements ILessonService {
 
   @Autowired @Lazy private ICourseService courseService;
 
+  @Autowired @Lazy private IUpdateDurationService updateDurationService;
+
   @Override
   public LessonResponse create(LessonCreationRequest request) {
     try {
@@ -47,6 +50,8 @@ public class LessonServiceImpl implements ILessonService {
       newLesson.setOrderInCourse(orderInCourse);
       Lesson savedLesson = lessonRepository.save(newLesson);
 
+      updateDurationService.updateCourseDuration(savedLesson.getCourse().getId());
+
       return LessonMapper.FromEntityToLessonResponse(savedLesson);
     } catch (Exception e) {
       log.error("Failed to create lesson: {}", e.getMessage(), e);
@@ -60,6 +65,7 @@ public class LessonServiceImpl implements ILessonService {
       Lesson updatedLesson = LessonMapper.fromLessonCreationRequestToEntity(request);
 
       Lesson savedLesson = lessonRepository.save(updatedLesson);
+      updateDurationService.updateCourseDuration(savedLesson.getId());
 
       return LessonMapper.FromEntityToLessonResponse(savedLesson);
     } catch (Exception e) {
@@ -74,6 +80,7 @@ public class LessonServiceImpl implements ILessonService {
       Lesson existingLesson = findById(id);
       lessonRepository.deleteById(existingLesson.getId());
       updateOrderInCourse(existingLesson.getCourse().getId());
+      updateDurationService.updateCourseDuration(existingLesson.getCourse().getId());
 
     } catch (Exception e) {
       log.error("Failed to delete lesson with ID {}: {}", id, e.getMessage(), e);
@@ -100,6 +107,18 @@ public class LessonServiceImpl implements ILessonService {
       }
     }
     return null;
+  }
+
+  @Override
+  public List<Lesson> findByCourseIdReturnEntity(String courseId) {
+    try {
+      return lessonRepository.findAllByCourseId(courseId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.LESSON_NOT_EXISTED);
+    }
   }
 
   @Override
