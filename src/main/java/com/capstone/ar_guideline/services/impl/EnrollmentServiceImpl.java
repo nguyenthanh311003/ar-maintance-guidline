@@ -133,11 +133,6 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
   }
 
   @Override
-  public Integer countByCourseId(String courseId) {
-    return enrollmentRepository.countByCourseId(courseId);
-  }
-
-  @Override
   public List<EnrollmentResponse> createAll(List<EnrollmentCreationRequest> requests) {
 
     try {
