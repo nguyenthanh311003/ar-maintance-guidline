@@ -9,7 +9,9 @@ public class ConstAPI {
 
   public static class CourseAPI {
     public static final String COURSE = "api/v1/course";
-    public static final String COURSE_FIND_BY_TITILE = "api/v1/course/title";
+    public static final String COURSE_FIND_BY_TITLE = "api/v1/course/title";
+    public static final String COURSE_FIND_BY_COMPANY_ID = "api/v1/course/company/";
+    public static final String NO_MANDATORY_COURSE = "api/v1/course/no-mandatory";
   }
 
   public static class ModelAPI {
@@ -59,8 +61,8 @@ public class ConstAPI {
     public static final String LESSON_PROCESS = "api/v1/lesson-process";
   }
 
-  public static class ModelLessonAPI {
-    public static final String MODELLESSON = "api/v1/model-lesson";
+  public static class InstructionLessonAPI {
+    public static final String INSTRUCTION_LESSON = "api/v1/instruction-lesson";
   }
 
   public static class EnrollmentAPI {
@@ -68,6 +70,7 @@ public class ConstAPI {
     public static final String UPDATE_ENROLLMENT = "api/v1/enrollment/";
     public static final String DELETE_ENROLLMENT = "api/v1/enrollment/";
     public static final String UPDATE_STATUS_ENROLLMENT = "api/v1/enrollment/status/";
+    public static final String FIND_COURSE_MANDATORY = "api/v1/enrollment/user/";
   }
 
   public static class SubscriptionAPI {
@@ -92,11 +95,31 @@ public class ConstAPI {
     public static final String CREATE_QUIZ = "api/v1/quiz";
     public static final String UPDATE_QUIZ = "api/v1/quiz/";
     public static final String DELETE_QUIZ = "api/v1/quiz/";
+    public static final String FIND_QUIZ_BY_COURSE_ID = "api/v1/quiz/course/";
+  }
+
+  public static class QuestionAPI {
+    public static final String QUESTION = "api/v1/question";
+    public static final String UPDATE_QUESTION = "api/v1/question/";
+    public static final String FIND_QUESTION_BY_QUIZ_ID = "api/v1/question/quiz/";
+    public static final String DELETE_QUESTION = "api/v1/question/";
+  }
+
+  public static class OptionAPI {
+    public static final String OPTION = "api/v1/option";
   }
 
   public static class ResultAPI {
     public static final String CREATE_RESULT = "api/v1/result";
     public static final String UPDATE_RESULT = "api/v1/result/";
     public static final String DELETE_RESULT = "api/v1/result/";
+  }
+
+  public static class InstructionProcessAPI {
+    public static final String InstructionProcess = "api/v1/instruction-process";
+  }
+
+  public static class LessonDetailAPI {
+    public static final String LESSON_DETAIL = "api/v1/lesson-detail";
   }
 }

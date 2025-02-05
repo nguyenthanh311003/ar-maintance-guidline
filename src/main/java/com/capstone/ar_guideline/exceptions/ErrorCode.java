@@ -83,6 +83,21 @@ public enum ErrorCode {
   RESULT_UPDATE_FAILED(1067, "Results update fail", HttpStatus.BAD_REQUEST),
   RESULT_DELETE_FAILED(1068, "Results delete fail", HttpStatus.BAD_REQUEST),
   RESULT_NOT_EXISTED(1069, "Results not existed", HttpStatus.NOT_FOUND),
+  QUESTION_CREATE_FAILED(1070, "Question create fail", HttpStatus.BAD_REQUEST),
+  QUESTION_UPDATE_FAILED(1071, "Question update fail", HttpStatus.BAD_REQUEST),
+  QUESTION_DELETE_FAILED(1072, "Question delete fail", HttpStatus.BAD_REQUEST),
+  QUESTION_NOT_EXISTED(1073, "Question not existed", HttpStatus.NOT_FOUND),
+  OPTION_CREATE_FAILED(1074, "Option create fail", HttpStatus.BAD_REQUEST),
+  OPTION_UPDATE_FAILED(1075, "Option update fail", HttpStatus.BAD_REQUEST),
+  OPTION_DELETE_FAILED(1076, "Option delete fail", HttpStatus.BAD_REQUEST),
+  OPTION_NOT_EXISTED(1077, "Option not existed", HttpStatus.NOT_FOUND),
+  QUIZ_EXISTED(1078, "Quiz existed", HttpStatus.BAD_REQUEST),
+  INSTRUCTION_PROCESS_NOT_EXISTED(1079, "Instruction process not existed", HttpStatus.BAD_REQUEST),
+  LESSON_DETAIL(1080, "Lesson detail not existed", HttpStatus.BAD_REQUEST),
+  LESSON_DETAIL_CREATE_FAILED(1081, "Lesson detail create failed", HttpStatus.BAD_REQUEST),
+  LESSON_DETAIL_UPDATE_FAILED(1082, "Lesson detail update failed", HttpStatus.BAD_REQUEST),
+  FIND_COURSE_MANDATORY_FAILED(1083, "Find course mandatory failed", HttpStatus.BAD_REQUEST),
+  FIND_COURSE_NO_MANDATORY_FAILED(1084, "Find course no mandatory failed", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;

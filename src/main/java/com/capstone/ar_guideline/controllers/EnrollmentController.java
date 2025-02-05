@@ -6,6 +6,7 @@ import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Enrollment.EnrollmentResponse;
 import com.capstone.ar_guideline.services.IEnrollmentService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,10 +21,18 @@ public class EnrollmentController {
   IEnrollmentService enrollmentService;
 
   @PostMapping(value = ConstAPI.EnrollmentAPI.CREATE_ENROLLMENT)
-  ApiResponse<EnrollmentResponse> createEnrollment(
-      @RequestBody @Valid EnrollmentCreationRequest request) {
-    return ApiResponse.<EnrollmentResponse>builder()
-        .result(enrollmentService.create(request))
+  ApiResponse<List<EnrollmentResponse>> createEnrollment(
+      @RequestBody @Valid List<EnrollmentCreationRequest> request) {
+    return ApiResponse.<List<EnrollmentResponse>>builder()
+        .result(enrollmentService.createAll(request))
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.EnrollmentAPI.FIND_COURSE_MANDATORY + "{userId}")
+  ApiResponse<List<EnrollmentResponse>> findCourseMandatory(
+      @PathVariable String userId, @RequestParam Boolean isRequiredCourse) {
+    return ApiResponse.<List<EnrollmentResponse>>builder()
+        .result(enrollmentService.findCourseIsRequiredForUser(userId, isRequiredCourse))
         .build();
   }
 

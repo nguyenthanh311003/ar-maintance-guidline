@@ -27,4 +27,13 @@ public interface CourseRepository extends JpaRepository<Course, String> {
       @Param("status") String status);
 
   Optional<Course> findByTitle(String title);
+
+  @Query(
+      value = "SELECT c FROM Course c WHERE c.company.id = :companyId ORDER BY c.createdDate ASC")
+  List<Course> findByCompanyId(@Param("companyId") String companyId);
+
+  @Query(
+      value =
+          "SELECT c FROM Course c WHERE c.isMandatory = false AND c.status = 'ACTIVE' ORDER BY c.createdDate ASC")
+  List<Course> findCourseNoMandatory();
 }

@@ -9,12 +9,10 @@ public class LessonMapper {
 
   public static Lesson fromLessonCreationRequestToEntity(LessonCreationRequest request) {
     return Lesson.builder()
-        .id(request.getId())
         .course(Course.builder().id(request.getCourseId()).build())
         .title(request.getTitle())
         .description(request.getDescription())
         .duration(request.getDuration())
-        .orderInCourse(request.getOrderInCourse())
         .status(request.getStatus())
         .course(Course.builder().id(request.getCourseId()).build())
         .build();

@@ -7,11 +7,16 @@ import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.LessonMapper;
 import com.capstone.ar_guideline.repositories.LessonRepository;
+import com.capstone.ar_guideline.services.ICourseService;
+import com.capstone.ar_guideline.services.ILessonDetailService;
 import com.capstone.ar_guideline.services.ILessonService;
-import com.capstone.ar_guideline.util.UtilService;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,18 +25,27 @@ import org.springframework.stereotype.Service;
 public class LessonServiceImpl implements ILessonService {
 
   private final LessonRepository lessonRepository;
-  private final RedisTemplate<String, Object> redisTemplate;
+  @Autowired @Lazy private ILessonDetailService lessonDetailService;
 
-  private static final String LESSON_CACHE_KEY = "lesson:all";
+  @Autowired @Lazy private ICourseService courseService;
 
   @Override
   public LessonResponse create(LessonCreationRequest request) {
     try {
-      Lesson newLesson = LessonMapper.fromLessonCreationRequestToEntity(request);
-      Lesson savedLesson = lessonRepository.save(newLesson);
+      courseService.findById(request.getCourseId());
+      Integer orderInCourse = lessonRepository.countByCourseId(request.getCourseId());
 
-      // Invalidate cache
-      UtilService.deleteCache(redisTemplate, redisTemplate.keys(LESSON_CACHE_KEY));
+      if (orderInCourse == 0) {
+        orderInCourse = 1;
+      } else {
+        orderInCourse++;
+      }
+
+      request.setDuration(0);
+
+      Lesson newLesson = LessonMapper.fromLessonCreationRequestToEntity(request);
+      newLesson.setOrderInCourse(orderInCourse);
+      Lesson savedLesson = lessonRepository.save(newLesson);
 
       return LessonMapper.FromEntityToLessonResponse(savedLesson);
     } catch (Exception e) {
@@ -43,13 +57,9 @@ public class LessonServiceImpl implements ILessonService {
   @Override
   public LessonResponse update(String id, LessonCreationRequest request) {
     try {
-      Lesson existingLesson = findById(id);
       Lesson updatedLesson = LessonMapper.fromLessonCreationRequestToEntity(request);
 
       Lesson savedLesson = lessonRepository.save(updatedLesson);
-
-      // Invalidate cache
-      UtilService.deleteCache(redisTemplate, redisTemplate.keys(LESSON_CACHE_KEY));
 
       return LessonMapper.FromEntityToLessonResponse(savedLesson);
     } catch (Exception e) {
@@ -63,13 +73,33 @@ public class LessonServiceImpl implements ILessonService {
     try {
       Lesson existingLesson = findById(id);
       lessonRepository.deleteById(existingLesson.getId());
+      updateOrderInCourse(existingLesson.getCourse().getId());
 
-      // Invalidate cache
-      UtilService.deleteCache(redisTemplate, redisTemplate.keys(LESSON_CACHE_KEY));
     } catch (Exception e) {
       log.error("Failed to delete lesson with ID {}: {}", id, e.getMessage(), e);
       throw new AppException(ErrorCode.LESSON_DELETE_FAILED);
     }
+  }
+
+  @Override
+  public List<LessonResponse> findByCourseId(String courseId) {
+    try {
+      courseService.findById(courseId);
+      List<Lesson> lessons = lessonRepository.findAllByCourseId(courseId);
+      List<LessonResponse> lessonResponses = new ArrayList<>();
+      for (Lesson lesson : lessons) {
+        LessonResponse lessonResponse = LessonMapper.FromEntityToLessonResponse(lesson);
+        lessonResponse.setLessonDetails(lessonDetailService.findAllByLessonId(lesson.getId()));
+        lessonResponses.add(lessonResponse);
+      }
+      lessonResponses.sort(Comparator.comparing(LessonResponse::getOrderInCourse));
+      return lessonResponses;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+    }
+    return null;
   }
 
   @Override
@@ -86,5 +116,38 @@ public class LessonServiceImpl implements ILessonService {
   @Override
   public Integer countByCourseId(String courseId) {
     return lessonRepository.countByCourseId(courseId);
+  }
+
+  @Override
+  public void updateDuration(String lessonId, Integer duration) {
+    try {
+      Lesson lesson = findById(lessonId);
+      lesson.setDuration(duration);
+      lessonRepository.save(lesson);
+    } catch (Exception e) {
+      log.error("Failed to update lesson duration with ID {}: {}", lessonId, e.getMessage(), e);
+      throw new AppException(ErrorCode.LESSON_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public void swapOrder(String id1, String id2) {
+    Lesson lesson1 = findById(id1);
+    Lesson lesson2 = findById(id2);
+
+    Integer tempOrder = lesson1.getOrderInCourse();
+    lesson1.setOrderInCourse(lesson2.getOrderInCourse());
+    lesson2.setOrderInCourse(tempOrder);
+
+    lessonRepository.save(lesson1);
+    lessonRepository.save(lesson2);
+  }
+
+  private void updateOrderInCourse(String courseId) {
+    List<Lesson> lessons = lessonRepository.findAllByCourseId(courseId);
+    for (int i = 0; i < lessons.size(); i++) {
+      lessons.get(i).setOrderInCourse(i + 1);
+      lessonRepository.save(lessons.get(i));
+    }
   }
 }

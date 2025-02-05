@@ -1,6 +1,5 @@
 package com.capstone.ar_guideline.services.impl;
 
-import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.dtos.requests.Enrollment.EnrollmentCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Enrollment.EnrollmentResponse;
 import com.capstone.ar_guideline.entities.Course;
@@ -8,20 +7,21 @@ import com.capstone.ar_guideline.entities.Enrollment;
 import com.capstone.ar_guideline.entities.User;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
+import com.capstone.ar_guideline.mappers.CourseMapper;
 import com.capstone.ar_guideline.mappers.EnrollmentMapper;
 import com.capstone.ar_guideline.repositories.EnrollmentRepository;
 import com.capstone.ar_guideline.services.IEnrollmentService;
+import com.capstone.ar_guideline.services.ILessonProcessService;
 import com.capstone.ar_guideline.services.IUserService;
-import com.capstone.ar_guideline.util.UtilService;
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,18 +30,17 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EnrollmentServiceImpl implements IEnrollmentService {
   EnrollmentRepository enrollmentRepository;
-  RedisTemplate<String, Object> redisTemplate;
 
   @Autowired @Lazy MiddleCourseServiceImpl middleService;
 
-  IUserService userService;
+  @Autowired IUserService userService;
 
-  private final String[] keysToRemove = {ConstHashKey.HASH_KEY_ENROLLMENT};
+  @Autowired ILessonProcessService lessonProcessService;
 
   @Override
   public EnrollmentResponse create(EnrollmentCreationRequest request) {
     try {
-      Course course = middleService.findById(request.getCourseId());
+      Course course = middleService.findCourseById(request.getCourseId());
 
       User user = userService.findById(request.getUserId());
 
@@ -49,11 +48,8 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
           EnrollmentMapper.fromEnrolmentCreationRequestToEntity(request, course, user);
       newEnrollment.setIsCompleted(false);
       newEnrollment.setCompletionDate(null);
+      newEnrollment.setEnrollmentDate(null);
       newEnrollment = enrollmentRepository.save(newEnrollment);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return EnrollmentMapper.FromEntityToEnrollmentResponse(newEnrollment);
     } catch (Exception exception) {
@@ -69,7 +65,7 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
     try {
       Enrollment enrollmentById = findById(id);
 
-      Course courseById = middleService.findById(request.getCourseId());
+      Course courseById = middleService.findCourseById(request.getCourseId());
 
       User userById = userService.findById(request.getUserId());
 
@@ -77,14 +73,6 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
       enrollmentById.setUser(userById);
 
       enrollmentById = enrollmentRepository.save(enrollmentById);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return EnrollmentMapper.FromEntityToEnrollmentResponse(enrollmentById);
     } catch (Exception exception) {
@@ -122,9 +110,6 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
 
       enrollmentRepository.deleteById(enrollmentById.getId());
 
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -150,5 +135,63 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
   @Override
   public Integer countByCourseId(String courseId) {
     return enrollmentRepository.countByCourseId(courseId);
+  }
+
+  @Override
+  public List<EnrollmentResponse> createAll(List<EnrollmentCreationRequest> requests) {
+
+    try {
+      List<EnrollmentResponse> responses = new ArrayList<>();
+      for (EnrollmentCreationRequest request : requests) {
+        responses.add(create(request));
+        lessonProcessService.createAll(request.getCourseId(), request.getUserId());
+      }
+      return responses;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.ENROLLMENT_CREATE_FAILED);
+    }
+  }
+
+  @Override
+  public List<EnrollmentResponse> findCourseIsRequiredForUser(
+      String userId, Boolean isRequiredCourse) {
+    try {
+      userService.findById(userId);
+      List<Enrollment> enrollments =
+          enrollmentRepository.findByUserIdAndEnrollmentDate(userId, isRequiredCourse);
+
+      return enrollments.stream()
+          .map(
+              e -> {
+                EnrollmentResponse enrollmentResponse =
+                    EnrollmentMapper.FromEntityToEnrollmentResponse(e);
+                enrollmentResponse.setCourseResponse(
+                    CourseMapper.fromEntityToCourseResponse(e.getCourse()));
+                return enrollmentResponse;
+              })
+          .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.FIND_COURSE_MANDATORY_FAILED);
+    }
+  }
+
+  @Override
+  public void enroll(String courseId, String userId) {
+    try {
+      Enrollment enrollment = enrollmentRepository.findByCourseIdAndUserId(courseId, userId);
+      enrollment.setEnrollmentDate(LocalDateTime.now());
+      enrollmentRepository.save(enrollment);
+
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+    }
   }
 }

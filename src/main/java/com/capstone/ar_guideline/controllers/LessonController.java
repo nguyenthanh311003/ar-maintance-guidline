@@ -6,6 +6,7 @@ import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Lesson.LessonResponse;
 import com.capstone.ar_guideline.services.ILessonService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,25 +21,13 @@ public class LessonController {
 
   ILessonService lessonService;
 
-  //    @GetMapping
-  //    public ApiResponse<PagingModel<LessonResponse>> getAllLessons(
-  //            @RequestParam(defaultValue = "0") int page,
-  //            @RequestParam(defaultValue = "10") int size,
-  //            @RequestParam(required = false) String searchTemp) {
-  //        log.info("Fetching lessons with page: {}, size: {}, searchTemp: {}", page, size,
-  // searchTemp);
-  //        return ApiResponse.<PagingModel<LessonResponse>>builder()
-  //                .result(lessonService.findAll(page, size, searchTemp))
-  //                .build();
-  //    }
-
-  //    @GetMapping("/{lessonId}")
-  //    public ApiResponse<LessonResponse> getLessonById(@PathVariable String lessonId) {
-  //        log.info("Fetching lesson with ID: {}", lessonId);
-  //        return ApiResponse.<LessonResponse>builder()
-  //                .result(lessonService.findById(lessonId))
-  //                .build();
-  //    }
+  @GetMapping(value = ConstAPI.LessonAPI.LESSON + "/course/{courseId}")
+  public ApiResponse<List<LessonResponse>> getAllByCourseId(@PathVariable String courseId) {
+    log.info("get all by course id: {}", courseId);
+    return ApiResponse.<List<LessonResponse>>builder()
+        .result(lessonService.findByCourseId(courseId))
+        .build();
+  }
 
   @PostMapping(value = ConstAPI.LessonAPI.LESSON)
   public ApiResponse<LessonResponse> createLesson(
@@ -61,5 +50,14 @@ public class LessonController {
     log.info("Deleting lesson with ID: {}", lessonId);
     lessonService.delete(lessonId);
     return ApiResponse.<String>builder().result("Lesson has been deleted successfully").build();
+  }
+
+  @PutMapping(value = ConstAPI.LessonAPI.LESSON + "/swap")
+  public ApiResponse<String> swapOrder(@RequestParam String id1, @RequestParam String id2) {
+    log.info("Swapping order of lessons with ID: {} and {}", id1, id2);
+    lessonService.swapOrder(id1, id2);
+    return ApiResponse.<String>builder()
+        .result("Lesson order has been swapped successfully")
+        .build();
   }
 }

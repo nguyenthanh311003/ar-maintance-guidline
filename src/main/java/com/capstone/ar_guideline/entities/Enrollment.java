@@ -25,9 +25,10 @@ public class Enrollment {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  private String enrollmentDate;
+  private LocalDateTime enrollmentDate;
   private Boolean isCompleted;
   private LocalDateTime completionDate;
+  private LocalDateTime deadline;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

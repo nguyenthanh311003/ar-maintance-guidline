@@ -34,7 +34,7 @@ public class Course implements Serializable {
   private Integer duration;
   private Boolean isMandatory;
   private String type;
-  private String status = "INACTIVE";
+  private String status;
   private String imageUrl;
 
   @Column(nullable = false, updatable = false)

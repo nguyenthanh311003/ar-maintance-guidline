@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LessonProcessResponse implements Serializable {
   String id;
-  String lessonId;
+  String lessonDetailId;
   String userId;
   Boolean isCompleted;
   String completeDate;

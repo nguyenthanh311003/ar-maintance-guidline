@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.constants.ConstHashKey;
+import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
@@ -9,7 +10,9 @@ import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CourseMapper;
+import com.capstone.ar_guideline.mappers.LessonMapper;
 import com.capstone.ar_guideline.repositories.CourseRepository;
+import com.capstone.ar_guideline.services.ICompanyService;
 import com.capstone.ar_guideline.services.ICourseService;
 import com.capstone.ar_guideline.services.ILessonService;
 import com.capstone.ar_guideline.util.UtilService;
@@ -36,16 +39,14 @@ import org.springframework.stereotype.Service;
 public class CourseServiceImpl implements ICourseService {
 
   CourseRepository courseRepository;
-  @Autowired RedisTemplate<String, Object> redisTemplate;
+  RedisTemplate<String, Object> redisTemplate;
+  ICompanyService companyService;
 
   @Autowired @Lazy MiddleEnrollmentServiceImpl middleService;
-  @Autowired ILessonService lessonService;
+  @Autowired @Lazy ILessonService lessonService;
 
   private final String[] keysToRemove = {
-    ConstHashKey.HASH_KEY_MODEL_TYPE,
-    ConstHashKey.HASH_KEY_MODEL,
-    ConstHashKey.HASH_KEY_INSTRUCTION,
-    ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL
+    ConstHashKey.HASH_KEY_COURSE,
   };
 
   @Override
@@ -119,7 +120,7 @@ public class CourseServiceImpl implements ICourseService {
   public CourseResponse create(CourseCreationRequest request) {
     try {
       Course newCourse = CourseMapper.fromCourseCreationRequestToEntity(request);
-
+      newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
       Company company = new Company();
       company.setId(request.getCompanyId());
 
@@ -146,16 +147,11 @@ public class CourseServiceImpl implements ICourseService {
       Course courseById = findById(id);
       courseById = CourseMapper.fromCourseCreationRequestToEntity(request);
       courseRepository.save(courseById);
-      // delete all cache of course
-      //   utilService.deleteCache(keysToDelete);
-      redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_COURSE, id, courseById);
+
       Arrays.stream(keysToRemove)
           .map(k -> k + ConstHashKey.HASH_KEY_ALL)
           .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
       return CourseMapper.fromEntityToCourseResponse(courseById);
 
     } catch (Exception exception) {
@@ -187,11 +183,9 @@ public class CourseServiceImpl implements ICourseService {
   public Course findById(String id) {
     try {
 
-      Course courseById =
-          courseRepository
-              .findById(id)
-              .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_EXISTED));
-      return courseById;
+      return courseRepository
+          .findById(id)
+          .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_EXISTED));
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -204,7 +198,11 @@ public class CourseServiceImpl implements ICourseService {
   public CourseResponse findByIdResponse(String id) {
     try {
       Course courseById = findById(id);
-      return CourseMapper.fromEntityToCourseResponse(courseById);
+      CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(courseById);
+      courseResponse.setNumberOfParticipants(middleService.countByCourseId(courseById.getId()));
+      courseResponse.setNumberOfLessons(lessonService.countByCourseId(courseById.getId()));
+      courseResponse.setLessons(lessonService.findByCourseId(courseById.getId()));
+      return courseResponse;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -226,6 +224,54 @@ public class CourseServiceImpl implements ICourseService {
         throw exception;
       }
       throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<CourseResponse> findByCompanyId(String companyId) {
+    try {
+      companyService.findByIdReturnEntity(companyId);
+
+      List<Course> coursesByCompanyId = courseRepository.findByCompanyId(companyId);
+
+      return coursesByCompanyId.stream()
+          .map(
+              course -> {
+                CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(course);
+                courseResponse.setLessons(
+                    course.getLessons().stream()
+                        .map(LessonMapper::FromEntityToLessonResponse)
+                        .toList());
+                return courseResponse;
+              })
+          .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<CourseResponse> findCourseNoMandatory() {
+    try {
+      List<Course> coursesNoMandatory = courseRepository.findCourseNoMandatory();
+
+      return coursesNoMandatory.stream()
+          .map(
+              c -> {
+                CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(c);
+                courseResponse.setLessons(
+                    c.getLessons().stream().map(LessonMapper::FromEntityToLessonResponse).toList());
+                return courseResponse;
+              })
+          .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.FIND_COURSE_NO_MANDATORY_FAILED);
     }
   }
 }

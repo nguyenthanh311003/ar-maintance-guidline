@@ -9,10 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LessonCreationRequest {
-  private String id;
   private String courseId;
   private String title;
-  private Integer orderInCourse;
   private String description;
   private Integer duration;
   private String status;

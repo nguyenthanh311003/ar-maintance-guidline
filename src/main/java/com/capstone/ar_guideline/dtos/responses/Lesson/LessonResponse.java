@@ -1,6 +1,8 @@
 package com.capstone.ar_guideline.dtos.responses.Lesson;
 
+import com.capstone.ar_guideline.dtos.responses.LessonDetail.LessonDetailResponse;
 import java.io.Serializable;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,4 +19,5 @@ public class LessonResponse implements Serializable {
   String description;
   Integer duration;
   String status;
+  List<LessonDetailResponse> lessonDetails;
 }

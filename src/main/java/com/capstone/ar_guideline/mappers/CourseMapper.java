@@ -8,7 +8,6 @@ import com.capstone.ar_guideline.entities.Course;
 public class CourseMapper {
   public static Course fromCourseCreationRequestToEntity(CourseCreationRequest request) {
     return Course.builder()
-        .id(request.getId())
         .title(request.getTitle())
         .duration(request.getDuration())
         .isMandatory(request.getIsMandatory())

@@ -35,6 +35,12 @@ public class QuizServiceImpl implements IQuizService {
     try {
       courseService.findById(request.getCourseId());
 
+      boolean isExist = quizRepository.existsByCourseId(request.getCourseId());
+
+      if (isExist) {
+        throw new AppException(ErrorCode.QUIZ_EXISTED);
+      }
+
       Quiz newQuiz = QuizMapper.fromQuizCreationRequestToEntity(request);
 
       newQuiz = quizRepository.save(newQuiz);
@@ -109,6 +115,20 @@ public class QuizServiceImpl implements IQuizService {
       return quizRepository
           .findById(id)
           .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_EXISTED));
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.QUIZ_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public QuizResponse findByCourseId(String courseId) {
+    try {
+      Quiz quizById = quizRepository.findByCourseId(courseId);
+
+      return QuizMapper.fromEntityToQuizResponse(quizById);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

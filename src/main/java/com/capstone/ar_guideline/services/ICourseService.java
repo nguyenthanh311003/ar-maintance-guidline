@@ -4,6 +4,7 @@ import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Course;
+import java.util.List;
 
 public interface ICourseService {
 
@@ -27,4 +28,8 @@ public interface ICourseService {
   CourseResponse findByIdResponse(String id);
 
   CourseResponse findByTitleResponse(String title);
+
+  List<CourseResponse> findByCompanyId(String companyId);
+
+  List<CourseResponse> findCourseNoMandatory();
 }

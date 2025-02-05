@@ -1,7 +1,8 @@
 package com.capstone.ar_guideline.dtos.responses.Course;
 
-import jakarta.persistence.*;
+import com.capstone.ar_guideline.dtos.responses.Lesson.LessonResponse;
 import java.io.Serializable;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class CourseResponse implements Serializable {
   private String id;
   private String companyId;
-  //    private List<Lesson> lessons;
+  private List<LessonResponse> lessons;
   private String title;
   private String description;
   private Integer duration;

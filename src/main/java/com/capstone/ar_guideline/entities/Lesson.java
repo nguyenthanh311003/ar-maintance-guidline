@@ -23,10 +23,7 @@ public class Lesson {
   private Course course;
 
   @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
-  private List<ModelLesson> modelLessons;
-
-  @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
-  private List<LessonProcess> lessonProcesses;
+  private List<LessonDetail> lessonDetail;
 
   private String title;
   private Integer orderInCourse;

@@ -14,13 +14,10 @@ import com.capstone.ar_guideline.repositories.CompanySubscriptionRepository;
 import com.capstone.ar_guideline.services.ICompanyService;
 import com.capstone.ar_guideline.services.ICompanySubscriptionService;
 import com.capstone.ar_guideline.services.ISubscriptionService;
-import com.capstone.ar_guideline.util.UtilService;
-import java.util.Arrays;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,7 +26,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CompanySubscriptionServiceImpl implements ICompanySubscriptionService {
   CompanySubscriptionRepository companySubscriptionRepository;
-  RedisTemplate<String, Object> redisTemplate;
   ICompanyService companyService;
   ISubscriptionService subscriptionService;
 
@@ -50,10 +46,6 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
       newCompanySubscription.setStatus(ConstStatus.ACTIVE_STATUS);
 
       newCompanySubscription = companySubscriptionRepository.save(newCompanySubscription);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(
           newCompanySubscription);
@@ -85,14 +77,6 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
 
       companySubscriptionById = companySubscriptionRepository.save(companySubscriptionById);
 
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
       return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(
           companySubscriptionById);
     } catch (Exception exception) {
@@ -110,13 +94,6 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
 
       companySubscriptionRepository.deleteById(companySubscriptionById.getId());
 
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.services;
 import com.capstone.ar_guideline.dtos.requests.Enrollment.EnrollmentCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Enrollment.EnrollmentResponse;
 import com.capstone.ar_guideline.entities.Enrollment;
+import java.util.List;
 
 public interface IEnrollmentService {
   EnrollmentResponse create(EnrollmentCreationRequest request);
@@ -16,4 +17,10 @@ public interface IEnrollmentService {
   Enrollment findById(String id);
 
   Integer countByCourseId(String courseId);
+
+  List<EnrollmentResponse> createAll(List<EnrollmentCreationRequest> requests);
+
+  List<EnrollmentResponse> findCourseIsRequiredForUser(String userId, Boolean isMandatory);
+
+  void enroll(String courseId, String userId);
 }

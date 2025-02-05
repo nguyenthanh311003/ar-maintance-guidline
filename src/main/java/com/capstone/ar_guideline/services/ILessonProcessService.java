@@ -12,4 +12,6 @@ public interface ILessonProcessService {
   void delete(String id);
 
   LessonProcess findById(String id);
+
+  void createAll(String courseId, String userId);
 }
