@@ -1,6 +1,5 @@
 package com.capstone.ar_guideline.dtos.requests.Course;
 
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
