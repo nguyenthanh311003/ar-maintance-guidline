@@ -54,6 +54,14 @@ public class EnrollmentController {
     return ApiResponse.<String>builder().result("Enrollment has been deleted").build();
   }
 
+  @DeleteMapping(
+      value =
+          ConstAPI.EnrollmentAPI.DELETE_ENROLLMENT_BY_COURSE_USER + "{courseId}" + "/user/{userId}")
+  ApiResponse<String> deleteEnrollment(@PathVariable String courseId, @PathVariable String userId) {
+    enrollmentService.deleteByCourseIdAndUserId(courseId, userId);
+    return ApiResponse.<String>builder().result("Enrollment has been deleted").build();
+  }
+
   @PutMapping(value = ConstAPI.EnrollmentAPI.UPDATE_STATUS_ENROLLMENT + "{enrollmentId}")
   ApiResponse<EnrollmentResponse> updateEnrollmentStatus(@PathVariable String enrollmentId) {
     return ApiResponse.<EnrollmentResponse>builder()

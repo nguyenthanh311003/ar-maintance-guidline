@@ -32,4 +32,6 @@ public interface IEnrollmentService {
   Integer countByCourseIdAndEnrollmentDateNotNull(String courseId);
 
   void enroll(String courseId, String userId);
+
+  void deleteByCourseIdAndUserId(String courseId, String userId);
 }
