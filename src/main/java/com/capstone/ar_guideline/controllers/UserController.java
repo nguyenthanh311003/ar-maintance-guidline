@@ -4,11 +4,11 @@ import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.User.LoginRequest;
 import com.capstone.ar_guideline.dtos.requests.User.SignUpRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.User.AuthenticationResponse;
 import com.capstone.ar_guideline.dtos.responses.User.UserToAssignResponse;
 import com.capstone.ar_guideline.services.IUserAssignmentService;
 import com.capstone.ar_guideline.services.IUserService;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -25,10 +25,17 @@ public class UserController {
   IUserAssignmentService userAssignmentService;
 
   @GetMapping(value = ConstAPI.UserAPI.PREFIX_USER + "company/{companyId}/" + "course/{courseId}")
-  public ApiResponse<List<UserToAssignResponse>> getUserToAssign(
-      @PathVariable String companyId, @PathVariable String courseId) {
-    return ApiResponse.<List<UserToAssignResponse>>builder()
-        .result(userAssignmentService.getUsersToAssign(companyId, courseId))
+  public ApiResponse<PagingModel<UserToAssignResponse>> getUserToAssign(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam String keyword,
+      @RequestParam(defaultValue = "") String isAssign,
+      @PathVariable String companyId,
+      @PathVariable String courseId) {
+    return ApiResponse.<PagingModel<UserToAssignResponse>>builder()
+        .result(
+            userAssignmentService.getUsersToAssign(
+                page, size, companyId, courseId, keyword, isAssign))
         .build();
   }
 

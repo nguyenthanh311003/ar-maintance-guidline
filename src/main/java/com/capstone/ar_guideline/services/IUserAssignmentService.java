@@ -1,8 +1,9 @@
 package com.capstone.ar_guideline.services;
 
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.User.UserToAssignResponse;
-import java.util.List;
 
 public interface IUserAssignmentService {
-  List<UserToAssignResponse> getUsersToAssign(String companyId, String courseId);
+  PagingModel<UserToAssignResponse> getUsersToAssign(
+      int page, int size, String companyId, String courseId, String keyword, String isAssign);
 }

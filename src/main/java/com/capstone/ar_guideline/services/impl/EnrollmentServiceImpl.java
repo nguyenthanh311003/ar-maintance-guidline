@@ -241,4 +241,18 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
       }
     }
   }
+
+  @Override
+  public void deleteByCourseIdAndUserId(String courseId, String userId) {
+    try {
+      Enrollment enrollmentByCourseIdAndUserId =
+          enrollmentRepository.findByCourseIdAndUserId(courseId, userId);
+      enrollmentRepository.deleteById(enrollmentByCourseIdAndUserId.getId());
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.ENROLLMENT_DELETE_FAILED);
+    }
+  }
 }
