@@ -72,7 +72,7 @@ public class CourseController {
 
   @PostMapping(value = ConstAPI.CourseAPI.COURSE)
   public ApiResponse<CourseResponse> createCourse(
-      @RequestBody @Valid CourseCreationRequest request) {
+      @ModelAttribute @Valid CourseCreationRequest request) {
     return ApiResponse.<CourseResponse>builder().result(courseService.create(request)).build();
   }
 

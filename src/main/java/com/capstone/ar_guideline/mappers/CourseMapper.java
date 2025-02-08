@@ -4,7 +4,10 @@ import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.entities.Course;
+import com.capstone.ar_guideline.services.impl.FileStorageService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CourseMapper {
   public static Course fromCourseCreationRequestToEntity(CourseCreationRequest request) {
     return Course.builder()
@@ -13,7 +16,7 @@ public class CourseMapper {
         .isMandatory(request.getIsMandatory())
         .shortDescription(request.getShortDescription())
         .targetAudience(request.getTargetAudience())
-        .imageUrl(request.getImageUrl())
+        .imageUrl(FileStorageService.storeFile(request.getImageUrl()))
         .company(Company.builder().id(request.getCompanyId()).build())
         .type(request.getType())
         .status(request.getStatus())
