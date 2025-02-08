@@ -2,6 +2,8 @@ package com.capstone.ar_guideline.services.impl;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -24,14 +26,32 @@ public class FileStorageService {
   }
 
   public String storeFile(MultipartFile file) {
+    if (file.isEmpty()) {
+      throw new IllegalArgumentException("Cannot store an empty file.");
+    }
+
     try {
-      Path targetLocation = this.fileStorageLocation.resolve(file.getOriginalFilename());
+      // Extract the original filename and sanitize it
+      String originalFilename = file.getOriginalFilename();
+      String fileExtension = "";
+
+      if (originalFilename != null && originalFilename.contains(".")) {
+        fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+      }
+
+      // Generate a safe, unique filename
+      String fileId = UUID.randomUUID().toString() + fileExtension;
+      Path targetLocation = this.fileStorageLocation.resolve(fileId);
+
+      // Save the file
       Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-      return targetLocation.toString();
+
+      return fileId;
     } catch (IOException e) {
-      throw new RuntimeException("Could not store file " + file.getOriginalFilename(), e);
+      throw new RuntimeException("Could not store file: " + file.getOriginalFilename(), e);
     }
   }
+
 
   public Resource getFile(String filename) {
     try {
