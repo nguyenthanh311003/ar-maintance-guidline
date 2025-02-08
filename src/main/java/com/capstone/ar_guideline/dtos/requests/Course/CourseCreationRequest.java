@@ -11,12 +11,14 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CourseCreationRequest {
 
-  private String companyId;
-  private String title;
-  private String description;
-  private Integer duration;
-  private String imageUrl;
-  private String status;
-  private Boolean isMandatory;
-  private String type;
+  String companyId;
+  String title;
+  String description;
+  String shortDescription;
+  String targetAudience;
+  Integer duration;
+  String imageUrl;
+  String status;
+  Boolean isMandatory;
+  String type;
 }

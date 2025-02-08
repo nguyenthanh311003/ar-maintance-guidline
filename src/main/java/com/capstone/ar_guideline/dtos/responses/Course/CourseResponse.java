@@ -12,16 +12,18 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CourseResponse implements Serializable {
-  private String id;
-  private String companyId;
-  private List<LessonResponse> lessons;
-  private String title;
-  private String description;
-  private Integer duration;
-  private Boolean isMandatory;
-  private String imageUrl;
-  private Integer numberOfLessons;
-  private Integer numberOfParticipants;
-  private String status;
-  private String type;
+  String id;
+  String companyId;
+  List<LessonResponse> lessons;
+  String title;
+  String description;
+  String shortDescription;
+  String targetAudience;
+  Integer duration;
+  Boolean isMandatory;
+  String imageUrl;
+  Integer numberOfLessons;
+  Integer numberOfParticipants;
+  String status;
+  String type;
 }
