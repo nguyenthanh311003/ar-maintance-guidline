@@ -126,4 +126,8 @@ public class ConstAPI {
   public static class LessonDetailAPI {
     public static final String LESSON_DETAIL = "api/v1/lesson-detail";
   }
+
+  public static class FileAPI {
+    public static final String FILE = "api/v1/files";
+  }
 }

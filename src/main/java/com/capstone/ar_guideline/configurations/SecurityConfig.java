@@ -25,9 +25,13 @@ public class SecurityConfig implements WebMvcConfigurer {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(request -> request.anyRequest().permitAll())
+        .authorizeHttpRequests(request -> request
+           //     .requestMatchers("/api/v1/login", "/api/v1/register").permitAll()
+              //  .requestMatchers("/api/v1/**").hasAnyAuthority("ADMIN")
+                .anyRequest().permitAll()
+        )
         .sessionManagement(
-            manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
