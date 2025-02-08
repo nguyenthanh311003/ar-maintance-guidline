@@ -19,6 +19,7 @@ public class CourseCreationRequest {
   String targetAudience;
   Integer duration;
   MultipartFile imageUrl;
+  String imageUrlString;
   String status;
   Boolean isMandatory;
   String type;

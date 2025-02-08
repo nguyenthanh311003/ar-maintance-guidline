@@ -16,7 +16,7 @@ public class CourseMapper {
         .isMandatory(request.getIsMandatory())
         .shortDescription(request.getShortDescription())
         .targetAudience(request.getTargetAudience())
-        .imageUrl(FileStorageService.storeFile(request.getImageUrl()))
+        .imageUrl(request.getImageUrlString())
         .company(Company.builder().id(request.getCompanyId()).build())
         .type(request.getType())
         .status(request.getStatus())

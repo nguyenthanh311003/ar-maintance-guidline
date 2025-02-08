@@ -31,6 +31,7 @@ public class LessonDetail {
   private Integer duration;
   private String status;
   private String videoUrl;
+  private String attachFileUrl;
   private String type;
 
   @Column(nullable = false, updatable = false)

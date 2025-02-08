@@ -18,5 +18,6 @@ public class LessonDetailResponse {
   private Integer duration;
   private String status;
   private String videoUrl;
+  private String attachFileUrl;
   private String type;
 }

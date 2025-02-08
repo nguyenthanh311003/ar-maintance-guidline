@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -78,11 +79,19 @@ public class CourseController {
 
   @PutMapping(value = ConstAPI.CourseAPI.COURSE + "/{courseId}")
   public ApiResponse<CourseResponse> updateCourse(
-      @PathVariable String courseId, @RequestBody @Valid CourseCreationRequest request) {
+      @PathVariable String courseId, @ModelAttribute @Valid CourseCreationRequest request) {
     return ApiResponse.<CourseResponse>builder()
         .result(courseService.update(courseId, request))
         .build();
   }
+
+  @PutMapping(value = ConstAPI.CourseAPI.UPDATE_COURSE_PICTURE + "/{courseId}")
+    public ApiResponse<String> updateCoursePicture(
+        @PathVariable String courseId, @RequestParam MultipartFile file) {
+        return ApiResponse.<String>builder()
+            .result(courseService.updateCoursePicture(courseId, file))
+            .build();
+    }
 
   @DeleteMapping(value = ConstAPI.CourseAPI.COURSE + "/{courseId}")
   public ApiResponse<String> deleteCourse(@PathVariable String courseId) {

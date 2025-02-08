@@ -35,5 +35,10 @@ public class FileUploadController {
       return ResponseEntity.notFound().build();
     }
   }
+  @PostMapping(ConstAPI.FileAPI.FILE+"/upload")
+  public String getFile(@RequestParam MultipartFile file) {
+
+    return fileStorageService.storeFile(file);
+  }
 
 }

@@ -31,6 +31,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -123,6 +124,7 @@ public class CourseServiceImpl implements ICourseService {
   public CourseResponse create(CourseCreationRequest request) {
     try {
       Course newCourse = CourseMapper.fromCourseCreationRequestToEntity(request);
+      newCourse.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
       newCourse.setDuration(0);
       Company company = new Company();
@@ -146,9 +148,11 @@ public class CourseServiceImpl implements ICourseService {
   @Override
   public CourseResponse update(String id, CourseCreationRequest request) {
     try {
-      Set<String> keysToDelete = redisTemplate.keys(ConstHashKey.HASH_KEY_COURSE);
       Course courseById = findById(id);
       courseById = CourseMapper.fromCourseCreationRequestToEntity(request);
+      if(request.getImageUrl() != null) {
+        courseById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
+      }
       courseRepository.save(courseById);
 
       Arrays.stream(keysToRemove)
@@ -165,6 +169,20 @@ public class CourseServiceImpl implements ICourseService {
     }
   }
 
+  @Override
+  public String updateCoursePicture(String courseId, MultipartFile file) {
+    try {
+      Course course = findById(courseId);
+      course.setImageUrl(FileStorageService.storeFile(file));
+      courseRepository.save(course);
+      return course.getImageUrl();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_UPDATE_FAILED);
+    }
+  }
   @Override
   public void delete(String id) {
     try {
