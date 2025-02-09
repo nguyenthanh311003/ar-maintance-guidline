@@ -1,8 +1,11 @@
 package com.capstone.ar_guideline.repositories;
 
+import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Enrollment;
 import java.util.List;
 import java.util.Optional;
+
+import com.capstone.ar_guideline.entities.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +33,6 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, String> 
   Integer countByCourseIdAndEnrollmentDateIsNotNull(String courseId);
 
   Enrollment findByCourseIdAndUserId(String courseId, String userId);
+  boolean existsByUserAndCourse(User user, Course course);
+
 }

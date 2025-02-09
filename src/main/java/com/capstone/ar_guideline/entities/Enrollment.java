@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "enrollment", uniqueConstraints = @UniqueConstraint(columnNames = {"course_id", "user_id"}))
 public class Enrollment {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
