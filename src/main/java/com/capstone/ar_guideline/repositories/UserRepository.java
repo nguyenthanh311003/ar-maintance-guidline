@@ -22,6 +22,7 @@ public interface UserRepository extends JpaRepository<User, String> {
           + "AND (:isAssign = '' OR "
           + "( :isAssign = 'NotIsAssign' AND e.id IS NULL ) OR "
           + "( :isAssign = 'IsAssign' AND e.enrollmentDate IS NOT NULL )) "
+          + "AND u.role.id = '1dc4dacd-571e-43e9-a9f6-570432d30a5e' "
           + "ORDER BY u.createdDate ASC")
   List<User> getUserByCompanyId(
       Pageable pageable,

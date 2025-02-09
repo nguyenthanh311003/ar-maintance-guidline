@@ -19,7 +19,7 @@ public class FileUploadController {
     this.fileStorageService = fileStorageService;
   }
 
-  @GetMapping(ConstAPI.FileAPI.FILE+"/{filename}")
+  @GetMapping(ConstAPI.FileAPI.FILE + "/{filename}")
   public ResponseEntity<Resource> getFile(@PathVariable String filename) {
     try {
       Resource resource = fileStorageService.getFile(filename);
@@ -35,10 +35,10 @@ public class FileUploadController {
       return ResponseEntity.notFound().build();
     }
   }
-  @PostMapping(ConstAPI.FileAPI.FILE+"/upload")
+
+  @PostMapping(ConstAPI.FileAPI.FILE + "/upload")
   public String getFile(@RequestParam MultipartFile file) {
 
     return fileStorageService.storeFile(file);
   }
-
 }
