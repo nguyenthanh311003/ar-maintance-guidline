@@ -30,4 +30,21 @@ public interface UserRepository extends JpaRepository<User, String> {
       @Param("keyword") String keyword,
       @Param("isAssign") String isAssign,
       @Param("courseId") String courseId);
+
+  @Query(
+      "SELECT COUNT(u) FROM User u "
+          + "LEFT JOIN Enrollment e ON u.id = e.user.id AND e.course.id = :courseId "
+          + "WHERE u.company.id = :companyId "
+          + "AND u.role.roleName = 'STAFF' "
+          + "AND (:keyword IS NULL OR LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%')) "
+          + "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%'))) "
+          + "AND (:isAssign = '' OR "
+          + "( :isAssign = 'NotIsAssign' AND e.id IS NULL ) OR "
+          + "( :isAssign = 'IsAssign' AND e.id IS NOT NULL )) "
+          + "ORDER BY u.createdDate ASC")
+  int countUsersByCompanyId(
+      @Param("companyId") String companyId,
+      @Param("keyword") String keyword,
+      @Param("isAssign") String isAssign,
+      @Param("courseId") String courseId);
 }

@@ -15,4 +15,6 @@ public interface IUserService {
 
   List<User> getUserByCompanyId(
       int page, int size, String companyId, String keyword, String isAssign, String courseId);
+
+  int countUsersByCompanyId(String companyId, String keyword, String isAssign, String courseId);
 }

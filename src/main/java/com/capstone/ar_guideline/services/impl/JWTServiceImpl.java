@@ -10,17 +10,25 @@ import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 public class JWTServiceImpl implements IJWTService {
 
+  @Value("${jwt.access-token-expiration}") // Load from properties
+  private long accessTokenExpiration;
+
+  @Value("${jwt.refresh-token-expiration}") // Load from properties
+  private long refreshTokenExpiration;
+
   public String generateToken(UserDetails userDetails) {
     return Jwts.builder()
         .setSubject(userDetails.getUsername())
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+        .setExpiration(
+            new Date(System.currentTimeMillis() + accessTokenExpiration)) // Use configured time
         .signWith(getSigninKey(), SignatureAlgorithm.HS256)
         .compact();
   }
@@ -30,7 +38,8 @@ public class JWTServiceImpl implements IJWTService {
         .setClaims(extraClaims)
         .setSubject(userDetails.getUsername())
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 604800000))
+        .setExpiration(
+            new Date(System.currentTimeMillis() + refreshTokenExpiration)) // Use configured time
         .signWith(getSigninKey(), SignatureAlgorithm.HS256)
         .compact();
   }
@@ -41,13 +50,12 @@ public class JWTServiceImpl implements IJWTService {
 
   private <T> T extractClaims(String token, Function<Claims, T> claimsResolvers) {
     final Claims claims = extractAllClaims(token);
-    return claimsResolvers.apply((claims));
+    return claimsResolvers.apply(claims);
   }
 
   private Key getSigninKey() {
     byte[] key =
-        Decoders.BASE64.decode(
-            "413F4428472B4B6250655368566D5970337336763979244226452948404D6351"); // Secret key
+        Decoders.BASE64.decode("413F4428472B4B6250655368566D5970337336763979244226452948404D6351");
     return Keys.hmacShaKeyFor(key);
   }
 
