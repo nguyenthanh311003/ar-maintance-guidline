@@ -24,7 +24,7 @@ public class Course implements Serializable {
   private Company company;
 
   @ManyToOne
-  @JoinColumn(name = "model_id", nullable = false)
+  @JoinColumn(name = "model_id")
   private Model model;
 
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)

@@ -17,6 +17,7 @@ public interface UserRepository extends JpaRepository<User, String> {
       "SELECT u FROM User u "
           + "LEFT JOIN Enrollment e ON u.id = e.user.id AND e.course.id = :courseId "
           + "WHERE u.company.id = :companyId "
+          + "AND u.role.roleName = 'STAFF' "
           + "AND (:keyword IS NULL OR LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%')) "
           + "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%'))) "
           + "AND (:isAssign = '' OR "
