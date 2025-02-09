@@ -19,7 +19,6 @@ import com.capstone.ar_guideline.util.UtilService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -150,7 +149,7 @@ public class CourseServiceImpl implements ICourseService {
     try {
       Course courseById = findById(id);
       courseById = CourseMapper.fromCourseCreationRequestToEntity(request);
-      if(request.getImageUrl() != null) {
+      if (request.getImageUrl() != null) {
         courseById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       }
       courseRepository.save(courseById);
@@ -183,6 +182,7 @@ public class CourseServiceImpl implements ICourseService {
       throw new AppException(ErrorCode.COURSE_UPDATE_FAILED);
     }
   }
+
   @Override
   public void delete(String id) {
     try {

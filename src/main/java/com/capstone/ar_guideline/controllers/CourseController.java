@@ -86,12 +86,12 @@ public class CourseController {
   }
 
   @PutMapping(value = ConstAPI.CourseAPI.UPDATE_COURSE_PICTURE + "/{courseId}")
-    public ApiResponse<String> updateCoursePicture(
-        @PathVariable String courseId, @RequestParam MultipartFile file) {
-        return ApiResponse.<String>builder()
-            .result(courseService.updateCoursePicture(courseId, file))
-            .build();
-    }
+  public ApiResponse<String> updateCoursePicture(
+      @PathVariable String courseId, @RequestParam MultipartFile file) {
+    return ApiResponse.<String>builder()
+        .result(courseService.updateCoursePicture(courseId, file))
+        .build();
+  }
 
   @DeleteMapping(value = ConstAPI.CourseAPI.COURSE + "/{courseId}")
   public ApiResponse<String> deleteCourse(@PathVariable String courseId) {

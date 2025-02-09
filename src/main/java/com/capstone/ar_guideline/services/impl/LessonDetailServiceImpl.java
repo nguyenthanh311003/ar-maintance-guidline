@@ -36,12 +36,15 @@ public class LessonDetailServiceImpl implements ILessonDetailService {
       } else {
         orderInLesson++;
       }
-      LessonDetail lessonDetail = LessonDetailMapper.fromLessonDetailCreationRequestToEntity(lessonDetailCreationRequest);
+      LessonDetail lessonDetail =
+          LessonDetailMapper.fromLessonDetailCreationRequestToEntity(lessonDetailCreationRequest);
       if (lessonDetailCreationRequest.getAttachFileUrl() != null) {
-        lessonDetail.setAttachFileUrl(FileStorageService.storeFile(lessonDetailCreationRequest.getAttachFileUrl()));
+        lessonDetail.setAttachFileUrl(
+            FileStorageService.storeFile(lessonDetailCreationRequest.getAttachFileUrl()));
       }
       if (lessonDetailCreationRequest.getVideoUrl() != null) {
-        lessonDetail.setVideoUrl(FileStorageService.storeFile(lessonDetailCreationRequest.getVideoUrl()));
+        lessonDetail.setVideoUrl(
+            FileStorageService.storeFile(lessonDetailCreationRequest.getVideoUrl()));
       }
 
       lessonDetail.setOrderInLesson(orderInLesson);
@@ -64,10 +67,12 @@ public class LessonDetailServiceImpl implements ILessonDetailService {
           LessonDetailMapper.fromLessonDetailCreationRequestToEntity(lessonDetailCreationRequest);
 
       if (lessonDetailCreationRequest.getAttachFileUrl() != null) {
-        lessonDetail.setAttachFileUrl(FileStorageService.storeFile(lessonDetailCreationRequest.getAttachFileUrl()));
+        lessonDetail.setAttachFileUrl(
+            FileStorageService.storeFile(lessonDetailCreationRequest.getAttachFileUrl()));
       }
       if (lessonDetailCreationRequest.getVideoUrl() != null) {
-        lessonDetail.setVideoUrl(FileStorageService.storeFile(lessonDetailCreationRequest.getVideoUrl()));
+        lessonDetail.setVideoUrl(
+            FileStorageService.storeFile(lessonDetailCreationRequest.getVideoUrl()));
       }
       lessonDetail = lessonDetailRepository.save(lessonDetail);
       return LessonDetailMapper.fromEntityToLessonDetailResponse(lessonDetail);
