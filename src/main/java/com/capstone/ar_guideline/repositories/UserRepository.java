@@ -21,8 +21,7 @@ public interface UserRepository extends JpaRepository<User, String> {
           + "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%'))) "
           + "AND (:isAssign = '' OR "
           + "( :isAssign = 'NotIsAssign' AND e.id IS NULL ) OR "
-          + "( :isAssign = 'IsAssign' AND e.enrollmentDate IS NOT NULL )) "
-          + "AND u.role.id = '1dc4dacd-571e-43e9-a9f6-570432d30a5e' "
+          + "( :isAssign = 'IsAssign' AND e.id IS NOT NULL )) "
           + "ORDER BY u.createdDate ASC")
   List<User> getUserByCompanyId(
       Pageable pageable,
