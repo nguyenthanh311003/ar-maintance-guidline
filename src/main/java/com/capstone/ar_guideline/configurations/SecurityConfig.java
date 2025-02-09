@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.configurations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,9 +27,11 @@ public class SecurityConfig implements WebMvcConfigurer {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(request -> request
-           //     .requestMatchers("/api/v1/login", "/api/v1/register").permitAll()
-              //  .requestMatchers("/api/v1/**").hasAnyAuthority("ADMIN")
-                .anyRequest().permitAll()
+                .requestMatchers("/api/v1/login", "/api/v1/register").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/**").hasAnyAuthority("ADMIN", "COMPANY")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/**").hasAnyAuthority("ADMIN", "COMPANY")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasAnyAuthority("ADMIN", "COMPANY")
+                .anyRequest().authenticated()
         )
         .sessionManagement(
                 manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -36,34 +39,6 @@ public class SecurityConfig implements WebMvcConfigurer {
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
-
-  //  @Bean
-  //  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-  //    http.csrf(AbstractHttpConfigurer::disable)
-  //        .authorizeHttpRequests(
-  //            request ->
-  //                request
-  //                    .requestMatchers(ConstAPI.UserAPI.LOGIN)
-  //                    .permitAll()
-  //                    .anyRequest()
-  //                    .authenticated())
-  //        .sessionManagement(
-  //            manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-  //        .authenticationProvider(authenticationProvider)
-  //        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-  //    return http.build();
-  //  }
-
-  //  @Bean
-  //  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-  //    http.csrf(AbstractHttpConfigurer::disable)
-  //        .authorizeHttpRequests(request -> request.anyRequest().permitAll())
-  //        .sessionManagement(
-  //            manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-  //        .authenticationProvider(authenticationProvider)
-  //        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-  //    return http.build();
-  //  }
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
