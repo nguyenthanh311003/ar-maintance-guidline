@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class CourseCreationRequest {
 
   String companyId;
+  String modelId;
   String title;
   String description;
   String shortDescription;
