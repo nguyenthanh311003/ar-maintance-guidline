@@ -18,6 +18,7 @@ public class LessonDetailCreationRequest {
   private String status;
   private MultipartFile videoUrl;
   private MultipartFile attachFileUrl;
+  private String content;
   private String videoUrlString;
   private String attachFileUrlString;
   private String type;

@@ -5,9 +5,7 @@ import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
-import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.entities.Course;
-import com.capstone.ar_guideline.entities.Model;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CourseMapper;
@@ -126,8 +124,8 @@ public class CourseServiceImpl implements ICourseService {
   public CourseResponse create(CourseCreationRequest request) {
     try {
       Course newCourse = CourseMapper.fromCourseCreationRequestToEntity(request);
-       modelService.findById(request.getModelId());
-       companyService.findById(request.getCompanyId());
+      modelService.findById(request.getModelId());
+      companyService.findById(request.getCompanyId());
       newCourse.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
       newCourse.setDuration(0);

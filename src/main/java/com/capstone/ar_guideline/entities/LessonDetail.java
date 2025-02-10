@@ -33,6 +33,7 @@ public class LessonDetail {
   private String videoUrl;
   private String attachFileUrl;
   private String type;
+  private String content;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
