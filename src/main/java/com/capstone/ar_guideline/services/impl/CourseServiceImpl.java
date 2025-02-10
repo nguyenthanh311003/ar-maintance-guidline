@@ -19,7 +19,6 @@ import com.capstone.ar_guideline.util.UtilService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +30,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +57,7 @@ public class CourseServiceImpl implements ICourseService {
       Boolean isMandatory,
       String userId,
       String searchTemp,
+      String companyId,
       String status) {
     try {
       PagingModel<CourseResponse> pagingModel = new PagingModel<>();
@@ -84,7 +85,7 @@ public class CourseServiceImpl implements ICourseService {
               courseRepository.findAllCourseEnrolledBy(
                   pageable, isMandatory, userId, searchTemp, status);
         } else {
-          courses = courseRepository.findAllBy(pageable, searchTemp, status);
+          courses = courseRepository.findAllBy(pageable, searchTemp, status, companyId);
         }
         courseResponses =
             courses.stream()
@@ -122,6 +123,7 @@ public class CourseServiceImpl implements ICourseService {
   public CourseResponse create(CourseCreationRequest request) {
     try {
       Course newCourse = CourseMapper.fromCourseCreationRequestToEntity(request);
+      newCourse.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
       newCourse.setDuration(0);
       Company company = new Company();
@@ -145,9 +147,11 @@ public class CourseServiceImpl implements ICourseService {
   @Override
   public CourseResponse update(String id, CourseCreationRequest request) {
     try {
-      Set<String> keysToDelete = redisTemplate.keys(ConstHashKey.HASH_KEY_COURSE);
       Course courseById = findById(id);
       courseById = CourseMapper.fromCourseCreationRequestToEntity(request);
+      if (request.getImageUrl() != null) {
+        courseById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
+      }
       courseRepository.save(courseById);
 
       Arrays.stream(keysToRemove)
@@ -156,6 +160,21 @@ public class CourseServiceImpl implements ICourseService {
 
       return CourseMapper.fromEntityToCourseResponse(courseById);
 
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public String updateCoursePicture(String courseId, MultipartFile file) {
+    try {
+      Course course = findById(courseId);
+      course.setImageUrl(FileStorageService.storeFile(file));
+      courseRepository.save(course);
+      return course.getImageUrl();
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -256,19 +275,31 @@ public class CourseServiceImpl implements ICourseService {
   }
 
   @Override
-  public List<CourseResponse> findCourseNoMandatory() {
+  public PagingModel<CourseResponse> findCourseNoMandatory(int page, int size, String companyId) {
     try {
-      List<Course> coursesNoMandatory = courseRepository.findCourseNoMandatory();
+      PagingModel<CourseResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+      List<Course> coursesNoMandatory = courseRepository.findCourseNoMandatory(pageable, companyId);
 
-      return coursesNoMandatory.stream()
-          .map(
-              c -> {
-                CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(c);
-                courseResponse.setLessons(
-                    c.getLessons().stream().map(LessonMapper::FromEntityToLessonResponse).toList());
-                return courseResponse;
-              })
-          .toList();
+      List<CourseResponse> courseResponses =
+          coursesNoMandatory.stream()
+              .map(
+                  c -> {
+                    CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(c);
+                    courseResponse.setLessons(
+                        c.getLessons().stream()
+                            .map(LessonMapper::FromEntityToLessonResponse)
+                            .toList());
+                    return courseResponse;
+                  })
+              .toList();
+
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems(courseResponses.size());
+      pagingModel.setTotalPages(UtilService.getTotalPage(courseResponses.size(), size));
+      pagingModel.setObjectList(courseResponses);
+      return pagingModel;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

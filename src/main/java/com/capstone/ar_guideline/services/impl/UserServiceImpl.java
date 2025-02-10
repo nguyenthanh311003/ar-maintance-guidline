@@ -19,6 +19,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -117,9 +119,11 @@ public class UserServiceImpl implements IUserService {
   }
 
   @Override
-  public List<User> getUserByCompanyId(String companyId) {
+  public List<User> getUserByCompanyId(
+      int page, int size, String companyId, String keyword, String isAssign, String courseId) {
     try {
-      return userRepository.getUserByCompanyId(companyId);
+      Pageable pageable = PageRequest.of(page - 1, size);
+      return userRepository.getUserByCompanyId(pageable, companyId, keyword, isAssign, courseId);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -146,5 +150,11 @@ public class UserServiceImpl implements IUserService {
       log.error("Error when get user by email: {}", e.getMessage());
     }
     return null;
+  }
+
+  @Override
+  public int countUsersByCompanyId(
+      String companyId, String keyword, String isAssign, String courseId) {
+    return userRepository.countUsersByCompanyId(companyId, keyword, isAssign, courseId);
   }
 }

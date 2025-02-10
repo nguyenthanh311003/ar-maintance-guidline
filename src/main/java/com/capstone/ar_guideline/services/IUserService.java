@@ -13,5 +13,8 @@ public interface IUserService {
 
   User findById(String id);
 
-  List<User> getUserByCompanyId(String companyId);
+  List<User> getUserByCompanyId(
+      int page, int size, String companyId, String keyword, String isAssign, String courseId);
+
+  int countUsersByCompanyId(String companyId, String keyword, String isAssign, String courseId);
 }

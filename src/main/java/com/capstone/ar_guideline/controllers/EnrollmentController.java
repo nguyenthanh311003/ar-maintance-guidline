@@ -4,6 +4,7 @@ import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.Enrollment.EnrollmentCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Enrollment.EnrollmentResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IEnrollmentService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -29,10 +30,13 @@ public class EnrollmentController {
   }
 
   @GetMapping(value = ConstAPI.EnrollmentAPI.FIND_COURSE_MANDATORY + "{userId}")
-  ApiResponse<List<EnrollmentResponse>> findCourseMandatory(
-      @PathVariable String userId, @RequestParam Boolean isRequiredCourse) {
-    return ApiResponse.<List<EnrollmentResponse>>builder()
-        .result(enrollmentService.findCourseIsRequiredForUser(userId, isRequiredCourse))
+  ApiResponse<PagingModel<EnrollmentResponse>> findCourseMandatory(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @PathVariable String userId,
+      @RequestParam Boolean isRequiredCourse) {
+    return ApiResponse.<PagingModel<EnrollmentResponse>>builder()
+        .result(enrollmentService.findCourseIsRequiredForUser(page, size, userId, isRequiredCourse))
         .build();
   }
 
@@ -50,6 +54,14 @@ public class EnrollmentController {
     return ApiResponse.<String>builder().result("Enrollment has been deleted").build();
   }
 
+  @DeleteMapping(
+      value =
+          ConstAPI.EnrollmentAPI.DELETE_ENROLLMENT_BY_COURSE_USER + "{courseId}" + "/user/{userId}")
+  ApiResponse<String> deleteEnrollment(@PathVariable String courseId, @PathVariable String userId) {
+    enrollmentService.deleteByCourseIdAndUserId(courseId, userId);
+    return ApiResponse.<String>builder().result("Enrollment has been deleted").build();
+  }
+
   @PutMapping(value = ConstAPI.EnrollmentAPI.UPDATE_STATUS_ENROLLMENT + "{enrollmentId}")
   ApiResponse<EnrollmentResponse> updateEnrollmentStatus(@PathVariable String enrollmentId) {
     return ApiResponse.<EnrollmentResponse>builder()
@@ -58,8 +70,7 @@ public class EnrollmentController {
   }
 
   @PutMapping(value = ConstAPI.EnrollmentAPI.ENROLL)
-    void enroll(@RequestBody EnrollmentCreationRequest request) {
+  void enroll(@RequestBody EnrollmentCreationRequest request) {
     enrollmentService.enroll(request.getCourseId(), request.getUserId());
   }
-
 }

@@ -2,6 +2,7 @@ package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.dtos.requests.Enrollment.EnrollmentCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Enrollment.EnrollmentResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Enrollment;
 import com.capstone.ar_guideline.entities.User;
@@ -13,6 +14,7 @@ import com.capstone.ar_guideline.repositories.EnrollmentRepository;
 import com.capstone.ar_guideline.services.IEnrollmentService;
 import com.capstone.ar_guideline.services.ILessonProcessService;
 import com.capstone.ar_guideline.services.IUserService;
+import com.capstone.ar_guideline.util.UtilService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -151,23 +155,32 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
   }
 
   @Override
-  public List<EnrollmentResponse> findCourseIsRequiredForUser(
-      String userId, Boolean isRequiredCourse) {
+  public PagingModel<EnrollmentResponse> findCourseIsRequiredForUser(
+      int page, int size, String userId, Boolean isRequiredCourse) {
     try {
+      PagingModel<EnrollmentResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
       userService.findById(userId);
       List<Enrollment> enrollments =
-          enrollmentRepository.findByUserIdAndEnrollmentDate(userId, isRequiredCourse);
+          enrollmentRepository.findByUserIdAndEnrollmentDate(pageable, userId, isRequiredCourse);
 
-      return enrollments.stream()
-          .map(
-              e -> {
-                EnrollmentResponse enrollmentResponse =
-                    EnrollmentMapper.FromEntityToEnrollmentResponse(e);
-                enrollmentResponse.setCourseResponse(
-                    CourseMapper.fromEntityToCourseResponse(e.getCourse()));
-                return enrollmentResponse;
-              })
-          .toList();
+      List<EnrollmentResponse> enrollmentResponses =
+          enrollments.stream()
+              .map(
+                  e -> {
+                    EnrollmentResponse enrollmentResponse =
+                        EnrollmentMapper.FromEntityToEnrollmentResponse(e);
+                    enrollmentResponse.setCourseResponse(
+                        CourseMapper.fromEntityToCourseResponse(e.getCourse()));
+                    return enrollmentResponse;
+                  })
+              .toList();
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems(enrollmentResponses.size());
+      pagingModel.setTotalPages(UtilService.getTotalPage(enrollmentResponses.size(), size));
+      pagingModel.setObjectList(enrollmentResponses);
+      return pagingModel;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -226,6 +239,20 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
       if (exception instanceof AppException) {
         throw exception;
       }
+    }
+  }
+
+  @Override
+  public void deleteByCourseIdAndUserId(String courseId, String userId) {
+    try {
+      Enrollment enrollmentByCourseIdAndUserId =
+          enrollmentRepository.findByCourseIdAndUserId(courseId, userId);
+      enrollmentRepository.deleteById(enrollmentByCourseIdAndUserId.getId());
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.ENROLLMENT_DELETE_FAILED);
     }
   }
 }

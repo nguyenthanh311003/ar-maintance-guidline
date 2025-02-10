@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,10 +31,12 @@ public class CourseController {
       @RequestParam(required = false) Boolean isMandatory,
       @RequestParam(required = false) String userId,
       @RequestParam(required = false) String searchTemp,
+      @RequestParam(required = false) String companyId,
       @RequestParam(required = false) String status) {
     return ApiResponse.<PagingModel<CourseResponse>>builder()
         .result(
-            courseService.findAll(page, size, isEnrolled, isMandatory, userId, searchTemp, status))
+            courseService.findAll(
+                page, size, isEnrolled, isMandatory, userId, searchTemp, companyId, status))
         .build();
   }
 
@@ -51,10 +54,13 @@ public class CourseController {
         .build();
   }
 
-  @GetMapping(value = ConstAPI.CourseAPI.NO_MANDATORY_COURSE)
-  public ApiResponse<List<CourseResponse>> getNoMandatoryCourse() {
-    return ApiResponse.<List<CourseResponse>>builder()
-        .result(courseService.findCourseNoMandatory())
+  @GetMapping(value = ConstAPI.CourseAPI.NO_MANDATORY_COURSE + "{companyId}")
+  public ApiResponse<PagingModel<CourseResponse>> getNoMandatoryCourse(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @PathVariable String companyId) {
+    return ApiResponse.<PagingModel<CourseResponse>>builder()
+        .result(courseService.findCourseNoMandatory(page, size, companyId))
         .build();
   }
 
@@ -67,15 +73,23 @@ public class CourseController {
 
   @PostMapping(value = ConstAPI.CourseAPI.COURSE)
   public ApiResponse<CourseResponse> createCourse(
-      @RequestBody @Valid CourseCreationRequest request) {
+      @ModelAttribute @Valid CourseCreationRequest request) {
     return ApiResponse.<CourseResponse>builder().result(courseService.create(request)).build();
   }
 
   @PutMapping(value = ConstAPI.CourseAPI.COURSE + "/{courseId}")
   public ApiResponse<CourseResponse> updateCourse(
-      @PathVariable String courseId, @RequestBody @Valid CourseCreationRequest request) {
+      @PathVariable String courseId, @ModelAttribute @Valid CourseCreationRequest request) {
     return ApiResponse.<CourseResponse>builder()
         .result(courseService.update(courseId, request))
+        .build();
+  }
+
+  @PutMapping(value = ConstAPI.CourseAPI.UPDATE_COURSE_PICTURE + "/{courseId}")
+  public ApiResponse<String> updateCoursePicture(
+      @PathVariable String courseId, @RequestParam MultipartFile file) {
+    return ApiResponse.<String>builder()
+        .result(courseService.updateCoursePicture(courseId, file))
         .build();
   }
 

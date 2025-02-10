@@ -2,6 +2,7 @@ package com.capstone.ar_guideline.services;
 
 import com.capstone.ar_guideline.dtos.requests.Enrollment.EnrollmentCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Enrollment.EnrollmentResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Enrollment;
 import java.util.List;
 import org.springframework.data.jpa.repository.Query;
@@ -19,7 +20,8 @@ public interface IEnrollmentService {
 
   List<EnrollmentResponse> createAll(List<EnrollmentCreationRequest> requests);
 
-  List<EnrollmentResponse> findCourseIsRequiredForUser(String userId, Boolean isMandatory);
+  PagingModel<EnrollmentResponse> findCourseIsRequiredForUser(
+      int page, int size, String userId, Boolean isMandatory);
 
   boolean checkUserIsAssign(String userId, String courseId);
 
@@ -30,4 +32,6 @@ public interface IEnrollmentService {
   Integer countByCourseIdAndEnrollmentDateNotNull(String courseId);
 
   void enroll(String courseId, String userId);
+
+  void deleteByCourseIdAndUserId(String courseId, String userId);
 }

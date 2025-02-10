@@ -27,6 +27,9 @@ public class Model implements Serializable {
   private List<Instruction> instructions;
 
   @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
+  private List<Course> courses;
+
+  @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
   private List<ModelRequest> modelRequests;
 
   private String modelCode;

@@ -32,7 +32,7 @@ public class LessonDetailController {
 
   @PostMapping(value = ConstAPI.LessonDetailAPI.LESSON_DETAIL)
   public ApiResponse<LessonDetailResponse> createLessonDetail(
-      @RequestBody @Valid LessonDetailCreationRequest request) {
+      @ModelAttribute @Valid LessonDetailCreationRequest request) {
     log.info("Creating a new lesson detail: {}", request);
     return ApiResponse.<LessonDetailResponse>builder()
         .result(lessonDetailService.create(request))
@@ -42,7 +42,7 @@ public class LessonDetailController {
   @PutMapping(value = ConstAPI.LessonDetailAPI.LESSON_DETAIL + "/{lessonDetailId}")
   public ApiResponse<LessonDetailResponse> updateLessonDetail(
       @PathVariable String lessonDetailId,
-      @RequestBody @Valid LessonDetailCreationRequest request) {
+      @ModelAttribute @Valid LessonDetailCreationRequest request) {
     log.info("Updating lesson detail with ID: {}", lessonDetailId);
     return ApiResponse.<LessonDetailResponse>builder()
         .result(lessonDetailService.update(lessonDetailId, request))

@@ -2,6 +2,7 @@ package com.capstone.ar_guideline.dtos.requests.LessonDetail;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -15,6 +16,9 @@ public class LessonDetailCreationRequest {
   private String description;
   private Integer duration;
   private String status;
-  private String videoUrl;
+  private MultipartFile videoUrl;
+  private MultipartFile attachFileUrl;
+  private String videoUrlString;
+  private String attachFileUrlString;
   private String type;
 }

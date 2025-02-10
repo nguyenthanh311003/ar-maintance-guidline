@@ -62,10 +62,11 @@ public class LessonServiceImpl implements ILessonService {
   @Override
   public LessonResponse update(String id, LessonCreationRequest request) {
     try {
+      Lesson lesson = findById(id);
       Lesson updatedLesson = LessonMapper.fromLessonCreationRequestToEntity(request);
-
+      updatedLesson.setOrderInCourse(lesson.getOrderInCourse());
       Lesson savedLesson = lessonRepository.save(updatedLesson);
-      updateDurationService.updateCourseDuration(savedLesson.getId());
+      updateDurationService.updateCourseDuration(savedLesson.getCourse().getId());
 
       return LessonMapper.FromEntityToLessonResponse(savedLesson);
     } catch (Exception e) {

@@ -5,6 +5,7 @@ import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Course;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ICourseService {
 
@@ -15,6 +16,7 @@ public interface ICourseService {
       Boolean isMandatory,
       String userId,
       String searchTemp,
+      String companyId,
       String status);
 
   CourseResponse create(CourseCreationRequest request);
@@ -31,7 +33,9 @@ public interface ICourseService {
 
   List<CourseResponse> findByCompanyId(String companyId);
 
-  List<CourseResponse> findCourseNoMandatory();
+  PagingModel<CourseResponse> findCourseNoMandatory(int page, int size, String companyId);
 
   Course save(Course course);
+
+  String updateCoursePicture(String courseId, MultipartFile file);
 }
