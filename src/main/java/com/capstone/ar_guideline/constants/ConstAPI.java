@@ -12,6 +12,7 @@ public class ConstAPI {
     public static final String COURSE_FIND_BY_TITLE = "api/v1/course/title";
     public static final String COURSE_FIND_BY_COMPANY_ID = "api/v1/course/company/";
     public static final String NO_MANDATORY_COURSE = "api/v1/course/no-mandatory/company/";
+    public static final String UPDATE_COURSE_PICTURE = "api/v1/course/picture";
   }
 
   public static class ModelAPI {
@@ -125,5 +126,9 @@ public class ConstAPI {
 
   public static class LessonDetailAPI {
     public static final String LESSON_DETAIL = "api/v1/lesson-detail";
+  }
+
+  public static class FileAPI {
+    public static final String FILE = "api/v1/files";
   }
 }

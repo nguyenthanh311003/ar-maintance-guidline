@@ -24,12 +24,12 @@ public class LessonDetailServiceImpl implements ILessonDetailService {
   @Autowired private ILessonService lessonService;
 
   @Override
-  public LessonDetailResponse create(LessonDetailCreationRequest lessonProcessCreationRequest) {
+  public LessonDetailResponse create(LessonDetailCreationRequest lessonDetailCreationRequest) {
     try {
-      Lesson lesson = lessonService.findById(lessonProcessCreationRequest.getLessonId());
+      Lesson lesson = lessonService.findById(lessonDetailCreationRequest.getLessonId());
       Integer orderInLesson =
           lessonDetailRepository
-              .findLessonDetailsByLessonId(lessonProcessCreationRequest.getLessonId())
+              .findLessonDetailsByLessonId(lessonDetailCreationRequest.getLessonId())
               .size();
       if (orderInLesson == 0) {
         orderInLesson = 1;
@@ -37,10 +37,19 @@ public class LessonDetailServiceImpl implements ILessonDetailService {
         orderInLesson++;
       }
       LessonDetail lessonDetail =
-          LessonDetailMapper.fromLessonDetailCreationRequestToEntity(lessonProcessCreationRequest);
+          LessonDetailMapper.fromLessonDetailCreationRequestToEntity(lessonDetailCreationRequest);
+      if (lessonDetailCreationRequest.getAttachFileUrl() != null) {
+        lessonDetail.setAttachFileUrl(
+            FileStorageService.storeFile(lessonDetailCreationRequest.getAttachFileUrl()));
+      }
+      if (lessonDetailCreationRequest.getVideoUrl() != null) {
+        lessonDetail.setVideoUrl(
+            FileStorageService.storeFile(lessonDetailCreationRequest.getVideoUrl()));
+      }
+
       lessonDetail.setOrderInLesson(orderInLesson);
       lessonDetail = lessonDetailRepository.save(lessonDetail);
-      Integer lessonDuration = lesson.getDuration() + lessonProcessCreationRequest.getDuration();
+      Integer lessonDuration = lesson.getDuration() + lessonDetailCreationRequest.getDuration();
       lessonService.updateDuration(lesson.getId(), lessonDuration);
       return LessonDetailMapper.fromEntityToLessonDetailResponse(lessonDetail);
     } catch (Exception exception) {
@@ -50,12 +59,21 @@ public class LessonDetailServiceImpl implements ILessonDetailService {
 
   @Override
   public LessonDetailResponse update(
-      String id, LessonDetailCreationRequest lessonProcessCreationRequest) {
+      String id, LessonDetailCreationRequest lessonDetailCreationRequest) {
     try {
-      findById(id);
-      lessonService.findById(lessonProcessCreationRequest.getLessonId());
+      LessonDetail lessonDetailId = findById(id);
+      lessonService.findById(lessonDetailCreationRequest.getLessonId());
       LessonDetail lessonDetail =
-          LessonDetailMapper.fromLessonDetailCreationRequestToEntity(lessonProcessCreationRequest);
+          LessonDetailMapper.fromLessonDetailCreationRequestToEntity(lessonDetailCreationRequest);
+      lessonDetail.setOrderInLesson(lessonDetailId.getOrderInLesson());
+      if (lessonDetailCreationRequest.getAttachFileUrl() != null) {
+        lessonDetail.setAttachFileUrl(
+            FileStorageService.storeFile(lessonDetailCreationRequest.getAttachFileUrl()));
+      }
+      if (lessonDetailCreationRequest.getVideoUrl() != null) {
+        lessonDetail.setVideoUrl(
+            FileStorageService.storeFile(lessonDetailCreationRequest.getVideoUrl()));
+      }
       lessonDetail = lessonDetailRepository.save(lessonDetail);
       return LessonDetailMapper.fromEntityToLessonDetailResponse(lessonDetail);
     } catch (Exception exception) {

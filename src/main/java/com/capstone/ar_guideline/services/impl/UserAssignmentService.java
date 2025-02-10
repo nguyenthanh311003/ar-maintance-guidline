@@ -51,7 +51,9 @@ public class UserAssignmentService implements IUserAssignmentService {
       pagingModel.setPage(page);
       pagingModel.setSize(size);
       pagingModel.setTotalItems(userToAssignResponses.size());
-      pagingModel.setTotalPages(UtilService.getTotalPage(userToAssignResponses.size(), size));
+      pagingModel.setTotalPages(
+          UtilService.getTotalPage(
+              countUserByCompanyId(companyId, keyword, isAssigned, courseId), size));
       pagingModel.setObjectList(userToAssignResponses);
       return pagingModel;
     } catch (Exception exception) {
@@ -60,5 +62,10 @@ public class UserAssignmentService implements IUserAssignmentService {
       }
       throw new AppException(ErrorCode.FIND_USER_TO_ASSIGN_FAILED);
     }
+  }
+
+  private int countUserByCompanyId(
+      String companyId, String keyword, String isAssign, String courseId) {
+    return userService.countUsersByCompanyId(companyId, keyword, isAssign, courseId);
   }
 }

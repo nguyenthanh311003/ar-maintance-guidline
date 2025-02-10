@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.configurations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,49 +26,40 @@ public class SecurityConfig implements WebMvcConfigurer {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(request -> request.anyRequest().permitAll())
+        .authorizeHttpRequests(
+            request ->
+                request
+                    .requestMatchers(
+                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.OPTIONS, "/api/v1/**")
+                    .permitAll() // ✅ Allow OPTIONS requests
+                    .requestMatchers("/api/v1/login", "/api/v1/register")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/**")
+                    .hasAnyAuthority("ADMIN", "COMPANY")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/**")
+                    .hasAnyAuthority("ADMIN", "COMPANY")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/**")
+                    .hasAnyAuthority("ADMIN", "COMPANY")
+                    .anyRequest()
+                    .authenticated())
         .sessionManagement(
             manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
     return http.build();
   }
-
-  //  @Bean
-  //  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-  //    http.csrf(AbstractHttpConfigurer::disable)
-  //        .authorizeHttpRequests(
-  //            request ->
-  //                request
-  //                    .requestMatchers(ConstAPI.UserAPI.LOGIN)
-  //                    .permitAll()
-  //                    .anyRequest()
-  //                    .authenticated())
-  //        .sessionManagement(
-  //            manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-  //        .authenticationProvider(authenticationProvider)
-  //        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-  //    return http.build();
-  //  }
-
-  //  @Bean
-  //  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-  //    http.csrf(AbstractHttpConfigurer::disable)
-  //        .authorizeHttpRequests(request -> request.anyRequest().permitAll())
-  //        .sessionManagement(
-  //            manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-  //        .authenticationProvider(authenticationProvider)
-  //        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-  //    return http.build();
-  //  }
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry
         .addMapping("/**")
-        .allowedOrigins("*") // specify your front-end origin
+        .allowedOrigins("http://localhost:3000") // MUST specify exact origin
         .allowedMethods("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD")
-        .allowedHeaders("*")
-        .exposedHeaders("X-Get-Header");
+        .allowedHeaders("Authorization", "Content-Type") // Allow authentication headers
+        .exposedHeaders("Authorization") // Expose Authorization header
+        .allowCredentials(true); // Enable cookies and authentication headers
   }
 }

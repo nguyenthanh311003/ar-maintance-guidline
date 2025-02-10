@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.dtos.requests.Course;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -17,7 +18,8 @@ public class CourseCreationRequest {
   String shortDescription;
   String targetAudience;
   Integer duration;
-  String imageUrl;
+  MultipartFile imageUrl;
+  String imageUrlString;
   String status;
   Boolean isMandatory;
   String type;

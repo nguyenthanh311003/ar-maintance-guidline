@@ -32,7 +32,7 @@ public interface CourseRepository extends JpaRepository<Course, String> {
   Optional<Course> findByTitle(String title);
 
   @Query(
-      value = "SELECT c FROM Course c WHERE c.company.id = :companyId ORDER BY c.createdDate ASC")
+      value = "SELECT c FROM Course c WHERE c.company.id = :companyId ORDER BY c.createdDate DESC")
   List<Course> findByCompanyId(@Param("companyId") String companyId);
 
   @Query(

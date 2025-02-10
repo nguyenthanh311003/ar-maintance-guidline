@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.controllers;
 
+import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.services.impl.FileStorageService;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/files")
 public class FileUploadController {
 
   private final FileStorageService fileStorageService;
@@ -19,7 +19,7 @@ public class FileUploadController {
     this.fileStorageService = fileStorageService;
   }
 
-  @GetMapping("/{filename}")
+  @GetMapping(ConstAPI.FileAPI.FILE + "/{filename}")
   public ResponseEntity<Resource> getFile(@PathVariable String filename) {
     try {
       Resource resource = fileStorageService.getFile(filename);
@@ -36,9 +36,9 @@ public class FileUploadController {
     }
   }
 
-  @PostMapping("/upload")
-  public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-    String filePath = fileStorageService.storeFile(file);
-    return ResponseEntity.ok("File stored at: " + filePath);
+  @PostMapping(ConstAPI.FileAPI.FILE + "/upload")
+  public String getFile(@RequestParam MultipartFile file) {
+
+    return fileStorageService.storeFile(file);
   }
 }

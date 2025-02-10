@@ -16,6 +16,7 @@ public class LessonDetailMapper {
         .duration(lessonDetail.getDuration())
         .status(lessonDetail.getStatus())
         .videoUrl(lessonDetail.getVideoUrl())
+        .attachFileUrl(lessonDetail.getAttachFileUrl())
         .type(lessonDetail.getType())
         .orderInLesson(lessonDetail.getOrderInLesson())
         .build();
@@ -28,7 +29,8 @@ public class LessonDetailMapper {
         .title(request.getTitle())
         .description(request.getDescription())
         .duration(request.getDuration())
-        .videoUrl(request.getVideoUrl())
+        .videoUrl(request.getVideoUrlString())
+        .attachFileUrl(request.getAttachFileUrlString())
         .type(request.getType())
         .status(request.getStatus())
         .build();
