@@ -151,4 +151,10 @@ public class UserServiceImpl implements IUserService {
     }
     return null;
   }
+
+  @Override
+  public int countUsersByCompanyId(
+      String companyId, String keyword, String isAssign, String courseId) {
+    return userRepository.countUsersByCompanyId(companyId, keyword, isAssign, courseId);
+  }
 }

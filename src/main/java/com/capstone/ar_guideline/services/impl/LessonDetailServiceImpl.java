@@ -36,12 +36,15 @@ public class LessonDetailServiceImpl implements ILessonDetailService {
       } else {
         orderInLesson++;
       }
-      LessonDetail lessonDetail = LessonDetailMapper.fromLessonDetailCreationRequestToEntity(lessonDetailCreationRequest);
+      LessonDetail lessonDetail =
+          LessonDetailMapper.fromLessonDetailCreationRequestToEntity(lessonDetailCreationRequest);
       if (lessonDetailCreationRequest.getAttachFileUrl() != null) {
-        lessonDetail.setAttachFileUrl(FileStorageService.storeFile(lessonDetailCreationRequest.getAttachFileUrl()));
+        lessonDetail.setAttachFileUrl(
+            FileStorageService.storeFile(lessonDetailCreationRequest.getAttachFileUrl()));
       }
       if (lessonDetailCreationRequest.getVideoUrl() != null) {
-        lessonDetail.setVideoUrl(FileStorageService.storeFile(lessonDetailCreationRequest.getVideoUrl()));
+        lessonDetail.setVideoUrl(
+            FileStorageService.storeFile(lessonDetailCreationRequest.getVideoUrl()));
       }
 
       lessonDetail.setOrderInLesson(orderInLesson);
@@ -58,16 +61,18 @@ public class LessonDetailServiceImpl implements ILessonDetailService {
   public LessonDetailResponse update(
       String id, LessonDetailCreationRequest lessonDetailCreationRequest) {
     try {
-      findById(id);
+      LessonDetail lessonDetailId = findById(id);
       lessonService.findById(lessonDetailCreationRequest.getLessonId());
       LessonDetail lessonDetail =
           LessonDetailMapper.fromLessonDetailCreationRequestToEntity(lessonDetailCreationRequest);
-
+      lessonDetail.setOrderInLesson(lessonDetailId.getOrderInLesson());
       if (lessonDetailCreationRequest.getAttachFileUrl() != null) {
-        lessonDetail.setAttachFileUrl(FileStorageService.storeFile(lessonDetailCreationRequest.getAttachFileUrl()));
+        lessonDetail.setAttachFileUrl(
+            FileStorageService.storeFile(lessonDetailCreationRequest.getAttachFileUrl()));
       }
       if (lessonDetailCreationRequest.getVideoUrl() != null) {
-        lessonDetail.setVideoUrl(FileStorageService.storeFile(lessonDetailCreationRequest.getVideoUrl()));
+        lessonDetail.setVideoUrl(
+            FileStorageService.storeFile(lessonDetailCreationRequest.getVideoUrl()));
       }
       lessonDetail = lessonDetailRepository.save(lessonDetail);
       return LessonDetailMapper.fromEntityToLessonDetailResponse(lessonDetail);

@@ -4,7 +4,6 @@ import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.entities.Course;
-import com.capstone.ar_guideline.services.impl.FileStorageService;
 import org.springframework.stereotype.Service;
 
 @Service
