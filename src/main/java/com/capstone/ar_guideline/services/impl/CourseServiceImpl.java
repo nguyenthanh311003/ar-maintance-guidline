@@ -262,6 +262,11 @@ public class CourseServiceImpl implements ICourseService {
                     course.getLessons().stream()
                         .map(LessonMapper::FromEntityToLessonResponse)
                         .toList());
+                courseResponse.setNumberOfParticipants(
+                    middleService.countByCourseId(course.getId()));
+                courseResponse.setNumberOfLessons(lessonService.countByCourseId(course.getId()));
+                courseResponse.setDuration(
+                    middleService.getDurationOfCourseByCourseId(course.getId()));
                 return courseResponse;
               })
           .toList();
@@ -289,6 +294,11 @@ public class CourseServiceImpl implements ICourseService {
                         c.getLessons().stream()
                             .map(LessonMapper::FromEntityToLessonResponse)
                             .toList());
+                    courseResponse.setNumberOfParticipants(
+                        middleService.countByCourseId(c.getId()));
+                    courseResponse.setNumberOfLessons(lessonService.countByCourseId(c.getId()));
+                    courseResponse.setDuration(
+                        middleService.getDurationOfCourseByCourseId(c.getId()));
                     return courseResponse;
                   })
               .toList();
