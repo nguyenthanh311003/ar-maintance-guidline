@@ -43,7 +43,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/**")
                     .hasAnyAuthority("ADMIN", "COMPANY")
                     .anyRequest()
-                    .authenticated())
+                    .permitAll())
         .sessionManagement(
             manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider)

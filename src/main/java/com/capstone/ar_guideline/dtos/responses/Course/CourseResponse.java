@@ -14,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class CourseResponse implements Serializable {
   String id;
   String companyId;
+  String modelId;
   List<LessonResponse> lessons;
   String title;
   String description;

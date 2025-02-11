@@ -5,7 +5,6 @@ import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
-import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
@@ -15,6 +14,7 @@ import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.services.ICompanyService;
 import com.capstone.ar_guideline.services.ICourseService;
 import com.capstone.ar_guideline.services.ILessonService;
+import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +41,7 @@ public class CourseServiceImpl implements ICourseService {
   CourseRepository courseRepository;
   RedisTemplate<String, Object> redisTemplate;
   ICompanyService companyService;
+  IModelService modelService;
 
   @Autowired @Lazy MiddleEnrollmentServiceImpl middleService;
   @Autowired @Lazy ILessonService lessonService;
@@ -123,13 +124,11 @@ public class CourseServiceImpl implements ICourseService {
   public CourseResponse create(CourseCreationRequest request) {
     try {
       Course newCourse = CourseMapper.fromCourseCreationRequestToEntity(request);
+      modelService.findById(request.getModelId());
+      companyService.findById(request.getCompanyId());
       newCourse.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
       newCourse.setDuration(0);
-      Company company = new Company();
-      company.setId(request.getCompanyId());
-
-      newCourse.setCompany(company);
       newCourse = courseRepository.save(newCourse);
       Arrays.stream(keysToRemove)
           .map(k -> k + ConstHashKey.HASH_KEY_ALL)
@@ -263,6 +262,11 @@ public class CourseServiceImpl implements ICourseService {
                     course.getLessons().stream()
                         .map(LessonMapper::FromEntityToLessonResponse)
                         .toList());
+                courseResponse.setNumberOfParticipants(
+                    middleService.countByCourseId(course.getId()));
+                courseResponse.setNumberOfLessons(lessonService.countByCourseId(course.getId()));
+                courseResponse.setDuration(
+                    middleService.getDurationOfCourseByCourseId(course.getId()));
                 return courseResponse;
               })
           .toList();
@@ -290,6 +294,11 @@ public class CourseServiceImpl implements ICourseService {
                         c.getLessons().stream()
                             .map(LessonMapper::FromEntityToLessonResponse)
                             .toList());
+                    courseResponse.setNumberOfParticipants(
+                        middleService.countByCourseId(c.getId()));
+                    courseResponse.setNumberOfLessons(lessonService.countByCourseId(c.getId()));
+                    courseResponse.setDuration(
+                        middleService.getDurationOfCourseByCourseId(c.getId()));
                     return courseResponse;
                   })
               .toList();

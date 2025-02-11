@@ -48,6 +48,10 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
 
       User user = userService.findById(request.getUserId());
 
+      if (enrollmentRepository.existsByUserAndCourse(user, course)) {
+        throw new AppException(ErrorCode.ENROLLMENT_EXISTED);
+      }
+
       Enrollment newEnrollment =
           EnrollmentMapper.fromEnrolmentCreationRequestToEntity(request, course, user);
       newEnrollment.setIsCompleted(false);
