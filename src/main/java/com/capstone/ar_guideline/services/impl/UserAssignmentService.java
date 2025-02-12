@@ -43,7 +43,9 @@ public class UserAssignmentService implements IUserAssignmentService {
                     userResponse = UserMapper.fromEntityToUserResponse(u);
                     userToAssignResponse.setUserResponse(userResponse);
                     boolean isAssign = enrollmentService.checkUserIsAssign(u.getId(), courseId);
+                    boolean isEnrolled = enrollmentService.checkUserIsEnrolled(u.getId(), courseId);
                     userToAssignResponse.setIsAssigned(isAssign);
+                    userToAssignResponse.setIsEnrolled(isEnrolled);
                     return userToAssignResponse;
                   })
               .toList();

@@ -209,6 +209,20 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
   }
 
   @Override
+  public boolean checkUserIsEnrolled(String userId, String courseId) {
+    try {
+      Optional<Enrollment> enrollmentByUserId = enrollmentRepository.findByUserIdAndCourseIdToCheckIsEnrolled(userId, courseId);
+
+      return enrollmentByUserId.isPresent();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.ENROLLMENT_NOT_EXISTED);
+    }
+  }
+
+  @Override
   public List<Enrollment> findByCourseId(String courseId) {
     try {
       return enrollmentRepository.findByCourseId(courseId);
