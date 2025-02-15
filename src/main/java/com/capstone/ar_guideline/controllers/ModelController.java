@@ -20,7 +20,7 @@ public class ModelController {
   IModelService modelService;
 
   @PostMapping(value = ConstAPI.ModelAPI.CREATE_MODEL)
-  ApiResponse<ModelResponse> createModel(@RequestBody @Valid ModelCreationRequest request) {
+  ApiResponse<ModelResponse> createModel(@ModelAttribute @Valid ModelCreationRequest request) {
     return ApiResponse.<ModelResponse>builder().result(modelService.create(request)).build();
   }
 

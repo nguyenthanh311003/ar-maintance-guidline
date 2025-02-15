@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.constants.ConstHashKey;
+import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.entities.Model;
@@ -39,7 +40,9 @@ public class ModelServiceImpl implements IModelService {
     try {
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
-      Model newModel = ModelMapper.fromModelCreationRequestToEntity(request, modelTypeById);
+      Model newModel = ModelMapper.fromModelCreationRequestToEntity(request);
+      newModel.setFile(FileStorageService.storeFile(request.getFile()));
+      newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       newModel = modelRepository.save(newModel);
 
       Arrays.stream(keysToRemove)
@@ -59,21 +62,8 @@ public class ModelServiceImpl implements IModelService {
   public ModelResponse update(String id, ModelCreationRequest request) {
     try {
       Model modelById = findById(id);
-      ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
-      modelById.setModelType(modelTypeById);
-      modelById.setModelCode(request.getModelCode());
-      modelById.setStatus(request.getStatus());
-      modelById.setName(request.getName());
-      modelById.setDescription(request.getDescription());
-      modelById.setImage(request.getImage());
-      modelById.setDocumentUrl(request.getDocumentUrl());
-      modelById.setARUrl(request.getARUrl());
-      modelById.setVersion(request.getVersion());
-      modelById.setRotation(request.getRotation());
-      modelById.setScale(request.getScale());
-      modelById.setFileSize(request.getFileSize());
-      modelById.setFileType(request.getFileType());
+      ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
       modelById = modelRepository.save(modelById);
 

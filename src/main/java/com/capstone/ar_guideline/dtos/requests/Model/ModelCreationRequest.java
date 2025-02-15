@@ -2,6 +2,7 @@ package com.capstone.ar_guideline.dtos.requests.Model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -14,12 +15,8 @@ public class ModelCreationRequest {
   String status;
   String name;
   String description;
-  String image;
-  String documentUrl;
-  String aRUrl;
+  MultipartFile imageUrl;
   String version;
-  String rotation;
   String scale;
-  String fileType;
-  Long fileSize;
+  MultipartFile file;
 }

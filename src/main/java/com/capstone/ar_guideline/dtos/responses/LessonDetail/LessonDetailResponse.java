@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LessonDetailResponse {
-
   private String id;
   private String lessonId;
   private String title;

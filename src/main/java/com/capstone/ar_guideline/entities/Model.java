@@ -23,6 +23,10 @@ public class Model implements Serializable {
   @JoinColumn(name = "modelType_id", nullable = false)
   private ModelType modelType;
 
+  @ManyToOne
+  @JoinColumn(name = "company_id")
+  private Company company;
+
   @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
   private List<Instruction> instructions;
 
@@ -36,14 +40,10 @@ public class Model implements Serializable {
   private String status;
   private String name;
   private String description;
-  private String image;
-  private String documentUrl;
-  private String aRUrl;
+  private String imageUrl;
   private String version;
-  private String rotation;
   private String scale;
-  private String fileType;
-  private Long fileSize;
+  private String file;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
