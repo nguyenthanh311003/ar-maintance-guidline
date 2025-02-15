@@ -25,6 +25,8 @@ public interface IEnrollmentService {
 
   boolean checkUserIsAssign(String userId, String courseId);
 
+  boolean checkUserIsEnrolled(String userId, String courseId);
+
   List<Enrollment> findByCourseId(String courseId);
 
   @Query(
