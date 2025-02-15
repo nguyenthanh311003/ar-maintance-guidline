@@ -7,21 +7,15 @@ import com.capstone.ar_guideline.entities.ModelType;
 
 public class ModelMapper {
   public static Model fromModelCreationRequestToEntity(
-      ModelCreationRequest request, ModelType modelType) {
+      ModelCreationRequest request) {
     return Model.builder()
-        .modelType(modelType)
+        .modelType(ModelType.builder().id(request.getModelTypeId()).build())
         .modelCode(request.getModelCode())
         .status(request.getStatus())
         .name(request.getName())
         .description(request.getDescription())
-        .image(request.getImage())
-        .documentUrl(request.getDocumentUrl())
-        .aRUrl(request.getARUrl())
         .version(request.getVersion())
-        .rotation(request.getRotation())
         .scale(request.getScale())
-        .fileType(request.getFileType())
-        .fileSize(request.getFileSize())
         .build();
   }
 
@@ -32,15 +26,10 @@ public class ModelMapper {
         .modelCode(model.getModelCode())
         .status(model.getStatus())
         .name(model.getName())
-        .description(model.getDescription())
-        .image(model.getImage())
-        .documentUrl(model.getDocumentUrl())
-        .aRUrl(model.getARUrl())
+        .image(model.getImageUrl())
         .version(model.getVersion())
-        .rotation(model.getRotation())
         .scale(model.getScale())
-        .fileType(model.getFileType())
-        .fileSize(model.getFileSize())
+            .file(model.getFile())
         .build();
   }
 }

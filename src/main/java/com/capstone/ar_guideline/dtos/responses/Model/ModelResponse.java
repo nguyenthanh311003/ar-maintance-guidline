@@ -15,13 +15,8 @@ public class ModelResponse implements Serializable {
   String modelCode;
   String status;
   String name;
-  String description;
   String image;
-  String documentUrl;
-  String aRUrl;
   String version;
-  String rotation;
   String scale;
-  String fileType;
-  Long fileSize;
+  String file;
 }
