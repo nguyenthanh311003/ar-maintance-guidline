@@ -12,6 +12,10 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+
+import static reactor.core.publisher.Mono.delay;
+
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -20,7 +24,7 @@ public class ModelController {
   IModelService modelService;
 
   @PostMapping(value = ConstAPI.ModelAPI.CREATE_MODEL)
-  ApiResponse<ModelResponse> createModel(@ModelAttribute @Valid ModelCreationRequest request) {
+  ApiResponse<ModelResponse> createModel(@ModelAttribute @Valid ModelCreationRequest request) throws InterruptedException {
     return ApiResponse.<ModelResponse>builder().result(modelService.create(request)).build();
   }
 
