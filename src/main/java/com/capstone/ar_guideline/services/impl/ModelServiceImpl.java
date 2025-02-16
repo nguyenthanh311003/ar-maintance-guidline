@@ -2,6 +2,8 @@ package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.configurations.AppConfig;
 import com.capstone.ar_guideline.constants.ConstAPI;
+import com.capstone.ar_guideline.constants.ConstHashKey;
+import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Vuforia.DatasetRequest;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
@@ -15,12 +17,16 @@ import com.capstone.ar_guideline.mappers.ModelMapper;
 import com.capstone.ar_guideline.repositories.ModelRepository;
 import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.services.IModelTypeService;
-import jakarta.transaction.Transactional;
+import com.capstone.ar_guideline.util.UtilService;
 import java.util.Arrays;
+
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,6 +40,7 @@ public class ModelServiceImpl implements IModelService {
 
   private final AppConfig appConfig;
 
+
   @Override
   @Transactional
   public ModelResponse create(ModelCreationRequest request) throws InterruptedException {
@@ -41,42 +48,48 @@ public class ModelServiceImpl implements IModelService {
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
       Model newModel = ModelMapper.fromModelCreationRequestToEntity(request);
-      //      newModel.setFile(FileStorageService.storeFile(request.getFile()));
-      //      newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
-      String fileUrl =
-          appConfig.getApplicationUrl() + "/" + ConstAPI.FileAPI.FILE + "/" + newModel.getFile();
-      DatasetRequest datasetRequest =
-          new DatasetRequest(
+//      newModel.setFile(FileStorageService.storeFile(request.getFile()));
+//      newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
+      String fileUrl = appConfig.getApplicationUrl()+ "/"+ConstAPI.FileAPI.FILE+"/"+newModel.getFile();
+      DatasetRequest datasetRequest = new DatasetRequest(
+
               "dataset-name",
               "10.18",
               Arrays.asList(
-                  new DatasetRequest.ModelData(
-                      "mouse",
-                      fileUrl,
-                      Arrays.asList(
-                          new DatasetRequest.ViewData(
-                              "viewpoint-name",
-                              "landscape",
-                              new DatasetRequest.GuideViewPosition(
-                                  Arrays.asList(0f, 0f, 5f), Arrays.asList(0f, 0f, 0f, 1f)))))));
+                      new DatasetRequest.ModelData(
+                              "mouse",
+                              fileUrl,
+                              Arrays.asList(
+                                      new DatasetRequest.ViewData(
+                                              "viewpoint-name",
+                                              "landscape",
+                                              new DatasetRequest.GuideViewPosition(
+                                                      Arrays.asList(0f, 0f, 5f),
+                                                      Arrays.asList(0f, 0f, 0f, 1f)
+                                              )
+                                      )
+                              )
+                      )
+              )
+      );
 
-      // DataStatusResponse dataStatusResponse =  vuforiaService.createDataset(datasetRequest);
-      DataStatusResponse dataStatusResponse =
-          new DataStatusResponse("e6a9a4dff6d34b179eb4c17d2cec675b");
-      String file = "";
+   // DataStatusResponse dataStatusResponse =  vuforiaService.createDataset(datasetRequest);
+      DataStatusResponse dataStatusResponse =  new DataStatusResponse("e6a9a4dff6d34b179eb4c17d2cec675b");
+      String file ="";
 
-      while (true) {
-        DatasetStatusResponse datasetStatus =
-            vuforiaService.getDatasetStatus(dataStatusResponse.getUuid()).block();
-        Thread.sleep(5000);
-        if (datasetStatus.getStatus().equals("done")) {
-          file = vuforiaService.downloadAndStoreDataset(datasetStatus.getUuid()).block();
-          break;
-        }
-      }
-      newModel.setModelCode(dataStatusResponse.getUuid());
+      while(true){
+     DatasetStatusResponse datasetStatus = vuforiaService.getDatasetStatus(dataStatusResponse.getUuid()).block();
+     Thread.sleep(5000);
+     if(datasetStatus.getStatus().equals("done")){
+       file = vuforiaService.downloadAndStoreDataset(datasetStatus.getUuid()).block();
+       break;
+     }
+    }
+    newModel.setModelCode(dataStatusResponse.getUuid());
       newModel.setFile(file);
-      newModel = modelRepository.save(newModel);
+    newModel = modelRepository.save(newModel);
+
+
 
       return ModelMapper.fromEntityToModelResponse(newModel);
     } catch (Exception exception) {
