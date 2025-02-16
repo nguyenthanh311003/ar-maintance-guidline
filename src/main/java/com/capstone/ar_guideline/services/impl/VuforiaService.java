@@ -1,14 +1,23 @@
 package com.capstone.ar_guideline.services.impl;
 import com.capstone.ar_guideline.dtos.requests.Vuforia.DatasetRequest;
+import com.capstone.ar_guideline.dtos.responses.Vuforia.DataStatusResponse;
+import com.capstone.ar_guideline.dtos.responses.Vuforia.DatasetStatusResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import org.springframework.core.io.Resource;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class VuforiaService {
@@ -20,6 +29,7 @@ public class VuforiaService {
 
     @Value("${vuforia.username}")
     private String username;
+
 
     @Value("${vuforia.password}")
     private String password;
@@ -41,18 +51,18 @@ public class VuforiaService {
                 .map(response -> (String) response.get("access_token"));
     }
 
-    public String downloadAndStoreDataset(String uuid) {
+    public Mono<String> downloadAndStoreDataset(String uuid) {
         return getTokenWithPasswordGrant()
                 .flatMap(token -> webClient.get()
                         .uri("/modeltargets/advancedDatasets/" + uuid + "/dataset")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .accept(MediaType.APPLICATION_OCTET_STREAM)
                         .retrieve()
-                        .bodyToMono(InputStream.class)
-                        .map(FileStorageService::storeZipFile))
-                .block(); // Blocking for simplicity
+                        .bodyToMono(Resource.class) // Change here
+                        .flatMap(FileStorageService::storeZipFile));
     }
-    public String createDataset(DatasetRequest datasetRequest) {
+
+    public DataStatusResponse createDataset(DatasetRequest datasetRequest) {
         return getTokenWithPasswordGrant()
                 .flatMap(token -> webClient.post()
                         .uri("/modeltargets/datasets")
@@ -60,8 +70,16 @@ public class VuforiaService {
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .bodyValue(datasetRequest)  // Automatically converts DTO to JSON
                         .retrieve()
-                        .bodyToMono(String.class))
+                        .bodyToMono(DataStatusResponse.class))
                 .block(); // Blocking for simplicity
+    }
+    public Mono<DatasetStatusResponse> getDatasetStatus(String uuid) {
+        return getTokenWithPasswordGrant()
+                .flatMap(token -> webClient.get()
+                        .uri("/modeltargets/advancedDatasets/{uuid}/status", uuid)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .retrieve()
+                        .bodyToMono(DatasetStatusResponse.class));
     }
 
 }

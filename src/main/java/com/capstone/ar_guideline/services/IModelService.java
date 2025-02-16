@@ -5,7 +5,7 @@ import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.entities.Model;
 
 public interface IModelService {
-  ModelResponse create(ModelCreationRequest request);
+  ModelResponse create(ModelCreationRequest request) throws InterruptedException;
 
   ModelResponse update(String id, ModelCreationRequest request);
 
