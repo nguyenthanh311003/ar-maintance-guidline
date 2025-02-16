@@ -6,8 +6,7 @@ import com.capstone.ar_guideline.entities.Model;
 import com.capstone.ar_guideline.entities.ModelType;
 
 public class ModelMapper {
-  public static Model fromModelCreationRequestToEntity(
-      ModelCreationRequest request) {
+  public static Model fromModelCreationRequestToEntity(ModelCreationRequest request) {
     return Model.builder()
         .modelType(ModelType.builder().id(request.getModelTypeId()).build())
         .modelCode(request.getModelCode())
@@ -29,7 +28,7 @@ public class ModelMapper {
         .image(model.getImageUrl())
         .version(model.getVersion())
         .scale(model.getScale())
-            .file(model.getFile())
+        .file(model.getFile())
         .build();
   }
 }

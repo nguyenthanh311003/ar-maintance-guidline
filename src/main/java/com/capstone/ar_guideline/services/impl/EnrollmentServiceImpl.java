@@ -211,7 +211,8 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
   @Override
   public boolean checkUserIsEnrolled(String userId, String courseId) {
     try {
-      Optional<Enrollment> enrollmentByUserId = enrollmentRepository.findByUserIdAndCourseIdToCheckIsEnrolled(userId, courseId);
+      Optional<Enrollment> enrollmentByUserId =
+          enrollmentRepository.findByUserIdAndCourseIdToCheckIsEnrolled(userId, courseId);
 
       return enrollmentByUserId.isPresent();
     } catch (Exception exception) {

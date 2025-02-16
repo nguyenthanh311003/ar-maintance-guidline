@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DatasetStatusResponse {
-    private String status;
-    private String uuid;
-    private String createdAt;
+  private String status;
+  private String uuid;
+  private String createdAt;
 }

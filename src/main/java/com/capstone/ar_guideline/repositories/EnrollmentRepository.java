@@ -26,10 +26,12 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, String> 
   Optional<Enrollment> findByUserId(
       @Param("userId") String userId, @Param("courseId") String courseId);
 
-  @Query(value = "SELECT e FROM Enrollment e WHERE e.user.id = :userId AND e.course.id = :courseId " +
-                 "AND e.enrollmentDate IS NOT NULL")
+  @Query(
+      value =
+          "SELECT e FROM Enrollment e WHERE e.user.id = :userId AND e.course.id = :courseId "
+              + "AND e.enrollmentDate IS NOT NULL")
   Optional<Enrollment> findByUserIdAndCourseIdToCheckIsEnrolled(
-          @Param("userId") String userId, @Param("courseId") String courseId);
+      @Param("userId") String userId, @Param("courseId") String courseId);
 
   @Query(value = "SELECT e FROM Enrollment e WHERE e.course.id = :courseId")
   List<Enrollment> findByCourseId(@Param("courseId") String courseId);

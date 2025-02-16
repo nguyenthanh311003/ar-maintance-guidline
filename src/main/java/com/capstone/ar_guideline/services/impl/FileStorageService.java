@@ -80,19 +80,21 @@ public class FileStorageService {
       throw new RuntimeException("Could not delete file: " + filename, e);
     }
   }
+
   public static Mono<String> storeZipFile(Resource resource) {
-    return Mono.fromCallable(() -> {
-      try (InputStream inputStream = resource.getInputStream()) {
-        String fileId = UUID.randomUUID().toString() + ".zip";
-        Path targetLocation = fileStorageLocation.resolve(fileId);
+    return Mono.fromCallable(
+        () -> {
+          try (InputStream inputStream = resource.getInputStream()) {
+            String fileId = UUID.randomUUID().toString() + ".zip";
+            Path targetLocation = fileStorageLocation.resolve(fileId);
 
-        Files.createDirectories(targetLocation.getParent());
-        Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            Files.createDirectories(targetLocation.getParent());
+            Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-        return fileId;
-      } catch (IOException e) {
-        throw new RuntimeException("Could not store ZIP file", e);
-      }
-    });
+            return fileId;
+          } catch (IOException e) {
+            throw new RuntimeException("Could not store ZIP file", e);
+          }
+        });
   }
 }

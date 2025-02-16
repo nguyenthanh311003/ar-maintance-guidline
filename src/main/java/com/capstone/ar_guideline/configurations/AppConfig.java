@@ -10,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,8 +31,11 @@ public class AppConfig {
 
   @Bean
   public UserDetailsService userDetailsService() {
-    return userEmail -> userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
+    return userEmail ->
+        userRepository
+            .findByEmail(userEmail)
+            .orElseThrow(
+                () -> new UsernameNotFoundException("User not found with email: " + userEmail));
   }
 
   @Bean
@@ -51,8 +53,7 @@ public class AppConfig {
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-          throws Exception {
+      throws Exception {
     return config.getAuthenticationManager();
   }
 }
-

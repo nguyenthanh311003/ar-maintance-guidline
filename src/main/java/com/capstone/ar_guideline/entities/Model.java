@@ -44,7 +44,6 @@ public class Model implements Serializable {
   private String version;
   private String scale;
   private String file;
-  private String fileDat;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
