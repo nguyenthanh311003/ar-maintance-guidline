@@ -62,7 +62,7 @@ public class ModelServiceImpl implements IModelService {
 
       // DataStatusResponse dataStatusResponse =  vuforiaService.createDataset(datasetRequest);
       DataStatusResponse dataStatusResponse =
-          new DataStatusResponse("a6ae2300f6fe42e3aa85c368d25ccad8");
+          new DataStatusResponse("e6a9a4dff6d34b179eb4c17d2cec675b");
       String file = "";
 
       while (true) {
