@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.services.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.*;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,6 +77,19 @@ public class FileStorageService {
       Files.deleteIfExists(filePath);
     } catch (IOException e) {
       throw new RuntimeException("Could not delete file: " + filename, e);
+    }
+  }
+  public static String storeZipFile(InputStream inputStream) {
+    try {
+      String fileId = UUID.randomUUID().toString() + ".zip";
+      Path targetLocation = fileStorageLocation.resolve(fileId);
+
+      Files.createDirectories(targetLocation.getParent());
+      Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+      return fileId;
+    } catch (IOException e) {
+      throw new RuntimeException("Could not store ZIP file", e);
     }
   }
 }
