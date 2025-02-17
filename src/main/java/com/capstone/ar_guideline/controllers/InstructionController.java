@@ -23,7 +23,7 @@ public class InstructionController {
 
   @PostMapping(value = ConstAPI.InstructionAPI.CREATE_INSTRUCTION)
   ApiResponse<InstructionResponse> createInstruction(
-      @RequestBody @Valid InstructionCreationRequest request) {
+          @ModelAttribute @Valid InstructionCreationRequest request) {
     return ApiResponse.<InstructionResponse>builder()
         .result(arGuidelineService.createInstruction(request))
         .build();
