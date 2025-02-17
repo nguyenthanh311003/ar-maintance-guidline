@@ -36,7 +36,12 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
   public InstructionDetailResponse create(
       InstructionDetailCreationRequest request, String instructionId) {
     try {
-      Instruction instructionById = instructionService.findById(instructionId);
+      Instruction instructionById;
+      if (instructionId.isEmpty()) {
+        instructionById = instructionService.findById(request.getInstructionId());
+      } else {
+        instructionById = instructionService.findById(instructionId);
+      }
 
       InstructionDetail newInstructionDetail =
           InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(
@@ -68,10 +73,10 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
 
       InstructionDetail instructionDetailById = findById(id);
 
-      Instruction instructionById = instructionService.findById(request.getInstructionId());
+      if (request.getMultipartFile() != null) {
+        instructionDetailById.setFile(FileStorageService.storeFile(request.getMultipartFile()));
+      }
 
-      instructionDetailById.setInstruction(instructionById);
-      instructionDetailById.setOrderNumber(request.getOrderNumber());
       instructionDetailById.setDescription(request.getDescription());
 
       instructionDetailById = instructionDetailRepository.save(instructionDetailById);

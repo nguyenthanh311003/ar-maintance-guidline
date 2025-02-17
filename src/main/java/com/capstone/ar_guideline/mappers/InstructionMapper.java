@@ -25,6 +25,7 @@ public class InstructionMapper {
         .orderNumber(instruction.getOrderNumber())
         .name(instruction.getName())
         .description(instruction.getDescription())
+        .imageUrl(instruction.getImageUrl())
         .rotation(instruction.getRotation())
         .position(instruction.getPosition())
         .build();

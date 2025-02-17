@@ -16,6 +16,8 @@ import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -54,13 +56,22 @@ public class InstructionServiceImpl implements IInstructionService {
     try {
       Instruction instructionById = findById(id);
 
-      Model modelById = modelService.findById(request.getModelId());
+      List<Float> translations = request.getGuideViewPosition().getTranslation();
+      List<Float> rotations = request.getGuideViewPosition().getRotation();
 
-      instructionById.setModel(modelById);
+      if (request.getImageUrl() != null) {
+        instructionById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
+      }
+
       instructionById.setName(request.getName());
       instructionById.setCode(request.getCode());
-      instructionById.setOrderNumber(request.getOrderNumber());
       instructionById.setDescription(request.getDescription());
+
+      String position =
+              translations.stream().map(String::valueOf).collect(Collectors.joining(", "));
+      String rotation = rotations.stream().map(String::valueOf).collect(Collectors.joining(", "));
+      instructionById.setPosition(position);
+      instructionById.setRotation(rotation);
 
       instructionById = instructionRepository.save(instructionById);
 
