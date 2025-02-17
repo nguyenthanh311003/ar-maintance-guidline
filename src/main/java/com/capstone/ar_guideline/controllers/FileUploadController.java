@@ -35,15 +35,15 @@ public class FileUploadController {
       }
 
       return ResponseEntity.ok()
-              .contentType(MediaType.parseMediaType(
-                      contentType != null ? contentType : "application/octet-stream"))
-              .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-              .body(resource);
+          .contentType(
+              MediaType.parseMediaType(
+                  contentType != null ? contentType : "application/octet-stream"))
+          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+          .body(resource);
     } catch (Exception e) {
       return ResponseEntity.notFound().build();
     }
   }
-
 
   @PostMapping(ConstAPI.FileAPI.FILE + "/upload")
   public String getFile(@RequestParam MultipartFile file) {

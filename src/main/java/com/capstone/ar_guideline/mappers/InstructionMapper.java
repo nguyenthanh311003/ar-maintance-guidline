@@ -11,8 +11,8 @@ public class InstructionMapper {
     return Instruction.builder()
         .model(model)
         .code(request.getCode())
-        .orderNumber(request.getOrderNumber())
         .name(request.getName())
+        .imageUrl(request.getImageUrlString())
         .description(request.getDescription())
         .build();
   }
@@ -25,6 +25,8 @@ public class InstructionMapper {
         .orderNumber(instruction.getOrderNumber())
         .name(instruction.getName())
         .description(instruction.getDescription())
+        .rotation(instruction.getRotation())
+        .position(instruction.getPosition())
         .build();
   }
 }
