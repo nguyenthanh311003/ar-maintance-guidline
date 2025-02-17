@@ -14,6 +14,6 @@ public interface InstructionDetailRepository extends JpaRepository<InstructionDe
           "SELECT MAX(i.orderNumber) FROM InstructionDetail i WHERE i.instruction.id = :instructionId GROUP BY i.instruction.id")
   Integer getHighestOrderNumber(@Param("instructionId") String instructionId);
 
-  @Query(value = "SELECT i FROM InstructionDetail i WHERE i.instruction.id = :instructionId")
+  @Query(value = "SELECT i FROM InstructionDetail i WHERE i.instruction.id = :instructionId ORDER BY i.orderNumber ASC")
   List<InstructionDetail> getByInstructionId(@Param("instructionId") String instructionId);
 }

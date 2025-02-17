@@ -31,7 +31,7 @@ public class InstructionController {
 
   @PutMapping(value = ConstAPI.InstructionAPI.UPDATE_INSTRUCTION + "{instructionId}")
   ApiResponse<InstructionResponse> updateInstruction(
-      @PathVariable String instructionId, @RequestBody InstructionCreationRequest request) {
+      @PathVariable String instructionId, @ModelAttribute @Valid InstructionCreationRequest request) {
     return ApiResponse.<InstructionResponse>builder()
         .result(instructionService.update(instructionId, request))
         .build();
