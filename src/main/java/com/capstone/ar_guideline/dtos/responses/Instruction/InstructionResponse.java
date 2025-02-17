@@ -1,5 +1,7 @@
 package com.capstone.ar_guideline.dtos.responses.Instruction;
 
+import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,6 +15,10 @@ public class InstructionResponse {
   String modelId;
   String code;
   Integer orderNumber;
+  String imageUrl;
   String name;
   String description;
+  String position;
+  String rotation;
+  List<InstructionDetailResponse> instructionDetailResponse;
 }

@@ -5,7 +5,6 @@ import com.capstone.ar_guideline.dtos.requests.InstructionDetail.InstructionDeta
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
 import com.capstone.ar_guideline.services.IInstructionDetailService;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,13 +18,13 @@ import org.springframework.web.bind.annotation.*;
 public class InstructionDetailController {
   IInstructionDetailService instructionDetailService;
 
-  @PostMapping(value = ConstAPI.InstructionDetailAPI.CREATE_INSTRUCTION_DETAIL)
+  /*@PostMapping(value = ConstAPI.InstructionDetailAPI.CREATE_INSTRUCTION_DETAIL)
   ApiResponse<InstructionDetailResponse> createInstructionDetail(
       @RequestBody @Valid InstructionDetailCreationRequest request) {
     return ApiResponse.<InstructionDetailResponse>builder()
         .result(instructionDetailService.create(request))
         .build();
-  }
+  }*/
 
   @PutMapping(
       value = ConstAPI.InstructionDetailAPI.UPDATE_INSTRUCTION_DETAIL + "{instructionDetailId}")
@@ -34,6 +33,16 @@ public class InstructionDetailController {
       @RequestBody InstructionDetailCreationRequest request) {
     return ApiResponse.<InstructionDetailResponse>builder()
         .result(instructionDetailService.update(instructionDetailId, request))
+        .build();
+  }
+
+  @PutMapping(value = ConstAPI.InstructionDetailAPI.SWAP_ORDER_INSTRUCTION_DETAIL)
+  ApiResponse<Boolean> swapOrder(
+      @RequestParam String instructionDetailIdCurrent,
+      @RequestParam String instructionDetailIdSwap) {
+    return ApiResponse.<Boolean>builder()
+        .result(
+            instructionDetailService.swapOrder(instructionDetailIdCurrent, instructionDetailIdSwap))
         .build();
   }
 

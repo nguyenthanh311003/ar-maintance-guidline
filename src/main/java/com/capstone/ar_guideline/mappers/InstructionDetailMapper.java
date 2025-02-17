@@ -10,10 +10,7 @@ public class InstructionDetailMapper {
       InstructionDetailCreationRequest request, Instruction instruction) {
     return InstructionDetail.builder()
         .instruction(instruction)
-        .triggerEvent(request.getTriggerEvent())
-        .orderNumber(request.getOrderNumber())
         .description(request.getDescription())
-        .type(request.getType())
         .build();
   }
 
@@ -22,10 +19,9 @@ public class InstructionDetailMapper {
     return InstructionDetailResponse.builder()
         .id(instructionDetail.getId())
         .instructionId(instructionDetail.getInstruction().getId())
-        .triggerEvent(instructionDetail.getTriggerEvent())
         .orderNumber(instructionDetail.getOrderNumber())
         .description(instructionDetail.getDescription())
-        .type(instructionDetail.getType())
+        .fileString(instructionDetail.getFile())
         .build();
   }
 }

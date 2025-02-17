@@ -25,7 +25,7 @@ public class ModelMapper {
         .modelCode(model.getModelCode())
         .status(model.getStatus())
         .name(model.getName())
-        .image(model.getImageUrl())
+        .imageUrl(model.getImageUrl())
         .version(model.getVersion())
         .scale(model.getScale())
         .file(model.getFile())

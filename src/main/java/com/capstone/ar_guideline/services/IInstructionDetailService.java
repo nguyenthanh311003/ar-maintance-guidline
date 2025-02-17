@@ -5,11 +5,13 @@ import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDet
 import com.capstone.ar_guideline.entities.InstructionDetail;
 
 public interface IInstructionDetailService {
-  InstructionDetailResponse create(InstructionDetailCreationRequest request);
+  InstructionDetailResponse create(InstructionDetailCreationRequest request, String instructionId);
 
   InstructionDetailResponse update(String id, InstructionDetailCreationRequest request);
 
   void delete(String id);
 
   InstructionDetail findById(String id);
+
+  Boolean swapOrder(String instructionDetailIdCurrent, String instructionDetailIdSwap);
 }

@@ -100,6 +100,8 @@ public enum ErrorCode {
   FIND_COURSE_NO_MANDATORY_FAILED(1084, "Find course no mandatory failed", HttpStatus.BAD_REQUEST),
   FIND_USER_TO_ASSIGN_FAILED(1085, "Find user to assign failed", HttpStatus.BAD_REQUEST),
   ENROLLMENT_EXISTED(1086, "Enrollment existed", HttpStatus.BAD_REQUEST),
+  GET_HIGHEST_ORDER_FAIL(1087, "Get highest order number failed", HttpStatus.BAD_REQUEST),
+  SWAP_ORDER_NUMBER_FAILED(1088, "Swap order number failed", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;

@@ -29,7 +29,10 @@ public class Instruction implements Serializable {
   private String code;
   private Integer orderNumber;
   private String name;
+  private String imageUrl;
   private String description;
+  private String rotation;
+  private String position;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

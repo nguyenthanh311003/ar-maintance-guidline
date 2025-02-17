@@ -11,8 +11,7 @@ import lombok.experimental.FieldDefaults;
 public class InstructionDetailResponse {
   String id;
   String instructionId;
-  String triggerEvent;
   Integer orderNumber;
   String description;
-  String type;
+  String fileString;
 }

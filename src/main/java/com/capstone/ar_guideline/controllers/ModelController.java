@@ -4,6 +4,7 @@ import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
+import com.capstone.ar_guideline.services.IARGuidelineService;
 import com.capstone.ar_guideline.services.IModelService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -18,6 +19,14 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class ModelController {
   IModelService modelService;
+  IARGuidelineService arGuidelineService;
+
+  @GetMapping(value = ConstAPI.ModelAPI.GET_MODEL_BY_ID + "{modelId}")
+  ApiResponse<ModelResponse> getModelById(@PathVariable String modelId) {
+    return ApiResponse.<ModelResponse>builder()
+        .result(arGuidelineService.findModelById(modelId))
+        .build();
+  }
 
   @PostMapping(value = ConstAPI.ModelAPI.CREATE_MODEL)
   ApiResponse<ModelResponse> createModel(@ModelAttribute @Valid ModelCreationRequest request)
