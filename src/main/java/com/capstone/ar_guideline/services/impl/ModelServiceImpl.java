@@ -42,7 +42,7 @@ public class ModelServiceImpl implements IModelService {
 
       Model newModel = ModelMapper.fromModelCreationRequestToEntity(request);
       //      newModel.setFile(FileStorageService.storeFile(request.getFile()));
-      //      newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
+          newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       String fileUrl =
           appConfig.getApplicationUrl() + "/" + ConstAPI.FileAPI.FILE + "/" + newModel.getFile();
       DatasetRequest datasetRequest =

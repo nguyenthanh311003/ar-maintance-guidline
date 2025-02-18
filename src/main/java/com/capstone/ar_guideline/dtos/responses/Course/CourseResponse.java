@@ -16,6 +16,7 @@ public class CourseResponse implements Serializable {
   String companyId;
   String modelId;
   List<LessonResponse> lessons;
+  String modelCode;
   String title;
   String description;
   String shortDescription;
