@@ -4,6 +4,7 @@ import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IARGuidelineService;
 import com.capstone.ar_guideline.services.IModelService;
 import jakarta.validation.Valid;
@@ -26,6 +27,18 @@ public class ModelController {
     return ApiResponse.<ModelResponse>builder()
         .result(arGuidelineService.findModelById(modelId))
         .build();
+  }
+
+  @GetMapping(value = ConstAPI.ModelAPI.GET_MODEL_BY_COMPANY_ID + "{companyId}")
+  ApiResponse<PagingModel<ModelResponse>> getModelByCompanyId(
+          @PathVariable String companyId,
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "10") int size,
+          @RequestParam String type,
+          @RequestParam String name) {
+    return ApiResponse.<PagingModel<ModelResponse>>builder()
+            .result(modelService.findByCompanyId(page, size, companyId, type, name))
+            .build();
   }
 
   @PostMapping(value = ConstAPI.ModelAPI.CREATE_MODEL)
