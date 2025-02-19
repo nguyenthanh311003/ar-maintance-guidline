@@ -134,11 +134,6 @@ public class UserServiceImpl implements IUserService {
 
   private UserResponse getUserResponseByEmail(String email) {
     try {
-      UserResponse userByEmailWithRedis =
-          (UserResponse) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_USER, email);
-      if (!Objects.isNull(userByEmailWithRedis)) {
-        return userByEmailWithRedis;
-      }
       Optional<User> userByEmail = userRepository.findByEmail(email);
       if (userByEmail.isEmpty()) {
         log.warn("User not found by email: {}", email);
