@@ -41,12 +41,10 @@ public class CompanyServiceImpl implements ICompanyService {
   }
 
   @Override
-  public CompanyResponse create(CompanyCreationRequest request) {
+  public Company create(CompanyCreationRequest request) {
     try {
       Company newCompany = CompanyMapper.fromCompanyCreationRequestToEntity(request);
-      newCompany = companyRepository.save(newCompany);
-      redisTemplate.opsForHash().put(ConstHashKey.HASH_KEY_COMPANY, newCompany.getId(), newCompany);
-      return CompanyMapper.fromEntityToCompanyResponse(newCompany);
+      return companyRepository.save(newCompany);
     } catch (Exception exception) {
       log.error("Company create failed: {}", exception.getMessage());
       if (exception instanceof AppException) {

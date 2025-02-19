@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.repositories;
 
 import com.capstone.ar_guideline.entities.Model;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,5 +16,5 @@ public interface ModelRepository extends JpaRepository<Model, String> {
             + "AND (:type IS NULL OR :type = '' OR m.modelType.name = :type) "
             + "AND (:name IS NULL OR :name = '' OR LOWER(m.name) LIKE LOWER(CONCAT('%', :name, '%'))) "
             + "ORDER BY m.createdDate ASC")
-    List<Model> findByCompanyId(Pageable pageable, @Param("companyId") String companyId, @Param("type") String type, @Param("name") String name);
+    Page<Model> findByCompanyId(Pageable pageable, @Param("companyId") String companyId, @Param("type") String type, @Param("name") String name);
 }

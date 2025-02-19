@@ -32,8 +32,10 @@ public class ConstAPI {
   }
 
   public static class UserAPI {
+    public static final String GET_USERS = "api/v1/user";
     public static final String LOGIN = "api/v1/login";
     public static final String REGISTER = "api/v1/register";
+    public static final String REGISTER_FOR_COMPANY = "api/v1/register/company";
     public static final String PREFIX_USER = "api/v1/user/";
     public static final String GET_USER_TO_ASSIGN = "course/";
   }

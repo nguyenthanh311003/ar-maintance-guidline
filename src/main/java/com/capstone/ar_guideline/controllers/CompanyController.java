@@ -44,11 +44,11 @@ public class CompanyController {
         .build();
   }
 
-  @PostMapping(value = ConstAPI.CompanyAPI.CREATE_COMPANY)
+  /*@PostMapping(value = ConstAPI.CompanyAPI.CREATE_COMPANY)
   ApiResponse<CompanyResponse> createCompany(@RequestBody @Valid CompanyCreationRequest request) {
     return ApiResponse.<CompanyResponse>builder()
         .result(companyService.create(request))
         .message("Create company")
         .build();
-  }
+  }*/
 }

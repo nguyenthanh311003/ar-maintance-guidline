@@ -34,8 +34,8 @@ public class ModelController {
           @PathVariable String companyId,
           @RequestParam(defaultValue = "1") int page,
           @RequestParam(defaultValue = "10") int size,
-          @RequestParam String type,
-          @RequestParam String name) {
+          @RequestParam(defaultValue = "") String type,
+          @RequestParam(defaultValue = "") String name) {
     return ApiResponse.<PagingModel<ModelResponse>>builder()
             .result(modelService.findByCompanyId(page, size, companyId, type, name))
             .build();
