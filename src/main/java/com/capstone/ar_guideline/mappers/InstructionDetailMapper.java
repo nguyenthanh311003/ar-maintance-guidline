@@ -11,6 +11,7 @@ public class InstructionDetailMapper {
     return InstructionDetail.builder()
         .instruction(instruction)
             .name(request.getName())
+            .description(request.getDescription())
         .build();
   }
 
