@@ -175,18 +175,13 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    private UserResponse getUserResponseByEmail(String email) {
-        try {
-            UserResponse userByEmailWithRedis =
-                    (UserResponse) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_USER, email);
-            if (!Objects.isNull(userByEmailWithRedis)) {
-                return userByEmailWithRedis;
-            }
-            Optional<User> userByEmail = userRepository.findByEmail(email);
-            if (userByEmail.isEmpty()) {
-                log.warn("User not found by email: {}", email);
-                throw new AppException(ErrorCode.USER_NOT_EXISTED);
-            }
+  private UserResponse getUserResponseByEmail(String email) {
+    try {
+      Optional<User> userByEmail = userRepository.findByEmail(email);
+      if (userByEmail.isEmpty()) {
+        log.warn("User not found by email: {}", email);
+        throw new AppException(ErrorCode.USER_NOT_EXISTED);
+      }
 
             return UserMapper.fromEntityToUserResponse(userByEmail.get());
         } catch (Exception e) {
