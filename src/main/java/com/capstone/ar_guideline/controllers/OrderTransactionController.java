@@ -4,6 +4,7 @@ import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.OrderTransaction.OrderTransactionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.OrderTransaction.OrderTransactionResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IOrderTransactionService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -18,6 +19,17 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class OrderTransactionController {
   IOrderTransactionService orderTransactionService;
+
+  @GetMapping(
+      value = ConstAPI.OrderTransactionAPI.GET_ORDER_TRANSACTION_BY_COMPANY_ID + "{companyId}")
+  ApiResponse<PagingModel<OrderTransactionResponse>> getOrderTransactionByCompanyId(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @PathVariable String companyId) {
+    return ApiResponse.<PagingModel<OrderTransactionResponse>>builder()
+        .result(orderTransactionService.getAllTransactionByCompanyId(page, size, companyId))
+        .build();
+  }
 
   @PostMapping(value = ConstAPI.OrderTransactionAPI.CREATE_ORDER_TRANSACTION)
   ApiResponse<OrderTransactionResponse> createOrderTransaction(

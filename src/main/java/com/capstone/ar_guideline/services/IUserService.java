@@ -12,6 +12,7 @@ public interface IUserService {
   AuthenticationResponse login(LoginRequest loginRequest);
 
   <T> AuthenticationResponse create(SignUpRequest signUpRequest);
+
   AuthenticationResponse createCompanyAccount(SignUpRequest signUpRequest);
 
   User findById(String id);
@@ -26,4 +27,7 @@ public interface IUserService {
   UserResponse findByIdReturnUserResponse(String id);
 
   Boolean changeStatus(String status, String userId, Boolean isPending);
+
+  PagingModel<UserResponse> getStaffByCompanyId(
+      int page, int size, String companyId, String username, String email, String status);
 }
