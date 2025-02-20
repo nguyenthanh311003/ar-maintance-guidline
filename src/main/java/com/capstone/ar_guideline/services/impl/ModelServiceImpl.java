@@ -27,6 +27,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -138,7 +139,7 @@ public class ModelServiceImpl implements IModelService {
         try {
             PagingModel<ModelResponse> pagingModel = new PagingModel<>();
             Pageable pageable = PageRequest.of(page - 1, size);
-            List<Model> models = modelRepository.findByCompanyId(pageable, companyId, type, name);
+            Page<Model> models = modelRepository.findByCompanyId(pageable, companyId, type, name);
             List<ModelResponse> modelResponses = models.stream().map(
                     m -> ModelResponse.builder()
                             .id(m.getId())
@@ -156,10 +157,8 @@ public class ModelServiceImpl implements IModelService {
 
             pagingModel.setPage(page);
             pagingModel.setSize(size);
-            pagingModel.setTotalItems(modelResponses.size());
-            pagingModel.setTotalPages(
-                    UtilService.getTotalPage(
-                            modelResponses.size(), size));
+            pagingModel.setTotalItems((int) models.getTotalElements());
+            pagingModel.setTotalPages(models.getTotalPages());
             pagingModel.setObjectList(modelResponses);
             return pagingModel;
         } catch (Exception exception) {

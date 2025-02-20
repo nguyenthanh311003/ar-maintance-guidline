@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 public class UserResponse implements Serializable {
   private String id;
   private RoleResponse role;
+  private String roleName;
   private CompanyResponse company;
   private String email;
   private String avatar;
