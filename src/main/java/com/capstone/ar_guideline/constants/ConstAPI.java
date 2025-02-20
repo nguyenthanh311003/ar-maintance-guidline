@@ -33,6 +33,7 @@ public class ConstAPI {
 
   public static class UserAPI {
     public static final String GET_USERS = "api/v1/user";
+    public static final String GET_STAFF_BY_COMPANY = "api/v1/user/company/";
     public static final String LOGIN = "api/v1/login";
     public static final String REGISTER = "api/v1/register";
     public static final String REGISTER_FOR_COMPANY = "api/v1/register/company";
@@ -98,6 +99,8 @@ public class ConstAPI {
   }
 
   public static class OrderTransactionAPI {
+    public static final String GET_ORDER_TRANSACTION_BY_COMPANY_ID =
+        "api/v1/order-transaction/company/";
     public static final String CREATE_ORDER_TRANSACTION = "api/v1/order-transaction";
     public static final String UPDATE_ORDER_TRANSACTION = "api/v1/order-transaction/";
     public static final String DELETE_ORDER_TRANSACTION = "api/v1/order-transaction/";

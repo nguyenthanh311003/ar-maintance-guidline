@@ -25,6 +25,8 @@ public class OrderTransactionMapper {
         .orderCode(orderTransaction.getOrderCode())
         .status(orderTransaction.getStatus())
         .amount(orderTransaction.getAmount())
+        .createdDate(orderTransaction.getCreatedDate())
+        .updatedDate(orderTransaction.getUpdatedDate())
         .build();
   }
 }
