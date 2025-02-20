@@ -21,7 +21,7 @@ public class InstructionDetailController {
 
   @PostMapping(value = ConstAPI.InstructionDetailAPI.CREATE_INSTRUCTION_DETAIL)
   ApiResponse<InstructionDetailResponse> createInstructionDetail(
-          @ModelAttribute @Valid InstructionDetailCreationRequest request) {
+      @ModelAttribute @Valid InstructionDetailCreationRequest request) {
     return ApiResponse.<InstructionDetailResponse>builder()
         .result(instructionDetailService.create(request, ""))
         .build();

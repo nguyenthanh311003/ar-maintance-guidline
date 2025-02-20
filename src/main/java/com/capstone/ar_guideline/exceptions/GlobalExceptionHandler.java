@@ -28,18 +28,19 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(value = com.amazonaws.services.mq.model.UnauthorizedException.class)
-  ResponseEntity<ApiResponse> handlingUnauthorizedException(com.amazonaws.services.mq.model.UnauthorizedException exception) {
+  ResponseEntity<ApiResponse> handlingUnauthorizedException(
+      com.amazonaws.services.mq.model.UnauthorizedException exception) {
     log.warn("Unauthorized access attempt: ", exception);
 
     ErrorCode errorCode = ErrorCode.UNAUTHORIZED; // Define this in your error codes
 
     return ResponseEntity.status(errorCode.getStatusCode())
-            .body(ApiResponse.builder()
-                    .code(errorCode.getCode())
-                    .message("Invalid or expired token.")
-                    .build());
+        .body(
+            ApiResponse.builder()
+                .code(errorCode.getCode())
+                .message("Invalid or expired token.")
+                .build());
   }
-
 
   @ExceptionHandler(value = AppException.class)
   ResponseEntity<ApiResponse> handlingAppException(AppException exception) {

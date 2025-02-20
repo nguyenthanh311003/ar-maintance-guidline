@@ -5,7 +5,6 @@ import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRe
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
 import com.capstone.ar_guideline.entities.Instruction;
-import com.capstone.ar_guideline.entities.Model;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.InstructionMapper;
@@ -17,7 +16,6 @@ import com.capstone.ar_guideline.util.UtilService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -63,7 +61,7 @@ public class InstructionServiceImpl implements IInstructionService {
       instructionById.setDescription(request.getDescription());
 
       String position =
-              translations.stream().map(String::valueOf).collect(Collectors.joining(", "));
+          translations.stream().map(String::valueOf).collect(Collectors.joining(", "));
       String rotation = rotations.stream().map(String::valueOf).collect(Collectors.joining(", "));
       instructionById.setPosition(position);
       instructionById.setRotation(rotation);

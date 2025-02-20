@@ -6,6 +6,7 @@ import com.capstone.ar_guideline.dtos.requests.User.SignUpRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.User.AuthenticationResponse;
+import com.capstone.ar_guideline.dtos.responses.User.UserResponse;
 import com.capstone.ar_guideline.dtos.responses.User.UserToAssignResponse;
 import com.capstone.ar_guideline.services.IUserAssignmentService;
 import com.capstone.ar_guideline.services.IUserService;
@@ -39,6 +40,37 @@ public class UserController {
         .build();
   }
 
+  @GetMapping(value = ConstAPI.UserAPI.GET_USERS)
+  public ApiResponse<PagingModel<UserResponse>> getUsers(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(defaultValue = "") String email,
+      @RequestParam(defaultValue = "") String status) {
+    return ApiResponse.<PagingModel<UserResponse>>builder()
+        .result(userService.getUsers(page, size, email, status))
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.UserAPI.GET_STAFF_BY_COMPANY + "{companyId}")
+  public ApiResponse<PagingModel<UserResponse>> getStaffByCompanyId(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(defaultValue = "") String username,
+      @RequestParam(defaultValue = "") String email,
+      @RequestParam(defaultValue = "") String status,
+      @PathVariable String companyId) {
+    return ApiResponse.<PagingModel<UserResponse>>builder()
+        .result(userService.getStaffByCompanyId(page, size, companyId, username, email, status))
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.UserAPI.PREFIX_USER + "{userId}")
+  public ApiResponse<UserResponse> getUserById(@PathVariable String userId) {
+    return ApiResponse.<UserResponse>builder()
+        .result(userService.findByIdReturnUserResponse(userId))
+        .build();
+  }
+
   @PostMapping(value = ConstAPI.UserAPI.LOGIN)
   ApiResponse<AuthenticationResponse> login(@RequestBody LoginRequest loginRequest) {
     try {
@@ -63,5 +95,28 @@ public class UserController {
       log.error("Register failed: {}", exception.getMessage());
       return ApiResponse.<AuthenticationResponse>builder().message("Register failed").build();
     }
+  }
+
+  @PostMapping(value = ConstAPI.UserAPI.REGISTER_FOR_COMPANY)
+  ApiResponse<AuthenticationResponse> registerForCompany(@RequestBody SignUpRequest signUpRequest) {
+    try {
+      return ApiResponse.<AuthenticationResponse>builder()
+          .message("Register process")
+          .result(userService.createCompanyAccount(signUpRequest))
+          .build();
+    } catch (AuthenticationException exception) {
+      log.error("Register failed: {}", exception.getMessage());
+      return ApiResponse.<AuthenticationResponse>builder().message("Register failed").build();
+    }
+  }
+
+  @PutMapping(value = ConstAPI.UserAPI.PREFIX_USER + "{userId}")
+  ApiResponse<Boolean> changeStatus(
+      @PathVariable String userId,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) Boolean isPending) {
+    return ApiResponse.<Boolean>builder()
+        .result(userService.changeStatus(status, userId, isPending))
+        .build();
   }
 }

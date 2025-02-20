@@ -31,14 +31,14 @@ public class ModelController {
 
   @GetMapping(value = ConstAPI.ModelAPI.GET_MODEL_BY_COMPANY_ID + "{companyId}")
   ApiResponse<PagingModel<ModelResponse>> getModelByCompanyId(
-          @PathVariable String companyId,
-          @RequestParam(defaultValue = "1") int page,
-          @RequestParam(defaultValue = "10") int size,
-          @RequestParam String type,
-          @RequestParam String name) {
+      @PathVariable String companyId,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(defaultValue = "") String type,
+      @RequestParam(defaultValue = "") String name) {
     return ApiResponse.<PagingModel<ModelResponse>>builder()
-            .result(modelService.findByCompanyId(page, size, companyId, type, name))
-            .build();
+        .result(modelService.findByCompanyId(page, size, companyId, type, name))
+        .build();
   }
 
   @PostMapping(value = ConstAPI.ModelAPI.CREATE_MODEL)

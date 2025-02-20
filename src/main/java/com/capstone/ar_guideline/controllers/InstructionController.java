@@ -23,7 +23,7 @@ public class InstructionController {
 
   @PostMapping(value = ConstAPI.InstructionAPI.CREATE_INSTRUCTION)
   ApiResponse<InstructionResponse> createInstruction(
-          @ModelAttribute @Valid InstructionCreationRequest request) {
+      @ModelAttribute @Valid InstructionCreationRequest request) {
     return ApiResponse.<InstructionResponse>builder()
         .result(arGuidelineService.createInstruction(request))
         .build();
@@ -31,7 +31,8 @@ public class InstructionController {
 
   @PutMapping(value = ConstAPI.InstructionAPI.UPDATE_INSTRUCTION + "{instructionId}")
   ApiResponse<InstructionResponse> updateInstruction(
-      @PathVariable String instructionId, @ModelAttribute @Valid InstructionCreationRequest request) {
+      @PathVariable String instructionId,
+      @ModelAttribute @Valid InstructionCreationRequest request) {
     return ApiResponse.<InstructionResponse>builder()
         .result(instructionService.update(instructionId, request))
         .build();

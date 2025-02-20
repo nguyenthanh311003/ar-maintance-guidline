@@ -34,7 +34,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                     .permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/api/v1/**")
                     .permitAll() // ✅ Allow OPTIONS requests
-                    .requestMatchers("/api/v1/login", "/api/v1/register")
+                    .requestMatchers(
+                        "/api/v1/login", "/api/v1/register", "/api/v1/register/company")
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/**")
                     .hasAnyAuthority("ADMIN", "COMPANY")
