@@ -13,11 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class InstructionCreationRequest {
   String modelId;
-  String code;
   Integer orderNumber;
   String name;
-  String imageUrlString;
-  MultipartFile imageUrl;
   String description;
   DatasetRequest.GuideViewPosition guideViewPosition;
   InstructionDetailCreationRequest instructionDetailRequest;

@@ -59,12 +59,7 @@ public class InstructionServiceImpl implements IInstructionService {
       List<Float> translations = request.getGuideViewPosition().getTranslation();
       List<Float> rotations = request.getGuideViewPosition().getRotation();
 
-      if (request.getImageUrl() != null) {
-        instructionById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
-      }
-
       instructionById.setName(request.getName());
-      instructionById.setCode(request.getCode());
       instructionById.setDescription(request.getDescription());
 
       String position =
@@ -138,9 +133,7 @@ public class InstructionServiceImpl implements IInstructionService {
                         .toList();
                 instructionResponse.setId(i.getId());
                 instructionResponse.setModelId(i.getModel().getId());
-                instructionResponse.setCode(i.getCode());
                 instructionResponse.setOrderNumber(i.getOrderNumber());
-                instructionResponse.setImageUrl(i.getImageUrl());
                 instructionResponse.setName(i.getName());
                 instructionResponse.setDescription(i.getDescription());
                 instructionResponse.setPosition(i.getPosition());

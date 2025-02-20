@@ -10,9 +10,7 @@ public class InstructionMapper {
       InstructionCreationRequest request, Model model) {
     return Instruction.builder()
         .model(model)
-        .code(request.getCode())
         .name(request.getName())
-        .imageUrl(request.getImageUrlString())
         .description(request.getDescription())
         .build();
   }
@@ -21,11 +19,9 @@ public class InstructionMapper {
     return InstructionResponse.builder()
         .id(instruction.getId())
         .modelId(instruction.getModel().getId())
-        .code(instruction.getCode())
         .orderNumber(instruction.getOrderNumber())
         .name(instruction.getName())
         .description(instruction.getDescription())
-        .imageUrl(instruction.getImageUrl())
         .rotation(instruction.getRotation())
         .position(instruction.getPosition())
         .build();

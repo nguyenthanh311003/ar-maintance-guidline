@@ -11,7 +11,9 @@ import lombok.experimental.FieldDefaults;
 public class InstructionDetailResponse {
   String id;
   String instructionId;
+  String name;
   Integer orderNumber;
   String description;
   String fileString;
+    String imgString;
 }

@@ -13,9 +13,7 @@ import lombok.experimental.FieldDefaults;
 public class InstructionResponse {
   String id;
   String modelId;
-  String code;
   Integer orderNumber;
-  String imageUrl;
   String name;
   String description;
   String position;

@@ -47,7 +47,7 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
           InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(
               request, instructionById);
       newInstructionDetail.setFile(FileStorageService.storeFile(request.getMultipartFile()));
-
+      newInstructionDetail.setImgUrl(FileStorageService.storeFile(request.getImageFile()));
       Integer highestOrderNumber = getHighestOrderNumber(instructionById.getId());
 
       if (Objects.isNull(highestOrderNumber)) {
@@ -75,6 +75,9 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
 
       if (request.getMultipartFile() != null) {
         instructionDetailById.setFile(FileStorageService.storeFile(request.getMultipartFile()));
+      }
+      if (request.getImageFile() != null) {
+        instructionDetailById.setFile(FileStorageService.storeFile(request.getImageFile()));
       }
 
       instructionDetailById.setDescription(request.getDescription());

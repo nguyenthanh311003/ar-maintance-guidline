@@ -26,10 +26,8 @@ public class Instruction implements Serializable {
   @OneToMany(mappedBy = "instruction", cascade = CascadeType.ALL)
   private List<InstructionDetail> instructionDetails;
 
-  private String code;
   private Integer orderNumber;
   private String name;
-  private String imageUrl;
   private String description;
   private String rotation;
   private String position;

@@ -40,7 +40,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       List<Float> rotations = request.getGuideViewPosition().getRotation();
       Instruction newInstruction =
           InstructionMapper.fromInstructionCreationRequestToEntity(request, modelById);
-      newInstruction.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       Integer highestOrderNumber = instructionService.getHighestOrderNumber(modelById.getId());
 
       if (Objects.isNull(highestOrderNumber)) {
