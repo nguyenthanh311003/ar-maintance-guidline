@@ -46,7 +46,7 @@ public class ModelServiceImpl implements IModelService {
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
       Model newModel = ModelMapper.fromModelCreationRequestToEntity(request);
-      //    newModel.setFile(FileStorageService.storeFile(request.getFile()));
+      newModel.setFile(FileStorageService.storeFile(request.getFile()));
       newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       String fileUrl =
           appConfig.getApplicationUrl() + "/" + ConstAPI.FileAPI.FILE + "/" + newModel.getFile();
@@ -71,9 +71,9 @@ public class ModelServiceImpl implements IModelService {
       String file = "";
 
       while (true) {
+        Thread.sleep(5000);
         DatasetStatusResponse datasetStatus =
             vuforiaService.getDatasetStatus(dataStatusResponse.getUuid()).block();
-        Thread.sleep(5000);
         if (datasetStatus.getStatus().equals("done")) {
           file = vuforiaService.downloadAndStoreDataset(datasetStatus.getUuid()).block();
           break;
