@@ -65,9 +65,9 @@ public class ModelServiceImpl implements IModelService {
                               new DatasetRequest.GuideViewPosition(
                                   Arrays.asList(0f, 0f, 5f), Arrays.asList(0f, 0f, 0f, 1f)))))));
 
-      //   DataStatusResponse dataStatusResponse =  vuforiaService.createDataset(datasetRequest);
-      DataStatusResponse dataStatusResponse =
-          new DataStatusResponse("0e553950-2a32-44cd-bd53-ed680a00f2e5");
+        DataStatusResponse dataStatusResponse =  vuforiaService.createDataset(datasetRequest);
+//      DataStatusResponse dataStatusResponse =
+//          new DataStatusResponse("0e553950-2a32-44cd-bd53-ed680a00f2e5");
       String file = "";
 
       while (true) {
