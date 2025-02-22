@@ -125,8 +125,8 @@ public class InstructionServiceImpl implements IInstructionService {
                                     .instructionId(ide.getInstruction().getId())
                                     .orderNumber(ide.getOrderNumber())
                                     .description(ide.getDescription())
-                                        .imgString(ide.getImgUrl())
-                                        .name(ide.getName())
+                                    .imgString(ide.getImgUrl())
+                                    .name(ide.getName())
                                     .fileString(ide.getFile())
                                     .build())
                         .toList();

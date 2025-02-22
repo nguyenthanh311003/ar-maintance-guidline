@@ -4,30 +4,23 @@ import com.amazonaws.util.IOUtils;
 import com.capstone.ar_guideline.constants.ConstS3Bucket;
 import com.capstone.ar_guideline.dtos.CustomMultipartFile;
 import com.capstone.ar_guideline.exceptions.AppException;
-
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.util.*;
-
 import com.capstone.ar_guideline.services.impl.FileStorageService;
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
+import javax.imageio.ImageIO;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-//import org.springframework.mock.web.MockMultipartFile;
 
-
-import javax.imageio.ImageIO;
+// import org.springframework.mock.web.MockMultipartFile;
 
 @Service
 public class UtilService {
@@ -130,6 +123,7 @@ public class UtilService {
       throw baseException;
     }
   }
+
   public static MultipartFile generateQRCodeImage(String text) throws WriterException, IOException {
     QRCodeWriter qrCodeWriter = new QRCodeWriter();
 

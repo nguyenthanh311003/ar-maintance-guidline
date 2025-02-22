@@ -9,7 +9,6 @@ import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CourseMapper;
-import com.capstone.ar_guideline.mappers.LessonMapper;
 import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.services.*;
 import com.capstone.ar_guideline.util.UtilService;

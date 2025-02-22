@@ -15,5 +15,5 @@ public class InstructionDetailResponse {
   Integer orderNumber;
   String description;
   String fileString;
-    String imgString;
+  String imgString;
 }
