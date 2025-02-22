@@ -28,15 +28,13 @@ public class Model implements Serializable {
   private Company company;
 
   @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
-  private List<Instruction> instructions;
-
-  @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
   private List<Course> courses;
 
   @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
   private List<ModelRequest> modelRequests;
 
   private String modelCode;
+  private Boolean isUsed;
   private String status;
   private String name;
   private String description;

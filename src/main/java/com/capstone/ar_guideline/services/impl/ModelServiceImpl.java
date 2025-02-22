@@ -16,6 +16,7 @@ import com.capstone.ar_guideline.mappers.ModelMapper;
 import com.capstone.ar_guideline.repositories.ModelRepository;
 import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.services.IModelTypeService;
+import com.capstone.ar_guideline.util.UtilService;
 import jakarta.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
@@ -46,42 +47,41 @@ public class ModelServiceImpl implements IModelService {
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
       Model newModel = ModelMapper.fromModelCreationRequestToEntity(request);
-      newModel.setFile(FileStorageService.storeFile(request.getFile()));
       newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
-      String fileUrl =
-          appConfig.getApplicationUrl() + "/" + ConstAPI.FileAPI.FILE + "/" + newModel.getFile();
-      DatasetRequest datasetRequest =
-          new DatasetRequest(
-              "dataset-name",
-              "10.18",
-              Arrays.asList(
-                  new DatasetRequest.ModelData(
-                      "mouse",
-                      fileUrl,
-                      Arrays.asList(
-                          new DatasetRequest.ViewData(
-                              "viewpoint-name",
-                              "landscape",
-                              new DatasetRequest.GuideViewPosition(
-                                  Arrays.asList(0f, 0f, 5f), Arrays.asList(0f, 0f, 0f, 1f)))))));
+      newModel.setFile(FileStorageService.storeFile(request.getFile()));
+//      String fileUrl =
+//          appConfig.getApplicationUrl() + "/" + ConstAPI.FileAPI.FILE + "/" + newModel.getFile();
+//      DatasetRequest datasetRequest =
+//          new DatasetRequest(
+//              "dataset-name",
+//              "10.18",
+//              Arrays.asList(
+//                  new DatasetRequest.ModelData(
+//                      "mouse",
+//                      fileUrl,
+//                      Arrays.asList(
+//                          new DatasetRequest.ViewData(
+//                              "viewpoint-name",
+//                              "landscape",
+//                              new DatasetRequest.GuideViewPosition(
+//                                  Arrays.asList(0f, 0f, 5f), Arrays.asList(0f, 0f, 0f, 1f)))))));
 
-        DataStatusResponse dataStatusResponse =  vuforiaService.createDataset(datasetRequest);
-//      DataStatusResponse dataStatusResponse =
-//          new DataStatusResponse("0e553950-2a32-44cd-bd53-ed680a00f2e5");
-      String file = "";
+//        DataStatusResponse dataStatusResponse =  vuforiaService.createDataset(datasetRequest);
 
-      while (true) {
-        Thread.sleep(5000);
-        DatasetStatusResponse datasetStatus =
-            vuforiaService.getDatasetStatus(dataStatusResponse.getUuid()).block();
-        if (datasetStatus.getStatus().equals("done")) {
-          file = vuforiaService.downloadAndStoreDataset(datasetStatus.getUuid()).block();
-          break;
-        }
-      }
-      newModel.setModelCode(dataStatusResponse.getUuid());
-      newModel.setFile(file);
+//      while (true) {
+//        Thread.sleep(5000);
+//        DatasetStatusResponse datasetStatus =
+//            vuforiaService.getDatasetStatus(dataStatusResponse.getUuid()).block();
+//        if (datasetStatus.getStatus().equals("done")) {
+//          file = vuforiaService.downloadAndStoreDataset(datasetStatus.getUuid()).block();
+//          break;
+//        }
+//      }
+   //   newModel.setModelCode();
+   //   newModel.setFile(file);
       newModel = modelRepository.save(newModel);
+      newModel.setFile(UtilService.generateAndStoreQRCode(newModel.getId()));
+
 
       return ModelMapper.fromEntityToModelResponse(newModel);
     } catch (Exception exception) {

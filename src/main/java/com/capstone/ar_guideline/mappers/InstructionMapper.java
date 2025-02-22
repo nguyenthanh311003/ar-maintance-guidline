@@ -9,7 +9,6 @@ public class InstructionMapper {
   public static Instruction fromInstructionCreationRequestToEntity(
       InstructionCreationRequest request, Model model) {
     return Instruction.builder()
-        .model(model)
         .name(request.getName())
         .description(request.getDescription())
         .build();
@@ -18,7 +17,6 @@ public class InstructionMapper {
   public static InstructionResponse fromEntityToInstructionResponse(Instruction instruction) {
     return InstructionResponse.builder()
         .id(instruction.getId())
-        .modelId(instruction.getModel().getId())
         .orderNumber(instruction.getOrderNumber())
         .name(instruction.getName())
         .description(instruction.getDescription())

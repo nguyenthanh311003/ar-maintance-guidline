@@ -20,8 +20,8 @@ public class Instruction implements Serializable {
   private String id;
 
   @ManyToOne
-  @JoinColumn(name = "model_id", nullable = false)
-  private Model model;
+  @JoinColumn(name = "course_id", nullable = false)
+  private Course course;
 
   @OneToMany(mappedBy = "instruction", cascade = CascadeType.ALL)
   private List<InstructionDetail> instructionDetails;

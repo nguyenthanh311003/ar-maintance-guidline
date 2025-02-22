@@ -1,12 +1,33 @@
 package com.capstone.ar_guideline.util;
 
+import com.amazonaws.util.IOUtils;
 import com.capstone.ar_guideline.constants.ConstS3Bucket;
+import com.capstone.ar_guideline.dtos.CustomMultipartFile;
 import com.capstone.ar_guideline.exceptions.AppException;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.*;
+
+import com.capstone.ar_guideline.services.impl.FileStorageService;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+//import org.springframework.mock.web.MockMultipartFile;
+
+
+import javax.imageio.ImageIO;
 
 @Service
 public class UtilService {
@@ -107,6 +128,36 @@ public class UtilService {
         throw (AppException) baseException;
       }
       throw baseException;
+    }
+  }
+  public static MultipartFile generateQRCodeImage(String text) throws WriterException, IOException {
+    QRCodeWriter qrCodeWriter = new QRCodeWriter();
+
+    // Set encoding hints
+    BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 300, 300);
+
+    // Convert BitMatrix to BufferedImage
+    BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+    File tempFile = File.createTempFile("qrCode", ".png");
+    ImageIO.write(qrImage, "png", tempFile);
+
+    // Convert file to MultipartFile
+    return convertFileToMultipartFile(tempFile);
+  }
+
+  private static MultipartFile convertFileToMultipartFile(File file) throws IOException {
+    FileInputStream input = new FileInputStream(file);
+    byte[] bytes = IOUtils.toByteArray(input);
+    input.close();
+    return new CustomMultipartFile(file.getName(), "qrCode.png", "image/png", bytes);
+  }
+
+  public static String generateAndStoreQRCode(String text) {
+    try {
+      MultipartFile qrCodeFile = generateQRCodeImage(text);
+      return FileStorageService.storeFile(qrCodeFile);
+    } catch (WriterException | IOException e) {
+      throw new RuntimeException("Failed to generate or store QR code image", e);
     }
   }
 }

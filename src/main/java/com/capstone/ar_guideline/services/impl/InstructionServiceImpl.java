@@ -39,7 +39,6 @@ public class InstructionServiceImpl implements IInstructionService {
   @Override
   public Instruction create(Instruction instruction) {
     try {
-      modelService.findById(instruction.getModel().getId());
       return instructionRepository.save(instruction);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
@@ -111,9 +110,9 @@ public class InstructionServiceImpl implements IInstructionService {
   }
 
   @Override
-  public List<InstructionResponse> findByModelId(String modelId) {
+  public List<InstructionResponse> findByCourseId(String modelId) {
     try {
-      return instructionRepository.getByModelId(modelId).stream()
+      return instructionRepository.getByCourseId(modelId).stream()
           .map(
               i -> {
                 InstructionResponse instructionResponse = new InstructionResponse();
@@ -132,7 +131,6 @@ public class InstructionServiceImpl implements IInstructionService {
                                     .build())
                         .toList();
                 instructionResponse.setId(i.getId());
-                instructionResponse.setModelId(i.getModel().getId());
                 instructionResponse.setOrderNumber(i.getOrderNumber());
                 instructionResponse.setName(i.getName());
                 instructionResponse.setDescription(i.getDescription());

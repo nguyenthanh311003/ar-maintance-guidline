@@ -28,6 +28,9 @@ public class Course implements Serializable {
   private Model model;
 
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+  private List<Instruction> instructions;
+
+  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
   private List<Lesson> lessons;
 
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
@@ -42,6 +45,8 @@ public class Course implements Serializable {
   private String type;
   private String status;
   private String imageUrl;
+  private String qrCode;
+  private String courseCode;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

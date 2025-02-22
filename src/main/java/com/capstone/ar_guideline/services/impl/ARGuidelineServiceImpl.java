@@ -83,8 +83,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
     try {
       Model modelById = modelService.findById(modelId);
 
-      List<InstructionResponse> instructionResponses =
-          instructionService.findByModelId(modelById.getId());
       return ModelResponse.builder()
           .id(modelById.getId())
           .modelTypeId(modelById.getModelType().getId())
@@ -96,7 +94,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
           .version(modelById.getVersion())
           .scale(modelById.getScale())
           .file(modelById.getFile())
-          .instructionResponses(instructionResponses)
           .build();
 
     } catch (Exception exception) {

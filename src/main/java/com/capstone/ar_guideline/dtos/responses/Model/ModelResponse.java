@@ -20,6 +20,7 @@ public class ModelResponse implements Serializable {
   String companyId;
   String description;
   String imageUrl;
+  Boolean isUsed;
   String version;
   String scale;
   String file;

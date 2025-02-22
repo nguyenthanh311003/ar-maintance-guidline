@@ -14,7 +14,7 @@ public interface IInstructionService {
 
   Instruction findById(String id);
 
-  List<InstructionResponse> findByModelId(String modelId);
+  List<InstructionResponse> findByCourseId(String modelId);
 
   Integer getHighestOrderNumber(String modelId);
 

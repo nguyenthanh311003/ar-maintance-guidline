@@ -103,14 +103,14 @@ public class LessonProcessServiceImpl implements ILessonProcessService {
   @Override
   public void createAll(String courseId, String userId) {
     CourseResponse course = courseService.findByIdResponse(courseId);
-    List<LessonResponse> lessons = course.getLessons();
-    for (LessonResponse lesson : lessons) {
-      for (LessonDetailResponse lessonDetail : lesson.getLessonDetails()) {
-        LessonProcessCreationRequest request = new LessonProcessCreationRequest();
-        request.setLessonDetailId(lessonDetail.getId());
-        request.setUserId(userId);
-        create(request);
-      }
-    }
+//    List<LessonResponse> lessons = course.getInstructions();
+//    for (LessonResponse lesson : lessons) {
+//      for (LessonDetailResponse lessonDetail : lesson.getLessonDetails()) {
+//        LessonProcessCreationRequest request = new LessonProcessCreationRequest();
+//        request.setLessonDetailId(lessonDetail.getId());
+//        request.setUserId(userId);
+//        create(request);
+//      }
+//    }
   }
 }
