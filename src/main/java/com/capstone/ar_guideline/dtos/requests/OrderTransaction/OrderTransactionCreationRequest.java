@@ -11,7 +11,4 @@ import lombok.experimental.FieldDefaults;
 public class OrderTransactionCreationRequest {
   String userId;
   String itemCode;
-  String orderCode;
-  String status;
-  Double amount;
 }

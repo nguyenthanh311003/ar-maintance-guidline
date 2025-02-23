@@ -14,6 +14,12 @@ public interface IOrderTransactionService {
 
   OrderTransaction findById(String id);
 
+  void UpdateOrderCode(String orderId, Long orderCode);
+
   PagingModel<OrderTransactionResponse> getAllTransactionByCompanyId(
       int page, int size, String companyId);
+
+  OrderTransaction findByOrderCode(Long orderCode);
+
+  void changeStatus(String orderId, String status);
 }

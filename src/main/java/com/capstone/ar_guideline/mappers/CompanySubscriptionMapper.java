@@ -12,8 +12,6 @@ public class CompanySubscriptionMapper {
     return CompanySubscription.builder()
         .company(company)
         .subscription(subscription)
-        .subscriptionStartDate(request.getSubscriptionStartDate())
-        .subscriptionExpireDate(request.getSubscriptionExpireDate())
         .build();
   }
 

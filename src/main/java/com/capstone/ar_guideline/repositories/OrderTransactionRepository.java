@@ -17,4 +17,6 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
               + "ORDER BY o.createdDate ASC")
   Page<OrderTransaction> getOrderTransactionByCompanyId(
       Pageable pageable, @Param("companyId") String companyId);
+
+    OrderTransaction findByOrderCode(Long orderCode);
 }

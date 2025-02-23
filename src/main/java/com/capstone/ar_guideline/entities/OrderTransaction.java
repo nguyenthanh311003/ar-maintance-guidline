@@ -22,7 +22,7 @@ public class OrderTransaction {
   private User user;
 
   private String itemCode;
-  private String orderCode;
+  private Long orderCode;
   private String status;
   private Double amount;
 

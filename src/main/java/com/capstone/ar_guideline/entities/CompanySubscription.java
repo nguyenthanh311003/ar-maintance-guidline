@@ -29,11 +29,14 @@ public class CompanySubscription {
   private LocalDateTime subscriptionExpireDate;
   private String status;
 
+  private Integer usedEmployees;
+  private Integer usedModels;
+  private Double totalFee;
+
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
-  private LocalDateTime createdDate;
+  private LocalDateTime startDate;
 
-  @Column(nullable = false)
-  @UpdateTimestamp
-  private LocalDateTime updatedDate;
+  private LocalDateTime endDate;
+
 }

@@ -10,7 +10,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SubscriptionCreationRequest {
   String subscriptionCode;
-  Integer duration;
-  Integer scanTime;
+  Integer maxEmployees;
+  Integer maxModels;
+  Double monthlyFee;
+  Double extraModelFee;
   String status;
 }

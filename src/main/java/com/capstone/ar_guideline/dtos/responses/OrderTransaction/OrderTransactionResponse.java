@@ -13,7 +13,7 @@ public class OrderTransactionResponse {
   String id;
   String userId;
   String itemCode;
-  String orderCode;
+  Long orderCode;
   String status;
   Double amount;
   LocalDateTime createdDate;

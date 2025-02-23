@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import vn.payos.PayOS;
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,6 +23,13 @@ public class AppConfig {
 
   @Value("${application.url}")
   private String applicationUrl; // REMOVE STATIC
+
+  @Value("${PAYOS_CLIENT_ID}")
+  private String clientId;
+  @Value("${PAYOS_API_KEY}")
+  private String apiKey;
+  @Value("${PAYOS_CHECKSUM_KEY}")
+  private String checksumKey;
 
   private final UserRepository userRepository;
 
@@ -49,6 +57,11 @@ public class AppConfig {
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public PayOS payOS() {
+    return new PayOS(clientId, apiKey, checksumKey);
   }
 
   @Bean

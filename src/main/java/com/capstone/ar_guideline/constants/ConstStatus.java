@@ -7,4 +7,6 @@ public class ConstStatus {
   public static final String REJECT = "REJECT";
   public static final String SUCCESS = "SUCCESS";
   public static final String FAIL = "FAIL";
+  public static final String PAID ="PAID";
+  public static final String CANCEL="CANCEL";
 }

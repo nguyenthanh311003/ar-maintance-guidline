@@ -22,8 +22,12 @@ public class Subscription {
   private List<CompanySubscription> companySubscriptions;
 
   private String subscriptionCode;
-  private Integer duration;
-  private Integer scanTime;
+  private Integer maxEmployees;
+  private Integer maxModels;
+
+  private Double monthlyFee;
+  private Double extraModelFee;
+
   private String status;
 
   @Column(nullable = false, updatable = false)

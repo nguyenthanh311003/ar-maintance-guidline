@@ -20,6 +20,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -44,6 +46,10 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
           CompanySubscriptionMapper.fromComSubscriptionCreationRequestToEntity(
               request, companyById, subscriptionById);
       newCompanySubscription.setStatus(ConstStatus.ACTIVE_STATUS);
+
+      newCompanySubscription.setSubscriptionStartDate(LocalDateTime.now());
+        newCompanySubscription.setSubscriptionExpireDate(
+            newCompanySubscription.getSubscriptionStartDate().plusMonths(1));
 
       newCompanySubscription = companySubscriptionRepository.save(newCompanySubscription);
 
@@ -71,9 +77,6 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
 
       companySubscriptionById.setCompany(companyById);
       companySubscriptionById.setSubscription(subscriptionById);
-      companySubscriptionById.setSubscriptionStartDate(request.getSubscriptionStartDate());
-      companySubscriptionById.setSubscriptionExpireDate(request.getSubscriptionExpireDate());
-      companySubscriptionById.setStatus(request.getStatus());
 
       companySubscriptionById = companySubscriptionRepository.save(companySubscriptionById);
 

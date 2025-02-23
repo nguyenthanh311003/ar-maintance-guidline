@@ -11,8 +11,6 @@ public class OrderTransactionMapper {
     return OrderTransaction.builder()
         .user(user)
         .itemCode(request.getItemCode())
-        .orderCode(request.getOrderCode())
-        .amount(request.getAmount())
         .build();
   }
 

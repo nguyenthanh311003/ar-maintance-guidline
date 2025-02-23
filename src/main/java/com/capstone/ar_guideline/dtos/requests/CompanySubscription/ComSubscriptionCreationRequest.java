@@ -12,7 +12,4 @@ import lombok.experimental.FieldDefaults;
 public class ComSubscriptionCreationRequest {
   String companyId;
   String subscriptionId;
-  LocalDateTime subscriptionStartDate;
-  LocalDateTime subscriptionExpireDate;
-  String status;
 }
