@@ -14,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class ModelResponse implements Serializable {
   String id;
   String modelTypeId;
+  String modelTypeName;
   String modelCode;
   String status;
   String name;

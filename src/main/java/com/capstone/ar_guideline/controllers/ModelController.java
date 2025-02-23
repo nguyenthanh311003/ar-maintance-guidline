@@ -9,6 +9,7 @@ import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IARGuidelineService;
 import com.capstone.ar_guideline.services.IModelService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,15 +31,23 @@ public class ModelController {
         .build();
   }
 
+  @GetMapping(value = ConstAPI.ModelAPI.GET_UNUSED_MODEL_BY_ID + "{companyId}")
+  ApiResponse<List<ModelResponse>> getUnusedModelByCompanyId(@PathVariable String companyId) {
+    return ApiResponse.<List<ModelResponse>>builder()
+        .result(modelService.getModelUnused(companyId))
+        .build();
+  }
+
   @GetMapping(value = ConstAPI.ModelAPI.GET_MODEL_BY_COMPANY_ID + "{companyId}")
   ApiResponse<PagingModel<ModelResponse>> getModelByCompanyId(
       @PathVariable String companyId,
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int size,
       @RequestParam(defaultValue = "") String type,
-      @RequestParam(defaultValue = "") String name) {
+      @RequestParam(defaultValue = "") String name,
+      @RequestParam(defaultValue = "") String code) {
     return ApiResponse.<PagingModel<ModelResponse>>builder()
-        .result(modelService.findByCompanyId(page, size, companyId, type, name))
+        .result(modelService.findByCompanyId(page, size, companyId, type, name, code))
         .build();
   }
 
