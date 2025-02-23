@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class InstructionResponse {
   String id;
-  String modelId;
+  String courseId;
   Integer orderNumber;
   String name;
   String description;

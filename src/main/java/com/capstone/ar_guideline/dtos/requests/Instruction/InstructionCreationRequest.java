@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class InstructionCreationRequest {
-  String modelId;
+  String courseId;
   Integer orderNumber;
   String name;
   String description;

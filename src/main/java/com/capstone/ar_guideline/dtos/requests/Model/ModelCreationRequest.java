@@ -14,6 +14,7 @@ public class ModelCreationRequest {
   String modelCode;
   String status;
   String name;
+  Boolean isUsed;
   String companyId;
   String description;
   MultipartFile imageUrl;

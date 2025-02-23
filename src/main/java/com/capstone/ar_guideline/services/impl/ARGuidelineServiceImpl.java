@@ -1,18 +1,19 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRequest;
+import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
+import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Instruction;
 import com.capstone.ar_guideline.entities.Model;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
+import com.capstone.ar_guideline.mappers.CourseMapper;
 import com.capstone.ar_guideline.mappers.InstructionMapper;
-import com.capstone.ar_guideline.services.IARGuidelineService;
-import com.capstone.ar_guideline.services.IInstructionDetailService;
-import com.capstone.ar_guideline.services.IInstructionService;
-import com.capstone.ar_guideline.services.IModelService;
+import com.capstone.ar_guideline.services.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,17 +31,17 @@ import org.springframework.stereotype.Service;
 public class ARGuidelineServiceImpl implements IARGuidelineService {
   IInstructionService instructionService;
   IInstructionDetailService instructionDetailService;
-  IModelService modelService;
+  ICourseService courseService;
 
   @Override
   public InstructionResponse createInstruction(InstructionCreationRequest request) {
     try {
-      Model modelById = modelService.findById(request.getModelId());
+      Course course = courseService.findById(request.getCourseId());
       List<Float> translations = request.getGuideViewPosition().getTranslation();
       List<Float> rotations = request.getGuideViewPosition().getRotation();
       Instruction newInstruction =
-          InstructionMapper.fromInstructionCreationRequestToEntity(request, modelById);
-      Integer highestOrderNumber = instructionService.getHighestOrderNumber(modelById.getId());
+          InstructionMapper.fromInstructionCreationRequestToEntity(request);
+      Integer highestOrderNumber = instructionService.getHighestOrderNumber(course.getId());
 
       if (Objects.isNull(highestOrderNumber)) {
         newInstruction.setOrderNumber(1);
@@ -79,22 +80,11 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   }
 
   @Override
-  public ModelResponse findModelById(String modelId) {
+  public CourseResponse findCourseById(String modelId) {
     try {
-      Model modelById = modelService.findById(modelId);
+      Course course = courseService.findById(modelId);
 
-      return ModelResponse.builder()
-          .id(modelById.getId())
-          .modelTypeId(modelById.getModelType().getId())
-          .modelCode(modelById.getModelCode())
-          .status(modelById.getStatus())
-          .name(modelById.getName())
-          .description(modelById.getDescription())
-          .imageUrl(modelById.getImageUrl())
-          .version(modelById.getVersion())
-          .scale(modelById.getScale())
-          .file(modelById.getFile())
-          .build();
+      return CourseMapper.fromEntityToCourseResponse(course);
 
     } catch (Exception exception) {
       if (exception instanceof AppException) {

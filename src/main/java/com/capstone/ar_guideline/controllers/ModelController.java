@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.controllers;
 import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
+import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IARGuidelineService;
@@ -23,9 +24,9 @@ public class ModelController {
   IARGuidelineService arGuidelineService;
 
   @GetMapping(value = ConstAPI.ModelAPI.GET_MODEL_BY_ID + "{modelId}")
-  ApiResponse<ModelResponse> getModelById(@PathVariable String modelId) {
-    return ApiResponse.<ModelResponse>builder()
-        .result(arGuidelineService.findModelById(modelId))
+  ApiResponse<CourseResponse> getModelById(@PathVariable String modelId) {
+    return ApiResponse.<CourseResponse>builder()
+        .result(arGuidelineService.findCourseById(modelId))
         .build();
   }
 

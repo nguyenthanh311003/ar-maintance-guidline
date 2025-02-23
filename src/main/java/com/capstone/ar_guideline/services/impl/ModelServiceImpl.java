@@ -44,39 +44,7 @@ public class ModelServiceImpl implements IModelService {
       Model newModel = ModelMapper.fromModelCreationRequestToEntity(request);
       newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       newModel.setFile(FileStorageService.storeFile(request.getFile()));
-      //      String fileUrl =
-      //          appConfig.getApplicationUrl() + "/" + ConstAPI.FileAPI.FILE + "/" +
-      // newModel.getFile();
-      //      DatasetRequest datasetRequest =
-      //          new DatasetRequest(
-      //              "dataset-name",
-      //              "10.18",
-      //              Arrays.asList(
-      //                  new DatasetRequest.ModelData(
-      //                      "mouse",
-      //                      fileUrl,
-      //                      Arrays.asList(
-      //                          new DatasetRequest.ViewData(
-      //                              "viewpoint-name",
-      //                              "landscape",
-      //                              new DatasetRequest.GuideViewPosition(
-      //                                  Arrays.asList(0f, 0f, 5f), Arrays.asList(0f, 0f, 0f,
-      // 1f)))))));
-
-      //        DataStatusResponse dataStatusResponse =
-      // vuforiaService.createDataset(datasetRequest);
-
-      //      while (true) {
-      //        Thread.sleep(5000);
-      //        DatasetStatusResponse datasetStatus =
-      //            vuforiaService.getDatasetStatus(dataStatusResponse.getUuid()).block();
-      //        if (datasetStatus.getStatus().equals("done")) {
-      //          file = vuforiaService.downloadAndStoreDataset(datasetStatus.getUuid()).block();
-      //          break;
-      //        }
-      //      }
-      //   newModel.setModelCode();
-      //   newModel.setFile(file);
+      newModel.setIsUsed(false);
       newModel = modelRepository.save(newModel);
       newModel.setFile(UtilService.generateAndStoreQRCode(newModel.getId()));
 
@@ -93,7 +61,13 @@ public class ModelServiceImpl implements IModelService {
   public ModelResponse update(String id, ModelCreationRequest request) {
     try {
       Model modelById = findById(id);
-
+      modelById = ModelMapper.fromModelCreationRequestToEntity(request);
+      if (request.getImageUrl() != null) {
+        modelById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
+      }
+        if (request.getFile() != null) {
+            modelById.setFile(FileStorageService.storeFile(request.getFile()));
+        }
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
       modelById = modelRepository.save(modelById);
