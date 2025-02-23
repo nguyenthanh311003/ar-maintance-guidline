@@ -4,16 +4,13 @@ import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRe
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
-import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Instruction;
-import com.capstone.ar_guideline.entities.Model;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CourseMapper;
 import com.capstone.ar_guideline.mappers.InstructionMapper;
 import com.capstone.ar_guideline.services.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

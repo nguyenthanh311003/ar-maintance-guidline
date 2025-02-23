@@ -20,6 +20,7 @@ public class ConstAPI {
     public static final String UPDATE_MODEL = "api/v1/model/";
     public static final String DELETE_MODEL = "api/v1/model/";
     public static final String GET_MODEL_BY_ID = "api/v1/model/";
+    public static final String GET_UNUSED_MODEL_BY_ID = "api/v1/model/unused/company/";
     public static final String GET_MODEL_BY_COMPANY_ID = "api/v1/model/company/";
   }
 
