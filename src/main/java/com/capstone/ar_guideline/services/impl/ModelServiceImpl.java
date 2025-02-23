@@ -12,7 +12,6 @@ import com.capstone.ar_guideline.mappers.ModelMapper;
 import com.capstone.ar_guideline.repositories.ModelRepository;
 import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.services.IModelTypeService;
-import com.capstone.ar_guideline.util.UtilService;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.AccessLevel;
@@ -63,9 +62,9 @@ public class ModelServiceImpl implements IModelService {
       if (request.getImageUrl() != null) {
         modelById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       }
-        if (request.getFile() != null) {
-            modelById.setFile(FileStorageService.storeFile(request.getFile()));
-        }
+      if (request.getFile() != null) {
+        modelById.setFile(FileStorageService.storeFile(request.getFile()));
+      }
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
       modelById = modelRepository.save(modelById);
@@ -102,11 +101,11 @@ public class ModelServiceImpl implements IModelService {
 
   @Override
   public PagingModel<ModelResponse> findByCompanyId(
-      int page, int size, String companyId, String type, String name) {
+      int page, int size, String companyId, String type, String name, String code) {
     try {
       PagingModel<ModelResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
-      Page<Model> models = modelRepository.findByCompanyId(pageable, companyId, type, name);
+      Page<Model> models = modelRepository.findByCompanyId(pageable, companyId, type, name, code);
       List<ModelResponse> modelResponses =
           models.stream()
               .map(
@@ -120,6 +119,7 @@ public class ModelServiceImpl implements IModelService {
                           .description(m.getDescription())
                           .imageUrl(m.getImageUrl())
                           .version(m.getVersion())
+                          .modelTypeName(m.getModelType().getName())
                           .scale(m.getScale())
                           .file(m.getFile())
                           .build())
@@ -131,6 +131,20 @@ public class ModelServiceImpl implements IModelService {
       pagingModel.setTotalPages(models.getTotalPages());
       pagingModel.setObjectList(modelResponses);
       return pagingModel;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<ModelResponse> getModelUnused(String companyId) {
+    try {
+      List<Model> models = modelRepository.getModelUnused(companyId);
+
+      return models.stream().map(ModelMapper::fromEntityToModelResponse).toList();
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
