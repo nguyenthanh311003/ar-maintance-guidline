@@ -46,6 +46,7 @@ public class ModelServiceImpl implements IModelService {
       newModel.setFile(FileStorageService.storeFile(request.getFile()));
       newModel.setIsUsed(false);
       newModel = modelRepository.save(newModel);
+
       return ModelMapper.fromEntityToModelResponse(newModel);
     } catch (Exception exception) {
       if (exception instanceof AppException) {

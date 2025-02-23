@@ -16,7 +16,6 @@ public class CourseResponse implements Serializable {
   String companyId;
   String modelId;
   List<InstructionResponse> instructions;
-  String modelCode;
   String title;
   String description;
   String shortDescription;
@@ -24,6 +23,7 @@ public class CourseResponse implements Serializable {
   Integer duration;
   Boolean isMandatory;
   String imageUrl;
+  String qrCode;
   Integer numberOfLessons;
   Integer numberOfParticipants;
   String status;

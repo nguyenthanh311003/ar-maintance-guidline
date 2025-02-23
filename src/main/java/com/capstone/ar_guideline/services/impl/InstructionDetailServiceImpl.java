@@ -11,9 +11,10 @@ import com.capstone.ar_guideline.mappers.InstructionDetailMapper;
 import com.capstone.ar_guideline.repositories.InstructionDetailRepository;
 import com.capstone.ar_guideline.services.IInstructionDetailService;
 import com.capstone.ar_guideline.services.IInstructionService;
-import com.capstone.ar_guideline.util.UtilService;
 import java.util.Arrays;
 import java.util.Objects;
+
+import com.capstone.ar_guideline.util.UtilService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -46,7 +47,7 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
       InstructionDetail newInstructionDetail =
           InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(
               request, instructionById);
-      newInstructionDetail.setFile(FileStorageService.storeFile(request.getMultipartFile()));
+      newInstructionDetail.setFile(FileStorageService.storeFile(request.getFile()));
       newInstructionDetail.setImgUrl(FileStorageService.storeFile(request.getImageFile()));
       Integer highestOrderNumber = getHighestOrderNumber(instructionById.getId());
 
@@ -73,8 +74,8 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
 
       InstructionDetail instructionDetailById = findById(id);
 
-      if (request.getMultipartFile() != null) {
-        instructionDetailById.setFile(FileStorageService.storeFile(request.getMultipartFile()));
+      if (request.getFile() != null) {
+        instructionDetailById.setFile(FileStorageService.storeFile(request.getFile()));
       }
       if (request.getImageFile() != null) {
         instructionDetailById.setFile(FileStorageService.storeFile(request.getImageFile()));

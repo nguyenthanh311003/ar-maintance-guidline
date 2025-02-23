@@ -132,6 +132,7 @@ public class InstructionServiceImpl implements IInstructionService {
                         .toList();
                 instructionResponse.setId(i.getId());
                 instructionResponse.setOrderNumber(i.getOrderNumber());
+                instructionResponse.setCourseId(i.getCourse().getId());
                 instructionResponse.setName(i.getName());
                 instructionResponse.setDescription(i.getDescription());
                 instructionResponse.setPosition(i.getPosition());

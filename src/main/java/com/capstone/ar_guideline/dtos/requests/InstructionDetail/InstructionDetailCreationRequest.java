@@ -17,5 +17,5 @@ public class InstructionDetailCreationRequest {
   String imageString;
   String fileString;
   MultipartFile imageFile;
-  MultipartFile multipartFile;
+  MultipartFile file;
 }
