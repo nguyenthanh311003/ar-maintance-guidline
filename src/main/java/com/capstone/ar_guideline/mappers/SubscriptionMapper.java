@@ -9,12 +9,11 @@ public class SubscriptionMapper {
       SubscriptionCreationRequest request) {
     return Subscription.builder()
         .subscriptionCode(request.getSubscriptionCode())
-            .maxEmployees(request.getMaxEmployees())
-            .maxModels(request.getMaxModels())
-            .monthlyFee(request.getMonthlyFee())
-            .extraModelFee(request.getExtraModelFee())
-            .status(request.getStatus())
-
+        .maxEmployees(request.getMaxEmployees())
+        .maxModels(request.getMaxModels())
+        .monthlyFee(request.getMonthlyFee())
+        .extraModelFee(request.getExtraModelFee())
+        .status(request.getStatus())
         .build();
   }
 
@@ -22,11 +21,11 @@ public class SubscriptionMapper {
     return SubscriptionResponse.builder()
         .id(subscription.getId())
         .subscriptionCode(subscription.getSubscriptionCode())
-            .subscriptionCode(subscription.getSubscriptionCode())
-            .maxEmployees(subscription.getMaxEmployees())
-            .maxModels(subscription.getMaxModels())
-            .monthlyFee(subscription.getMonthlyFee())
-            .extraModelFee(subscription.getExtraModelFee())
+        .subscriptionCode(subscription.getSubscriptionCode())
+        .maxEmployees(subscription.getMaxEmployees())
+        .maxModels(subscription.getMaxModels())
+        .monthlyFee(subscription.getMonthlyFee())
+        .extraModelFee(subscription.getExtraModelFee())
         .status(subscription.getStatus())
         .build();
   }

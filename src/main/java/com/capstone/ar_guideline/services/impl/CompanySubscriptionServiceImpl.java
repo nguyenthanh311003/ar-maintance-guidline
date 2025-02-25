@@ -14,13 +14,12 @@ import com.capstone.ar_guideline.repositories.CompanySubscriptionRepository;
 import com.capstone.ar_guideline.services.ICompanyService;
 import com.capstone.ar_guideline.services.ICompanySubscriptionService;
 import com.capstone.ar_guideline.services.ISubscriptionService;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +35,13 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
   @Override
   public CompanySubscriptionResponse create(ComSubscriptionCreationRequest request) {
     try {
+      CompanySubscription companySubscription = findByCompanyIdAndSubscriptionId(
+              request.getCompanyId(), request.getSubscriptionId());
+
+      if (companySubscription != null) {
+        return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(
+            companySubscription);
+      }
       Company companyById = companyService.findByIdReturnEntity(request.getCompanyId());
 
       Subscription subscriptionById =
@@ -48,8 +54,8 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
       newCompanySubscription.setStatus(ConstStatus.ACTIVE_STATUS);
 
       newCompanySubscription.setSubscriptionStartDate(LocalDateTime.now());
-        newCompanySubscription.setSubscriptionExpireDate(
-            newCompanySubscription.getSubscriptionStartDate().plusMonths(1));
+      newCompanySubscription.setSubscriptionExpireDate(
+          newCompanySubscription.getSubscriptionStartDate().plusMonths(1));
 
       newCompanySubscription = companySubscriptionRepository.save(newCompanySubscription);
 
@@ -61,6 +67,27 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
         throw exception;
       }
       throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_CREATE_FAILED);
+    }
+  }
+
+  private CompanySubscription findByCompanyIdAndSubscriptionId(
+      String companyId, String subscriptionId) {
+    try {
+      CompanySubscription companySubscription =
+          companySubscriptionRepository.findByCompanyId(companyId);
+
+      if (companySubscription != null) {
+        companySubscription.setSubscription(subscriptionService.findById(subscriptionId));
+        return companySubscriptionRepository.save(companySubscription);
+      } else {
+        return null;
+      }
+
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_NOT_EXISTED);
     }
   }
 
@@ -117,5 +144,14 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
       }
       throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_NOT_EXISTED);
     }
+  }
+
+  @Override
+  public CompanySubscriptionResponse disable(String id) {
+    CompanySubscription companySubscriptionById = findById(id);
+    companySubscriptionById.setStatus(ConstStatus.INACTIVE_STATUS);
+    companySubscriptionById.setSubscriptionStartDate(null);
+    companySubscriptionById.setSubscriptionExpireDate(null);
+   return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(companySubscriptionRepository.save(companySubscriptionById));
   }
 }

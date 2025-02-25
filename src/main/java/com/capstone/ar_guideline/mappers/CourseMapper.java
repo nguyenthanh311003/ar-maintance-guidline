@@ -37,7 +37,7 @@ public class CourseMapper {
         .duration(course.getDuration())
         .imageUrl(course.getImageUrl())
         .isMandatory(course.getIsMandatory())
-            .qrCode(course.getQrCode())
+        .qrCode(course.getQrCode())
         .status(course.getStatus())
         .type(course.getType())
         .build();

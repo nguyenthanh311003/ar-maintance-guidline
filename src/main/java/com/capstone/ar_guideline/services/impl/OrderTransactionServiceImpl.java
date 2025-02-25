@@ -18,11 +18,10 @@ import com.capstone.ar_guideline.services.IOrderTransactionService;
 import com.capstone.ar_guideline.services.ISubscriptionService;
 import com.capstone.ar_guideline.services.IUserService;
 import com.capstone.ar_guideline.util.UtilService;
+import jakarta.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
-import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -52,7 +51,7 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
     try {
       User userById = userService.findById(request.getUserId());
 
-    Subscription subscription = subscriptionService.findByCode(request.getItemCode());
+      Subscription subscription = subscriptionService.findByCode(request.getItemCode());
 
       OrderTransaction newOrderTransaction =
           OrderTransactionMapper.fromOrderTransactionCreationRequestToEntity(request, userById);
@@ -68,9 +67,6 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
               .companyId(userById.getCompany().getId())
               .subscriptionId(subscription.getId())
               .build();
-
-      companySubscriptionService.create(comSubscriptionCreationRequest);
-
       return OrderTransactionMapper.fromEntityToOrderTransactionResponse(newOrderTransaction);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
@@ -151,7 +147,6 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
     OrderTransaction orderTransaction = findById(orderId);
     orderTransaction.setOrderCode(orderCode);
     orderTransactionRepository.save(orderTransaction);
-
   }
 
   @Override

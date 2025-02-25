@@ -26,8 +26,10 @@ public class AppConfig {
 
   @Value("${PAYOS_CLIENT_ID}")
   private String clientId;
+
   @Value("${PAYOS_API_KEY}")
   private String apiKey;
+
   @Value("${PAYOS_CHECKSUM_KEY}")
   private String checksumKey;
 

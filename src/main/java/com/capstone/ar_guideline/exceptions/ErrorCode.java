@@ -104,6 +104,7 @@ public enum ErrorCode {
   SWAP_ORDER_NUMBER_FAILED(1088, "Swap order number failed", HttpStatus.BAD_REQUEST),
   USER_UPDATE_FAILED(1089, "User update failed", HttpStatus.BAD_REQUEST),
   USER_CREATE_FAILED(1090, "User create failed", HttpStatus.BAD_REQUEST),
+  COMPANY_SUBSCRIPTION_EXISTED(1091, "Company Subscription existed", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;

@@ -25,6 +25,4 @@ public class ModelResponse implements Serializable {
   String version;
   String scale;
   String file;
-  String fileDat;
-  List<InstructionResponse> instructionResponses;
 }

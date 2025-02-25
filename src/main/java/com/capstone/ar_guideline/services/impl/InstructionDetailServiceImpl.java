@@ -11,10 +11,7 @@ import com.capstone.ar_guideline.mappers.InstructionDetailMapper;
 import com.capstone.ar_guideline.repositories.InstructionDetailRepository;
 import com.capstone.ar_guideline.services.IInstructionDetailService;
 import com.capstone.ar_guideline.services.IInstructionService;
-import java.util.Arrays;
 import java.util.Objects;
-
-import com.capstone.ar_guideline.util.UtilService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -74,8 +71,9 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
 
       InstructionDetail instructionDetailById = findById(id);
 
-      instructionDetailById = InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(
-          request, instructionDetailById.getInstruction());
+      instructionDetailById =
+          InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(
+              request, instructionDetailById.getInstruction());
 
       if (request.getFile() != null) {
         instructionDetailById.setFile(FileStorageService.storeFile(request.getFile()));
@@ -85,7 +83,6 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
       }
 
       instructionDetailById = instructionDetailRepository.save(instructionDetailById);
-
 
       return InstructionDetailMapper.fromEntityToInstructionDetailResponse(instructionDetailById);
     } catch (Exception exception) {

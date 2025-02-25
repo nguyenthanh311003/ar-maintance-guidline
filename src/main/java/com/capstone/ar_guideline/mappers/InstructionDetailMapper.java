@@ -11,9 +11,9 @@ public class InstructionDetailMapper {
     return InstructionDetail.builder()
         .instruction(instruction)
         .name(request.getName())
-            .orderNumber(request.getOrderNumber())
-            .imgUrl(request.getImageString())
-            .file(request.getFileString())
+        .orderNumber(request.getOrderNumber())
+        .imgUrl(request.getImageString())
+        .file(request.getFileString())
         .description(request.getDescription())
         .build();
   }
@@ -26,7 +26,7 @@ public class InstructionDetailMapper {
         .instructionId(instructionDetail.getInstruction().getId())
         .orderNumber(instructionDetail.getOrderNumber())
         .name(instructionDetail.getName())
-            .description(instructionDetail.getDescription())
+        .description(instructionDetail.getDescription())
         .fileString(instructionDetail.getFile())
         .imgString(instructionDetail.getImgUrl())
         .build();

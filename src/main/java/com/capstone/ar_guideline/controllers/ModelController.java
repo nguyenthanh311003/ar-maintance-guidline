@@ -25,9 +25,9 @@ public class ModelController {
   IARGuidelineService arGuidelineService;
 
   @GetMapping(value = ConstAPI.ModelAPI.GET_MODEL_BY_ID + "{modelId}")
-  ApiResponse<CourseResponse> getModelById(@PathVariable String modelId) {
-    return ApiResponse.<CourseResponse>builder()
-        .result(arGuidelineService.findCourseById(modelId))
+  ApiResponse<ModelResponse> getModelById(@PathVariable String modelId) {
+    return ApiResponse.<ModelResponse>builder()
+        .result(modelService.findByIdResponse(modelId))
         .build();
   }
 

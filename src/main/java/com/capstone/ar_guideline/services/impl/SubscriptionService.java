@@ -1,6 +1,5 @@
 package com.capstone.ar_guideline.services.impl;
 
-import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Subscription.SubscriptionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Subscription.SubscriptionResponse;
@@ -10,13 +9,10 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.SubscriptionMapper;
 import com.capstone.ar_guideline.repositories.SubscriptionRepository;
 import com.capstone.ar_guideline.services.ISubscriptionService;
-import com.capstone.ar_guideline.util.UtilService;
-import java.util.Arrays;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,6 +21,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class SubscriptionService implements ISubscriptionService {
   SubscriptionRepository subscriptionRepository;
+
   @Override
   public SubscriptionResponse create(SubscriptionCreationRequest request) {
     try {
@@ -52,7 +49,6 @@ public class SubscriptionService implements ISubscriptionService {
       subscriptionById.setStatus(request.getStatus());
 
       subscriptionById = subscriptionRepository.save(subscriptionById);
-
 
       return SubscriptionMapper.fromEntityToSubscriptionResponse(subscriptionById);
     } catch (Exception exception) {
