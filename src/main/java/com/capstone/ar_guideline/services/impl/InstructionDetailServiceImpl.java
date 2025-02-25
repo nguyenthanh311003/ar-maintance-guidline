@@ -74,6 +74,9 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
 
       InstructionDetail instructionDetailById = findById(id);
 
+      instructionDetailById = InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(
+          request, instructionDetailById.getInstruction());
+
       if (request.getFile() != null) {
         instructionDetailById.setFile(FileStorageService.storeFile(request.getFile()));
       }
@@ -81,17 +84,8 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
         instructionDetailById.setFile(FileStorageService.storeFile(request.getImageFile()));
       }
 
-      instructionDetailById.setDescription(request.getDescription());
-
       instructionDetailById = instructionDetailRepository.save(instructionDetailById);
 
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return InstructionDetailMapper.fromEntityToInstructionDetailResponse(instructionDetailById);
     } catch (Exception exception) {
@@ -107,14 +101,6 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
     try {
       InstructionDetail instructionDetailById = findById(id);
       instructionDetailRepository.deleteById(instructionDetailById.getId());
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
     } catch (Exception exception) {
       if (exception instanceof AppException) {
