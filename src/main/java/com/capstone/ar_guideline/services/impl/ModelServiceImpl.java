@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.configurations.AppConfig;
+import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
@@ -44,6 +45,7 @@ public class ModelServiceImpl implements IModelService {
       newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       newModel.setFile(FileStorageService.storeFile(request.getFile()));
       newModel.setIsUsed(false);
+      newModel.setStatus(ConstStatus.ACTIVE_STATUS);
       newModel = modelRepository.save(newModel);
 
       return ModelMapper.fromEntityToModelResponse(newModel);

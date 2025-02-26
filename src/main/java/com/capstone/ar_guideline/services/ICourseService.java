@@ -35,6 +35,8 @@ public interface ICourseService {
 
   PagingModel<CourseResponse> findCourseNoMandatory(int page, int size, String companyId);
 
+  CourseResponse findByCode(String courseCode);
+
   Course save(Course course);
 
   String updateCoursePicture(String courseId, MultipartFile file);

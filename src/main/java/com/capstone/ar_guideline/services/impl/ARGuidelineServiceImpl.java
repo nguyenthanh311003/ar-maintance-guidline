@@ -4,6 +4,7 @@ import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRe
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Instruction;
 import com.capstone.ar_guideline.exceptions.AppException;
@@ -19,6 +20,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -73,6 +77,52 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         throw exception;
       }
       throw new AppException(ErrorCode.INSTRUCTION_CREATE_FAILED);
+    }
+  }
+
+  @Override
+  public PagingModel<InstructionResponse> getInstructionsByCourseId(
+      int page, int size, String courseId) {
+    try {
+      PagingModel<InstructionResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+      Page<Instruction> instructions = instructionService.findByCourseIdPaging(pageable, courseId);
+
+      List<InstructionResponse> instructionResponses =
+          instructions.stream()
+              .map(
+                  i -> {
+                    InstructionResponse instructionResponse =
+                        InstructionMapper.fromEntityToInstructionResponse(i);
+                    List<InstructionDetailResponse> instructionDetailResponses =
+                        instructionDetailService.findByInstructionId(i.getId()).stream()
+                            .map(
+                                ide ->
+                                    InstructionDetailResponse.builder()
+                                        .id(ide.getId())
+                                        .instructionId(ide.getInstruction().getId())
+                                        .orderNumber(ide.getOrderNumber())
+                                        .description(ide.getDescription())
+                                        .imgString(ide.getImgUrl())
+                                        .name(ide.getName())
+                                        .fileString(ide.getFile())
+                                        .build())
+                            .toList();
+                    instructionResponse.setInstructionDetailResponse(instructionDetailResponses);
+                    return instructionResponse;
+                  })
+              .toList();
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) instructions.getTotalElements());
+      pagingModel.setTotalPages(instructions.getTotalPages());
+      pagingModel.setObjectList(instructionResponses);
+      return pagingModel;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED);
     }
   }
 

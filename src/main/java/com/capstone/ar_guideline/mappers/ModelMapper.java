@@ -11,6 +11,7 @@ public class ModelMapper {
     return Model.builder()
         .modelType(ModelType.builder().id(request.getModelTypeId()).build())
         .status(request.getStatus())
+        .modelCode(request.getModelCode())
         .name(request.getName())
         .company(Company.builder().id(request.getCompanyId()).build())
         .description(request.getDescription())

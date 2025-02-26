@@ -11,6 +11,9 @@ import com.capstone.ar_guideline.mappers.InstructionDetailMapper;
 import com.capstone.ar_guideline.repositories.InstructionDetailRepository;
 import com.capstone.ar_guideline.services.IInstructionDetailService;
 import com.capstone.ar_guideline.services.IInstructionService;
+import com.capstone.ar_guideline.util.UtilService;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -79,8 +82,11 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
         instructionDetailById.setFile(FileStorageService.storeFile(request.getFile()));
       }
       if (request.getImageFile() != null) {
-        instructionDetailById.setFile(FileStorageService.storeFile(request.getImageFile()));
+        instructionDetailById.setImgUrl(FileStorageService.storeFile(request.getImageFile()));
       }
+
+      instructionDetailById.setName(request.getName());
+      instructionDetailById.setDescription(request.getDescription());
 
       instructionDetailById = instructionDetailRepository.save(instructionDetailById);
 
@@ -113,6 +119,49 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
       return instructionDetailRepository
           .findById(id)
           .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTION_DETAIL_NOT_EXISTED));
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_DETAIL_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public InstructionDetailResponse findByIdReturnResponse(String id) {
+    try {
+      InstructionDetail instructionDetailById = findById(id);
+      return InstructionDetailMapper.fromEntityToInstructionDetailResponse(instructionDetailById);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_DETAIL_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<InstructionDetail> findByInstructionId(String instructionId) {
+    try {
+      return instructionDetailRepository.getByInstructionId(instructionId);
+
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_DETAIL_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<InstructionDetailResponse> findByInstructionIdReturnResponse(String instructionId) {
+    try {
+      List<InstructionDetail> instructionDetails =
+          instructionDetailRepository.getByInstructionId(instructionId);
+
+      return instructionDetails.stream()
+          .map(InstructionDetailMapper::fromEntityToInstructionDetailResponse)
+          .toList();
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
