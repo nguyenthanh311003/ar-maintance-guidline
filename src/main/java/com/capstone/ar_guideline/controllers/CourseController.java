@@ -47,6 +47,13 @@ public class CourseController {
         .build();
   }
 
+  @GetMapping(value = ConstAPI.CourseAPI.FIND_COURSE_BY_CODE + "{courseCode}")
+  public ApiResponse<CourseResponse> getByCourseCode(@PathVariable String courseCode) {
+    return ApiResponse.<CourseResponse>builder()
+            .result(courseService.findByCode(courseCode))
+            .build();
+  }
+
   @GetMapping(value = ConstAPI.CourseAPI.COURSE_FIND_BY_COMPANY_ID + "{companyId}")
   public ApiResponse<List<CourseResponse>> getCourseByCompanyId(@PathVariable String companyId) {
     return ApiResponse.<List<CourseResponse>>builder()
