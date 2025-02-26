@@ -4,6 +4,7 @@ import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IARGuidelineService;
 import com.capstone.ar_guideline.services.IInstructionService;
 import jakarta.validation.Valid;
@@ -20,6 +21,16 @@ import org.springframework.web.bind.annotation.*;
 public class InstructionController {
   IInstructionService instructionService;
   IARGuidelineService arGuidelineService;
+
+  @GetMapping(value = ConstAPI.InstructionAPI.GET_INSTRUCTIONS_BY_COURSE_ID + "{courseId}")
+  ApiResponse<PagingModel<InstructionResponse>> getInstructions(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @PathVariable String courseId) {
+    return ApiResponse.<PagingModel<InstructionResponse>>builder()
+        .result(arGuidelineService.getInstructionsByCourseId(page, size, courseId))
+        .build();
+  }
 
   @PostMapping(value = ConstAPI.InstructionAPI.CREATE_INSTRUCTION)
   ApiResponse<InstructionResponse> createInstruction(

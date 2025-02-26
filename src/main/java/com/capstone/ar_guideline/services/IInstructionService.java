@@ -4,6 +4,8 @@ import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRe
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.entities.Instruction;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IInstructionService {
   Instruction create(Instruction instruction);
@@ -15,6 +17,8 @@ public interface IInstructionService {
   Instruction findById(String id);
 
   List<InstructionResponse> findByCourseId(String modelId);
+
+  Page<Instruction> findByCourseIdPaging(Pageable pageable, String courseId);
 
   Integer getHighestOrderNumber(String modelId);
 

@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.services.impl;
 import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.dtos.requests.ModelType.ModelTypeCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.ModelType.ModelTypeResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.ModelType;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
@@ -11,10 +12,14 @@ import com.capstone.ar_guideline.repositories.ModelTypeRepository;
 import com.capstone.ar_guideline.services.IModelTypeService;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.Arrays;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +36,30 @@ public class ModelTypeServiceImpl implements IModelTypeService {
     ConstHashKey.HASH_KEY_INSTRUCTION,
     ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL
   };
+
+  @Override
+  public PagingModel<ModelTypeResponse> getAll(int page, int size) {
+    try {
+      PagingModel<ModelTypeResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+      Page<ModelType> modelTypes = modelTypeRepository.getAlL(pageable);
+
+      List<ModelTypeResponse> modelTypeResponses =
+          modelTypes.stream().map(ModelTypeMapper::fromEntityToModelTypeResponse).toList();
+
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) modelTypes.getTotalElements());
+      pagingModel.setTotalPages(modelTypes.getTotalPages());
+      pagingModel.setObjectList(modelTypeResponses);
+      return pagingModel;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED);
+    }
+  }
 
   @Override
   public ModelTypeResponse create(ModelTypeCreationRequest request) {

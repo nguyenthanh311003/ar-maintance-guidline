@@ -39,4 +39,7 @@ public interface CourseRepository extends JpaRepository<Course, String> {
       value =
           "SELECT c FROM Course c WHERE c.isMandatory = false AND c.status = 'ACTIVE' AND c.company.id = :companyId ORDER BY c.createdDate ASC")
   List<Course> findCourseNoMandatory(Pageable pageable, @Param("companyId") String companyId);
+
+  @Query(value = "SELECT c FROM Course c WHERE c.courseCode = :courseCode AND c.status = 'ACTIVE'")
+  Course findByCode(@Param("courseCode") String courseCode);
 }
