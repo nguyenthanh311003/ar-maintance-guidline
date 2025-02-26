@@ -24,6 +24,7 @@ public class CourseResponse implements Serializable {
   Boolean isMandatory;
   String imageUrl;
   String qrCode;
+  String courseCode;
   Integer numberOfLessons;
   Integer numberOfParticipants;
   String status;
