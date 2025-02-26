@@ -3,7 +3,6 @@ package com.capstone.ar_guideline.services;
 import com.capstone.ar_guideline.dtos.requests.InstructionDetail.InstructionDetailCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
 import com.capstone.ar_guideline.entities.InstructionDetail;
-
 import java.util.List;
 
 public interface IInstructionDetailService {

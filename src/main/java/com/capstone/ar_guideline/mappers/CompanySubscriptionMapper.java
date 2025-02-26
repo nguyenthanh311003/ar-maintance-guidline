@@ -9,10 +9,7 @@ import com.capstone.ar_guideline.entities.Subscription;
 public class CompanySubscriptionMapper {
   public static CompanySubscription fromComSubscriptionCreationRequestToEntity(
       ComSubscriptionCreationRequest request, Company company, Subscription subscription) {
-    return CompanySubscription.builder()
-        .company(company)
-        .subscription(subscription)
-        .build();
+    return CompanySubscription.builder().company(company).subscription(subscription).build();
   }
 
   public static CompanySubscriptionResponse fromEntityToCompanySubscriptionResponse(

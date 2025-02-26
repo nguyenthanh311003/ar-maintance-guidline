@@ -24,12 +24,12 @@ public class InstructionController {
 
   @GetMapping(value = ConstAPI.InstructionAPI.GET_INSTRUCTIONS_BY_COURSE_ID + "{courseId}")
   ApiResponse<PagingModel<InstructionResponse>> getInstructions(
-          @RequestParam(defaultValue = "1") int page,
-          @RequestParam(defaultValue = "10") int size,
-          @PathVariable String courseId) {
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @PathVariable String courseId) {
     return ApiResponse.<PagingModel<InstructionResponse>>builder()
-            .result(arGuidelineService.getInstructionsByCourseId(page, size, courseId))
-            .build();
+        .result(arGuidelineService.getInstructionsByCourseId(page, size, courseId))
+        .build();
   }
 
   @PostMapping(value = ConstAPI.InstructionAPI.CREATE_INSTRUCTION)

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Getter
 @Setter
@@ -38,5 +37,4 @@ public class CompanySubscription {
   private LocalDateTime startDate;
 
   private LocalDateTime endDate;
-
 }

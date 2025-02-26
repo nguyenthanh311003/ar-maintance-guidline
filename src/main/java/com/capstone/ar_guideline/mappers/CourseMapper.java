@@ -9,52 +9,52 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CourseMapper {
-    public static Course fromCourseCreationRequestToEntity(CourseCreationRequest request) {
-        return Course.builder()
-                .title(request.getTitle())
-                .duration(request.getDuration())
-                .isMandatory(request.getIsMandatory())
-                .shortDescription(request.getShortDescription())
-                .targetAudience(request.getTargetAudience())
-                .imageUrl(request.getImageUrlString())
-                .company(Company.builder().id(request.getCompanyId()).build())
-                .model(Model.builder().id(request.getModelId()).build())
-                .type(request.getType())
-                .status(request.getStatus())
-                .description(request.getDescription())
-                .build();
-    }
+  public static Course fromCourseCreationRequestToEntity(CourseCreationRequest request) {
+    return Course.builder()
+        .title(request.getTitle())
+        .duration(request.getDuration())
+        .isMandatory(request.getIsMandatory())
+        .shortDescription(request.getShortDescription())
+        .targetAudience(request.getTargetAudience())
+        .imageUrl(request.getImageUrlString())
+        .company(Company.builder().id(request.getCompanyId()).build())
+        .model(Model.builder().id(request.getModelId()).build())
+        .type(request.getType())
+        .status(request.getStatus())
+        .description(request.getDescription())
+        .build();
+  }
 
-    public static CourseResponse fromEntityToCourseResponse(Course course) {
-        return CourseResponse.builder()
-                .id(course.getId())
-                .companyId(course.getCompany().getId())
-                .modelId(course.getModel().getId())
-                .title(course.getTitle())
-                .description(course.getDescription())
-                .shortDescription(course.getShortDescription())
-                .targetAudience(course.getTargetAudience())
-                .duration(course.getDuration())
-                .imageUrl(course.getImageUrl())
-                .isMandatory(course.getIsMandatory())
-                .qrCode(course.getQrCode())
-                .status(course.getStatus())
-                .type(course.getType())
-                .build();
-    }
+  public static CourseResponse fromEntityToCourseResponse(Course course) {
+    return CourseResponse.builder()
+        .id(course.getId())
+        .companyId(course.getCompany().getId())
+        .modelId(course.getModel().getId())
+        .title(course.getTitle())
+        .description(course.getDescription())
+        .shortDescription(course.getShortDescription())
+        .targetAudience(course.getTargetAudience())
+        .duration(course.getDuration())
+        .imageUrl(course.getImageUrl())
+        .isMandatory(course.getIsMandatory())
+        .qrCode(course.getQrCode())
+        .status(course.getStatus())
+        .type(course.getType())
+        .build();
+  }
 
-    public static Course fromCourseResponseToEntity(CourseResponse response) {
-        return Course.builder()
-                .id(response.getId())
-                // .lessons(response.getLessons())
-                .title(response.getTitle())
-                .description(response.getDescription())
-                .company(Company.builder().id(response.getCompanyId()).build())
-                .duration(response.getDuration())
-                .imageUrl(response.getImageUrl())
-                .status(response.getStatus())
-                .isMandatory(response.getIsMandatory())
-                .type(response.getType())
-                .build();
-    }
+  public static Course fromCourseResponseToEntity(CourseResponse response) {
+    return Course.builder()
+        .id(response.getId())
+        // .lessons(response.getLessons())
+        .title(response.getTitle())
+        .description(response.getDescription())
+        .company(Company.builder().id(response.getCompanyId()).build())
+        .duration(response.getDuration())
+        .imageUrl(response.getImageUrl())
+        .status(response.getStatus())
+        .isMandatory(response.getIsMandatory())
+        .type(response.getType())
+        .build();
+  }
 }

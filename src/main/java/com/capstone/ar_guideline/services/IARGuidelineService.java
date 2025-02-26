@@ -7,6 +7,8 @@ import com.capstone.ar_guideline.dtos.responses.PagingModel;
 
 public interface IARGuidelineService {
   InstructionResponse createInstruction(InstructionCreationRequest request);
+
   PagingModel<InstructionResponse> getInstructionsByCourseId(int page, int size, String courseId);
+
   CourseResponse findCourseById(String modelId);
 }

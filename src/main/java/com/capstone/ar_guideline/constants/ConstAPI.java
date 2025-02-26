@@ -54,7 +54,8 @@ public class ConstAPI {
 
   public static class InstructionDetailAPI {
     public static final String GET_INSTRUCTION_DETAIL_BY_ID = "api/v1/instruction-detail/";
-    public static final String GET_INSTRUCTION_DETAIL_BY_INSTRUCTION = "api/v1/instruction-detail/instruction/";
+    public static final String GET_INSTRUCTION_DETAIL_BY_INSTRUCTION =
+        "api/v1/instruction-detail/instruction/";
     public static final String CREATE_INSTRUCTION_DETAIL = "api/v1/instruction-detail";
     public static final String UPDATE_INSTRUCTION_DETAIL = "api/v1/instruction-detail/";
     public static final String DELETE_INSTRUCTION_DETAIL = "api/v1/instruction-detail/";

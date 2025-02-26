@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ModelTypeRepository extends JpaRepository<ModelType, String> {
-    @Query(value = "SELECT mt FROM ModelType mt ORDER BY mt.createdDate ASC")
-    Page<ModelType> getAlL(Pageable pageable);
+  @Query(value = "SELECT mt FROM ModelType mt ORDER BY mt.createdDate ASC")
+  Page<ModelType> getAlL(Pageable pageable);
 }

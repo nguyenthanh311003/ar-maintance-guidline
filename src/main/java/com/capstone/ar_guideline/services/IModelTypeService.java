@@ -7,6 +7,7 @@ import com.capstone.ar_guideline.entities.ModelType;
 
 public interface IModelTypeService {
   PagingModel<ModelTypeResponse> getAll(int page, int size);
+
   ModelTypeResponse create(ModelTypeCreationRequest request);
 
   ModelTypeResponse update(String id, ModelTypeCreationRequest request);

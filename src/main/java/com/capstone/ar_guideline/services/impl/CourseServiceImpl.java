@@ -312,9 +312,9 @@ public class CourseServiceImpl implements ICourseService {
   @Override
   public CourseResponse findByCode(String courseCode) {
     try {
-        Course courseByCode = courseRepository.findByCode(courseCode);
+      Course courseByCode = courseRepository.findByCode(courseCode);
 
-        return CourseMapper.fromEntityToCourseResponse(courseByCode);
+      return CourseMapper.fromEntityToCourseResponse(courseByCode);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

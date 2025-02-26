@@ -6,13 +6,12 @@ import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
 import com.capstone.ar_guideline.services.IInstructionDetailService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,19 +20,23 @@ import java.util.List;
 public class InstructionDetailController {
   IInstructionDetailService instructionDetailService;
 
-
-  @GetMapping(value = ConstAPI.InstructionDetailAPI.GET_INSTRUCTION_DETAIL_BY_INSTRUCTION + "{instructionId}")
-  ApiResponse<List<InstructionDetailResponse>> getInstructionDetailByInstructionId(@PathVariable String instructionId) {
+  @GetMapping(
+      value =
+          ConstAPI.InstructionDetailAPI.GET_INSTRUCTION_DETAIL_BY_INSTRUCTION + "{instructionId}")
+  ApiResponse<List<InstructionDetailResponse>> getInstructionDetailByInstructionId(
+      @PathVariable String instructionId) {
     return ApiResponse.<List<InstructionDetailResponse>>builder()
-            .result(instructionDetailService.findByInstructionIdReturnResponse(instructionId))
-            .build();
+        .result(instructionDetailService.findByInstructionIdReturnResponse(instructionId))
+        .build();
   }
 
-  @GetMapping(value = ConstAPI.InstructionDetailAPI.GET_INSTRUCTION_DETAIL_BY_ID + "{instructionDetailId}")
-  ApiResponse<InstructionDetailResponse> getInstructionDetailById(@PathVariable String instructionDetailId) {
+  @GetMapping(
+      value = ConstAPI.InstructionDetailAPI.GET_INSTRUCTION_DETAIL_BY_ID + "{instructionDetailId}")
+  ApiResponse<InstructionDetailResponse> getInstructionDetailById(
+      @PathVariable String instructionDetailId) {
     return ApiResponse.<InstructionDetailResponse>builder()
-            .result(instructionDetailService.findByIdReturnResponse(instructionDetailId))
-            .build();
+        .result(instructionDetailService.findByIdReturnResponse(instructionDetailId))
+        .build();
   }
 
   @PostMapping(value = ConstAPI.InstructionDetailAPI.CREATE_INSTRUCTION_DETAIL)

@@ -11,7 +11,6 @@ import com.capstone.ar_guideline.services.impl.PayOsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,12 +28,9 @@ import vn.payos.type.WebhookData;
 public class OrderTransactionController {
   IOrderTransactionService orderTransactionService;
 
-  @Autowired
-  PayOS payOS;
+  @Autowired PayOS payOS;
 
-  @Autowired
-  PayOsService payOsService;
-
+  @Autowired PayOsService payOsService;
 
   @PostMapping(ConstAPI.OrderTransactionAPI.CREATE_ORDER_TRANSACTION)
   public ObjectNode createPaymentLink(@RequestBody CreatePaymentLinkRequestBody RequestBody) {
@@ -43,7 +39,7 @@ public class OrderTransactionController {
 
   @PostMapping(path = "/payment/payos_transfer_handler")
   public ObjectNode payosTransferHandler(@RequestBody ObjectNode body)
-          throws JsonProcessingException, IllegalArgumentException {
+      throws JsonProcessingException, IllegalArgumentException {
 
     ObjectMapper objectMapper = new ObjectMapper();
     ObjectNode response = objectMapper.createObjectNode();
@@ -67,7 +63,6 @@ public class OrderTransactionController {
     }
   }
 
-
   @GetMapping(
       value = ConstAPI.OrderTransactionAPI.GET_ORDER_TRANSACTION_BY_COMPANY_ID + "{companyId}")
   ApiResponse<PagingModel<OrderTransactionResponse>> getOrderTransactionByCompanyId(
@@ -79,13 +74,13 @@ public class OrderTransactionController {
         .build();
   }
 
-//  @PostMapping(value = ConstAPI.OrderTransactionAPI.CREATE_ORDER_TRANSACTION)
-//  ApiResponse<OrderTransactionResponse> createOrderTransaction(
-//      @RequestBody @Valid OrderTransactionCreationRequest request) {
-//    return ApiResponse.<OrderTransactionResponse>builder()
-//        .result(orderTransactionService.create(request))
-//        .build();
-//  }
+  //  @PostMapping(value = ConstAPI.OrderTransactionAPI.CREATE_ORDER_TRANSACTION)
+  //  ApiResponse<OrderTransactionResponse> createOrderTransaction(
+  //      @RequestBody @Valid OrderTransactionCreationRequest request) {
+  //    return ApiResponse.<OrderTransactionResponse>builder()
+  //        .result(orderTransactionService.create(request))
+  //        .build();
+  //  }
 
   @PutMapping(
       value = ConstAPI.OrderTransactionAPI.UPDATE_ORDER_TRANSACTION + "{orderTransactionId}")

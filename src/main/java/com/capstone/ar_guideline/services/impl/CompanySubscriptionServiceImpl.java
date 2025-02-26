@@ -14,13 +14,12 @@ import com.capstone.ar_guideline.repositories.CompanySubscriptionRepository;
 import com.capstone.ar_guideline.services.ICompanyService;
 import com.capstone.ar_guideline.services.ICompanySubscriptionService;
 import com.capstone.ar_guideline.services.ISubscriptionService;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -48,8 +47,8 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
       newCompanySubscription.setStatus(ConstStatus.ACTIVE_STATUS);
 
       newCompanySubscription.setSubscriptionStartDate(LocalDateTime.now());
-        newCompanySubscription.setSubscriptionExpireDate(
-            newCompanySubscription.getSubscriptionStartDate().plusMonths(1));
+      newCompanySubscription.setSubscriptionExpireDate(
+          newCompanySubscription.getSubscriptionStartDate().plusMonths(1));
 
       newCompanySubscription = companySubscriptionRepository.save(newCompanySubscription);
 
