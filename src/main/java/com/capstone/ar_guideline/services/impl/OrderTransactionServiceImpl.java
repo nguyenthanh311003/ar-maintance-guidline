@@ -67,9 +67,6 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
               .companyId(userById.getCompany().getId())
               .subscriptionId(subscription.getId())
               .build();
-
-      companySubscriptionService.create(comSubscriptionCreationRequest);
-
       return OrderTransactionMapper.fromEntityToOrderTransactionResponse(newOrderTransaction);
     } catch (Exception exception) {
       if (exception instanceof AppException) {

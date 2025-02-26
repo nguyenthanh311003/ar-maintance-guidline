@@ -35,6 +35,13 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
   @Override
   public CompanySubscriptionResponse create(ComSubscriptionCreationRequest request) {
     try {
+      CompanySubscription companySubscription = findByCompanyIdAndSubscriptionId(
+              request.getCompanyId(), request.getSubscriptionId());
+
+      if (companySubscription != null) {
+        return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(
+            companySubscription);
+      }
       Company companyById = companyService.findByIdReturnEntity(request.getCompanyId());
 
       Subscription subscriptionById =
@@ -60,6 +67,27 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
         throw exception;
       }
       throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_CREATE_FAILED);
+    }
+  }
+
+  private CompanySubscription findByCompanyIdAndSubscriptionId(
+      String companyId, String subscriptionId) {
+    try {
+      CompanySubscription companySubscription =
+          companySubscriptionRepository.findByCompanyId(companyId);
+
+      if (companySubscription != null) {
+        companySubscription.setSubscription(subscriptionService.findById(subscriptionId));
+        return companySubscriptionRepository.save(companySubscription);
+      } else {
+        return null;
+      }
+
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_NOT_EXISTED);
     }
   }
 
@@ -116,5 +144,14 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
       }
       throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_NOT_EXISTED);
     }
+  }
+
+  @Override
+  public CompanySubscriptionResponse disable(String id) {
+    CompanySubscription companySubscriptionById = findById(id);
+    companySubscriptionById.setStatus(ConstStatus.INACTIVE_STATUS);
+    companySubscriptionById.setSubscriptionStartDate(null);
+    companySubscriptionById.setSubscriptionExpireDate(null);
+   return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(companySubscriptionRepository.save(companySubscriptionById));
   }
 }

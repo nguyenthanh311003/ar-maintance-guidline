@@ -111,6 +111,7 @@ public class ConstAPI {
     public static final String CREATE_ORDER_TRANSACTION = "api/v1/order-transaction";
     public static final String UPDATE_ORDER_TRANSACTION = "api/v1/order-transaction/";
     public static final String DELETE_ORDER_TRANSACTION = "api/v1/order-transaction/";
+    public static final String HANDLE_ORDER_STATUS = "api/v1/order-transaction/order-status/";
   }
 
   public static class QuizAPI {

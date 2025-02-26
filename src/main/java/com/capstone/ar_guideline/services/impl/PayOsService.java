@@ -1,11 +1,15 @@
 package com.capstone.ar_guideline.services.impl;
 
+import static com.capstone.ar_guideline.constants.ConstAPI.OrderTransactionAPI.HANDLE_ORDER_STATUS;
+
 import com.capstone.ar_guideline.constants.ConstStatus;
+import com.capstone.ar_guideline.dtos.requests.CompanySubscription.ComSubscriptionCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.OrderTransaction.OrderTransactionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.OrderTransaction.OrderTransactionResponse;
 import com.capstone.ar_guideline.entities.OrderTransaction;
 import com.capstone.ar_guideline.entities.Subscription;
 import com.capstone.ar_guideline.payos.CreatePaymentLinkRequestBody;
+import com.capstone.ar_guideline.services.ICompanySubscriptionService;
 import com.capstone.ar_guideline.services.IOrderTransactionService;
 import com.capstone.ar_guideline.services.ISubscriptionService;
 import com.capstone.ar_guideline.services.IUserService;
@@ -38,6 +42,8 @@ public class PayOsService {
 
   @Autowired private IOrderTransactionService paymentService;
 
+  @Autowired private ICompanySubscriptionService companySubscriptionService;
+
   @Autowired IUserService userService;
 
   public ObjectNode createPaymentLink(CreatePaymentLinkRequestBody requestBody) {
@@ -47,8 +53,8 @@ public class PayOsService {
       Subscription subscription = subscriptionService.findByCode(requestBody.getProductName());
 
       final String description = subscription.getSubscriptionCode() + ".";
-      String returnUrl = backEndHost + "/api/v1/order/handle-order-status/";
-      String cancelUrl = backEndHost + "/api/v1/order/handle-order-status/";
+      String returnUrl = backEndHost + "/" + HANDLE_ORDER_STATUS;
+      String cancelUrl = "";
       final int price = Integer.parseInt(subscription.getMonthlyFee().toString().replace(".0", ""));
 
       // create order
@@ -165,8 +171,12 @@ public class PayOsService {
       }
       if (order.getStatus().equals(ConstStatus.PAID)
           && !payment.getStatus().equals(ConstStatus.PAID)) {
-        paymentService.changeStatus(ConstStatus.PAID, payment.getId());
+        paymentService.changeStatus(payment.getId(), ConstStatus.PAID);
+        ComSubscriptionCreationRequest request = new ComSubscriptionCreationRequest();
         Subscription subscription = subscriptionService.findByCode(payment.getItemCode());
+        request.setCompanyId(payment.getUser().getCompany().getId());
+        request.setSubscriptionId(subscription.getId());
+        companySubscriptionService.create(request);
       } else {
         paymentService.changeStatus(ConstStatus.CANCEL, payment.getId());
         return new RedirectView(frontEndHost + "/payment/failed");

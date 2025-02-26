@@ -19,4 +19,6 @@ public interface IModelService {
       int page, int size, String companyId, String type, String name, String code);
 
   List<ModelResponse> getModelUnused(String companyId);
+
+  ModelResponse findByIdResponse(String id);
 }

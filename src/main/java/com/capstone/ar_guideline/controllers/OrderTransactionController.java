@@ -17,6 +17,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 import vn.payos.PayOS;
 import vn.payos.type.Webhook;
 import vn.payos.type.WebhookData;
@@ -35,6 +36,11 @@ public class OrderTransactionController {
   @PostMapping(ConstAPI.OrderTransactionAPI.CREATE_ORDER_TRANSACTION)
   public ObjectNode createPaymentLink(@RequestBody CreatePaymentLinkRequestBody RequestBody) {
     return payOsService.createPaymentLink(RequestBody);
+  }
+
+  @GetMapping(ConstAPI.OrderTransactionAPI.HANDLE_ORDER_STATUS + "{orderId}")
+  public RedirectView createPaymentLink(@PathVariable Long orderId) {
+    return payOsService.handleOrderStatus(orderId);
   }
 
   @PostMapping(path = "/payment/payos_transfer_handler")
