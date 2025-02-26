@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Getter
 @Setter
@@ -29,11 +28,13 @@ public class CompanySubscription {
   private LocalDateTime subscriptionExpireDate;
   private String status;
 
+  private Integer usedEmployees;
+  private Integer usedModels;
+  private Double totalFee;
+
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
-  private LocalDateTime createdDate;
+  private LocalDateTime startDate;
 
-  @Column(nullable = false)
-  @UpdateTimestamp
-  private LocalDateTime updatedDate;
+  private LocalDateTime endDate;
 }

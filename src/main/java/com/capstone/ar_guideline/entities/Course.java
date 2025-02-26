@@ -24,8 +24,11 @@ public class Course implements Serializable {
   private Company company;
 
   @ManyToOne
-  @JoinColumn(name = "model_id")
+  @JoinColumn(name = "model_id", unique = true)
   private Model model;
+
+  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+  private List<Instruction> instructions;
 
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
   private List<Lesson> lessons;
@@ -42,6 +45,8 @@ public class Course implements Serializable {
   private String type;
   private String status;
   private String imageUrl;
+  private String qrCode;
+  private String courseCode;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

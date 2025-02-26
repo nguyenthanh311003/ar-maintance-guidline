@@ -3,16 +3,19 @@ package com.capstone.ar_guideline.services.impl;
 import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
+import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
 import com.capstone.ar_guideline.entities.Instruction;
-import com.capstone.ar_guideline.entities.Model;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.InstructionMapper;
+import com.capstone.ar_guideline.repositories.InstructionDetailRepository;
 import com.capstone.ar_guideline.repositories.InstructionRepository;
 import com.capstone.ar_guideline.services.IInstructionService;
 import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,6 +29,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class InstructionServiceImpl implements IInstructionService {
   InstructionRepository instructionRepository;
+  InstructionDetailRepository instructionDetailRepository;
   RedisTemplate<String, Object> redisTemplate;
   IModelService modelService;
   private final String[] keysToRemove = {
@@ -33,20 +37,9 @@ public class InstructionServiceImpl implements IInstructionService {
   };
 
   @Override
-  public InstructionResponse create(InstructionCreationRequest request) {
+  public Instruction create(Instruction instruction) {
     try {
-      Model modelById = modelService.findById(request.getModelId());
-
-      Instruction newInstruction =
-          InstructionMapper.fromInstructionCreationRequestToEntity(request, modelById);
-
-      newInstruction = instructionRepository.save(newInstruction);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      return InstructionMapper.fromEntityToInstructionResponse(newInstruction);
+      return instructionRepository.save(instruction);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -60,13 +53,17 @@ public class InstructionServiceImpl implements IInstructionService {
     try {
       Instruction instructionById = findById(id);
 
-      Model modelById = modelService.findById(request.getModelId());
+      List<Float> translations = request.getGuideViewPosition().getTranslation();
+      List<Float> rotations = request.getGuideViewPosition().getRotation();
 
-      instructionById.setModel(modelById);
       instructionById.setName(request.getName());
-      instructionById.setCode(request.getCode());
-      instructionById.setOrderNumber(request.getOrderNumber());
       instructionById.setDescription(request.getDescription());
+
+      String position =
+          translations.stream().map(String::valueOf).collect(Collectors.joining(", "));
+      String rotation = rotations.stream().map(String::valueOf).collect(Collectors.joining(", "));
+      instructionById.setPosition(position);
+      instructionById.setRotation(rotation);
 
       instructionById = instructionRepository.save(instructionById);
 
@@ -110,5 +107,98 @@ public class InstructionServiceImpl implements IInstructionService {
     return instructionRepository
         .findById(id)
         .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED));
+  }
+
+  @Override
+  public List<InstructionResponse> findByCourseId(String modelId) {
+    try {
+      return instructionRepository.getByCourseId(modelId).stream()
+          .map(
+              i -> {
+                InstructionResponse instructionResponse = new InstructionResponse();
+                List<InstructionDetailResponse> instructionDetailResponses =
+                    instructionDetailRepository.getByInstructionId(i.getId()).stream()
+                        .map(
+                            ide ->
+                                InstructionDetailResponse.builder()
+                                    .id(ide.getId())
+                                    .instructionId(ide.getInstruction().getId())
+                                    .orderNumber(ide.getOrderNumber())
+                                    .description(ide.getDescription())
+                                    .imgString(ide.getImgUrl())
+                                    .name(ide.getName())
+                                    .fileString(ide.getFile())
+                                    .build())
+                        .toList();
+                instructionResponse.setId(i.getId());
+                instructionResponse.setOrderNumber(i.getOrderNumber());
+                instructionResponse.setCourseId(i.getCourse().getId());
+                instructionResponse.setName(i.getName());
+                instructionResponse.setDescription(i.getDescription());
+                instructionResponse.setPosition(i.getPosition());
+                instructionResponse.setRotation(i.getRotation());
+                instructionResponse.setInstructionDetailResponse(instructionDetailResponses);
+
+                return instructionResponse;
+              })
+          .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public Integer getHighestOrderNumber(String modelId) {
+    try {
+      return instructionRepository.getHighestOrderNumber(modelId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.GET_HIGHEST_ORDER_FAIL);
+    }
+  }
+
+  @Override
+  public Boolean swapOrder(String instructionIdCurrent, String instructionIdSwap) {
+    try {
+      Instruction instructionCurrent =
+          instructionRepository
+              .findById(instructionIdCurrent)
+              .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED));
+
+      Instruction instructionSwap =
+          instructionRepository
+              .findById(instructionIdSwap)
+              .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED));
+
+      Integer orderNumberCurrent = instructionCurrent.getOrderNumber();
+      Integer orderNumberSwap = instructionSwap.getOrderNumber();
+      instructionCurrent.setOrderNumber(orderNumberSwap);
+      instructionSwap.setOrderNumber(orderNumberCurrent);
+
+      instructionCurrent = instructionRepository.save(instructionCurrent);
+
+      if (instructionCurrent.getId() == null) {
+        throw new AppException(ErrorCode.INSTRUCTION_UPDATE_FAILED);
+      }
+
+      instructionSwap = instructionRepository.save(instructionSwap);
+
+      if (instructionSwap.getId() == null) {
+        throw new AppException(ErrorCode.INSTRUCTION_UPDATE_FAILED);
+      }
+
+      return true;
+
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.SWAP_ORDER_NUMBER_FAILED);
+    }
   }
 }

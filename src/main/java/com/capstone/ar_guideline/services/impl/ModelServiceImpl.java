@@ -1,8 +1,9 @@
 package com.capstone.ar_guideline.services.impl;
 
-import com.capstone.ar_guideline.constants.ConstHashKey;
+import com.capstone.ar_guideline.configurations.AppConfig;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Model;
 import com.capstone.ar_guideline.entities.ModelType;
 import com.capstone.ar_guideline.exceptions.AppException;
@@ -11,13 +12,15 @@ import com.capstone.ar_guideline.mappers.ModelMapper;
 import com.capstone.ar_guideline.repositories.ModelRepository;
 import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.services.IModelTypeService;
-import com.capstone.ar_guideline.util.UtilService;
-import java.util.Arrays;
+import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,24 +30,21 @@ import org.springframework.stereotype.Service;
 public class ModelServiceImpl implements IModelService {
   ModelRepository modelRepository;
   IModelTypeService modelTypeService;
-  RedisTemplate<String, Object> redisTemplate;
-  private final String[] keysToRemove = {
-    ConstHashKey.HASH_KEY_MODEL,
-    ConstHashKey.HASH_KEY_INSTRUCTION,
-    ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL
-  };
+  VuforiaService vuforiaService;
+
+  private final AppConfig appConfig;
 
   @Override
-  public ModelResponse create(ModelCreationRequest request) {
+  @Transactional
+  public ModelResponse create(ModelCreationRequest request) throws InterruptedException {
     try {
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
-      Model newModel = ModelMapper.fromModelCreationRequestToEntity(request, modelTypeById);
+      Model newModel = ModelMapper.fromModelCreationRequestToEntity(request);
+      newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
+      newModel.setFile(FileStorageService.storeFile(request.getFile()));
+      newModel.setIsUsed(false);
       newModel = modelRepository.save(newModel);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return ModelMapper.fromEntityToModelResponse(newModel);
     } catch (Exception exception) {
@@ -59,31 +59,16 @@ public class ModelServiceImpl implements IModelService {
   public ModelResponse update(String id, ModelCreationRequest request) {
     try {
       Model modelById = findById(id);
+      modelById = ModelMapper.fromModelCreationRequestToEntity(request);
+      if (request.getImageUrl() != null) {
+        modelById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
+      }
+      if (request.getFile() != null) {
+        modelById.setFile(FileStorageService.storeFile(request.getFile()));
+      }
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
-      modelById.setModelType(modelTypeById);
-      modelById.setModelCode(request.getModelCode());
-      modelById.setStatus(request.getStatus());
-      modelById.setName(request.getName());
-      modelById.setDescription(request.getDescription());
-      modelById.setImage(request.getImage());
-      modelById.setDocumentUrl(request.getDocumentUrl());
-      modelById.setARUrl(request.getARUrl());
-      modelById.setVersion(request.getVersion());
-      modelById.setRotation(request.getRotation());
-      modelById.setScale(request.getScale());
-      modelById.setFileSize(request.getFileSize());
-      modelById.setFileType(request.getFileType());
-
       modelById = modelRepository.save(modelById);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return ModelMapper.fromEntityToModelResponse(modelById);
     } catch (Exception exception) {
@@ -100,10 +85,6 @@ public class ModelServiceImpl implements IModelService {
       Model modelById = findById(id);
       modelRepository.deleteById(modelById.getId());
 
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -117,5 +98,72 @@ public class ModelServiceImpl implements IModelService {
     return modelRepository
         .findById(id)
         .orElseThrow(() -> new AppException(ErrorCode.MODEL_NOT_EXISTED));
+  }
+
+  @Override
+  public PagingModel<ModelResponse> findByCompanyId(
+      int page, int size, String companyId, String type, String name, String code) {
+    try {
+      PagingModel<ModelResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+      Page<Model> models = modelRepository.findByCompanyId(pageable, companyId, type, name, code);
+      List<ModelResponse> modelResponses =
+          models.stream()
+              .map(
+                  m ->
+                      ModelResponse.builder()
+                          .id(m.getId())
+                          .modelTypeId(m.getModelType().getId())
+                          .modelCode(m.getModelCode())
+                          .status(m.getStatus())
+                          .name(m.getName())
+                          .description(m.getDescription())
+                          .imageUrl(m.getImageUrl())
+                          .version(m.getVersion())
+                          .modelTypeName(m.getModelType().getName())
+                          .scale(m.getScale())
+                          .file(m.getFile())
+                          .build())
+              .toList();
+
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) models.getTotalElements());
+      pagingModel.setTotalPages(models.getTotalPages());
+      pagingModel.setObjectList(modelResponses);
+      return pagingModel;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<ModelResponse> getModelUnused(String companyId) {
+    try {
+      List<Model> models = modelRepository.getModelUnused(companyId);
+
+      return models.stream().map(ModelMapper::fromEntityToModelResponse).toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public ModelResponse findByIdResponse(String id) {
+    try {
+      Model model = findById(id);
+      return ModelMapper.fromEntityToModelResponse(model);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    }
   }
 }

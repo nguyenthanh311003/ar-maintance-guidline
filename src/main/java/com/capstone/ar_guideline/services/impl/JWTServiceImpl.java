@@ -1,5 +1,8 @@
 package com.capstone.ar_guideline.services.impl;
 
+import com.amazonaws.services.mq.model.UnauthorizedException;
+import com.capstone.ar_guideline.exceptions.AppException;
+import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.services.IJWTService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -49,6 +52,7 @@ public class JWTServiceImpl implements IJWTService {
   }
 
   private <T> T extractClaims(String token, Function<Claims, T> claimsResolvers) {
+
     final Claims claims = extractAllClaims(token);
     return claimsResolvers.apply(claims);
   }
@@ -59,12 +63,16 @@ public class JWTServiceImpl implements IJWTService {
     return Keys.hmacShaKeyFor(key);
   }
 
-  private Claims extractAllClaims(String token) {
-    return Jwts.parserBuilder()
-        .setSigningKey(getSigninKey())
-        .build()
-        .parseClaimsJws(token)
-        .getBody();
+  private Claims extractAllClaims(String token) throws UnauthorizedException {
+    try {
+      return Jwts.parserBuilder()
+          .setSigningKey(getSigninKey())
+          .build()
+          .parseClaimsJws(token)
+          .getBody();
+    } catch (Exception e) {
+      throw new AppException(ErrorCode.UNAUTHENTICATED);
+    }
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -72,7 +80,7 @@ public class JWTServiceImpl implements IJWTService {
     return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
   }
 
-  private boolean isTokenExpired(String token) {
+  public boolean isTokenExpired(String token) {
     return extractClaims(token, Claims::getExpiration).before(new Date());
   }
 }

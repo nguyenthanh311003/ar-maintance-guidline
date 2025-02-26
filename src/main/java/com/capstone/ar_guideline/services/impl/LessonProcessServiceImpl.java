@@ -2,8 +2,6 @@ package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.dtos.requests.LessonProcess.LessonProcessCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
-import com.capstone.ar_guideline.dtos.responses.Lesson.LessonResponse;
-import com.capstone.ar_guideline.dtos.responses.LessonDetail.LessonDetailResponse;
 import com.capstone.ar_guideline.dtos.responses.LessonProcess.LessonProcessResponse;
 import com.capstone.ar_guideline.entities.LessonProcess;
 import com.capstone.ar_guideline.exceptions.AppException;
@@ -14,7 +12,6 @@ import com.capstone.ar_guideline.services.ICourseService;
 import com.capstone.ar_guideline.services.ILessonDetailService;
 import com.capstone.ar_guideline.services.ILessonProcessService;
 import com.capstone.ar_guideline.services.IUserService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -103,14 +100,14 @@ public class LessonProcessServiceImpl implements ILessonProcessService {
   @Override
   public void createAll(String courseId, String userId) {
     CourseResponse course = courseService.findByIdResponse(courseId);
-    List<LessonResponse> lessons = course.getLessons();
-    for (LessonResponse lesson : lessons) {
-      for (LessonDetailResponse lessonDetail : lesson.getLessonDetails()) {
-        LessonProcessCreationRequest request = new LessonProcessCreationRequest();
-        request.setLessonDetailId(lessonDetail.getId());
-        request.setUserId(userId);
-        create(request);
-      }
-    }
+    //    List<LessonResponse> lessons = course.getInstructions();
+    //    for (LessonResponse lesson : lessons) {
+    //      for (LessonDetailResponse lessonDetail : lesson.getLessonDetails()) {
+    //        LessonProcessCreationRequest request = new LessonProcessCreationRequest();
+    //        request.setLessonDetailId(lessonDetail.getId());
+    //        request.setUserId(userId);
+    //        create(request);
+    //      }
+    //    }
   }
 }

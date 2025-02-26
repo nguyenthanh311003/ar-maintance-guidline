@@ -2,17 +2,15 @@ package com.capstone.ar_guideline.mappers;
 
 import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
+import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Instruction;
-import com.capstone.ar_guideline.entities.Model;
 
 public class InstructionMapper {
   public static Instruction fromInstructionCreationRequestToEntity(
-      InstructionCreationRequest request, Model model) {
+      InstructionCreationRequest request) {
     return Instruction.builder()
-        .model(model)
-        .code(request.getCode())
-        .orderNumber(request.getOrderNumber())
         .name(request.getName())
+        .course(Course.builder().id(request.getCourseId()).build())
         .description(request.getDescription())
         .build();
   }
@@ -20,11 +18,12 @@ public class InstructionMapper {
   public static InstructionResponse fromEntityToInstructionResponse(Instruction instruction) {
     return InstructionResponse.builder()
         .id(instruction.getId())
-        .modelId(instruction.getModel().getId())
-        .code(instruction.getCode())
         .orderNumber(instruction.getOrderNumber())
+        .courseId(instruction.getCourse().getId())
         .name(instruction.getName())
         .description(instruction.getDescription())
+        .rotation(instruction.getRotation())
+        .position(instruction.getPosition())
         .build();
   }
 }

@@ -5,6 +5,7 @@ import com.capstone.ar_guideline.services.impl.FileStorageService;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +25,20 @@ public class FileUploadController {
     try {
       Resource resource = fileStorageService.getFile(filename);
       Path filePath = resource.getFile().toPath();
+
+      // Try to determine content type
       String contentType = Files.probeContentType(filePath);
+
+      // Force ZIP content type if file extension is .zip
+      if (filename.toLowerCase().endsWith(".zip")) {
+        contentType = "application/zip";
+      }
 
       return ResponseEntity.ok()
           .contentType(
               MediaType.parseMediaType(
                   contentType != null ? contentType : "application/octet-stream"))
+          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
           .body(resource);
     } catch (Exception e) {
       return ResponseEntity.notFound().build();

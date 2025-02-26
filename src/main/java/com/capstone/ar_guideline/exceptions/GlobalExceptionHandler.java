@@ -17,14 +17,29 @@ public class GlobalExceptionHandler {
   private static final String MIN_ATTRIBUTE = "min";
 
   @ExceptionHandler(value = Exception.class)
-  ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException exception) {
+  ResponseEntity<ApiResponse> handlingRuntimeException(Exception exception) {
     log.error("Exception: ", exception);
     ApiResponse apiResponse = new ApiResponse();
 
     apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
-    apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
+    apiResponse.setMessage(exception.getMessage());
 
     return ResponseEntity.badRequest().body(apiResponse);
+  }
+
+  @ExceptionHandler(value = com.amazonaws.services.mq.model.UnauthorizedException.class)
+  ResponseEntity<ApiResponse> handlingUnauthorizedException(
+      com.amazonaws.services.mq.model.UnauthorizedException exception) {
+    log.warn("Unauthorized access attempt: ", exception);
+
+    ErrorCode errorCode = ErrorCode.UNAUTHORIZED; // Define this in your error codes
+
+    return ResponseEntity.status(errorCode.getStatusCode())
+        .body(
+            ApiResponse.builder()
+                .code(errorCode.getCode())
+                .message("Invalid or expired token.")
+                .build());
   }
 
   @ExceptionHandler(value = AppException.class)

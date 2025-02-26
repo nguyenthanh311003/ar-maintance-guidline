@@ -11,8 +11,7 @@ import com.capstone.ar_guideline.mappers.InstructionDetailMapper;
 import com.capstone.ar_guideline.repositories.InstructionDetailRepository;
 import com.capstone.ar_guideline.services.IInstructionDetailService;
 import com.capstone.ar_guideline.services.IInstructionService;
-import com.capstone.ar_guideline.util.UtilService;
-import java.util.Arrays;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -32,19 +31,30 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
   private final String[] keysToRemove = {ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL};
 
   @Override
-  public InstructionDetailResponse create(InstructionDetailCreationRequest request) {
+  public InstructionDetailResponse create(
+      InstructionDetailCreationRequest request, String instructionId) {
     try {
-      Instruction instructionById = instructionService.findById(request.getInstructionId());
+      Instruction instructionById;
+      if (instructionId.isEmpty()) {
+        instructionById = instructionService.findById(request.getInstructionId());
+      } else {
+        instructionById = instructionService.findById(instructionId);
+      }
 
       InstructionDetail newInstructionDetail =
           InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(
               request, instructionById);
+      newInstructionDetail.setFile(FileStorageService.storeFile(request.getFile()));
+      newInstructionDetail.setImgUrl(FileStorageService.storeFile(request.getImageFile()));
+      Integer highestOrderNumber = getHighestOrderNumber(instructionById.getId());
+
+      if (Objects.isNull(highestOrderNumber)) {
+        newInstructionDetail.setOrderNumber(1);
+      } else {
+        newInstructionDetail.setOrderNumber(highestOrderNumber + 1);
+      }
 
       newInstructionDetail = instructionDetailRepository.save(newInstructionDetail);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return InstructionDetailMapper.fromEntityToInstructionDetailResponse(newInstructionDetail);
     } catch (Exception exception) {
@@ -61,22 +71,18 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
 
       InstructionDetail instructionDetailById = findById(id);
 
-      Instruction instructionById = instructionService.findById(request.getInstructionId());
+      instructionDetailById =
+          InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(
+              request, instructionDetailById.getInstruction());
 
-      instructionDetailById.setInstruction(instructionById);
-      instructionDetailById.setTriggerEvent(request.getTriggerEvent());
-      instructionDetailById.setOrderNumber(request.getOrderNumber());
-      instructionDetailById.setDescription(request.getDescription());
+      if (request.getFile() != null) {
+        instructionDetailById.setFile(FileStorageService.storeFile(request.getFile()));
+      }
+      if (request.getImageFile() != null) {
+        instructionDetailById.setFile(FileStorageService.storeFile(request.getImageFile()));
+      }
 
       instructionDetailById = instructionDetailRepository.save(instructionDetailById);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return InstructionDetailMapper.fromEntityToInstructionDetailResponse(instructionDetailById);
     } catch (Exception exception) {
@@ -92,14 +98,6 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
     try {
       InstructionDetail instructionDetailById = findById(id);
       instructionDetailRepository.deleteById(instructionDetailById.getId());
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
     } catch (Exception exception) {
       if (exception instanceof AppException) {
@@ -120,6 +118,57 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
         throw exception;
       }
       throw new AppException(ErrorCode.INSTRUCTION_DETAIL_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public Boolean swapOrder(String instructionDetailIdCurrent, String instructionDetailIdSwap) {
+    try {
+      InstructionDetail instructionDetailCurrent =
+          instructionDetailRepository
+              .findById(instructionDetailIdCurrent)
+              .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTION_DETAIL_NOT_EXISTED));
+
+      InstructionDetail instructionDetailSwap =
+          instructionDetailRepository
+              .findById(instructionDetailIdSwap)
+              .orElseThrow(() -> new AppException(ErrorCode.INSTRUCTION_DETAIL_NOT_EXISTED));
+
+      Integer orderNumberCurrent = instructionDetailCurrent.getOrderNumber();
+      Integer orderNumberSwap = instructionDetailSwap.getOrderNumber();
+
+      instructionDetailCurrent.setOrderNumber(orderNumberSwap);
+      instructionDetailSwap.setOrderNumber(orderNumberCurrent);
+
+      instructionDetailCurrent = instructionDetailRepository.save(instructionDetailCurrent);
+
+      if (instructionDetailCurrent.getId() == null) {
+        throw new AppException(ErrorCode.INSTRUCTION_DETAIL_UPDATE_FAILED);
+      }
+
+      instructionDetailSwap = instructionDetailRepository.save(instructionDetailSwap);
+
+      if (instructionDetailSwap.getId() == null) {
+        throw new AppException(ErrorCode.INSTRUCTION_DETAIL_UPDATE_FAILED);
+      }
+
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.SWAP_ORDER_NUMBER_FAILED);
+    }
+  }
+
+  private Integer getHighestOrderNumber(String instructionId) {
+    try {
+      return instructionDetailRepository.getHighestOrderNumber(instructionId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.GET_HIGHEST_ORDER_FAIL);
     }
   }
 }

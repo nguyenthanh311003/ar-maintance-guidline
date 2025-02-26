@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.services.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.*;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 @Service
 public class FileStorageService {
@@ -77,5 +79,22 @@ public class FileStorageService {
     } catch (IOException e) {
       throw new RuntimeException("Could not delete file: " + filename, e);
     }
+  }
+
+  public static Mono<String> storeZipFile(Resource resource) {
+    return Mono.fromCallable(
+        () -> {
+          try (InputStream inputStream = resource.getInputStream()) {
+            String fileId = UUID.randomUUID().toString() + ".zip";
+            Path targetLocation = fileStorageLocation.resolve(fileId);
+
+            Files.createDirectories(targetLocation.getParent());
+            Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            return fileId;
+          } catch (IOException e) {
+            throw new RuntimeException("Could not store ZIP file", e);
+          }
+        });
   }
 }

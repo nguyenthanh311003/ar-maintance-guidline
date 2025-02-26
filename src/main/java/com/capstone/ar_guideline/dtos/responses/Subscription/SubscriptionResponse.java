@@ -12,6 +12,9 @@ public class SubscriptionResponse {
   String id;
   String subscriptionCode;
   Integer duration;
-  Integer scanTime;
+  Integer maxEmployees;
+  Integer maxModels;
+  Double monthlyFee;
+  Double extraModelFee;
   String status;
 }

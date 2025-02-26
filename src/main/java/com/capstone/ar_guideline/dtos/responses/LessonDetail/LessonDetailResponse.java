@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LessonDetailResponse {
-
   private String id;
   private String lessonId;
   private String title;
@@ -18,6 +17,7 @@ public class LessonDetailResponse {
   private Integer duration;
   private String status;
   private String videoUrl;
+  private String content;
   private String attachFileUrl;
   private String type;
 }

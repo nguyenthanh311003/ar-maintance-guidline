@@ -22,10 +22,11 @@ public class InstructionDetail implements Serializable {
   @JoinColumn(name = "instruction_id", nullable = false)
   private Instruction instruction;
 
-  private String triggerEvent;
+  private String name;
   private Integer orderNumber;
   private String description;
-  private String type;
+  private String imgUrl;
+  private String file;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

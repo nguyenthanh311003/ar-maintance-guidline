@@ -21,9 +21,9 @@ public class InstructionDetailController {
 
   @PostMapping(value = ConstAPI.InstructionDetailAPI.CREATE_INSTRUCTION_DETAIL)
   ApiResponse<InstructionDetailResponse> createInstructionDetail(
-      @RequestBody @Valid InstructionDetailCreationRequest request) {
+      @ModelAttribute @Valid InstructionDetailCreationRequest request) {
     return ApiResponse.<InstructionDetailResponse>builder()
-        .result(instructionDetailService.create(request))
+        .result(instructionDetailService.create(request, ""))
         .build();
   }
 
@@ -31,9 +31,19 @@ public class InstructionDetailController {
       value = ConstAPI.InstructionDetailAPI.UPDATE_INSTRUCTION_DETAIL + "{instructionDetailId}")
   ApiResponse<InstructionDetailResponse> updateInstructionDetail(
       @PathVariable String instructionDetailId,
-      @RequestBody InstructionDetailCreationRequest request) {
+      @ModelAttribute @Valid InstructionDetailCreationRequest request) {
     return ApiResponse.<InstructionDetailResponse>builder()
         .result(instructionDetailService.update(instructionDetailId, request))
+        .build();
+  }
+
+  @PutMapping(value = ConstAPI.InstructionDetailAPI.SWAP_ORDER_INSTRUCTION_DETAIL)
+  ApiResponse<Boolean> swapOrder(
+      @RequestParam String instructionDetailIdCurrent,
+      @RequestParam String instructionDetailIdSwap) {
+    return ApiResponse.<Boolean>builder()
+        .result(
+            instructionDetailService.swapOrder(instructionDetailIdCurrent, instructionDetailIdSwap))
         .build();
   }
 

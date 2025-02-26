@@ -1,11 +1,9 @@
 package com.capstone.ar_guideline.controllers;
 
 import com.capstone.ar_guideline.constants.ConstAPI;
-import com.capstone.ar_guideline.dtos.requests.Company.CompanyCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponse;
 import com.capstone.ar_guideline.services.ICompanyService;
-import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -44,11 +42,11 @@ public class CompanyController {
         .build();
   }
 
-  @PostMapping(value = ConstAPI.CompanyAPI.CREATE_COMPANY)
+  /*@PostMapping(value = ConstAPI.CompanyAPI.CREATE_COMPANY)
   ApiResponse<CompanyResponse> createCompany(@RequestBody @Valid CompanyCreationRequest request) {
     return ApiResponse.<CompanyResponse>builder()
         .result(companyService.create(request))
         .message("Create company")
         .build();
-  }
+  }*/
 }

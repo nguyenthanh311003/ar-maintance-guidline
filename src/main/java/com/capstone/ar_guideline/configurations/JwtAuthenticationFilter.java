@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.configurations;
 
+import com.amazonaws.services.lightsail.model.UnauthenticatedException;
 import com.capstone.ar_guideline.services.IJWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -61,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       }
       filterChain.doFilter(request, response);
     } catch (Exception baseException) {
-      log.error("Exception: ", baseException);
+      throw new UnauthenticatedException("Invalid Token");
     }
   }
 }

@@ -1,6 +1,8 @@
 package com.capstone.ar_guideline.dtos.responses.Model;
 
+import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import java.io.Serializable;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,16 +14,15 @@ import lombok.experimental.FieldDefaults;
 public class ModelResponse implements Serializable {
   String id;
   String modelTypeId;
+  String modelTypeName;
   String modelCode;
   String status;
   String name;
+  String companyId;
   String description;
-  String image;
-  String documentUrl;
-  String aRUrl;
+  String imageUrl;
+  Boolean isUsed;
   String version;
-  String rotation;
   String scale;
-  String fileType;
-  Long fileSize;
+  String file;
 }

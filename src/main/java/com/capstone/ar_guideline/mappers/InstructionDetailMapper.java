@@ -10,10 +10,11 @@ public class InstructionDetailMapper {
       InstructionDetailCreationRequest request, Instruction instruction) {
     return InstructionDetail.builder()
         .instruction(instruction)
-        .triggerEvent(request.getTriggerEvent())
+        .name(request.getName())
         .orderNumber(request.getOrderNumber())
+        .imgUrl(request.getImageString())
+        .file(request.getFileString())
         .description(request.getDescription())
-        .type(request.getType())
         .build();
   }
 
@@ -21,11 +22,13 @@ public class InstructionDetailMapper {
       InstructionDetail instructionDetail) {
     return InstructionDetailResponse.builder()
         .id(instructionDetail.getId())
+        .name(instructionDetail.getName())
         .instructionId(instructionDetail.getInstruction().getId())
-        .triggerEvent(instructionDetail.getTriggerEvent())
         .orderNumber(instructionDetail.getOrderNumber())
+        .name(instructionDetail.getName())
         .description(instructionDetail.getDescription())
-        .type(instructionDetail.getType())
+        .fileString(instructionDetail.getFile())
+        .imgString(instructionDetail.getImgUrl())
         .build();
   }
 }

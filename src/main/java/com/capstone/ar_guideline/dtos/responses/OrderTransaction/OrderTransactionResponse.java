@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.dtos.responses.OrderTransaction;
 
+import java.time.LocalDateTime;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,7 +13,9 @@ public class OrderTransactionResponse {
   String id;
   String userId;
   String itemCode;
-  String orderCode;
+  Long orderCode;
   String status;
   Double amount;
+  LocalDateTime createdDate;
+  LocalDateTime updatedDate;
 }

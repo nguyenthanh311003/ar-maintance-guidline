@@ -1,6 +1,5 @@
 package com.capstone.ar_guideline.services.impl;
 
-import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Subscription.SubscriptionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Subscription.SubscriptionResponse;
@@ -10,13 +9,10 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.SubscriptionMapper;
 import com.capstone.ar_guideline.repositories.SubscriptionRepository;
 import com.capstone.ar_guideline.services.ISubscriptionService;
-import com.capstone.ar_guideline.util.UtilService;
-import java.util.Arrays;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,11 +21,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class SubscriptionService implements ISubscriptionService {
   SubscriptionRepository subscriptionRepository;
-  RedisTemplate<String, Object> redisTemplate;
-
-  private final String[] keysToRemove = {
-    ConstHashKey.HASH_KEY_SUBSCRIPTION, ConstHashKey.HASH_KEY_COMPANY_SUBSCRIPTION
-  };
 
   @Override
   public SubscriptionResponse create(SubscriptionCreationRequest request) {
@@ -39,10 +30,6 @@ public class SubscriptionService implements ISubscriptionService {
       newSubscription.setStatus(ConstStatus.ACTIVE_STATUS);
 
       newSubscription = subscriptionRepository.save(newSubscription);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return SubscriptionMapper.fromEntityToSubscriptionResponse(newSubscription);
     } catch (Exception exception) {
@@ -59,19 +46,9 @@ public class SubscriptionService implements ISubscriptionService {
       Subscription subscriptionById = findById(id);
 
       subscriptionById.setSubscriptionCode(request.getSubscriptionCode());
-      subscriptionById.setDuration(request.getDuration());
-      subscriptionById.setScanTime(request.getScanTime());
       subscriptionById.setStatus(request.getStatus());
 
       subscriptionById = subscriptionRepository.save(subscriptionById);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return SubscriptionMapper.fromEntityToSubscriptionResponse(subscriptionById);
     } catch (Exception exception) {
@@ -87,13 +64,6 @@ public class SubscriptionService implements ISubscriptionService {
     try {
       Subscription subscriptionById = findById(id);
       subscriptionRepository.deleteById(subscriptionById.getId());
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
     } catch (Exception exception) {
       if (exception instanceof AppException) {

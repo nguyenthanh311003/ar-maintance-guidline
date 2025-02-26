@@ -12,4 +12,6 @@ public interface ICompanySubscriptionService {
   void delete(String id);
 
   CompanySubscription findById(String id);
+
+  CompanySubscriptionResponse disable(String id);
 }

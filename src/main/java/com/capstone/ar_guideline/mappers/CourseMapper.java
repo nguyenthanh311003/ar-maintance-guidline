@@ -4,6 +4,7 @@ import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.entities.Course;
+import com.capstone.ar_guideline.entities.Model;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +18,7 @@ public class CourseMapper {
         .targetAudience(request.getTargetAudience())
         .imageUrl(request.getImageUrlString())
         .company(Company.builder().id(request.getCompanyId()).build())
+        .model(Model.builder().id(request.getModelId()).build())
         .type(request.getType())
         .status(request.getStatus())
         .description(request.getDescription())
@@ -27,7 +29,7 @@ public class CourseMapper {
     return CourseResponse.builder()
         .id(course.getId())
         .companyId(course.getCompany().getId())
-        // .lessons(course.getLessons())
+        .modelId(course.getModel().getId())
         .title(course.getTitle())
         .description(course.getDescription())
         .shortDescription(course.getShortDescription())
@@ -35,6 +37,7 @@ public class CourseMapper {
         .duration(course.getDuration())
         .imageUrl(course.getImageUrl())
         .isMandatory(course.getIsMandatory())
+        .qrCode(course.getQrCode())
         .status(course.getStatus())
         .type(course.getType())
         .build();

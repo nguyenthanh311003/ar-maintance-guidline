@@ -48,6 +48,10 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
 
       User user = userService.findById(request.getUserId());
 
+      if (enrollmentRepository.existsByUserAndCourse(user, course)) {
+        throw new AppException(ErrorCode.ENROLLMENT_EXISTED);
+      }
+
       Enrollment newEnrollment =
           EnrollmentMapper.fromEnrolmentCreationRequestToEntity(request, course, user);
       newEnrollment.setIsCompleted(false);
@@ -196,6 +200,21 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
 
       return enrollmentByUserId.isPresent();
 
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.ENROLLMENT_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public boolean checkUserIsEnrolled(String userId, String courseId) {
+    try {
+      Optional<Enrollment> enrollmentByUserId =
+          enrollmentRepository.findByUserIdAndCourseIdToCheckIsEnrolled(userId, courseId);
+
+      return enrollmentByUserId.isPresent();
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

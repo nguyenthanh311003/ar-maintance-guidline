@@ -5,4 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CompanySubscriptionRepository extends JpaRepository<CompanySubscription, String> {}
+public interface CompanySubscriptionRepository extends JpaRepository<CompanySubscription, String> {
+  CompanySubscription findByCompanyId(String companyId);
+
+  CompanySubscription findByCompanyIdAndSubscriptionId(String companyId, String subscriptionId);
+}

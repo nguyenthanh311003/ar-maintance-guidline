@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 public interface InstructionProcessRepository extends JpaRepository<InstructionProcess, String> {
 
   @Query(
-      "SELECT ip FROM InstructionProcess ip JOIN InstructionLesson il ON ip.instruction.code = il.instructionCode WHERE il.lesson.course.id = :courseId AND ip.user.id = :userId")
+      "SELECT ip FROM InstructionProcess ip JOIN InstructionLesson il  WHERE il.lesson.course.id = :courseId AND ip.user.id = :userId")
   List<InstructionProcess> findByUserIdAndInstruction(
       @Param("userId") String userId, @Param("courseId") String courseId);
 }

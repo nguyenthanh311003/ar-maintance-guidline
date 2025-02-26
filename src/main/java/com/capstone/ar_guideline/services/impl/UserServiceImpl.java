@@ -1,11 +1,13 @@
 package com.capstone.ar_guideline.services.impl;
 
-import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.constants.ConstStatus;
+import com.capstone.ar_guideline.dtos.requests.Company.CompanyCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.User.LoginRequest;
 import com.capstone.ar_guideline.dtos.requests.User.SignUpRequest;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.User.AuthenticationResponse;
 import com.capstone.ar_guideline.dtos.responses.User.UserResponse;
+import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.entities.User;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
@@ -19,9 +21,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,12 +37,12 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserServiceImpl implements IUserService {
   UserRepository userRepository;
-  RedisTemplate<String, Object> redisTemplate;
   AuthenticationManager authenticationManager;
   IJWTService jwtService;
   PasswordEncoder passwordEncoder;
   IRoleService roleService;
   ICompanyService companyService;
+  EmailService emailService;
 
   @Override
   public AuthenticationResponse login(LoginRequest loginRequest) {
@@ -105,6 +107,41 @@ public class UserServiceImpl implements IUserService {
   }
 
   @Override
+  public AuthenticationResponse createCompanyAccount(SignUpRequest signUpRequest) {
+    try {
+      var role = roleService.findRoleEntityByName(signUpRequest.getRoleName());
+
+      if (Objects.isNull(role)) {
+        throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
+      }
+
+      CompanyCreationRequest companyCreationRequest =
+          CompanyCreationRequest.builder().companyName(signUpRequest.getCompany()).build();
+      Company newCompany = companyService.create(companyCreationRequest);
+      User user = UserMapper.fromSignUpRequestToEntity(signUpRequest);
+      user.setStatus(ConstStatus.PENDING);
+      user.setRole(role);
+      user.setCompany(newCompany);
+      user.setPassword(passwordEncoder.encode(user.getPassword()));
+      user = userRepository.save(user);
+
+      var jwt = jwtService.generateToken(user);
+      UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
+
+      return AuthenticationResponse.builder()
+          .message("User created successfully")
+          .token(jwt)
+          .user(userResponse)
+          .build();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_CREATE_FAILED);
+    }
+  }
+
+  @Override
   public User findById(String id) {
     try {
       return userRepository
@@ -134,11 +171,6 @@ public class UserServiceImpl implements IUserService {
 
   private UserResponse getUserResponseByEmail(String email) {
     try {
-      UserResponse userByEmailWithRedis =
-          (UserResponse) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_USER, email);
-      if (!Objects.isNull(userByEmailWithRedis)) {
-        return userByEmailWithRedis;
-      }
       Optional<User> userByEmail = userRepository.findByEmail(email);
       if (userByEmail.isEmpty()) {
         log.warn("User not found by email: {}", email);
@@ -156,5 +188,102 @@ public class UserServiceImpl implements IUserService {
   public int countUsersByCompanyId(
       String companyId, String keyword, String isAssign, String courseId) {
     return userRepository.countUsersByCompanyId(companyId, keyword, isAssign, courseId);
+  }
+
+  @Override
+  public PagingModel<UserResponse> getUsers(int page, int size, String email, String status) {
+    try {
+      PagingModel<UserResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+      Page<User> users = userRepository.getUsers(pageable, email, status);
+
+      List<UserResponse> userResponses =
+          users.getContent().stream().map(UserMapper::fromEntityToUserResponse).toList();
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) users.getTotalElements());
+      pagingModel.setTotalPages(users.getTotalPages());
+      pagingModel.setObjectList(userResponses);
+      return pagingModel;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public UserResponse findByIdReturnUserResponse(String id) {
+    try {
+      User userById =
+          userRepository
+              .findById(id)
+              .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+      return UserMapper.fromEntityToUserResponse(userById);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public Boolean changeStatus(String status, String userId, Boolean isPending) {
+    try {
+      User userById =
+          userRepository
+              .findById(userId)
+              .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+      if (status.isEmpty()) {
+        return false;
+      }
+
+      userById.setStatus(status);
+      userRepository.save(userById);
+
+      if (status.equals(ConstStatus.ACTIVE_STATUS) && isPending) {
+        emailService.sendAccountActivationEmail(userById.getEmail(), userById.getUsername());
+      }
+
+      if (status.equals(ConstStatus.REJECT) && isPending) {
+        emailService.sendAccountRejectionEmail(userById.getEmail(), userById.getUsername());
+      }
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public PagingModel<UserResponse> getStaffByCompanyId(
+      int page, int size, String companyId, String username, String email, String status) {
+    try {
+      PagingModel<UserResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+      Page<User> users =
+          userRepository.getStaffByCompanyId(pageable, companyId, username, email, status);
+
+      List<UserResponse> userResponses =
+          users.getContent().stream().map(UserMapper::fromEntityToUserResponse).toList();
+
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) users.getTotalElements());
+      pagingModel.setTotalPages(users.getTotalPages());
+      pagingModel.setObjectList(userResponses);
+      return pagingModel;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_NOT_EXISTED);
+    }
   }
 }

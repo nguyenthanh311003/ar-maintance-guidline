@@ -2,6 +2,7 @@ package com.capstone.ar_guideline.dtos.requests.InstructionDetail;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -10,8 +11,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class InstructionDetailCreationRequest {
   String instructionId;
-  String triggerEvent;
+  String name;
   Integer orderNumber;
   String description;
-  String type;
+  String imageString;
+  String fileString;
+  MultipartFile imageFile;
+  MultipartFile file;
 }

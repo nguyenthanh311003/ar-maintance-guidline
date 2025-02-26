@@ -2,26 +2,20 @@ package com.capstone.ar_guideline.mappers;
 
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
+import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.entities.Model;
 import com.capstone.ar_guideline.entities.ModelType;
 
 public class ModelMapper {
-  public static Model fromModelCreationRequestToEntity(
-      ModelCreationRequest request, ModelType modelType) {
+  public static Model fromModelCreationRequestToEntity(ModelCreationRequest request) {
     return Model.builder()
-        .modelType(modelType)
-        .modelCode(request.getModelCode())
+        .modelType(ModelType.builder().id(request.getModelTypeId()).build())
         .status(request.getStatus())
         .name(request.getName())
+        .company(Company.builder().id(request.getCompanyId()).build())
         .description(request.getDescription())
-        .image(request.getImage())
-        .documentUrl(request.getDocumentUrl())
-        .aRUrl(request.getARUrl())
         .version(request.getVersion())
-        .rotation(request.getRotation())
         .scale(request.getScale())
-        .fileType(request.getFileType())
-        .fileSize(request.getFileSize())
         .build();
   }
 
@@ -29,18 +23,16 @@ public class ModelMapper {
     return ModelResponse.builder()
         .id(model.getId())
         .modelTypeId(model.getModelType().getId())
-        .modelCode(model.getModelCode())
         .status(model.getStatus())
+        .isUsed(model.getIsUsed())
         .name(model.getName())
         .description(model.getDescription())
-        .image(model.getImage())
-        .documentUrl(model.getDocumentUrl())
-        .aRUrl(model.getARUrl())
+        .companyId(model.getCompany().getId())
+        .imageUrl(model.getImageUrl())
+        .modelTypeName(model.getModelType().getName())
         .version(model.getVersion())
-        .rotation(model.getRotation())
         .scale(model.getScale())
-        .fileType(model.getFileType())
-        .fileSize(model.getFileSize())
+        .file(model.getFile())
         .build();
   }
 }

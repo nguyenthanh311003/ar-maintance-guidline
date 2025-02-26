@@ -31,6 +31,7 @@ public class UserMapper {
         .email(user.getEmail())
         .role(RoleMapper.fromEntityToRoleResponse(user.getRole()))
         .avatar(user.getAvatar())
+        .roleName(user.getRole().getRoleName())
         .company(CompanyMapper.fromEntityToCompanyResponse(user.getCompany()))
         .isPayAdmin(user.getIsPayAdmin())
         .status(user.getStatus())

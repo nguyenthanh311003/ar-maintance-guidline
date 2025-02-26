@@ -99,6 +99,12 @@ public enum ErrorCode {
   FIND_COURSE_MANDATORY_FAILED(1083, "Find course mandatory failed", HttpStatus.BAD_REQUEST),
   FIND_COURSE_NO_MANDATORY_FAILED(1084, "Find course no mandatory failed", HttpStatus.BAD_REQUEST),
   FIND_USER_TO_ASSIGN_FAILED(1085, "Find user to assign failed", HttpStatus.BAD_REQUEST),
+  ENROLLMENT_EXISTED(1086, "Enrollment existed", HttpStatus.BAD_REQUEST),
+  GET_HIGHEST_ORDER_FAIL(1087, "Get highest order number failed", HttpStatus.BAD_REQUEST),
+  SWAP_ORDER_NUMBER_FAILED(1088, "Swap order number failed", HttpStatus.BAD_REQUEST),
+  USER_UPDATE_FAILED(1089, "User update failed", HttpStatus.BAD_REQUEST),
+  USER_CREATE_FAILED(1090, "User create failed", HttpStatus.BAD_REQUEST),
+  COMPANY_SUBSCRIPTION_EXISTED(1091, "Company Subscription existed", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;

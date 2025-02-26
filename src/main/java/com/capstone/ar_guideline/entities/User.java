@@ -58,6 +58,7 @@ public class User implements UserDetails, Serializable {
   private String phone;
   private String status;
   private String expirationDate;
+  private String deviceId;
   private Boolean isPayAdmin;
 
   @Column(nullable = false, updatable = false)

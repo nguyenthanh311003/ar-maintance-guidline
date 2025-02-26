@@ -12,7 +12,7 @@ public interface ICompanyService {
 
   CompanyResponse findByName(String name);
 
-  CompanyResponse create(CompanyCreationRequest request);
+  Company create(CompanyCreationRequest request);
 
   CompanyResponse update(String id, CompanyCreationRequest request);
 
