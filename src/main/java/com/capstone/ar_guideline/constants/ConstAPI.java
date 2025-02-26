@@ -2,6 +2,7 @@ package com.capstone.ar_guideline.constants;
 
 public class ConstAPI {
   public static class ModelTypeAPI {
+    public static final String GET_ALL_MODEL_TYPE = "api/v1/model-types";
     public static final String CREATE_MODEL_TYPE = "api/v1/model-types";
     public static final String UPDATE_MODEL_TYPE = "api/v1/model-types/";
     public static final String DELETE_MODEL_TYPE = "api/v1/model-types/";
@@ -43,6 +44,7 @@ public class ConstAPI {
   }
 
   public static class InstructionAPI {
+    public static final String GET_INSTRUCTIONS_BY_COURSE_ID = "api/v1/instruction/course/";
     public static final String CREATE_INSTRUCTION = "api/v1/instruction";
     public static final String UPDATE_INSTRUCTION = "api/v1/instruction/";
     public static final String DELETE_INSTRUCTION = "api/v1/instruction/";
@@ -50,6 +52,8 @@ public class ConstAPI {
   }
 
   public static class InstructionDetailAPI {
+    public static final String GET_INSTRUCTION_DETAIL_BY_ID = "api/v1/instruction-detail/";
+    public static final String GET_INSTRUCTION_DETAIL_BY_INSTRUCTION = "api/v1/instruction-detail/instruction/";
     public static final String CREATE_INSTRUCTION_DETAIL = "api/v1/instruction-detail";
     public static final String UPDATE_INSTRUCTION_DETAIL = "api/v1/instruction-detail/";
     public static final String DELETE_INSTRUCTION_DETAIL = "api/v1/instruction-detail/";

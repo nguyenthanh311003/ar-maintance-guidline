@@ -20,6 +20,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -142,6 +144,18 @@ public class InstructionServiceImpl implements IInstructionService {
                 return instructionResponse;
               })
           .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public Page<Instruction> findByCourseIdPaging(Pageable pageable, String courseId) {
+    try {
+      return instructionRepository.getByCourseIdPaging(pageable, courseId);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

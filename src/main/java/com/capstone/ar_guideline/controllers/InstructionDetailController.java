@@ -12,12 +12,29 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class InstructionDetailController {
   IInstructionDetailService instructionDetailService;
+
+
+  @GetMapping(value = ConstAPI.InstructionDetailAPI.GET_INSTRUCTION_DETAIL_BY_INSTRUCTION + "{instructionId}")
+  ApiResponse<List<InstructionDetailResponse>> getInstructionDetailByInstructionId(@PathVariable String instructionId) {
+    return ApiResponse.<List<InstructionDetailResponse>>builder()
+            .result(instructionDetailService.findByInstructionIdReturnResponse(instructionId))
+            .build();
+  }
+
+  @GetMapping(value = ConstAPI.InstructionDetailAPI.GET_INSTRUCTION_DETAIL_BY_ID + "{instructionDetailId}")
+  ApiResponse<InstructionDetailResponse> getInstructionDetailById(@PathVariable String instructionDetailId) {
+    return ApiResponse.<InstructionDetailResponse>builder()
+            .result(instructionDetailService.findByIdReturnResponse(instructionDetailId))
+            .build();
+  }
 
   @PostMapping(value = ConstAPI.InstructionDetailAPI.CREATE_INSTRUCTION_DETAIL)
   ApiResponse<InstructionDetailResponse> createInstructionDetail(

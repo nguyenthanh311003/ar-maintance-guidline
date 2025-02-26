@@ -23,7 +23,7 @@ public class InstructionDetailMapper {
         .instructionId(instructionDetail.getInstruction().getId())
         .orderNumber(instructionDetail.getOrderNumber())
         .name(instructionDetail.getName())
-            .description(instructionDetail.getDescription())
+        .description(instructionDetail.getDescription())
         .fileString(instructionDetail.getFile())
         .imgString(instructionDetail.getImgUrl())
         .build();
