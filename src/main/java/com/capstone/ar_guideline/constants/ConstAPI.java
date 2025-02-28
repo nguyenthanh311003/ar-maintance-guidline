@@ -22,6 +22,7 @@ public class ConstAPI {
     public static final String UPDATE_MODEL = "api/v1/model/";
     public static final String DELETE_MODEL = "api/v1/model/";
     public static final String GET_MODEL_BY_ID = "api/v1/model/";
+    public static final String GET_MODEL_BY_COURSE = "api/v1/model/course/";
     public static final String GET_UNUSED_MODEL_BY_ID = "api/v1/model/unused/company/";
     public static final String GET_MODEL_BY_COMPANY_ID = "api/v1/model/company/";
   }
@@ -46,9 +47,12 @@ public class ConstAPI {
 
   public static class InstructionAPI {
     public static final String GET_INSTRUCTIONS_BY_COURSE_ID = "api/v1/instruction/course/";
+    public static final String GET_INSTRUCTIONS_BY_COURSE_ID_FOR_SWAP_ORDER =
+        "api/v1/instruction/no-paging/course/";
     public static final String CREATE_INSTRUCTION = "api/v1/instruction";
     public static final String UPDATE_INSTRUCTION = "api/v1/instruction/";
     public static final String DELETE_INSTRUCTION = "api/v1/instruction/";
+    public static final String GET_INSTRUCTION_BY_ID = "api/v1/instruction/";
     public static final String SWAP_ORDER_INSTRUCTION = "api/v1/instruction/swap-order";
   }
 

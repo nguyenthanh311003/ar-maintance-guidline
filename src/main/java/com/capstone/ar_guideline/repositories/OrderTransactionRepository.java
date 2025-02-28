@@ -14,7 +14,7 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
       value =
           "SELECT o FROM OrderTransaction o WHERE o.user.company.id = :companyId "
               + "AND o.user.role.roleName = 'COMPANY' "
-              + "ORDER BY o.createdDate ASC")
+              + "ORDER BY o.createdDate DESC")
   Page<OrderTransaction> getOrderTransactionByCompanyId(
       Pageable pageable, @Param("companyId") String companyId);
 

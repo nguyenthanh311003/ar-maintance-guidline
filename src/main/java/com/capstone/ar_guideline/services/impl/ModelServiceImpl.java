@@ -4,7 +4,6 @@ import com.capstone.ar_guideline.configurations.AppConfig;
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
-import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Model;
 import com.capstone.ar_guideline.entities.ModelType;
 import com.capstone.ar_guideline.exceptions.AppException;
@@ -20,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +59,12 @@ public class ModelServiceImpl implements IModelService {
   public ModelResponse update(String id, ModelCreationRequest request) {
     try {
       Model modelById = findById(id);
-      modelById = ModelMapper.fromModelCreationRequestToEntity(request);
+      modelById.setStatus(request.getStatus());
+      modelById.setModelCode(request.getModelCode());
+      modelById.setName(request.getName());
+      modelById.setDescription(request.getDescription());
+      modelById.setVersion(request.getVersion());
+      modelById.setScale(request.getScale());
       if (request.getImageUrl() != null) {
         modelById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       }
@@ -69,6 +72,7 @@ public class ModelServiceImpl implements IModelService {
         modelById.setFile(FileStorageService.storeFile(request.getFile()));
       }
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
+      modelById.setModelType(modelTypeById);
 
       modelById = modelRepository.save(modelById);
 
@@ -97,43 +101,23 @@ public class ModelServiceImpl implements IModelService {
 
   @Override
   public Model findById(String id) {
-    return modelRepository
-        .findById(id)
-        .orElseThrow(() -> new AppException(ErrorCode.MODEL_NOT_EXISTED));
+    try {
+      return modelRepository
+          .findById(id)
+          .orElseThrow(() -> new AppException(ErrorCode.MODEL_NOT_EXISTED));
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    }
   }
 
   @Override
-  public PagingModel<ModelResponse> findByCompanyId(
-      int page, int size, String companyId, String type, String name, String code) {
+  public Page<Model> findByCompanyId(
+      Pageable pageable, String companyId, String type, String name, String code) {
     try {
-      PagingModel<ModelResponse> pagingModel = new PagingModel<>();
-      Pageable pageable = PageRequest.of(page - 1, size);
-      Page<Model> models = modelRepository.findByCompanyId(pageable, companyId, type, name, code);
-      List<ModelResponse> modelResponses =
-          models.stream()
-              .map(
-                  m ->
-                      ModelResponse.builder()
-                          .id(m.getId())
-                          .modelTypeId(m.getModelType().getId())
-                          .modelCode(m.getModelCode())
-                          .status(m.getStatus())
-                          .name(m.getName())
-                          .description(m.getDescription())
-                          .imageUrl(m.getImageUrl())
-                          .version(m.getVersion())
-                          .modelTypeName(m.getModelType().getName())
-                          .scale(m.getScale())
-                          .file(m.getFile())
-                          .build())
-              .toList();
-
-      pagingModel.setPage(page);
-      pagingModel.setSize(size);
-      pagingModel.setTotalItems((int) models.getTotalElements());
-      pagingModel.setTotalPages(models.getTotalPages());
-      pagingModel.setObjectList(modelResponses);
-      return pagingModel;
+      return modelRepository.findByCompanyId(pageable, companyId, type, name, code);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -157,10 +141,35 @@ public class ModelServiceImpl implements IModelService {
   }
 
   @Override
-  public ModelResponse findByIdResponse(String id) {
+  public Boolean updateIsUsed(boolean isCreate, Model model) {
     try {
-      Model model = findById(id);
-      return ModelMapper.fromEntityToModelResponse(model);
+      if (isCreate) {
+        model.setIsUsed(true);
+      } else {
+        model.setIsUsed(false);
+      }
+
+      model = modelRepository.save(model);
+
+      if (model.getId() == null) {
+        return false;
+      }
+
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public ModelResponse getByCourseId(String courseId) {
+    try {
+      Model modelByCourseId = modelRepository.getByCourseId(courseId);
+
+      return ModelMapper.fromEntityToModelResponse(modelByCourseId);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

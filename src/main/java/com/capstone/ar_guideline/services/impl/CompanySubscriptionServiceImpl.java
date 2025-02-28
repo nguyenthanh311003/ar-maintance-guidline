@@ -35,8 +35,8 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
   @Override
   public CompanySubscriptionResponse create(ComSubscriptionCreationRequest request) {
     try {
-      CompanySubscription companySubscription = findByCompanyIdAndSubscriptionId(
-              request.getCompanyId(), request.getSubscriptionId());
+      CompanySubscription companySubscription =
+          findByCompanyIdAndSubscriptionId(request.getCompanyId(), request.getSubscriptionId());
 
       if (companySubscription != null) {
         return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(
@@ -152,6 +152,7 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
     companySubscriptionById.setStatus(ConstStatus.INACTIVE_STATUS);
     companySubscriptionById.setSubscriptionStartDate(null);
     companySubscriptionById.setSubscriptionExpireDate(null);
-   return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(companySubscriptionRepository.save(companySubscriptionById));
+    return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(
+        companySubscriptionRepository.save(companySubscriptionById));
   }
 }

@@ -21,4 +21,6 @@ public interface IInstructionDetailService {
   List<InstructionDetailResponse> findByInstructionIdReturnResponse(String instructionId);
 
   Boolean swapOrder(String instructionDetailIdCurrent, String instructionDetailIdSwap);
+
+  Boolean deleteByInstructionId(String instructionId);
 }

@@ -6,6 +6,7 @@ import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Course;
+import com.capstone.ar_guideline.entities.Model;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CourseMapper;
@@ -130,6 +131,11 @@ public class CourseServiceImpl implements ICourseService {
       newCourse.setDuration(0);
       newCourse.setQrCode(UtilService.generateAndStoreQRCode(newCourse.getCourseCode()));
       newCourse = courseRepository.save(newCourse);
+
+      if (newCourse.getId() != null) {
+        Model modelById = modelService.findById(newCourse.getModel().getId());
+        modelService.updateIsUsed(true, modelById);
+      }
       Arrays.stream(keysToRemove)
           .map(k -> k + ConstHashKey.HASH_KEY_ALL)
           .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
@@ -179,6 +185,18 @@ public class CourseServiceImpl implements ICourseService {
         throw exception;
       }
       throw new AppException(ErrorCode.COURSE_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public Course findByModelId(String modelId) {
+    try {
+      return courseRepository.findByModelId(modelId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
     }
   }
 

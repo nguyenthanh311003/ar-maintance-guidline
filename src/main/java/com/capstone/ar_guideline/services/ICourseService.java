@@ -40,4 +40,6 @@ public interface ICourseService {
   Course save(Course course);
 
   String updateCoursePicture(String courseId, MultipartFile file);
+
+  Course findByModelId(String modelId);
 }

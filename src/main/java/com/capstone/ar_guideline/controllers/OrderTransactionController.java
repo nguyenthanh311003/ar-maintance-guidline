@@ -73,7 +73,7 @@ public class OrderTransactionController {
       value = ConstAPI.OrderTransactionAPI.GET_ORDER_TRANSACTION_BY_COMPANY_ID + "{companyId}")
   ApiResponse<PagingModel<OrderTransactionResponse>> getOrderTransactionByCompanyId(
       @RequestParam(defaultValue = "1") int page,
-      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(defaultValue = "5") int size,
       @PathVariable String companyId) {
     return ApiResponse.<PagingModel<OrderTransactionResponse>>builder()
         .result(orderTransactionService.getAllTransactionByCompanyId(page, size, companyId))
