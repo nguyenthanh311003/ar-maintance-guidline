@@ -16,7 +16,7 @@ public interface ModelRepository extends JpaRepository<Model, String> {
           + "AND (:type IS NULL OR :type = '' OR LOWER(m.modelType.name) LIKE LOWER(CONCAT('%', :type, '%'))) "
           + "AND (:name IS NULL OR :name = '' OR LOWER(m.name) LIKE LOWER(CONCAT('%', :name, '%'))) "
           + "AND (:code IS NULL OR :code = '' OR LOWER(m.modelCode) LIKE LOWER(CONCAT('%', :code, '%')))"
-          + "ORDER BY m.createdDate ASC")
+          + "ORDER BY m.createdDate DESC")
   Page<Model> findByCompanyId(
       Pageable pageable,
       @Param("companyId") String companyId,
@@ -26,6 +26,9 @@ public interface ModelRepository extends JpaRepository<Model, String> {
 
   @Query(
       value =
-          "SELECT m FROM Model m WHERE m.isUsed = false AND m.company.id = :companyId ORDER BY m.createdDate ASC")
+          "SELECT m FROM Model m WHERE m.isUsed = false AND m.company.id = :companyId ORDER BY m.createdDate DESC ")
   List<Model> getModelUnused(@Param("companyId") String companyId);
+
+  @Query(value = "SELECT m FROM Model m WHERE m.company.id = :companyId ORDER BY m.createdDate DESC")
+  List<Model> findAllByCompanyId(@Param("companyId") String companyId);
 }

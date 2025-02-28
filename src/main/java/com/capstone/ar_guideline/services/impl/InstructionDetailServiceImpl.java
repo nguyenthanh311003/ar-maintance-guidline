@@ -11,8 +11,6 @@ import com.capstone.ar_guideline.mappers.InstructionDetailMapper;
 import com.capstone.ar_guideline.repositories.InstructionDetailRepository;
 import com.capstone.ar_guideline.services.IInstructionDetailService;
 import com.capstone.ar_guideline.services.IInstructionService;
-import com.capstone.ar_guideline.util.UtilService;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import lombok.AccessLevel;

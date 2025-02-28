@@ -21,4 +21,6 @@ public interface IModelService {
   List<ModelResponse> getModelUnused(String companyId);
 
   ModelResponse findByIdResponse(String id);
+
+  List<Model> findAllByCompanyId(String companyId);
 }
