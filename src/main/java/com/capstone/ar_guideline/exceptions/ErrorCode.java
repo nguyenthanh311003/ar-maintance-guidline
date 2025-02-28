@@ -105,6 +105,11 @@ public enum ErrorCode {
   USER_UPDATE_FAILED(1089, "User update failed", HttpStatus.BAD_REQUEST),
   USER_CREATE_FAILED(1090, "User create failed", HttpStatus.BAD_REQUEST),
   COMPANY_SUBSCRIPTION_EXISTED(1091, "Company Subscription existed", HttpStatus.BAD_REQUEST),
+  COMPANY_SUBSCRIPTION_EXPIRED(1092, "Company Subscription expired", HttpStatus.BAD_REQUEST),
+  COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT(
+      1093, "Company Model is greater than subscription limit", HttpStatus.BAD_REQUEST),
+  COMPANY_SUBSCRIPTION_USER_OVER_LIMIT(
+      1094, "Company User is greater than subscription limit", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;

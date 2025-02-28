@@ -35,8 +35,8 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
   @Override
   public CompanySubscriptionResponse create(ComSubscriptionCreationRequest request) {
     try {
-      CompanySubscription companySubscription = findByCompanyIdAndSubscriptionId(
-              request.getCompanyId(), request.getSubscriptionId());
+      CompanySubscription companySubscription =
+          findByCompanyIdAndSubscriptionId(request.getCompanyId(), request.getSubscriptionId());
 
       if (companySubscription != null) {
         return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(
@@ -152,6 +152,34 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
     companySubscriptionById.setStatus(ConstStatus.INACTIVE_STATUS);
     companySubscriptionById.setSubscriptionStartDate(null);
     companySubscriptionById.setSubscriptionExpireDate(null);
-   return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(companySubscriptionRepository.save(companySubscriptionById));
+    return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(
+        companySubscriptionRepository.save(companySubscriptionById));
+  }
+
+  @Override
+  public CompanySubscription findByCompanyId(String companyId) {
+    try {
+      return companySubscriptionRepository.findByCompanyId(companyId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public CompanySubscription findCurrentSubscriptionByCompanyId(String companyId) {
+    try {
+      if (companySubscriptionRepository.findCurrentSubscriptionByCompanyId(companyId).isEmpty()) {
+        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_NOT_EXISTED);
+      }
+      return companySubscriptionRepository.findCurrentSubscriptionByCompanyId(companyId).getFirst();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_NOT_EXISTED);
+    }
   }
 }

@@ -28,4 +28,7 @@ public interface ModelRepository extends JpaRepository<Model, String> {
       value =
           "SELECT m FROM Model m WHERE m.isUsed = false AND m.company.id = :companyId ORDER BY m.createdDate ASC")
   List<Model> getModelUnused(@Param("companyId") String companyId);
+
+  @Query(value = "SELECT m FROM Model m WHERE m.company.id = :companyId ORDER BY m.createdDate ASC")
+  List<Model> findAllByCompanyId(@Param("companyId") String companyId);
 }
