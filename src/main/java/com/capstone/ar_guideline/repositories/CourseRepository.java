@@ -42,4 +42,7 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
   @Query(value = "SELECT c FROM Course c WHERE c.courseCode = :courseCode AND c.status = 'ACTIVE'")
   Course findByCode(@Param("courseCode") String courseCode);
+
+  @Query(value = "SELECT c FROM Course c WHERE c.model.id = :modelId")
+  Course findByModelId(@Param("modelId") String modelId);
 }

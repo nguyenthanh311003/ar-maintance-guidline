@@ -5,6 +5,7 @@ import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
+import com.capstone.ar_guideline.services.IARGuidelineService;
 import com.capstone.ar_guideline.services.ICourseService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class CourseController {
 
   ICourseService courseService;
+  IARGuidelineService arGuidelineService;
 
   @GetMapping(value = ConstAPI.CourseAPI.COURSE)
   public ApiResponse<PagingModel<CourseResponse>> getAllCourses(

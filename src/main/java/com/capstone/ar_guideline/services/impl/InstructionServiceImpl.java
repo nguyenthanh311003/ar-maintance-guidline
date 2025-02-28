@@ -87,7 +87,7 @@ public class InstructionServiceImpl implements IInstructionService {
   }
 
   @Override
-  public void delete(String id) {
+  public Boolean delete(String id) {
     try {
       Instruction instructionById = findById(id);
       instructionRepository.deleteById(instructionById.getId());
@@ -95,7 +95,7 @@ public class InstructionServiceImpl implements IInstructionService {
       Arrays.stream(keysToRemove)
           .map(k -> k + ConstHashKey.HASH_KEY_ALL)
           .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
+      return true;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -112,9 +112,9 @@ public class InstructionServiceImpl implements IInstructionService {
   }
 
   @Override
-  public List<InstructionResponse> findByCourseId(String modelId) {
+  public List<InstructionResponse> findByCourseId(String courseId) {
     try {
-      return instructionRepository.getByCourseId(modelId).stream()
+      return instructionRepository.getByCourseId(courseId).stream()
           .map(
               i -> {
                 InstructionResponse instructionResponse = new InstructionResponse();
@@ -213,6 +213,20 @@ public class InstructionServiceImpl implements IInstructionService {
         throw exception;
       }
       throw new AppException(ErrorCode.SWAP_ORDER_NUMBER_FAILED);
+    }
+  }
+
+  @Override
+  public InstructionResponse findByIdReturnResponse(String instructionId) {
+    try {
+      Instruction instructionById = findById(instructionId);
+
+      return InstructionMapper.fromEntityToInstructionResponse(instructionById);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED);
     }
   }
 }

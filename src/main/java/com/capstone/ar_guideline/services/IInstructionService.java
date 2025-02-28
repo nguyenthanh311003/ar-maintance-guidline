@@ -12,7 +12,7 @@ public interface IInstructionService {
 
   InstructionResponse update(String id, InstructionCreationRequest request);
 
-  void delete(String id);
+  Boolean delete(String id);
 
   Instruction findById(String id);
 
@@ -23,4 +23,6 @@ public interface IInstructionService {
   Integer getHighestOrderNumber(String modelId);
 
   Boolean swapOrder(String instructionIdCurrent, String instructionIdSwap);
+
+  InstructionResponse findByIdReturnResponse(String instructionId);
 }

@@ -72,10 +72,6 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
 
       InstructionDetail instructionDetailById = findById(id);
 
-      instructionDetailById =
-          InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(
-              request, instructionDetailById.getInstruction());
-
       if (request.getFile() != null) {
         instructionDetailById.setFile(FileStorageService.storeFile(request.getFile()));
       }
@@ -205,6 +201,27 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
         throw exception;
       }
       throw new AppException(ErrorCode.SWAP_ORDER_NUMBER_FAILED);
+    }
+  }
+
+  @Override
+  public Boolean deleteByInstructionId(String instructionId) {
+    try {
+      List<InstructionDetail> details =
+          instructionDetailRepository.getByInstructionId(instructionId);
+
+      if (details.isEmpty()) {
+        return false;
+      }
+
+      instructionDetailRepository.deleteAll(details);
+
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_DETAIL_DELETE_FAILED);
     }
   }
 
