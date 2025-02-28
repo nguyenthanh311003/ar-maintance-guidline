@@ -187,6 +187,19 @@ public class ModelServiceImpl implements IModelService {
     }
   }
 
+  @Override
+  public ModelResponse findByIdResponse(String id) {
+    try {
+      Model model = findById(id);
+      return ModelMapper.fromEntityToModelResponse(model);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    }
+  }
+
   private boolean isModelOverSubscriptionLimit(String companyId) {
     List<Model> models = modelRepository.findAllByCompanyId(companyId);
     int modelSize = models.size();
