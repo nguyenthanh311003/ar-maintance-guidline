@@ -24,4 +24,7 @@ public interface IModelService {
   Boolean updateIsUsed(boolean isCreate, Model model);
 
   ModelResponse getByCourseId(String courseId);
+  ModelResponse findByIdResponse(String id);
+
+  List<Model> findAllByCompanyId(String companyId);
 }

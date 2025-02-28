@@ -14,4 +14,8 @@ public interface ICompanySubscriptionService {
   CompanySubscription findById(String id);
 
   CompanySubscriptionResponse disable(String id);
+
+  CompanySubscription findByCompanyId(String companyId);
+
+  CompanySubscription findCurrentSubscriptionByCompanyId(String companyId);
 }

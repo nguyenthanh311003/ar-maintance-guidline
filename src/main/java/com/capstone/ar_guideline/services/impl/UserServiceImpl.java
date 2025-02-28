@@ -8,12 +8,14 @@ import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.User.AuthenticationResponse;
 import com.capstone.ar_guideline.dtos.responses.User.UserResponse;
 import com.capstone.ar_guideline.entities.Company;
+import com.capstone.ar_guideline.entities.CompanySubscription;
 import com.capstone.ar_guideline.entities.User;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.UserMapper;
 import com.capstone.ar_guideline.repositories.UserRepository;
 import com.capstone.ar_guideline.services.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,6 +45,7 @@ public class UserServiceImpl implements IUserService {
   IRoleService roleService;
   ICompanyService companyService;
   EmailService emailService;
+  ICompanySubscriptionService companySubscriptionService;
 
   @Override
   public AuthenticationResponse login(LoginRequest loginRequest) {
@@ -87,6 +90,12 @@ public class UserServiceImpl implements IUserService {
       if (Objects.isNull(role)) {
         throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
       }
+
+      boolean isUserOver = isUserOverSubscriptionLimit(company.getId());
+      if (isUserOver) {
+        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
+      }
+
       User user = UserMapper.fromSignUpRequestToEntity(signUpWitRoleRequest);
       user.setRole(role);
       user.setCompany(company);
@@ -238,6 +247,11 @@ public class UserServiceImpl implements IUserService {
               .findById(userId)
               .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
+      boolean isUserOver = isUserOverSubscriptionLimit(userById.getCompany().getId());
+      if (isUserOver) {
+        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
+      }
+
       if (status.isEmpty()) {
         return false;
       }
@@ -285,5 +299,29 @@ public class UserServiceImpl implements IUserService {
       }
       throw new AppException(ErrorCode.USER_NOT_EXISTED);
     }
+  }
+
+  private boolean isUserOverSubscriptionLimit(String companyId) {
+    List<User> users = findAllByCompanyId(companyId);
+    int userSize = users.size();
+    try {
+      CompanySubscription companySubscription =
+          companySubscriptionService.findCurrentSubscriptionByCompanyId(companyId);
+      if (companySubscription == null) {
+        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_NOT_EXISTED);
+      }
+      if (companySubscription.getSubscriptionExpireDate().isBefore(LocalDateTime.now())) {
+        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_EXPIRED);
+      }
+      int maxUserSubscription = companySubscription.getSubscription().getMaxEmployees();
+      return userSize > maxUserSubscription;
+    } catch (Exception exception) {
+      exception.printStackTrace();
+    }
+    return false;
+  }
+
+  private List<User> findAllByCompanyId(String companyId) {
+    return userRepository.findByCompanyId(companyId);
   }
 }
