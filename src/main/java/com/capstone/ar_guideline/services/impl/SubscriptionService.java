@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class SubscriptionService implements ISubscriptionService {
   {
 
     try {
-      List<Subscription> subscriptions = subscriptionRepository.findAll();
+      List<Subscription> subscriptions = subscriptionRepository.findAll(Sort.by(Sort.Direction.ASC, "monthlyFee"));
       return SubscriptionMapper.fromEntitiesToSubscriptionResponses(subscriptions);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
