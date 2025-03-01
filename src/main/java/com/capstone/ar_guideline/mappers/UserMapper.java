@@ -35,6 +35,7 @@ public class UserMapper {
         .company(CompanyMapper.fromEntityToCompanyResponse(user.getCompany()))
         .isPayAdmin(user.getIsPayAdmin())
         .status(user.getStatus())
+            .currentPlan(user.getCompany().getCompanySubscriptions().get(0).getSubscription().getSubscriptionCode())
         .username(user.getUsername())
         .phone(user.getPhone())
         .expirationDate(user.getExpirationDate())
