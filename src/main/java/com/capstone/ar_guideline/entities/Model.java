@@ -41,6 +41,9 @@ public class Model implements Serializable {
   private String imageUrl;
   private String version;
   private String scale;
+  private String rotation;
+  private String position;
+
   private String file;
 
   @Column(nullable = false, updatable = false)

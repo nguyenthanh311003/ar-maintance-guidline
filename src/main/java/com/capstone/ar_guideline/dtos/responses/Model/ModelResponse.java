@@ -1,6 +1,9 @@
 package com.capstone.ar_guideline.dtos.responses.Model;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.capstone.ar_guideline.dtos.requests.Vuforia.DatasetRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -22,6 +25,8 @@ public class ModelResponse implements Serializable {
   Boolean isUsed;
   String version;
   String scale;
+  List<Float> position;
+  List<Float> rotation;
   String file;
   String courseName;
 }
