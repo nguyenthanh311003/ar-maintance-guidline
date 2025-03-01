@@ -30,4 +30,8 @@ public interface IUserService {
 
   PagingModel<UserResponse> getStaffByCompanyId(
       int page, int size, String companyId, String username, String email, String status);
+
+  Boolean changeStatusAccountStaff(String userId);
+
+  Boolean resetPasswordStaff(String userId, String newPassword);
 }
