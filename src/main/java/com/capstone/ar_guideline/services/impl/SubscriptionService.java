@@ -15,6 +15,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -37,6 +39,21 @@ public class SubscriptionService implements ISubscriptionService {
         throw exception;
       }
       throw new AppException(ErrorCode.SUBSCRIPTION_CREATE_FAILED);
+    }
+  }
+
+  @Override
+  public List<SubscriptionResponse> findAll()
+  {
+
+    try {
+      List<Subscription> subscriptions = subscriptionRepository.findAll();
+      return SubscriptionMapper.fromEntitiesToSubscriptionResponses(subscriptions);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.SUBSCRIPTION_NOT_EXISTED);
     }
   }
 

@@ -4,6 +4,9 @@ import com.capstone.ar_guideline.dtos.requests.Subscription.SubscriptionCreation
 import com.capstone.ar_guideline.dtos.responses.Subscription.SubscriptionResponse;
 import com.capstone.ar_guideline.entities.Subscription;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class SubscriptionMapper {
   public static Subscription fromSubscriptionCreationRequestToEntity(
       SubscriptionCreationRequest request) {
@@ -28,5 +31,8 @@ public class SubscriptionMapper {
         .extraModelFee(subscription.getExtraModelFee())
         .status(subscription.getStatus())
         .build();
+  }
+  public static List<SubscriptionResponse> fromEntitiesToSubscriptionResponses(List<Subscription> subscriptions) {
+    return subscriptions.stream().map(SubscriptionMapper::fromEntityToSubscriptionResponse).collect(Collectors.toList());
   }
 }

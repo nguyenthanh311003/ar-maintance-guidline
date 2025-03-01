@@ -4,8 +4,12 @@ import com.capstone.ar_guideline.dtos.requests.Subscription.SubscriptionCreation
 import com.capstone.ar_guideline.dtos.responses.Subscription.SubscriptionResponse;
 import com.capstone.ar_guideline.entities.Subscription;
 
+import java.util.List;
+
 public interface ISubscriptionService {
   SubscriptionResponse create(SubscriptionCreationRequest request);
+
+  List<SubscriptionResponse> findAll();
 
   SubscriptionResponse update(String id, SubscriptionCreationRequest request);
 

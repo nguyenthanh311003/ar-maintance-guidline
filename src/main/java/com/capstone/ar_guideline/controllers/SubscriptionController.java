@@ -12,6 +12,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -26,6 +28,15 @@ public class SubscriptionController {
         .result(subscriptionService.create(request))
         .build();
   }
+
+
+  @GetMapping(value = ConstAPI.SubscriptionAPI.CREATE_SUBSCRIPTION)
+  ApiResponse<List<SubscriptionResponse>> findAll() {
+    return ApiResponse.<List<SubscriptionResponse>>builder()
+            .result(subscriptionService.findAll())
+            .build();
+  }
+
 
   @PutMapping(value = ConstAPI.SubscriptionAPI.UPDATE_SUBSCRIPTION + "{subscriptionId}")
   ApiResponse<SubscriptionResponse> updateSubscription(
