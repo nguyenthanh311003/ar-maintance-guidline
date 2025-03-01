@@ -20,10 +20,22 @@ public class ModelMapper {
         .build();
   }
 
+  public static Model fromModelCreationRequestToEntityForUpdate(ModelCreationRequest request) {
+    return Model.builder()
+        .status(request.getStatus())
+        .modelCode(request.getModelCode())
+        .name(request.getName())
+        .description(request.getDescription())
+        .version(request.getVersion())
+        .scale(request.getScale())
+        .build();
+  }
+
   public static ModelResponse fromEntityToModelResponse(Model model) {
     return ModelResponse.builder()
         .id(model.getId())
         .modelTypeId(model.getModelType().getId())
+        .modelCode(model.getModelCode())
         .status(model.getStatus())
         .isUsed(model.getIsUsed())
         .name(model.getName())

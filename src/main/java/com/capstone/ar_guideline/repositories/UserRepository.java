@@ -68,11 +68,13 @@ public interface UserRepository extends JpaRepository<User, String> {
               + ") "
               + "AND (:username IS NULL OR :username = '' OR LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%'))) "
               + "AND (:email IS NULL OR :email = '' OR LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%'))) "
-              + "ORDER BY u.createdDate ASC")
+              + "ORDER BY u.createdDate DESC")
   Page<User> getStaffByCompanyId(
       Pageable pageable,
       @Param("companyId") String companyId,
       @Param("username") String username,
       @Param("email") String email,
       @Param("status") String status);
+
+  List<User> findByCompanyId(String companyId);
 }
