@@ -136,9 +136,9 @@ public class CourseServiceImpl implements ICourseService {
         Model modelById = modelService.findById(newCourse.getModel().getId());
         modelService.updateIsUsed(true, modelById);
       }
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+      //      Arrays.stream(keysToRemove)
+      //          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+      //          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return CourseMapper.fromEntityToCourseResponse(newCourse);
     } catch (Exception exception) {

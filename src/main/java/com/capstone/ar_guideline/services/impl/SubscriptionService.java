@@ -9,14 +9,13 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.SubscriptionMapper;
 import com.capstone.ar_guideline.repositories.SubscriptionRepository;
 import com.capstone.ar_guideline.services.ISubscriptionService;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -44,11 +43,11 @@ public class SubscriptionService implements ISubscriptionService {
   }
 
   @Override
-  public List<SubscriptionResponse> findAll()
-  {
+  public List<SubscriptionResponse> findAll() {
 
     try {
-      List<Subscription> subscriptions = subscriptionRepository.findAll(Sort.by(Sort.Direction.ASC, "monthlyFee"));
+      List<Subscription> subscriptions =
+          subscriptionRepository.findAll(Sort.by(Sort.Direction.ASC, "monthlyFee"));
       return SubscriptionMapper.fromEntitiesToSubscriptionResponses(subscriptions);
     } catch (Exception exception) {
       if (exception instanceof AppException) {

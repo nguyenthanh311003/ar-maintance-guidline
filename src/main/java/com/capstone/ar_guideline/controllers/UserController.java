@@ -121,18 +121,17 @@ public class UserController {
   }
 
   @PutMapping(value = ConstAPI.UserAPI.PREFIX_USER + "change-status/{userId}")
-  ApiResponse<Boolean> changeStatusAccountStaff(
-          @PathVariable String userId) {
+  ApiResponse<Boolean> changeStatusAccountStaff(@PathVariable String userId) {
     return ApiResponse.<Boolean>builder()
-            .result(userService.changeStatusAccountStaff(userId))
-            .build();
+        .result(userService.changeStatusAccountStaff(userId))
+        .build();
   }
 
   @PutMapping(value = ConstAPI.UserAPI.PREFIX_USER + "reset/{userId}")
   ApiResponse<Boolean> resetPasswordStaff(
-          @PathVariable String userId, @RequestBody String newPassword) {
+      @PathVariable String userId, @RequestBody String newPassword) {
     return ApiResponse.<Boolean>builder()
-            .result(userService.resetPasswordStaff(userId, newPassword))
-            .build();
+        .result(userService.resetPasswordStaff(userId, newPassword))
+        .build();
   }
 }

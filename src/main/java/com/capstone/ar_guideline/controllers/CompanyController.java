@@ -42,6 +42,14 @@ public class CompanyController {
         .build();
   }
 
+  @GetMapping(value = ConstAPI.CompanyAPI.GET_COMPANY_BY_USER_ID)
+  ApiResponse<CompanyResponse> getCompanyByUserId(@RequestParam String userId) {
+    return ApiResponse.<CompanyResponse>builder()
+        .result(companyService.findByUserId(userId))
+        .message("Get company by name")
+        .build();
+  }
+
   /*@PostMapping(value = ConstAPI.CompanyAPI.CREATE_COMPANY)
   ApiResponse<CompanyResponse> createCompany(@RequestBody @Valid CompanyCreationRequest request) {
     return ApiResponse.<CompanyResponse>builder()

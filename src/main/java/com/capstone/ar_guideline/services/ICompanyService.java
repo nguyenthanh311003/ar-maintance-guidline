@@ -21,4 +21,6 @@ public interface ICompanyService {
   Company findCompanyEntityByName(String name);
 
   Company findByIdReturnEntity(String id);
+
+  CompanyResponse findByUserId(String userId);
 }

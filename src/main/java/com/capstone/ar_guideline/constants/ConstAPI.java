@@ -73,6 +73,7 @@ public class ConstAPI {
     public static final String GET_COMPANY_BY_NAME = "api/v1/company/name";
     public static final String CREATE_COMPANY = "api/v1/company";
     public static final String DELETE_COMPANY = "api/v1/company/";
+    public static final String GET_COMPANY_BY_USER_ID = "api/v1/company/userId";
   }
 
   public static class LessonAPI {
@@ -116,6 +117,7 @@ public class ConstAPI {
     public static final String UPDATE_ORDER_TRANSACTION = "api/v1/order-transaction/";
     public static final String DELETE_ORDER_TRANSACTION = "api/v1/order-transaction/";
     public static final String HANDLE_ORDER_STATUS = "api/v1/order-transaction/order-status/";
+    public static final String GET_ALL_ORDER_TRANSACTION = "api/v1/order-transaction/all";
   }
 
   public static class QuizAPI {
