@@ -2,8 +2,6 @@ package com.capstone.ar_guideline.dtos.responses.Model;
 
 import java.io.Serializable;
 import java.util.List;
-
-import com.capstone.ar_guideline.dtos.requests.Vuforia.DatasetRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
