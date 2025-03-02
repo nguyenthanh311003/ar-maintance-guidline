@@ -33,6 +33,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static com.capstone.ar_guideline.constants.ConstStatus.INACTIVE_STATUS;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -55,7 +57,7 @@ public class UserServiceImpl implements IUserService {
         log.warn("User not found by email: {}", loginRequest.getEmail());
         throw new AppException(ErrorCode.USER_NOT_EXISTED);
       }
-      if (userResponseByEmail.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
+      if (userResponseByEmail.getStatus().equals(INACTIVE_STATUS)) {
         throw new AppException(ErrorCode.USER_DISABLED);
       }
 
@@ -75,9 +77,11 @@ public class UserServiceImpl implements IUserService {
           .token(jwt)
           .user(userResponse)
           .build();
-    } catch (Exception e) {
-      log.error("Login failed: {}", e.getMessage());
-      return AuthenticationResponse.builder().message("Login failed").build();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
     }
   }
 
@@ -93,7 +97,12 @@ public class UserServiceImpl implements IUserService {
 
       boolean isUserOver = isUserOverSubscriptionLimit(company.getId());
       if (isUserOver) {
-        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
+        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_USER_OVER_LIMIT);
+      }
+
+      var userByEmail = userRepository.findByEmail(signUpWitRoleRequest.getEmail());
+      if (userByEmail.isPresent()) {
+        throw new AppException(ErrorCode.USER_EXISTED);
       }
 
       User user = UserMapper.fromSignUpRequestToEntity(signUpWitRoleRequest);
@@ -109,9 +118,11 @@ public class UserServiceImpl implements IUserService {
           .token(jwt)
           .user(userResponse)
           .build();
-    } catch (Exception e) {
-      log.error("Error when create user: {}", e.getMessage());
-      return AuthenticationResponse.builder().message("Create user failed").build();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
     }
   }
 
@@ -266,6 +277,60 @@ public class UserServiceImpl implements IUserService {
       if (status.equals(ConstStatus.REJECT) && isPending) {
         emailService.sendAccountRejectionEmail(userById.getEmail(), userById.getUsername());
       }
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public Boolean changeStatusAccountStaff(String userId) {
+    try {
+      User userById =
+              userRepository
+                      .findById(userId)
+                      .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+      boolean isUserOver = isUserOverSubscriptionLimit(userById.getCompany().getId());
+      if (userById.getStatus().equalsIgnoreCase(INACTIVE_STATUS) && isUserOver) {
+        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
+      }
+
+      if(userById.getStatus().equalsIgnoreCase(INACTIVE_STATUS)) {
+        userById.setStatus(ConstStatus.ACTIVE_STATUS);
+      } else {
+        userById.setStatus(INACTIVE_STATUS);
+      }
+      userRepository.save(userById);
+
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public Boolean resetPasswordStaff(String userId, String newPassword) {
+    try {
+      User userById =
+              userRepository
+                      .findById(userId)
+                      .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+      boolean isUserOver = isUserOverSubscriptionLimit(userById.getCompany().getId());
+      if (userById.getStatus().equalsIgnoreCase(INACTIVE_STATUS) && isUserOver) {
+        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
+      }
+
+      userById.setPassword(passwordEncoder.encode(newPassword));
+      userRepository.save(userById);
+
       return true;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
