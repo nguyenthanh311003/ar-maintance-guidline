@@ -178,6 +178,33 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
   }
 
   @Override
+  public PagingModel<OrderTransactionResponse> getAllTransaction(int page, int size) {
+    try {
+      PagingModel<OrderTransactionResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+      Page<OrderTransaction> orderTransactions =
+          orderTransactionRepository.getOrderTransaction(pageable);
+
+      List<OrderTransactionResponse> orderTransactionResponses =
+          orderTransactions.getContent().stream()
+              .map(OrderTransactionMapper::fromEntityToOrderTransactionResponse)
+              .toList();
+
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) orderTransactions.getTotalElements());
+      pagingModel.setTotalPages(orderTransactions.getTotalPages());
+      pagingModel.setObjectList(orderTransactionResponses);
+      return pagingModel;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.ORDER_TRANSACTION_NOT_EXISTED);
+    }
+  }
+
+  @Override
   public OrderTransaction findByOrderCode(Long orderCode) {
     try {
       return orderTransactionRepository.findByOrderCode(orderCode);

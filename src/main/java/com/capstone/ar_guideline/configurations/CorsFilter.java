@@ -19,14 +19,14 @@ public class CorsFilter implements Filter {
     HttpServletRequest request = (HttpServletRequest) req;
 
     String origin = request.getHeader("Origin");
-    if ("http://localhost:3000".equals(origin) || "https://ar-maintance-guideline-ui.vercel.app".equals(origin)) {
+    if ("http://localhost:3000".equals(origin)
+        || "https://ar-maintance-guideline-ui.vercel.app".equals(origin)) {
       response.setHeader("Access-Control-Allow-Origin", origin);
     }
     response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
     response.setHeader("Access-Control-Expose-Headers", "Authorization");
     response.setHeader("Access-Control-Allow-Credentials", "true");
-
 
     // ✅ Allow OPTIONS requests to pass through without authentication
     if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {

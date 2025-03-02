@@ -82,12 +82,12 @@ public class CompanyServiceImpl implements ICompanyService {
 
   @Override
   public CompanyResponse findById(String id) {
-    Company companyByIdWithRedis =
-        (Company) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_COMPANY, id);
-
-    if (!Objects.isNull(companyByIdWithRedis)) {
-      return CompanyMapper.fromEntityToCompanyResponse(companyByIdWithRedis);
-    }
+    //    Company companyByIdWithRedis =
+    //        (Company) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_COMPANY, id);
+    //
+    //    if (!Objects.isNull(companyByIdWithRedis)) {
+    //      return CompanyMapper.fromEntityToCompanyResponse(companyByIdWithRedis);
+    //    }
 
     Company companyById =
         companyRepository
@@ -133,5 +133,14 @@ public class CompanyServiceImpl implements ICompanyService {
       }
       throw new AppException(ErrorCode.COMPANY_NOT_EXISTED);
     }
+  }
+
+  @Override
+  public CompanyResponse findByUserId(String userId) {
+    Company companyByName =
+        companyRepository
+            .findByUserId(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_EXISTED));
+    return CompanyMapper.fromEntityToCompanyResponse(companyByName);
   }
 }

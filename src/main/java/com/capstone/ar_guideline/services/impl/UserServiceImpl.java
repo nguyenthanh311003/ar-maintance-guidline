@@ -1,5 +1,7 @@
 package com.capstone.ar_guideline.services.impl;
 
+import static com.capstone.ar_guideline.constants.ConstStatus.INACTIVE_STATUS;
+
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Company.CompanyCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.User.LoginRequest;
@@ -32,8 +34,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import static com.capstone.ar_guideline.constants.ConstStatus.INACTIVE_STATUS;
 
 @Service
 @RequiredArgsConstructor
@@ -290,16 +290,16 @@ public class UserServiceImpl implements IUserService {
   public Boolean changeStatusAccountStaff(String userId) {
     try {
       User userById =
-              userRepository
-                      .findById(userId)
-                      .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+          userRepository
+              .findById(userId)
+              .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
       boolean isUserOver = isUserOverSubscriptionLimit(userById.getCompany().getId());
       if (userById.getStatus().equalsIgnoreCase(INACTIVE_STATUS) && isUserOver) {
         throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
       }
 
-      if(userById.getStatus().equalsIgnoreCase(INACTIVE_STATUS)) {
+      if (userById.getStatus().equalsIgnoreCase(INACTIVE_STATUS)) {
         userById.setStatus(ConstStatus.ACTIVE_STATUS);
       } else {
         userById.setStatus(INACTIVE_STATUS);
@@ -319,9 +319,9 @@ public class UserServiceImpl implements IUserService {
   public Boolean resetPasswordStaff(String userId, String newPassword) {
     try {
       User userById =
-              userRepository
-                      .findById(userId)
-                      .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+          userRepository
+              .findById(userId)
+              .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
       boolean isUserOver = isUserOverSubscriptionLimit(userById.getCompany().getId());
       if (userById.getStatus().equalsIgnoreCase(INACTIVE_STATUS) && isUserOver) {

@@ -6,13 +6,12 @@ import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Subscription.SubscriptionResponse;
 import com.capstone.ar_guideline.services.ISubscriptionService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,14 +28,12 @@ public class SubscriptionController {
         .build();
   }
 
-
   @GetMapping(value = ConstAPI.SubscriptionAPI.CREATE_SUBSCRIPTION)
   ApiResponse<List<SubscriptionResponse>> findAll() {
     return ApiResponse.<List<SubscriptionResponse>>builder()
-            .result(subscriptionService.findAll())
-            .build();
+        .result(subscriptionService.findAll())
+        .build();
   }
-
 
   @PutMapping(value = ConstAPI.SubscriptionAPI.UPDATE_SUBSCRIPTION + "{subscriptionId}")
   ApiResponse<SubscriptionResponse> updateSubscription(

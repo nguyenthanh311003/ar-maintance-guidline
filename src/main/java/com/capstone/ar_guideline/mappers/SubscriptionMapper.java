@@ -3,7 +3,6 @@ package com.capstone.ar_guideline.mappers;
 import com.capstone.ar_guideline.dtos.requests.Subscription.SubscriptionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Subscription.SubscriptionResponse;
 import com.capstone.ar_guideline.entities.Subscription;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +31,11 @@ public class SubscriptionMapper {
         .status(subscription.getStatus())
         .build();
   }
-  public static List<SubscriptionResponse> fromEntitiesToSubscriptionResponses(List<Subscription> subscriptions) {
-    return subscriptions.stream().map(SubscriptionMapper::fromEntityToSubscriptionResponse).collect(Collectors.toList());
+
+  public static List<SubscriptionResponse> fromEntitiesToSubscriptionResponses(
+      List<Subscription> subscriptions) {
+    return subscriptions.stream()
+        .map(SubscriptionMapper::fromEntityToSubscriptionResponse)
+        .collect(Collectors.toList());
   }
 }

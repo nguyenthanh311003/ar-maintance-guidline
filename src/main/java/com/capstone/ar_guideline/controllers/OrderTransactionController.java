@@ -80,6 +80,14 @@ public class OrderTransactionController {
         .build();
   }
 
+  @GetMapping(value = ConstAPI.OrderTransactionAPI.GET_ALL_ORDER_TRANSACTION)
+  ApiResponse<PagingModel<OrderTransactionResponse>> getOrderTransaction(
+      @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size) {
+    return ApiResponse.<PagingModel<OrderTransactionResponse>>builder()
+        .result(orderTransactionService.getAllTransaction(page, size))
+        .build();
+  }
+
   //  @PostMapping(value = ConstAPI.OrderTransactionAPI.CREATE_ORDER_TRANSACTION)
   //  ApiResponse<OrderTransactionResponse> createOrderTransaction(
   //      @RequestBody @Valid OrderTransactionCreationRequest request) {
