@@ -18,6 +18,8 @@ public interface IInstructionService {
 
   List<InstructionResponse> findByCourseId(String modelId);
 
+  List<Instruction> findByCourseIdReturnEntity(String courseId);
+
   Page<Instruction> findByCourseIdPaging(Pageable pageable, String courseId);
 
   Integer getHighestOrderNumber(String modelId);
@@ -25,4 +27,6 @@ public interface IInstructionService {
   Boolean swapOrder(String instructionIdCurrent, String instructionIdSwap);
 
   InstructionResponse findByIdReturnResponse(String instructionId);
+
+  Boolean deleteByCourseId(String courseId);
 }

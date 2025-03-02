@@ -153,6 +153,18 @@ public class InstructionServiceImpl implements IInstructionService {
   }
 
   @Override
+  public List<Instruction> findByCourseIdReturnEntity(String courseId) {
+    try {
+      return instructionRepository.getByCourseId(courseId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED);
+    }
+  }
+
+  @Override
   public Page<Instruction> findByCourseIdPaging(Pageable pageable, String courseId) {
     try {
       return instructionRepository.getByCourseIdPaging(pageable, courseId);
@@ -227,6 +239,26 @@ public class InstructionServiceImpl implements IInstructionService {
         throw exception;
       }
       throw new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public Boolean deleteByCourseId(String courseId) {
+    try {
+      List<Instruction> instructionsByCourseId = instructionRepository.getByCourseId(courseId);
+
+      if (instructionsByCourseId.isEmpty()) {
+        return false;
+      }
+
+      instructionRepository.deleteAll(instructionsByCourseId);
+
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_DELETE_FAILED);
     }
   }
 }

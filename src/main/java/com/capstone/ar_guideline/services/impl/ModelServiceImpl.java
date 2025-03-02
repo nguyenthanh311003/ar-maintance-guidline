@@ -151,19 +151,11 @@ public class ModelServiceImpl implements IModelService {
   @Override
   public Boolean updateIsUsed(boolean isCreate, Model model) {
     try {
-      if (isCreate) {
-        model.setIsUsed(true);
-      } else {
-        model.setIsUsed(false);
-      }
+      model.setIsUsed(isCreate);
 
       model = modelRepository.save(model);
 
-      if (model.getId() == null) {
-        return false;
-      }
-
-      return true;
+      return model.getId() != null;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -228,6 +220,22 @@ public class ModelServiceImpl implements IModelService {
         throw exception;
       }
       throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public void updateIsUsedByCourseId(String courseId) {
+    try {
+      Model modelById = modelRepository.getByCourseId(courseId);
+
+      modelById.setIsUsed(!modelById.getIsUsed());
+
+      modelRepository.save(modelById);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_UPDATE_FAILED);
     }
   }
 }

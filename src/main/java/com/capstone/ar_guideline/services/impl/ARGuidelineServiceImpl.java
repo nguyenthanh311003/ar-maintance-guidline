@@ -236,4 +236,36 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       throw new AppException(ErrorCode.INSTRUCTION_DELETE_FAILED);
     }
   }
+
+  @Override
+  public Boolean deleteModelById(String modelId) {
+    try {
+      Model modelById = modelService.findById(modelId);
+
+      if (Objects.isNull(modelById)) {
+        return false;
+      }
+
+      modelService.delete(modelById.getId());
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_DELETE_FAILED);
+    }
+  }
+
+  @Override
+  public void deleteCourseById(String courseId) {
+    try {
+      modelService.updateIsUsedByCourseId(courseId);
+      courseService.delete(courseId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_DELETE_FAILED);
+    }
+  }
 }

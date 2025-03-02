@@ -94,6 +94,14 @@ public class CourseController {
         .build();
   }
 
+  @PutMapping(value = ConstAPI.CourseAPI.CHANGE_STATUS_GUIDELINE + "{courseId}")
+  public ApiResponse<String> changeStatusByCourseId(@PathVariable String courseId) {
+    courseService.changeStatusByCourseId(courseId);
+    return ApiResponse.<String>builder()
+        .result("Course status has been changed successfully")
+        .build();
+  }
+
   @PutMapping(value = ConstAPI.CourseAPI.UPDATE_COURSE_PICTURE + "/{courseId}")
   public ApiResponse<String> updateCoursePicture(
       @PathVariable String courseId, @RequestParam MultipartFile file) {
@@ -104,7 +112,7 @@ public class CourseController {
 
   @DeleteMapping(value = ConstAPI.CourseAPI.COURSE + "/{courseId}")
   public ApiResponse<String> deleteCourse(@PathVariable String courseId) {
-    courseService.delete(courseId);
+    arGuidelineService.deleteCourseById(courseId);
     return ApiResponse.<String>builder().result("Course has been deleted successfully").build();
   }
 }

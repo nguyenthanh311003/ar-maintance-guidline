@@ -28,4 +28,6 @@ public interface IModelService {
   ModelResponse findByIdResponse(String id);
 
   List<Model> findAllByCompanyId(String companyId);
+
+  void updateIsUsedByCourseId(String modelId);
 }
