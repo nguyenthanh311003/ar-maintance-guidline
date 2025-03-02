@@ -42,4 +42,6 @@ public interface ICourseService {
   String updateCoursePicture(String courseId, MultipartFile file);
 
   Course findByModelId(String modelId);
+
+  void changeStatusByCourseId(String courseId);
 }

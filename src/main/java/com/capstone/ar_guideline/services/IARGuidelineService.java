@@ -19,4 +19,8 @@ public interface IARGuidelineService {
   ModelResponse findModelById(String id);
 
   Boolean deleteInstructionById(String instructionId);
+
+  Boolean deleteModelById(String modelId);
+
+  void deleteCourseById(String courseId);
 }

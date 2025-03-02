@@ -10,6 +10,7 @@ public class ConstAPI {
 
   public static class CourseAPI {
     public static final String COURSE = "api/v1/course";
+    public static final String CHANGE_STATUS_GUIDELINE = "api/v1/course/status/";
     public static final String COURSE_FIND_BY_TITLE = "api/v1/course/title";
     public static final String COURSE_FIND_BY_COMPANY_ID = "api/v1/course/company/";
     public static final String FIND_COURSE_BY_CODE = "api/v1/course/code/";

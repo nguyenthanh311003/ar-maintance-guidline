@@ -201,11 +201,30 @@ public class CourseServiceImpl implements ICourseService {
   }
 
   @Override
+  public void changeStatusByCourseId(String courseId) {
+    try {
+      Course courseById = findById(courseId);
+
+      if (courseById.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
+        courseById.setStatus(ConstStatus.ACTIVE_STATUS);
+      } else {
+        courseById.setStatus(ConstStatus.INACTIVE_STATUS);
+      }
+
+      courseRepository.save(courseById);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_UPDATE_FAILED);
+    }
+  }
+
+  @Override
   public void delete(String id) {
     try {
       Course courseById = findById(id);
       courseRepository.deleteById(courseById.getId());
-      // delete all cache of course
       Arrays.stream(keysToRemove)
           .map(k -> k + ConstHashKey.HASH_KEY_ALL)
           .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
