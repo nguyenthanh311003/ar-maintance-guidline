@@ -48,6 +48,7 @@ public class ModelServiceImpl implements IModelService {
       newModel.setFile(FileStorageService.storeFile(request.getFile()));
       newModel.setIsUsed(false);
       newModel.setStatus(ConstStatus.ACTIVE_STATUS);
+      newModel.setSize((double) request.getFile().getSize());
       newModel = modelRepository.save(newModel);
 
       companySubscriptionService.updateStorageUsage(
@@ -97,7 +98,8 @@ public class ModelServiceImpl implements IModelService {
     try {
       Model modelById = findById(id);
       modelRepository.deleteById(modelById.getId());
-
+        companySubscriptionService.updateStorageUsage(
+            modelById.getCompany().getId(),  modelById.getSize(), "");
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
