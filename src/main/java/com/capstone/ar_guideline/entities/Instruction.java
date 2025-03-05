@@ -29,6 +29,7 @@ public class Instruction implements Serializable {
   private Integer orderNumber;
   private String name;
   private String description;
+
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
   private LocalDateTime createdDate;

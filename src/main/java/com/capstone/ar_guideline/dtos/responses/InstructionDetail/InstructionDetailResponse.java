@@ -1,9 +1,8 @@
 package com.capstone.ar_guideline.dtos.responses.InstructionDetail;
 
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @Builder

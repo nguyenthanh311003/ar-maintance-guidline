@@ -16,7 +16,6 @@ import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -107,18 +106,20 @@ public class InstructionServiceImpl implements IInstructionService {
   public List<InstructionResponse> findByCourseId(String courseId) {
     try {
       return instructionRepository.getByCourseId(courseId).stream()
-              .map(instruction -> {
-                InstructionResponse instructionResponse = InstructionMapper.fromEntityToInstructionResponse(instruction);
+          .map(
+              instruction -> {
+                InstructionResponse instructionResponse =
+                    InstructionMapper.fromEntityToInstructionResponse(instruction);
 
                 List<InstructionDetailResponse> instructionDetailResponses =
-                        instructionDetailRepository.getByInstructionId(instruction.getId()).stream()
-                                .map(InstructionDetailMapper::fromEntityToInstructionDetailResponse)
-                                .toList();
+                    instructionDetailRepository.getByInstructionId(instruction.getId()).stream()
+                        .map(InstructionDetailMapper::fromEntityToInstructionDetailResponse)
+                        .toList();
                 instructionResponse.setInstructionDetailResponse(instructionDetailResponses);
 
                 return instructionResponse;
               })
-              .toList();
+          .toList();
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -126,6 +127,7 @@ public class InstructionServiceImpl implements IInstructionService {
       throw new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED);
     }
   }
+
   @Override
   public List<Instruction> findByCourseIdReturnEntity(String courseId) {
     try {

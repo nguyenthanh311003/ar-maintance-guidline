@@ -1,11 +1,9 @@
 package com.capstone.ar_guideline.dtos.requests.InstructionDetail;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Data
 @Builder

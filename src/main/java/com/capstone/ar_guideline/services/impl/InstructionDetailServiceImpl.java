@@ -13,8 +13,6 @@ import com.capstone.ar_guideline.services.IInstructionDetailService;
 import com.capstone.ar_guideline.services.IInstructionService;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -34,14 +32,12 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
   private final String[] keysToRemove = {ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL};
 
   @Override
-  public InstructionDetailResponse create(
-      InstructionDetailCreationRequest request) {
+  public InstructionDetailResponse create(InstructionDetailCreationRequest request) {
     try {
       Instruction instructionById = instructionService.findById(request.getInstructionId());
 
       InstructionDetail newInstructionDetail =
-          InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(
-              request);
+          InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(request);
       Integer highestOrderNumber = getHighestOrderNumber(instructionById.getId());
 
       if (Objects.isNull(highestOrderNumber)) {
@@ -67,11 +63,13 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
 
       String instructionDetailId = findById(id).getId();
 
-      InstructionDetail instructionDetail = InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(request);
+      InstructionDetail instructionDetail =
+          InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(request);
 
       instructionDetail.setId(instructionDetailId);
 
-      return InstructionDetailMapper.fromEntityToInstructionDetailResponse(instructionDetailRepository.save(instructionDetail));
+      return InstructionDetailMapper.fromEntityToInstructionDetailResponse(
+          instructionDetailRepository.save(instructionDetail));
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

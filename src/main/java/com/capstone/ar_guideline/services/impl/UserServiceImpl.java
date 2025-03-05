@@ -18,7 +18,6 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.UserMapper;
 import com.capstone.ar_guideline.repositories.UserRepository;
 import com.capstone.ar_guideline.services.*;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -93,7 +92,8 @@ public class UserServiceImpl implements IUserService {
       // Validate the role name
       var role = roleService.findRoleEntityByName(signUpWitRoleRequest.getRoleName());
       var company = companyService.findCompanyEntityByName(signUpWitRoleRequest.getCompany());
-      CompanySubscription companySubscription = companySubscriptionService.findByCompanyId(company.getId());
+      CompanySubscription companySubscription =
+          companySubscriptionService.findByCompanyId(company.getId());
 
       if (Objects.isNull(role)) {
         throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
@@ -374,7 +374,8 @@ public class UserServiceImpl implements IUserService {
 
   private boolean isUserOverSubscriptionLimit(String companyId) {
     CompanySubscription companySubscription = companySubscriptionService.findByCompanyId(companyId);
-      return companySubscription.getNumberOfUsers() >= companySubscription.getSubscription().getMaxNumberOfUsers();
+    return companySubscription.getNumberOfUsers()
+        >= companySubscription.getSubscription().getMaxNumberOfUsers();
   }
 
   private List<User> findAllByCompanyId(String companyId) {

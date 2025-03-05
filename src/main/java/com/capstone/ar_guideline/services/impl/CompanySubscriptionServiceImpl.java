@@ -185,12 +185,12 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
   }
 
   @Override
-  public void updateStorageUsage(String companyId, Double storageUsage,String action) {
+  public void updateStorageUsage(String companyId, Double storageUsage, String action) {
     try {
       CompanySubscription companySubscription = findByCompanyId(companyId);
-      if(action.equals(ConstCommon.INCREASE)) {
+      if (action.equals(ConstCommon.INCREASE)) {
         companySubscription.setStorageUsage(storageUsage);
-      }else{
+      } else {
         companySubscription.setStorageUsage(companySubscription.getStorageUsage() - storageUsage);
       }
       companySubscriptionRepository.save(companySubscription);

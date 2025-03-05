@@ -1,7 +1,5 @@
 package com.capstone.ar_guideline.dtos.requests.Instruction;
 
-import com.capstone.ar_guideline.dtos.requests.InstructionDetail.InstructionDetailCreationRequest;
-import com.capstone.ar_guideline.dtos.requests.Vuforia.DatasetRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

@@ -1,6 +1,5 @@
 package com.capstone.ar_guideline.services.impl;
 
-import com.capstone.ar_guideline.configurations.AppConfig;
 import com.capstone.ar_guideline.constants.ConstCommon;
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
@@ -16,7 +15,6 @@ import com.capstone.ar_guideline.services.ICompanySubscriptionService;
 import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.services.IModelTypeService;
 import jakarta.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +50,8 @@ public class ModelServiceImpl implements IModelService {
       newModel.setStatus(ConstStatus.ACTIVE_STATUS);
       newModel = modelRepository.save(newModel);
 
-      companySubscriptionService.updateStorageUsage(request.getCompanyId(), (double) request.getFile().getSize(), ConstCommon.INCREASE);
+      companySubscriptionService.updateStorageUsage(
+          request.getCompanyId(), (double) request.getFile().getSize(), ConstCommon.INCREASE);
 
       return ModelMapper.fromEntityToModelResponse(newModel);
     } catch (Exception exception) {
@@ -193,14 +192,13 @@ public class ModelServiceImpl implements IModelService {
 
   private boolean isStorageUsageReach(String companyId) {
 
-     CompanySubscription companySubscription = companySubscriptionService.findByCompanyId(companyId);
-     if(companySubscription.getStorageUsage() < companySubscription.getSubscription().getMaxStorageUsage())
-     {
-         return false;
-     }
+    CompanySubscription companySubscription = companySubscriptionService.findByCompanyId(companyId);
+    if (companySubscription.getStorageUsage()
+        < companySubscription.getSubscription().getMaxStorageUsage()) {
+      return false;
+    }
     return true;
   }
-
 
   @Override
   public List<Model> findAllByCompanyId(String companyId) {
@@ -230,4 +228,3 @@ public class ModelServiceImpl implements IModelService {
     }
   }
 }
-

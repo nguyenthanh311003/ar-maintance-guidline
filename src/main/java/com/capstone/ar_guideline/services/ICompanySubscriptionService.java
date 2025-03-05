@@ -20,5 +20,6 @@ public interface ICompanySubscriptionService {
   CompanySubscription findCurrentSubscriptionByCompanyId(String companyId);
 
   void updateStorageUsage(String companyId, Double storageUsage, String action);
+
   void updateNumberOfUsers(String companyId, String action);
 }
