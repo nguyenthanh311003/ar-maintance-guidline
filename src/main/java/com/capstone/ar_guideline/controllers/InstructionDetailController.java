@@ -5,6 +5,7 @@ import com.capstone.ar_guideline.dtos.requests.InstructionDetail.InstructionDeta
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
 import com.capstone.ar_guideline.services.IInstructionDetailService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AccessLevel;
@@ -43,7 +44,7 @@ public class InstructionDetailController {
   ApiResponse<InstructionDetailResponse> createInstructionDetail(
       @ModelAttribute @Valid InstructionDetailCreationRequest request) {
     return ApiResponse.<InstructionDetailResponse>builder()
-        .result(instructionDetailService.create(request, ""))
+        .result(instructionDetailService.create(request))
         .build();
   }
 

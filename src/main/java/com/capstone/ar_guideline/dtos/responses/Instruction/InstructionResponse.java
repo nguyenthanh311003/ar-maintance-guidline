@@ -16,7 +16,5 @@ public class InstructionResponse {
   Integer orderNumber;
   String name;
   String description;
-  String position;
-  String rotation;
   List<InstructionDetailResponse> instructionDetailResponse;
 }

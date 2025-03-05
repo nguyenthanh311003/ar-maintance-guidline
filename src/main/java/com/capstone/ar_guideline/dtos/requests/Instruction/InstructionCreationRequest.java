@@ -15,6 +15,4 @@ public class InstructionCreationRequest {
   Integer orderNumber;
   String name;
   String description;
-  DatasetRequest.GuideViewPosition guideViewPosition;
-  InstructionDetailCreationRequest instructionDetailRequest;
 }
