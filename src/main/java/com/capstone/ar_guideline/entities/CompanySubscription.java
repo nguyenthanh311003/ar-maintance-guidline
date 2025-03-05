@@ -28,9 +28,8 @@ public class CompanySubscription {
   private LocalDateTime subscriptionExpireDate;
   private String status;
 
-  private Integer usedEmployees;
-  private Integer usedModels;
-  private Double totalFee;
+  private Integer numberOfUsers;
+  private Double storageUsage;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

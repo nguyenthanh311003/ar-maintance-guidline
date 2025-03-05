@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.configurations.AppConfig;
+import com.capstone.ar_guideline.constants.ConstCommon;
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
@@ -32,16 +33,13 @@ import org.springframework.stereotype.Service;
 public class ModelServiceImpl implements IModelService {
   ModelRepository modelRepository;
   IModelTypeService modelTypeService;
-  VuforiaService vuforiaService;
   ICompanySubscriptionService companySubscriptionService;
-  private final AppConfig appConfig;
 
   @Override
   @Transactional
   public ModelResponse create(ModelCreationRequest request) throws InterruptedException {
     try {
-      boolean isModelOver = isModelOverSubscriptionLimit(request.getCompanyId());
-      if (isModelOver) {
+      if (isStorageUsageReach(request.getCompanyId())) {
         throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
       }
 
@@ -53,6 +51,8 @@ public class ModelServiceImpl implements IModelService {
       newModel.setIsUsed(false);
       newModel.setStatus(ConstStatus.ACTIVE_STATUS);
       newModel = modelRepository.save(newModel);
+
+      companySubscriptionService.updateStorageUsage(request.getCompanyId(), (double) request.getFile().getSize(), ConstCommon.INCREASE);
 
       return ModelMapper.fromEntityToModelResponse(newModel);
     } catch (Exception exception) {
@@ -191,25 +191,16 @@ public class ModelServiceImpl implements IModelService {
     }
   }
 
-  private boolean isModelOverSubscriptionLimit(String companyId) {
-    List<Model> models = modelRepository.findAllByCompanyId(companyId);
-    int modelSize = models.size();
-    try {
-      CompanySubscription companySubscription =
-          companySubscriptionService.findCurrentSubscriptionByCompanyId(companyId);
-      if (companySubscription == null) {
-        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_NOT_EXISTED);
-      }
-      if (companySubscription.getSubscriptionExpireDate().isBefore(LocalDateTime.now())) {
-        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_EXPIRED);
-      }
-      int maxModelSubscription = companySubscription.getSubscription().getMaxModels();
-      return modelSize > maxModelSubscription;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-    }
-    return false;
+  private boolean isStorageUsageReach(String companyId) {
+
+     CompanySubscription companySubscription = companySubscriptionService.findByCompanyId(companyId);
+     if(companySubscription.getStorageUsage() < companySubscription.getSubscription().getMaxStorageUsage())
+     {
+         return false;
+     }
+    return true;
   }
+
 
   @Override
   public List<Model> findAllByCompanyId(String companyId) {
@@ -239,3 +230,4 @@ public class ModelServiceImpl implements IModelService {
     }
   }
 }
+
