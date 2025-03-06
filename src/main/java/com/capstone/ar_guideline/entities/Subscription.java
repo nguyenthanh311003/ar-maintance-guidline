@@ -21,11 +21,13 @@ public class Subscription {
   @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL)
   private List<CompanySubscription> companySubscriptions;
 
+  @Column(unique = true)
   private String subscriptionCode;
   private Integer maxNumberOfUsers;
   private Double maxStorageUsage;
   private Double monthlyFee;
-
+  private String storageUnit = "GB";
+  private String currency = "VND";
   private String status;
 
   @Column(nullable = false, updatable = false)

@@ -14,6 +14,8 @@ public class SubscriptionMapper {
         .maxNumberOfUsers(request.getMaxNumberOfUsers())
         .maxStorageUsage(request.getMaxStorageUsage())
         .monthlyFee(request.getMonthlyFee())
+        .storageUnit("GB")
+        .currency("VND")
         .status(request.getStatus())
         .build();
   }
@@ -25,6 +27,8 @@ public class SubscriptionMapper {
         .subscriptionCode(subscription.getSubscriptionCode())
         .maxNumberOfUsers(subscription.getMaxNumberOfUsers())
         .maxStorageUsage(subscription.getMaxStorageUsage())
+            .storageUnit(subscription.getStorageUnit())
+            .currency(subscription.getCurrency())
         .monthlyFee(subscription.getMonthlyFee())
         .status(subscription.getStatus())
         .build();

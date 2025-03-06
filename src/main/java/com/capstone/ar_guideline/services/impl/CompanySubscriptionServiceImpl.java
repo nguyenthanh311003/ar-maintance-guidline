@@ -58,6 +58,10 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
       newCompanySubscription.setSubscriptionExpireDate(
           newCompanySubscription.getSubscriptionStartDate().plusMonths(1));
 
+
+      newCompanySubscription.setStorageUsage(0.0);
+      newCompanySubscription.setNumberOfUsers(0);
+
       newCompanySubscription = companySubscriptionRepository.save(newCompanySubscription);
 
       return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(
@@ -189,9 +193,9 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
     try {
       CompanySubscription companySubscription = findByCompanyId(companyId);
       if (action.equals(ConstCommon.INCREASE)) {
-        companySubscription.setStorageUsage(storageUsage);
+        companySubscription.setStorageUsage(companySubscription.getStorageUsage() + (storageUsage/1000));
       } else {
-        companySubscription.setStorageUsage(companySubscription.getStorageUsage() - storageUsage);
+        companySubscription.setStorageUsage(companySubscription.getStorageUsage() - storageUsage/1000);
       }
       companySubscriptionRepository.save(companySubscription);
 

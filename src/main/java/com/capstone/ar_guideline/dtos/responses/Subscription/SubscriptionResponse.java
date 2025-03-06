@@ -11,9 +11,10 @@ import lombok.experimental.FieldDefaults;
 public class SubscriptionResponse {
   String id;
   String subscriptionCode;
-  Integer duration;
   Integer maxNumberOfUsers;
   Double maxStorageUsage;
   Double monthlyFee;
   String status;
+  String storageUnit;
+    String currency;
 }
