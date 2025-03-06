@@ -24,9 +24,9 @@ public class InstructionDetail implements Serializable {
 
   private String name;
   private Integer orderNumber;
+  private String animationName;
   private String description;
-  private String imgUrl;
-  private String file;
+  private String meshes;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

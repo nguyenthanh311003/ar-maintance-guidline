@@ -6,7 +6,7 @@ import com.capstone.ar_guideline.entities.InstructionDetail;
 import java.util.List;
 
 public interface IInstructionDetailService {
-  InstructionDetailResponse create(InstructionDetailCreationRequest request, String instructionId);
+  InstructionDetailResponse create(InstructionDetailCreationRequest request);
 
   InstructionDetailResponse update(String id, InstructionDetailCreationRequest request);
 

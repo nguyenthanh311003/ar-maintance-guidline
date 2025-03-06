@@ -2,6 +2,7 @@ package com.capstone.ar_guideline.services.impl;
 
 import static com.capstone.ar_guideline.constants.ConstStatus.INACTIVE_STATUS;
 
+import com.capstone.ar_guideline.constants.ConstCommon;
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Company.CompanyCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.User.LoginRequest;
@@ -17,7 +18,6 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.UserMapper;
 import com.capstone.ar_guideline.repositories.UserRepository;
 import com.capstone.ar_guideline.services.*;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -88,15 +88,18 @@ public class UserServiceImpl implements IUserService {
   @Override
   public <T> AuthenticationResponse create(SignUpRequest signUpWitRoleRequest) {
     try {
+
       // Validate the role name
       var role = roleService.findRoleEntityByName(signUpWitRoleRequest.getRoleName());
       var company = companyService.findCompanyEntityByName(signUpWitRoleRequest.getCompany());
+      CompanySubscription companySubscription =
+          companySubscriptionService.findByCompanyId(company.getId());
+
       if (Objects.isNull(role)) {
         throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
       }
 
-      boolean isUserOver = isUserOverSubscriptionLimit(company.getId());
-      if (isUserOver) {
+      if (isUserOverSubscriptionLimit(company.getId())) {
         throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_USER_OVER_LIMIT);
       }
 
@@ -110,6 +113,9 @@ public class UserServiceImpl implements IUserService {
       user.setCompany(company);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
+
+      companySubscriptionService.updateNumberOfUsers(company.getId(), ConstCommon.INCREASE);
+
       var jwt = jwtService.generateToken(user);
       UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
 
@@ -299,10 +305,13 @@ public class UserServiceImpl implements IUserService {
         throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
       }
 
+
       if (userById.getStatus().equalsIgnoreCase(INACTIVE_STATUS)) {
         userById.setStatus(ConstStatus.ACTIVE_STATUS);
+        companySubscriptionService.updateNumberOfUsers(userById.getCompany().getId(), ConstCommon.INCREASE);
       } else {
         userById.setStatus(INACTIVE_STATUS);
+        companySubscriptionService.updateNumberOfUsers(userById.getCompany().getId(), "");
       }
       userRepository.save(userById);
 
@@ -367,23 +376,9 @@ public class UserServiceImpl implements IUserService {
   }
 
   private boolean isUserOverSubscriptionLimit(String companyId) {
-    List<User> users = findAllByCompanyId(companyId);
-    int userSize = users.size();
-    try {
-      CompanySubscription companySubscription =
-          companySubscriptionService.findCurrentSubscriptionByCompanyId(companyId);
-      if (companySubscription == null) {
-        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_NOT_EXISTED);
-      }
-      if (companySubscription.getSubscriptionExpireDate().isBefore(LocalDateTime.now())) {
-        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_EXPIRED);
-      }
-      int maxUserSubscription = companySubscription.getSubscription().getMaxEmployees();
-      return userSize > maxUserSubscription;
-    } catch (Exception exception) {
-      exception.printStackTrace();
-    }
-    return false;
+    CompanySubscription companySubscription = companySubscriptionService.findByCompanyId(companyId);
+    return companySubscription.getNumberOfUsers()
+        >= companySubscription.getSubscription().getMaxNumberOfUsers();
   }
 
   private List<User> findAllByCompanyId(String companyId) {

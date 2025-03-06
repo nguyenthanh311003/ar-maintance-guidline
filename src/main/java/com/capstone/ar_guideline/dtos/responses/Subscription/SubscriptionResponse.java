@@ -12,9 +12,8 @@ public class SubscriptionResponse {
   String id;
   String subscriptionCode;
   Integer duration;
-  Integer maxEmployees;
-  Integer maxModels;
+  Integer maxNumberOfUsers;
+  Double maxStorageUsage;
   Double monthlyFee;
-  Double extraModelFee;
   String status;
 }

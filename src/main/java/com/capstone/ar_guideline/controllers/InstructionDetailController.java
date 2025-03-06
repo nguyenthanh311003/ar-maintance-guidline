@@ -43,7 +43,7 @@ public class InstructionDetailController {
   ApiResponse<InstructionDetailResponse> createInstructionDetail(
       @ModelAttribute @Valid InstructionDetailCreationRequest request) {
     return ApiResponse.<InstructionDetailResponse>builder()
-        .result(instructionDetailService.create(request, ""))
+        .result(instructionDetailService.create(request))
         .build();
   }
 

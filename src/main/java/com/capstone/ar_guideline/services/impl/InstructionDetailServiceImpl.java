@@ -32,21 +32,12 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
   private final String[] keysToRemove = {ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL};
 
   @Override
-  public InstructionDetailResponse create(
-      InstructionDetailCreationRequest request, String instructionId) {
+  public InstructionDetailResponse create(InstructionDetailCreationRequest request) {
     try {
-      Instruction instructionById;
-      if (instructionId.isEmpty()) {
-        instructionById = instructionService.findById(request.getInstructionId());
-      } else {
-        instructionById = instructionService.findById(instructionId);
-      }
+      Instruction instructionById = instructionService.findById(request.getInstructionId());
 
       InstructionDetail newInstructionDetail =
-          InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(
-              request, instructionById);
-      newInstructionDetail.setFile(FileStorageService.storeFile(request.getFile()));
-      newInstructionDetail.setImgUrl(FileStorageService.storeFile(request.getImageFile()));
+          InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(request);
       Integer highestOrderNumber = getHighestOrderNumber(instructionById.getId());
 
       if (Objects.isNull(highestOrderNumber)) {
@@ -70,21 +61,15 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
   public InstructionDetailResponse update(String id, InstructionDetailCreationRequest request) {
     try {
 
-      InstructionDetail instructionDetailById = findById(id);
+      String instructionDetailId = findById(id).getId();
 
-      if (request.getFile() != null) {
-        instructionDetailById.setFile(FileStorageService.storeFile(request.getFile()));
-      }
-      if (request.getImageFile() != null) {
-        instructionDetailById.setImgUrl(FileStorageService.storeFile(request.getImageFile()));
-      }
+      InstructionDetail instructionDetail =
+          InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(request);
 
-      instructionDetailById.setName(request.getName());
-      instructionDetailById.setDescription(request.getDescription());
+      instructionDetail.setId(instructionDetailId);
 
-      instructionDetailById = instructionDetailRepository.save(instructionDetailById);
-
-      return InstructionDetailMapper.fromEntityToInstructionDetailResponse(instructionDetailById);
+      return InstructionDetailMapper.fromEntityToInstructionDetailResponse(
+          instructionDetailRepository.save(instructionDetail));
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

@@ -7,6 +7,7 @@ import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDet
 import com.capstone.ar_guideline.entities.Instruction;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
+import com.capstone.ar_guideline.mappers.InstructionDetailMapper;
 import com.capstone.ar_guideline.mappers.InstructionMapper;
 import com.capstone.ar_guideline.repositories.InstructionDetailRepository;
 import com.capstone.ar_guideline.repositories.InstructionRepository;
@@ -15,7 +16,6 @@ import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -55,17 +55,8 @@ public class InstructionServiceImpl implements IInstructionService {
     try {
       Instruction instructionById = findById(id);
 
-      List<Float> translations = request.getGuideViewPosition().getTranslation();
-      List<Float> rotations = request.getGuideViewPosition().getRotation();
-
       instructionById.setName(request.getName());
       instructionById.setDescription(request.getDescription());
-
-      String position =
-          translations.stream().map(String::valueOf).collect(Collectors.joining(", "));
-      String rotation = rotations.stream().map(String::valueOf).collect(Collectors.joining(", "));
-      instructionById.setPosition(position);
-      instructionById.setRotation(rotation);
 
       instructionById = instructionRepository.save(instructionById);
 
@@ -116,29 +107,14 @@ public class InstructionServiceImpl implements IInstructionService {
     try {
       return instructionRepository.getByCourseId(courseId).stream()
           .map(
-              i -> {
-                InstructionResponse instructionResponse = new InstructionResponse();
+              instruction -> {
+                InstructionResponse instructionResponse =
+                    InstructionMapper.fromEntityToInstructionResponse(instruction);
+
                 List<InstructionDetailResponse> instructionDetailResponses =
-                    instructionDetailRepository.getByInstructionId(i.getId()).stream()
-                        .map(
-                            ide ->
-                                InstructionDetailResponse.builder()
-                                    .id(ide.getId())
-                                    .instructionId(ide.getInstruction().getId())
-                                    .orderNumber(ide.getOrderNumber())
-                                    .description(ide.getDescription())
-                                    .imgString(ide.getImgUrl())
-                                    .name(ide.getName())
-                                    .fileString(ide.getFile())
-                                    .build())
+                    instructionDetailRepository.getByInstructionId(instruction.getId()).stream()
+                        .map(InstructionDetailMapper::fromEntityToInstructionDetailResponse)
                         .toList();
-                instructionResponse.setId(i.getId());
-                instructionResponse.setOrderNumber(i.getOrderNumber());
-                instructionResponse.setCourseId(i.getCourse().getId());
-                instructionResponse.setName(i.getName());
-                instructionResponse.setDescription(i.getDescription());
-                instructionResponse.setPosition(i.getPosition());
-                instructionResponse.setRotation(i.getRotation());
                 instructionResponse.setInstructionDetailResponse(instructionDetailResponses);
 
                 return instructionResponse;

@@ -22,11 +22,9 @@ public class Subscription {
   private List<CompanySubscription> companySubscriptions;
 
   private String subscriptionCode;
-  private Integer maxEmployees;
-  private Integer maxModels;
-
+  private Integer maxNumberOfUsers;
+  private Double maxStorageUsage;
   private Double monthlyFee;
-  private Double extraModelFee;
 
   private String status;
 

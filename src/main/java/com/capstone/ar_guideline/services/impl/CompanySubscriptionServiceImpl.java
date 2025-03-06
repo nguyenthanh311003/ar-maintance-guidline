@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.services.impl;
 
+import com.capstone.ar_guideline.constants.ConstCommon;
 import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.CompanySubscription.ComSubscriptionCreationRequest;
@@ -180,6 +181,43 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
         throw exception;
       }
       throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public void updateStorageUsage(String companyId, Double storageUsage, String action) {
+    try {
+      CompanySubscription companySubscription = findByCompanyId(companyId);
+      if (action.equals(ConstCommon.INCREASE)) {
+        companySubscription.setStorageUsage(storageUsage);
+      } else {
+        companySubscription.setStorageUsage(companySubscription.getStorageUsage() - storageUsage);
+      }
+      companySubscriptionRepository.save(companySubscription);
+
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public void updateNumberOfUsers(String companyId, String action) {
+    try {
+      CompanySubscription companySubscription = findByCompanyId(companyId);
+      if (action.equals(ConstCommon.INCREASE)) {
+        companySubscription.setNumberOfUsers(companySubscription.getNumberOfUsers() + 1);
+      } else {
+        companySubscription.setNumberOfUsers(companySubscription.getNumberOfUsers() - 1);
+      }
+      companySubscriptionRepository.save(companySubscription);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_UPDATE_FAILED);
     }
   }
 }

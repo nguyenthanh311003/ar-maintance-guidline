@@ -18,10 +18,8 @@ import com.capstone.ar_guideline.mappers.CourseMapper;
 import com.capstone.ar_guideline.mappers.InstructionMapper;
 import com.capstone.ar_guideline.mappers.ModelMapper;
 import com.capstone.ar_guideline.services.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -46,8 +44,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   public InstructionResponse createInstruction(InstructionCreationRequest request) {
     try {
       Course course = courseService.findById(request.getCourseId());
-      List<Float> translations = request.getGuideViewPosition().getTranslation();
-      List<Float> rotations = request.getGuideViewPosition().getRotation();
       Instruction newInstruction =
           InstructionMapper.fromInstructionCreationRequestToEntity(request);
       Integer highestOrderNumber = instructionService.getHighestOrderNumber(course.getId());
@@ -57,29 +53,12 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       } else {
         newInstruction.setOrderNumber(highestOrderNumber + 1);
       }
-
-      String position =
-          translations.stream().map(String::valueOf).collect(Collectors.joining(", "));
-      String rotation = rotations.stream().map(String::valueOf).collect(Collectors.joining(", "));
-      newInstruction.setPosition(position);
-      newInstruction.setRotation(rotation);
       newInstruction = instructionService.create(newInstruction);
 
       if (newInstruction.getId() == null) {
         throw new AppException(ErrorCode.INSTRUCTION_CREATE_FAILED);
       }
-
-      List<InstructionDetailResponse> instructionDetailResponses = new ArrayList<>();
-
-      InstructionDetailResponse instructionDetailResponse =
-          instructionDetailService.create(
-              request.getInstructionDetailRequest(), newInstruction.getId());
-      instructionDetailResponses.add(instructionDetailResponse);
-
-      InstructionResponse instructionResponse =
-          InstructionMapper.fromEntityToInstructionResponse(newInstruction);
-      instructionResponse.setInstructionDetailResponse(instructionDetailResponses);
-      return instructionResponse;
+      return InstructionMapper.fromEntityToInstructionResponse(newInstruction);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -111,9 +90,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                                         .instructionId(ide.getInstruction().getId())
                                         .orderNumber(ide.getOrderNumber())
                                         .description(ide.getDescription())
-                                        .imgString(ide.getImgUrl())
                                         .name(ide.getName())
-                                        .fileString(ide.getFile())
                                         .build())
                             .toList();
                     instructionResponse.setInstructionDetailResponse(instructionDetailResponses);
