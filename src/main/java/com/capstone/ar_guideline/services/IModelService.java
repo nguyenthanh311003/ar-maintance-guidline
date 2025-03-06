@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 public interface IModelService {
   ModelResponse create(ModelCreationRequest request) throws InterruptedException;
 
+  Model update(Model model);
+
   ModelResponse update(String id, ModelCreationRequest request);
 
   void delete(String id);

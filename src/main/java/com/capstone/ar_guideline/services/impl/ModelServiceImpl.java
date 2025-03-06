@@ -15,7 +15,11 @@ import com.capstone.ar_guideline.services.ICompanySubscriptionService;
 import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.services.IModelTypeService;
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -41,7 +45,11 @@ public class ModelServiceImpl implements IModelService {
         throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
       }
 
-      ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
+            Model modelByName = modelRepository.findByName(request.getName());
+
+            if (!Objects.isNull(modelByName)) {
+                throw new AppException(ErrorCode.MODEL_NAME_EXISTED);
+            }
 
       Model newModel = ModelMapper.fromModelCreationRequestToEntity(request);
       newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
@@ -63,35 +71,47 @@ public class ModelServiceImpl implements IModelService {
     }
   }
 
-  @Override
-  public ModelResponse update(String id, ModelCreationRequest request) {
-    try {
-      Model modelById = findById(id);
-      modelById.setStatus(request.getStatus());
-      modelById.setModelCode(request.getModelCode());
-      modelById.setName(request.getName());
-      modelById.setDescription(request.getDescription());
-      modelById.setVersion(request.getVersion());
-      modelById.setScale(request.getScale());
-      if (request.getImageUrl() != null) {
-        modelById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
-      }
-      if (request.getFile() != null) {
-        modelById.setFile(FileStorageService.storeFile(request.getFile()));
-      }
-      ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
-      modelById.setModelType(modelTypeById);
-
-      modelById = modelRepository.save(modelById);
-
-      return ModelMapper.fromEntityToModelResponse(modelById);
-    } catch (Exception exception) {
-      if (exception instanceof AppException) {
-        throw exception;
-      }
-      throw new AppException(ErrorCode.MODEL_UPDATE_FAILED);
+    @Override
+    public Model update(Model model) {
+        try {
+            return modelRepository.save(model);
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_UPDATE_FAILED);
+        }
     }
-  }
+
+    @Override
+    public ModelResponse update(String id, ModelCreationRequest request) {
+        try {
+            Model modelById = findById(id);
+            modelById.setStatus(request.getStatus());
+            modelById.setModelCode(request.getModelCode());
+            modelById.setName(request.getName());
+            modelById.setDescription(request.getDescription());
+            modelById.setVersion(request.getVersion());
+            modelById.setScale(request.getScale());
+            if (request.getImageUrl() != null) {
+                modelById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
+            }
+            if (request.getFile() != null) {
+                modelById.setFile(FileStorageService.storeFile(request.getFile()));
+            }
+            ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
+            modelById.setModelType(modelTypeById);
+
+            modelById = modelRepository.save(modelById);
+
+            return ModelMapper.fromEntityToModelResponse(modelById);
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_UPDATE_FAILED);
+        }
+    }
 
   @Override
   public void delete(String id) {
@@ -108,89 +128,89 @@ public class ModelServiceImpl implements IModelService {
     }
   }
 
-  @Override
-  public Model findById(String id) {
-    try {
-      return modelRepository
-          .findById(id)
-          .orElseThrow(() -> new AppException(ErrorCode.MODEL_NOT_EXISTED));
-    } catch (Exception exception) {
-      if (exception instanceof AppException) {
-        throw exception;
-      }
-      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    @Override
+    public Model findById(String id) {
+        try {
+            return modelRepository
+                    .findById(id)
+                    .orElseThrow(() -> new AppException(ErrorCode.MODEL_NOT_EXISTED));
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+        }
     }
-  }
 
-  @Override
-  public Page<Model> findByCompanyId(
-      Pageable pageable, String companyId, String type, String name, String code) {
-    try {
-      return modelRepository.findByCompanyId(pageable, companyId, type, name, code);
-    } catch (Exception exception) {
-      if (exception instanceof AppException) {
-        throw exception;
-      }
-      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    @Override
+    public Page<Model> findByCompanyId(
+            Pageable pageable, String companyId, String type, String name, String code) {
+        try {
+            return modelRepository.findByCompanyId(pageable, companyId, type, name, code);
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+        }
     }
-  }
 
-  @Override
-  public List<ModelResponse> getModelUnused(String companyId) {
-    try {
-      List<Model> models = modelRepository.getModelUnused(companyId);
+    @Override
+    public List<ModelResponse> getModelUnused(String companyId) {
+        try {
+            List<Model> models = modelRepository.getModelUnused(companyId);
 
-      return models.stream().map(ModelMapper::fromEntityToModelResponse).toList();
-    } catch (Exception exception) {
-      if (exception instanceof AppException) {
-        throw exception;
-      }
-      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+            return models.stream().map(ModelMapper::fromEntityToModelResponse).toList();
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+        }
     }
-  }
 
-  @Override
-  public Boolean updateIsUsed(boolean isCreate, Model model) {
-    try {
-      model.setIsUsed(isCreate);
+    @Override
+    public Boolean updateIsUsed(boolean isCreate, Model model) {
+        try {
+            model.setIsUsed(isCreate);
 
-      model = modelRepository.save(model);
+            model = modelRepository.save(model);
 
-      return model.getId() != null;
-    } catch (Exception exception) {
-      if (exception instanceof AppException) {
-        throw exception;
-      }
-      throw new AppException(ErrorCode.MODEL_UPDATE_FAILED);
+            return model.getId() != null;
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_UPDATE_FAILED);
+        }
     }
-  }
 
-  @Override
-  public ModelResponse getByCourseId(String courseId) {
-    try {
-      Model modelByCourseId = modelRepository.getByCourseId(courseId);
+    @Override
+    public ModelResponse getByCourseId(String courseId) {
+        try {
+            Model modelByCourseId = modelRepository.getByCourseId(courseId);
 
-      return ModelMapper.fromEntityToModelResponse(modelByCourseId);
-    } catch (Exception exception) {
-      if (exception instanceof AppException) {
-        throw exception;
-      }
-      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+            return ModelMapper.fromEntityToModelResponse(modelByCourseId);
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+        }
     }
-  }
 
-  @Override
-  public ModelResponse findByIdResponse(String id) {
-    try {
-      Model model = findById(id);
-      return ModelMapper.fromEntityToModelResponse(model);
-    } catch (Exception exception) {
-      if (exception instanceof AppException) {
-        throw exception;
-      }
-      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    @Override
+    public ModelResponse findByIdResponse(String id) {
+        try {
+            Model model = findById(id);
+            return ModelMapper.fromEntityToModelResponse(model);
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+        }
     }
-  }
 
   private boolean isStorageUsageReach(String companyId) {
 
@@ -202,31 +222,31 @@ public class ModelServiceImpl implements IModelService {
     return true;
   }
 
-  @Override
-  public List<Model> findAllByCompanyId(String companyId) {
-    try {
-      return modelRepository.findAllByCompanyId(companyId);
-    } catch (Exception exception) {
-      if (exception instanceof AppException) {
-        throw exception;
-      }
-      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    @Override
+    public List<Model> findAllByCompanyId(String companyId) {
+        try {
+            return modelRepository.findAllByCompanyId(companyId);
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+        }
     }
-  }
 
-  @Override
-  public void updateIsUsedByCourseId(String courseId) {
-    try {
-      Model modelById = modelRepository.getByCourseId(courseId);
+    @Override
+    public void updateIsUsedByCourseId(String courseId) {
+        try {
+            Model modelById = modelRepository.getByCourseId(courseId);
 
-      modelById.setIsUsed(!modelById.getIsUsed());
+            modelById.setIsUsed(!modelById.getIsUsed());
 
-      modelRepository.save(modelById);
-    } catch (Exception exception) {
-      if (exception instanceof AppException) {
-        throw exception;
-      }
-      throw new AppException(ErrorCode.MODEL_UPDATE_FAILED);
+            modelRepository.save(modelById);
+        } catch (Exception exception) {
+            if (exception instanceof AppException) {
+                throw exception;
+            }
+            throw new AppException(ErrorCode.MODEL_UPDATE_FAILED);
+        }
     }
-  }
 }

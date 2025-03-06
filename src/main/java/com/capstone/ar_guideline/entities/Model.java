@@ -20,7 +20,7 @@ public class Model implements Serializable {
   private String id;
 
   @ManyToOne
-  @JoinColumn(name = "modelType_id", nullable = false)
+  @JoinColumn(name = "modelType_id", nullable = true)
   private ModelType modelType;
 
   @ManyToOne

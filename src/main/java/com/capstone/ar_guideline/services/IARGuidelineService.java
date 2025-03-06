@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.services;
 
 import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRequest;
+import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
@@ -23,4 +24,6 @@ public interface IARGuidelineService {
   Boolean deleteModelById(String modelId);
 
   void deleteCourseById(String courseId);
+
+  ModelResponse updateModel(String id, ModelCreationRequest request);
 }
