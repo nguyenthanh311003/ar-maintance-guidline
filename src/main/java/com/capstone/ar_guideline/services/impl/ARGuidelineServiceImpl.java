@@ -1,6 +1,8 @@
 package com.capstone.ar_guideline.services.impl;
 
+import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRequest;
+import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
@@ -9,6 +11,7 @@ import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Instruction;
 import com.capstone.ar_guideline.entities.Model;
+import com.capstone.ar_guideline.entities.ModelType;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CourseMapper;
@@ -37,6 +40,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   IInstructionDetailService instructionDetailService;
   IModelService modelService;
   ICourseService courseService;
+  IModelTypeService modelTypeService;
 
   @Override
   public InstructionResponse createInstruction(InstructionCreationRequest request) {
@@ -266,6 +270,41 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         throw exception;
       }
       throw new AppException(ErrorCode.COURSE_DELETE_FAILED);
+    }
+  }
+
+  @Override
+  public ModelResponse updateModel(String id, ModelCreationRequest request) {
+    try {
+      Model modelById = modelService.findById(id);
+      modelById.setStatus(request.getStatus());
+      modelById.setModelCode(request.getModelCode());
+      modelById.setName(request.getName());
+      modelById.setDescription(request.getDescription());
+      modelById.setVersion(request.getVersion());
+      modelById.setScale(request.getScale());
+      if (request.getImageUrl() != null) {
+        modelById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
+      }
+      if (request.getFile() != null) {
+        modelById.setFile(FileStorageService.storeFile(request.getFile()));
+      }
+      ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
+      modelById.setModelType(modelTypeById);
+
+      modelById = modelService.update(modelById);
+
+      if (modelById.getId() != null && request.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
+          Course courseByModelId = courseService.findByModelId(modelById.getId());
+          courseService.delete(courseByModelId.getId());
+      }
+
+      return ModelMapper.fromEntityToModelResponse(modelById);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_UPDATE_FAILED);
     }
   }
 }

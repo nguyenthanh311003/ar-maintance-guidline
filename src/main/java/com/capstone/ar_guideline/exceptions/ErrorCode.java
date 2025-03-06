@@ -110,6 +110,7 @@ public enum ErrorCode {
       1093, "Company Model is greater than subscription limit", HttpStatus.BAD_REQUEST),
   COMPANY_SUBSCRIPTION_USER_OVER_LIMIT(
       1094, "Company User is greater than subscription limit", HttpStatus.BAD_REQUEST),
+  MODEL_NAME_EXISTED(1095, "Model existed", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;

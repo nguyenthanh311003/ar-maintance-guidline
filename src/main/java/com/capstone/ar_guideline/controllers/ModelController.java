@@ -67,7 +67,7 @@ public class ModelController {
   ApiResponse<ModelResponse> updateModel(
       @PathVariable String modelId, @ModelAttribute @Valid ModelCreationRequest request) {
     return ApiResponse.<ModelResponse>builder()
-        .result(modelService.update(modelId, request))
+        .result(arGuidelineService.updateModel(modelId, request))
         .build();
   }
 
