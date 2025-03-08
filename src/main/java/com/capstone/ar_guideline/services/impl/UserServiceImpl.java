@@ -350,6 +350,11 @@ public class UserServiceImpl implements IUserService {
   }
 
   @Override
+  public User findUserByCompanyId(String id) {
+    return userRepository.findUserByCompanyId(id);
+  }
+
+  @Override
   public PagingModel<UserResponse> getStaffByCompanyId(
       int page, int size, String companyId, String username, String email, String status) {
     try {

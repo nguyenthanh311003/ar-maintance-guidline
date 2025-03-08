@@ -34,4 +34,6 @@ public interface IUserService {
   Boolean changeStatusAccountStaff(String userId);
 
   Boolean resetPasswordStaff(String userId, String newPassword);
+
+  User findUserByCompanyId(String id);
 }
