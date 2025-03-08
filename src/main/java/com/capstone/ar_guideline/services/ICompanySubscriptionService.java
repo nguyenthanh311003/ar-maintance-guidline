@@ -22,4 +22,6 @@ public interface ICompanySubscriptionService {
   void updateStorageUsage(String companyId, Double storageUsage, String action);
 
   void updateNumberOfUsers(String companyId, String action);
+
+
 }

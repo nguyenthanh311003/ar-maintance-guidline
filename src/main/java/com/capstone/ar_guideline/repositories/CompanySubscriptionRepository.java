@@ -16,14 +16,18 @@ public interface CompanySubscriptionRepository extends JpaRepository<CompanySubs
   CompanySubscription findByCompanyIdAndSubscriptionId(String companyId, String subscriptionId);
 
   @Query(
-      value =
-          "SELECT cs FROM CompanySubscription cs WHERE cs.company.id = :companyId "
-              + "AND cs.status = 'ACTIVE' "
-              + "AND cs.subscriptionExpireDate >= CURRENT_DATE"
-              + " ORDER BY cs.startDate DESC")
+          value =
+                  "SELECT cs FROM CompanySubscription cs WHERE cs.company.id = :companyId "
+                          + "AND cs.status = 'ACTIVE' "
+                          + "AND cs.subscriptionExpireDate >= CURRENT_DATE"
+                          + " ORDER BY cs.startDate DESC")
   List<CompanySubscription> findCurrentSubscriptionByCompanyId(String companyId);
 
 
   @Query("SELECT cs FROM CompanySubscription cs WHERE cs.subscriptionExpireDate <= :expireDate AND cs.status ='ACTIVE' ")
   List<CompanySubscription> findBySubscriptionExpireDateThatOnlyHave3DaysLeft(LocalDateTime expireDate);
+
+  @Query("SELECT cs FROM CompanySubscription cs WHERE cs.subscriptionExpireDate >= CURRENT_TIMESTAMP AND cs.status = 'ACTIVE'")
+  List<CompanySubscription> findByCompanySubscriptionExpired();
+
 }

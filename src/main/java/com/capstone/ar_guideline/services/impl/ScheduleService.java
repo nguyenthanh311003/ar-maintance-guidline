@@ -1,10 +1,12 @@
 package com.capstone.ar_guideline.services.impl;
 
+import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.entities.CompanySubscription;
 import com.capstone.ar_guideline.entities.User;
 import com.capstone.ar_guideline.payos.CreatePaymentLinkRequestBody;
 import com.capstone.ar_guideline.repositories.CompanySubscriptionRepository;
 import com.capstone.ar_guideline.repositories.UserRepository;
+import com.capstone.ar_guideline.services.ICompanySubscriptionService;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -36,5 +38,14 @@ public class ScheduleService {
                     objectNode.get("data").get("checkoutUrl").asText()
             );
         }
+    }
+
+    @Scheduled(cron = "0 0 12 * * ?") // Runs every day at 12:00 PM
+    public void deactiveCompanySubcription() {
+        List<CompanySubscription> expiredSubscriptions = companySubscriptionRepository.findByCompanySubscriptionExpired();
+        for (CompanySubscription companySubscription : expiredSubscriptions) {
+            companySubscription.setStatus(ConstStatus.INACTIVE_STATUS);
+        }
+        companySubscriptionRepository.saveAll(expiredSubscriptions);
     }
 }
