@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.controllers;
 import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Dashboard.AdminDashboardResponse;
+import com.capstone.ar_guideline.dtos.responses.Dashboard.CompanyDashboardResponse;
 import com.capstone.ar_guideline.services.impl.DashboardService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +22,17 @@ public class DashboardController {
   @Autowired DashboardService dashboardService;
 
   @GetMapping(value = ConstAPI.DashboardAPI.ADMIN_DASHBOARD)
-  ApiResponse<AdminDashboardResponse> findCourseMandatory() {
+  ApiResponse<AdminDashboardResponse> findAdminDashboard() {
     return ApiResponse.<AdminDashboardResponse>builder()
         .result(dashboardService.getAdminDashboard())
         .build();
   }
+
+  @GetMapping(value = ConstAPI.DashboardAPI.COMPANY_DASHBOARD+"/{companyId}")
+  ApiResponse<CompanyDashboardResponse> findCompanyDashboard(String companyId) {
+    return ApiResponse.<CompanyDashboardResponse>builder()
+            .result(dashboardService.getCompanyDashboardById(companyId))
+            .build();
+  }
+
 }

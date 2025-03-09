@@ -1,7 +1,9 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.dtos.responses.Dashboard.AdminDashboardResponse;
+import com.capstone.ar_guideline.dtos.responses.Dashboard.CompanyDashboardResponse;
 import com.capstone.ar_guideline.entities.Company;
+import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Subscription;
 import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.repositories.ModelRepository;
@@ -11,6 +13,8 @@ import com.capstone.ar_guideline.repositories.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -46,6 +50,8 @@ public class DashboardService {
 
     Integer numberOfInactiveModels = modelRepository.countAllBy(null, "INACTIVE");
 
+    Double totalRevenue = 0.0;
+
     // Get company revenue data
     List<Object[]> companiesWithRevenue =
         orderTransactionRepository.getCompaniesWithTotalPaidOrders();
@@ -80,17 +86,79 @@ public class DashboardService {
       subscriptionRevenueList.add(subcriptionRevenue);
     }
 
+    int currentYear = java.time.Year.now().getValue();
+    List<Object[]> monthlyRevenues = orderTransactionRepository.getMonthlyPaidOrderAmounts(currentYear);
+    List<AdminDashboardResponse.MonthRevenue> monthRevenueList = new ArrayList<>();
+
+    for (Object[] result : monthlyRevenues) {
+      Long month = (Long) result[0];
+      Double revenue = (Double) result[1];
+
+      AdminDashboardResponse.MonthRevenue monthRevenue = new AdminDashboardResponse.MonthRevenue();
+      monthRevenue.setMonth(month);
+      monthRevenue.setRevenue(revenue);
+      totalRevenue = totalRevenue + revenue;
+      monthRevenueList.add(monthRevenue);
+    }
+
     // Build and return the response
     return AdminDashboardResponse.builder()
         .numberOfGuidelines(numberOfGuidelines)
         .numberOfActiveGuidelines(activeGuidelines)
         .numberOfInactiveGuidelines(inactiveGuidelines)
         .numberOfAccount(numberOfAccount)
-        .numberOfActiveAccount(numberOfInactiveAccount)
+        .numberOfActiveAccount(numberOfActiveAccount)
         .numberOfInactiveAccount(numberOfInactiveAccount)
         .numberOfModels(numberOfModels)
+            .numberOfInactiveModels(numberOfInactiveModels)
+            .numberOfActiveModels(numberOfActiveModels)
+            .monthRevenueList(monthRevenueList)
+            .totalRevenue(totalRevenue)
         .companyRevenueList(companyRevenueList)
         .subscriptionRevenueList(subscriptionRevenueList)
         .build();
+  }
+
+  public CompanyDashboardResponse getCompanyDashboardById(String companyId) {
+    // Get active and inactive guidelines (courses) for the company
+    Integer numberOfGuidelines = courseRepository.countAllBy(companyId, null);
+    Integer activeGuidelines = courseRepository.countAllBy(companyId, "ACTIVE");
+    Integer inactiveGuidelines = courseRepository.countAllBy(companyId, "INACTIVE");
+
+    // Get total number of accounts for the company
+    Integer numberOfAccount = userRepository.countAllBy(companyId, null);
+    Integer numberOfActiveAccount = userRepository.countAllBy(companyId, "ACTIVE");
+    Integer numberOfInactiveAccount = userRepository.countAllBy(companyId, "INACTIVE");
+
+    // Get total number of models for the company
+    Integer numberOfModels = modelRepository.countAllBy(companyId, null);
+    Integer numberOfActiveModels = modelRepository.countAllBy(companyId, "ACTIVE");
+    Integer numberOfInactiveModels = modelRepository.countAllBy(companyId, "INACTIVE");
+
+    // Get top 3 guidelines by scan times for the company
+    Pageable topThree = PageRequest.of(0, 3);
+    List<Course> top3Courses = courseRepository.findTop3CoursesByScanTimes(topThree);
+    List<CompanyDashboardResponse.Top3Guidelines> top3GuidelinesList = new ArrayList<>();
+
+    for (Course course : top3Courses) {
+      CompanyDashboardResponse.Top3Guidelines guideline = new CompanyDashboardResponse.Top3Guidelines();
+      guideline.setName(course.getTitle());
+      guideline.setScanTimes(course.getNumberOfScan());
+      top3GuidelinesList.add(guideline);
+    }
+
+    // Build and return the response
+    return CompanyDashboardResponse.builder()
+            .numberOfGuidelines(numberOfGuidelines)
+            .numberOfActiveGuidelines(activeGuidelines)
+            .numberOfInactiveGuidelines(inactiveGuidelines)
+            .numberOfAccount(numberOfAccount)
+            .numberOfActiveAccount(numberOfActiveAccount)
+            .numberOfInactiveAccount(numberOfInactiveAccount)
+            .numberOfModels(numberOfModels)
+            .numberOfActiveModels(numberOfActiveModels)
+            .numberOfInactiveModels(numberOfInactiveModels)
+            .top3Guidelines(top3GuidelinesList)
+            .build();
   }
 }

@@ -18,8 +18,12 @@ public class AdminDashboardResponse {
   private Integer numberOfActiveAccount;
   private Integer numberOfInactiveAccount;
   private Integer numberOfModels;
+  private Integer numberOfActiveModels;
+  private Integer numberOfInactiveModels;
+  private Double totalRevenue;
   private List<CompanyRevenue> companyRevenueList;
   private List<SubscriptionRevenue> subscriptionRevenueList;
+  private List<MonthRevenue> monthRevenueList;
 
   @Data
   @Builder
@@ -36,6 +40,14 @@ public class AdminDashboardResponse {
   @AllArgsConstructor
   public static class SubscriptionRevenue {
     private String name;
+    private Double revenue;
+  }
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class MonthRevenue {
+    private Long month;
     private Double revenue;
   }
 }
