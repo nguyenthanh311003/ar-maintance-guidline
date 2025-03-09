@@ -21,6 +21,7 @@ public class UserResponse implements Serializable {
   private String currentPlan;
   private String avatar;
   private String username;
+  private String deviceId;
   private String phone;
   private String status;
   private String expirationDate;

@@ -16,6 +16,8 @@ public class ConstAPI {
     public static final String FIND_COURSE_BY_CODE = "api/v1/course/code/";
     public static final String NO_MANDATORY_COURSE = "api/v1/course/no-mandatory/company/";
     public static final String UPDATE_COURSE_PICTURE = "api/v1/course/picture";
+    public static final String UPDATE_COURSE_SCAN_TIMES = "api/v1/course/scan";
+
   }
 
   public static class ModelAPI {

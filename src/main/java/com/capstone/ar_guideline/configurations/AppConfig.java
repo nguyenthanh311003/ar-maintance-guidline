@@ -33,6 +33,7 @@ public class AppConfig {
   @Value("${PAYOS_CHECKSUM_KEY}")
   private String checksumKey;
 
+
   private final UserRepository userRepository;
 
   public String getApplicationUrl() { // REMOVE STATIC
@@ -71,4 +72,5 @@ public class AppConfig {
       throws Exception {
     return config.getAuthenticationManager();
   }
+
 }

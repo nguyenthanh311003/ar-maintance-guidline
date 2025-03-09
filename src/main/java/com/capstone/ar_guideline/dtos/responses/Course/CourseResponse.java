@@ -27,6 +27,7 @@ public class CourseResponse implements Serializable {
   String courseCode;
   Integer numberOfLessons;
   Integer numberOfParticipants;
+  Integer numberOfScan;
   String status;
   String type;
 }

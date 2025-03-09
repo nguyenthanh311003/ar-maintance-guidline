@@ -44,4 +44,6 @@ public interface ICourseService {
   Course findByModelId(String modelId);
 
   void changeStatusByCourseId(String courseId);
+
+  void updateNumberOfScan(String id);
 }

@@ -56,11 +56,11 @@ public class ModelServiceImpl implements IModelService {
       newModel.setFile(FileStorageService.storeFile(request.getFile()));
       newModel.setIsUsed(false);
       newModel.setStatus(ConstStatus.ACTIVE_STATUS);
-      newModel.setSize((double) request.getFile().getSize());
+      newModel.setSize((double) request.getFile().getSize()/ConstCommon.fileUnit);
       newModel = modelRepository.save(newModel);
 
       companySubscriptionService.updateStorageUsage(
-          request.getCompanyId(), (double) request.getFile().getSize(), ConstCommon.INCREASE);
+          request.getCompanyId(), (double) request.getFile().getSize() /ConstCommon.fileUnit, ConstCommon.INCREASE);
 
       return ModelMapper.fromEntityToModelResponse(newModel);
     } catch (Exception exception) {
@@ -97,7 +97,15 @@ public class ModelServiceImpl implements IModelService {
                 modelById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
             }
             if (request.getFile() != null) {
+                companySubscriptionService.updateStorageUsage(
+                        request.getCompanyId(), (double) modelById.getSize() /ConstCommon.fileUnit, "");
+
                 modelById.setFile(FileStorageService.storeFile(request.getFile()));
+                companySubscriptionService.updateStorageUsage(
+                        request.getCompanyId(), (double) request.getFile().getSize() /ConstCommon.fileUnit, ConstCommon.INCREASE);
+
+                modelById.setSize((double)request.getFile().getSize()/ConstCommon.fileUnit);
+
             }
             ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
             modelById.setModelType(modelTypeById);
