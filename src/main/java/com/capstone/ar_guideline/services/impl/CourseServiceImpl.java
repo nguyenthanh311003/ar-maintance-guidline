@@ -224,7 +224,7 @@ public class CourseServiceImpl implements ICourseService {
   @Override
   public void updateNumberOfScan(String id) {
     Course course = findById(id);
-    course.setNumberOfScan(course.getNumberOfScan() +1);
+    course.setNumberOfScan(course.getNumberOfScan() + 1);
     courseRepository.save(course);
   }
 

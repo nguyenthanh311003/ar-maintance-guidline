@@ -23,6 +23,7 @@ public class Subscription {
 
   @Column(unique = true)
   private String subscriptionCode;
+
   private Integer maxNumberOfUsers;
   private Double maxStorageUsage;
   private Double monthlyFee;

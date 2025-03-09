@@ -45,4 +45,11 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
   @Query(value = "SELECT c FROM Course c WHERE c.model.id = :modelId")
   Course findByModelId(@Param("modelId") String modelId);
+
+  @Query(
+      value =
+          "SELECT COUNT(c) FROM Course c WHERE (c.company.id = :companyId OR :companyId IS NULL) AND (c.status = :status OR c.status IS NULL )")
+  Integer countAllBy(String companyId, String status);
+
+  Integer countAllBy();
 }

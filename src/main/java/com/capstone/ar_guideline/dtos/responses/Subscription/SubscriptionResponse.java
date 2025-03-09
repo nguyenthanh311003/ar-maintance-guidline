@@ -16,5 +16,5 @@ public class SubscriptionResponse {
   Double monthlyFee;
   String status;
   String storageUnit;
-    String currency;
+  String currency;
 }

@@ -43,8 +43,7 @@ public class PayOsService {
 
   @Autowired private IOrderTransactionService paymentService;
 
-  @Lazy
-  @Autowired private ICompanySubscriptionService companySubscriptionService;
+  @Lazy @Autowired private ICompanySubscriptionService companySubscriptionService;
 
   @Autowired IUserService userService;
 

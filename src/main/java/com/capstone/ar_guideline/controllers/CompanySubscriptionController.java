@@ -48,10 +48,10 @@ public class CompanySubscriptionController {
         .build();
   }
 
-  @GetMapping(value = ConstAPI.CompanySubscriptionAPI.FIND_BY_COMPANY_ID+"{companyId}" )
+  @GetMapping(value = ConstAPI.CompanySubscriptionAPI.FIND_BY_COMPANY_ID + "{companyId}")
   ApiResponse<CompanySubscriptionResponse> findByCompanyId(@PathVariable String companyId) {
     return ApiResponse.<CompanySubscriptionResponse>builder()
-            .result(companySubscriptionService.findResponseById(companyId))
-            .build();
+        .result(companySubscriptionService.findResponseById(companyId))
+        .build();
   }
 }

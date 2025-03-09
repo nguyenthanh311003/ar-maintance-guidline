@@ -24,5 +24,4 @@ public interface ICompanySubscriptionService {
   void updateNumberOfUsers(String companyId, String action);
 
   CompanySubscriptionResponse findResponseById(String id);
-
 }

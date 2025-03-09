@@ -272,8 +272,8 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       modelById = modelService.update(modelById);
 
       if (modelById.getId() != null && request.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
-          Course courseByModelId = courseService.findByModelId(modelById.getId());
-          courseService.delete(courseByModelId.getId());
+        Course courseByModelId = courseService.findByModelId(modelById.getId());
+        courseService.delete(courseByModelId.getId());
       }
 
       return ModelMapper.fromEntityToModelResponse(modelById);

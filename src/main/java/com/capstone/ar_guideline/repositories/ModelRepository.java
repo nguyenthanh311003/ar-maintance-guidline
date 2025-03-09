@@ -38,4 +38,9 @@ public interface ModelRepository extends JpaRepository<Model, String> {
 
   @Query(value = "SELECT m FROM Model m WHERE m.name = :modelName")
   Model findByName(@Param("modelName") String modelName);
+
+  @Query(
+      value =
+          "SELECT COUNT(m) FROM Model m WHERE (m.company.id = :companyId OR :companyId IS NULL) AND (m.status = :status OR m.status IS NULL )")
+  Integer countAllBy(String companyId, String status);
 }
