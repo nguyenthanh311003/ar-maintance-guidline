@@ -27,8 +27,8 @@ public class SubscriptionMapper {
         .subscriptionCode(subscription.getSubscriptionCode())
         .maxNumberOfUsers(subscription.getMaxNumberOfUsers())
         .maxStorageUsage(subscription.getMaxStorageUsage())
-            .storageUnit(subscription.getStorageUnit())
-            .currency(subscription.getCurrency())
+        .storageUnit(subscription.getStorageUnit())
+        .currency(subscription.getCurrency())
         .monthlyFee(subscription.getMonthlyFee())
         .status(subscription.getStatus())
         .build();

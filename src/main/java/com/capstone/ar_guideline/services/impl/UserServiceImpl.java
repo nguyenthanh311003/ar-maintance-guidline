@@ -84,9 +84,7 @@ public class UserServiceImpl implements IUserService {
     }
   }
 
-  private void updateDeviceId(){
-
-  }
+  private void updateDeviceId() {}
 
   @Override
   public <T> AuthenticationResponse create(SignUpRequest signUpWitRoleRequest) {
@@ -308,10 +306,10 @@ public class UserServiceImpl implements IUserService {
         throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
       }
 
-
       if (userById.getStatus().equalsIgnoreCase(INACTIVE_STATUS)) {
         userById.setStatus(ConstStatus.ACTIVE_STATUS);
-        companySubscriptionService.updateNumberOfUsers(userById.getCompany().getId(), ConstCommon.INCREASE);
+        companySubscriptionService.updateNumberOfUsers(
+            userById.getCompany().getId(), ConstCommon.INCREASE);
       } else {
         userById.setStatus(INACTIVE_STATUS);
         companySubscriptionService.updateNumberOfUsers(userById.getCompany().getId(), "");

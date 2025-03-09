@@ -35,14 +35,17 @@ public class UserMapper {
         .company(CompanyMapper.fromEntityToCompanyResponse(user.getCompany()))
         .isPayAdmin(user.getIsPayAdmin())
         .status(user.getStatus())
-            .currentPlan(
-                    user.getCompany() != null &&
-                            user.getCompany().getCompanySubscriptions() != null &&
-                            !user.getCompany().getCompanySubscriptions().isEmpty() ?
-                            user.getCompany().getCompanySubscriptions().get(0).getSubscription().getSubscriptionCode() :
-                            null
-            )
-            .deviceId(user.getDeviceId())
+        .currentPlan(
+            user.getCompany() != null
+                    && user.getCompany().getCompanySubscriptions() != null
+                    && !user.getCompany().getCompanySubscriptions().isEmpty()
+                ? user.getCompany()
+                    .getCompanySubscriptions()
+                    .get(0)
+                    .getSubscription()
+                    .getSubscriptionCode()
+                : null)
+        .deviceId(user.getDeviceId())
         .username(user.getUsername())
         .phone(user.getPhone())
         .expirationDate(user.getExpirationDate())

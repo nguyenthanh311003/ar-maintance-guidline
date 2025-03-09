@@ -4,32 +4,20 @@ import com.capstone.ar_guideline.constants.ConstCommon;
 import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.CompanySubscription.ComSubscriptionCreationRequest;
-import com.capstone.ar_guideline.dtos.requests.OrderTransaction.OrderTransactionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.CompanySubscription.CompanySubscriptionResponse;
-import com.capstone.ar_guideline.dtos.responses.OrderTransaction.OrderTransactionResponse;
 import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.entities.CompanySubscription;
 import com.capstone.ar_guideline.entities.Subscription;
-import com.capstone.ar_guideline.entities.User;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CompanySubscriptionMapper;
-import com.capstone.ar_guideline.payos.CreatePaymentLinkRequestBody;
 import com.capstone.ar_guideline.repositories.CompanySubscriptionRepository;
-import com.capstone.ar_guideline.repositories.UserRepository;
 import com.capstone.ar_guideline.services.*;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -68,9 +56,8 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
       newCompanySubscription.setSubscriptionExpireDate(
           newCompanySubscription.getSubscriptionStartDate().plusMonths(1));
 
-
       newCompanySubscription.setStorageUsage(0.0);
-        newCompanySubscription.setNumberOfUsers(0);
+      newCompanySubscription.setNumberOfUsers(0);
 
       newCompanySubscription = companySubscriptionRepository.save(newCompanySubscription);
 
@@ -93,18 +80,21 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
 
       if (companySubscription != null) {
         companySubscription.setSubscriptionStartDate(LocalDateTime.now());
-        if(companySubscription.getSubscriptionExpireDate().isBefore(LocalDateTime.now()) && companySubscription.getSubscription().getId().equals(subscriptionId) )
-        {
-          long daysBetween = java.time.Duration.between(companySubscription.getSubscriptionExpireDate(), LocalDateTime.now()).toDays();
-          companySubscription.setSubscriptionExpireDate(LocalDateTime.now().plusDays(30+daysBetween));
+        if (companySubscription.getSubscriptionExpireDate().isBefore(LocalDateTime.now())
+            && companySubscription.getSubscription().getId().equals(subscriptionId)) {
+          long daysBetween =
+              java.time.Duration.between(
+                      companySubscription.getSubscriptionExpireDate(), LocalDateTime.now())
+                  .toDays();
+          companySubscription.setSubscriptionExpireDate(
+              LocalDateTime.now().plusDays(30 + daysBetween));
         }
-        if (companySubscription.getSubscriptionExpireDate().isAfter(LocalDateTime.now()) ||
-                companySubscription.getSubscriptionExpireDate().isEqual(LocalDateTime.now())) {
+        if (companySubscription.getSubscriptionExpireDate().isAfter(LocalDateTime.now())
+            || companySubscription.getSubscriptionExpireDate().isEqual(LocalDateTime.now())) {
           companySubscription.setSubscriptionExpireDate(LocalDateTime.now().plusDays(30));
         }
 
-        if(!companySubscription.getSubscription().getId().equals(subscriptionId))
-        {
+        if (!companySubscription.getSubscription().getId().equals(subscriptionId)) {
           companySubscription.setSubscription(subscriptionService.findById(subscriptionId));
         }
 
@@ -218,9 +208,11 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
     try {
       CompanySubscription companySubscription = findByCompanyId(companyId);
       if (action.equals(ConstCommon.INCREASE)) {
-        companySubscription.setStorageUsage(companySubscription.getStorageUsage() + (storageUsage/1000));
+        companySubscription.setStorageUsage(
+            companySubscription.getStorageUsage() + (storageUsage / 1000));
       } else {
-        companySubscription.setStorageUsage(companySubscription.getStorageUsage() - storageUsage/1000);
+        companySubscription.setStorageUsage(
+            companySubscription.getStorageUsage() - storageUsage / 1000);
       }
       companySubscriptionRepository.save(companySubscription);
 
@@ -255,5 +247,4 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
     CompanySubscription companySubscription = companySubscriptionRepository.findByCompanyId(id);
     return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(companySubscription);
   }
-
 }
