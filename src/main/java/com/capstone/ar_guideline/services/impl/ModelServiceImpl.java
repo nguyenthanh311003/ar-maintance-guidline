@@ -41,7 +41,7 @@ public class ModelServiceImpl implements IModelService {
   @Transactional
   public ModelResponse create(ModelCreationRequest request) throws InterruptedException {
     try {
-      if (isStorageUsageReach(request.getCompanyId())) {
+      if (isStorageUsageReach(request.getCompanyId(),(double) request.getFile().getSize()/ConstCommon.fileUnit)) {
         throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
       }
 
@@ -220,10 +220,10 @@ public class ModelServiceImpl implements IModelService {
         }
     }
 
-  private boolean isStorageUsageReach(String companyId) {
+  private boolean isStorageUsageReach(String companyId,Double fileSize) {
 
     CompanySubscription companySubscription = companySubscriptionService.findByCompanyId(companyId);
-    if (companySubscription.getStorageUsage()
+    if (companySubscription.getStorageUsage() + fileSize
         < companySubscription.getSubscription().getMaxStorageUsage()) {
       return false;
     }
