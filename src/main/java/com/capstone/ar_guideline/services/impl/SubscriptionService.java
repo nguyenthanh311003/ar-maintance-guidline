@@ -62,7 +62,9 @@ public class SubscriptionService implements ISubscriptionService {
     try {
       Subscription subscriptionById = findById(id);
 
-      subscriptionById.setSubscriptionCode(request.getSubscriptionCode());
+      subscriptionById.setMaxNumberOfUsers(request.getMaxNumberOfUsers());
+      subscriptionById.setMaxStorageUsage(request.getMaxStorageUsage());
+      subscriptionById.setMonthlyFee(request.getMonthlyFee());
       subscriptionById.setStatus(request.getStatus());
 
       subscriptionById = subscriptionRepository.save(subscriptionById);

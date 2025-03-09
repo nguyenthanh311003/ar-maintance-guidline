@@ -54,7 +54,7 @@ public interface UserRepository extends JpaRepository<User, String> {
           "SELECT u FROM User u WHERE "
               + "(:email = '' OR :email IS NULL OR LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%'))) "
               + "AND (:status IS NULL OR :status = '' OR u.status = :status) "
-              + "ORDER BY u.createdDate ASC")
+              + "ORDER BY u.createdDate DESC")
   Page<User> getUsers(
       Pageable pageable, @Param("email") String email, @Param("status") String status);
 

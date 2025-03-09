@@ -16,7 +16,6 @@ public class InstructionDetailMapper {
     return InstructionDetail.builder()
         .instruction(Instruction.builder().id(request.getInstructionId()).build())
         .name(request.getName())
-        .orderNumber(request.getOrderNumber())
         .animationName(request.getAnimationName())
         .meshes(request.getMeshes().toString())
         .description(request.getDescription())
@@ -42,5 +41,15 @@ public class InstructionDetailMapper {
         .meshes(meshesList)
         .description(instructionDetail.getDescription())
         .build();
+  }
+
+  public static InstructionDetail fromInstructionDetailCreationRequestToEntityToUpdate(
+      InstructionDetail instructionDetail, InstructionDetailCreationRequest request) {
+    instructionDetail.setName(request.getName());
+    instructionDetail.setDescription(request.getDescription());
+    instructionDetail.setAnimationName(request.getAnimationName());
+    instructionDetail.setMeshes(request.getMeshes().toString());
+
+    return instructionDetail;
   }
 }

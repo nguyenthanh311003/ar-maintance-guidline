@@ -17,6 +17,7 @@ import com.capstone.ar_guideline.services.IModelTypeService;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -55,6 +56,12 @@ public class ModelServiceImpl implements IModelService {
       newModel.setIsUsed(false);
       newModel.setStatus(ConstStatus.ACTIVE_STATUS);
       newModel.setSize((double) request.getFile().getSize() / ConstCommon.fileUnit);
+      newModel.setSize((double) request.getFile().getSize());
+      newModel.setPosition(
+          request.getPosition().stream().map(String::valueOf).collect(Collectors.joining(",")));
+
+      newModel.setRotation(
+          request.getRotation().stream().map(String::valueOf).collect(Collectors.joining(",")));
       newModel = modelRepository.save(newModel);
 
       companySubscriptionService.updateStorageUsage(
