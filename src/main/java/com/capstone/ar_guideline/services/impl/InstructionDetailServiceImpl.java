@@ -61,15 +61,10 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
   public InstructionDetailResponse update(String id, InstructionDetailCreationRequest request) {
     try {
 
-      String instructionDetailId = findById(id).getId();
-
-      InstructionDetail instructionDetail =
-          InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(request);
-
-      instructionDetail.setId(instructionDetailId);
+      InstructionDetail instructionDetailById = findById(id);
 
       return InstructionDetailMapper.fromEntityToInstructionDetailResponse(
-          instructionDetailRepository.save(instructionDetail));
+          instructionDetailRepository.save(InstructionDetailMapper.fromInstructionDetailCreationRequestToEntityToUpdate(instructionDetailById, request)));
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

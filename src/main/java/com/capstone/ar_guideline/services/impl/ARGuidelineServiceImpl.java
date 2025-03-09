@@ -20,6 +20,8 @@ import com.capstone.ar_guideline.mappers.ModelMapper;
 import com.capstone.ar_guideline.services.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -260,6 +262,15 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       modelById.setDescription(request.getDescription());
       modelById.setVersion(request.getVersion());
       modelById.setScale(request.getScale());
+
+        modelById.setPosition(request.getPosition().stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(",")));
+
+        modelById.setRotation(request.getRotation().stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(",")));
+
       if (request.getImageUrl() != null) {
         modelById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       }
@@ -269,12 +280,26 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
       modelById.setModelType(modelTypeById);
 
-      modelById = modelService.update(modelById);
-
       if (modelById.getId() != null && request.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
-          Course courseByModelId = courseService.findByModelId(modelById.getId());
-          courseService.delete(courseByModelId.getId());
+        Course courseByModelId = courseService.findByModelId(modelById.getId());
+        if (!Objects.isNull(courseByModelId)) {
+          if(courseByModelId.getStatus().equals(ConstStatus.ACTIVE_STATUS)) {
+            courseService.changeStatusByCourseId(courseByModelId.getId());
+          }
+        }
       }
+
+      else if (modelById.getId() != null && request.getStatus().equals(ConstStatus.ACTIVE_STATUS)) {
+        Course courseByModelId = courseService.findByModelId(modelById.getId());
+
+        if (!Objects.isNull(courseByModelId)) {
+          if(courseByModelId.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
+            courseService.changeStatusByCourseId(courseByModelId.getId());
+          }
+        }
+      }
+
+      modelById = modelService.update(modelById);
 
       return ModelMapper.fromEntityToModelResponse(modelById);
     } catch (Exception exception) {
