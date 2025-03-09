@@ -131,4 +131,5 @@ public class SubscriptionService implements ISubscriptionService {
       throw new AppException(ErrorCode.SUBSCRIPTION_NOT_EXISTED);
     }
   }
+
 }

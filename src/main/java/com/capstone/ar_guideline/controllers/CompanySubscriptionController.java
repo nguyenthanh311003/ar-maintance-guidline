@@ -47,4 +47,11 @@ public class CompanySubscriptionController {
         .result("Company Subscription detail has been deleted")
         .build();
   }
+
+  @GetMapping(value = ConstAPI.CompanySubscriptionAPI.FIND_BY_COMPANY_ID+"{companyId}" )
+  ApiResponse<CompanySubscriptionResponse> findByCompanyId(@PathVariable String companyId) {
+    return ApiResponse.<CompanySubscriptionResponse>builder()
+            .result(companySubscriptionService.findResponseById(companyId))
+            .build();
+  }
 }

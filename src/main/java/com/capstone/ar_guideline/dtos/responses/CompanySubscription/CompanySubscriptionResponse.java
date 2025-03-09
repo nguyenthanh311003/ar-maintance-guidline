@@ -13,6 +13,7 @@ public class CompanySubscriptionResponse {
   String id;
   String companyId;
   String subscriptionId;
+  String subscriptionCode;
   Double storageUsage;
   Integer numberOfUsers;
   LocalDateTime subscriptionStartDate;

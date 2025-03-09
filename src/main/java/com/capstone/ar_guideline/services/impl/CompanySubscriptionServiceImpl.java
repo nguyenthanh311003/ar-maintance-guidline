@@ -250,4 +250,10 @@ public class CompanySubscriptionServiceImpl implements ICompanySubscriptionServi
     }
   }
 
+  @Override
+  public CompanySubscriptionResponse findResponseById(String id) {
+    CompanySubscription companySubscription = companySubscriptionRepository.findByCompanyId(id);
+    return CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(companySubscription);
+  }
+
 }

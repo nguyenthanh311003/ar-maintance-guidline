@@ -103,12 +103,15 @@ public class ConstAPI {
     public static final String CREATE_SUBSCRIPTION = "api/v1/subscription";
     public static final String UPDATE_SUBSCRIPTION = "api/v1/subscription/";
     public static final String DELETE_SUBSCRIPTION = "api/v1/subscription/";
+    public static final String GET_CURRENT_PLAN = "api/v1/subscription/company/";
   }
 
   public static class CompanySubscriptionAPI {
     public static final String CREATE_COMPANY_SUBSCRIPTION = "api/v1/company-subscription";
     public static final String UPDATE_COMPANY_SUBSCRIPTION = "api/v1/company-subscription/";
     public static final String DELETE_COMPANY_SUBSCRIPTION = "api/v1/company-subscription/";
+    public static final String FIND_BY_COMPANY_ID = "api/v1/company-subscription/company/";
+
   }
 
   public static class OrderTransactionAPI {
