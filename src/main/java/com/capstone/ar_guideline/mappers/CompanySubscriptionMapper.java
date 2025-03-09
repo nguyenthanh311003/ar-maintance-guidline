@@ -23,6 +23,7 @@ public class CompanySubscriptionMapper {
                 .subscriptionExpireDate(companySubscription.getSubscriptionExpireDate())
                 .storageUsage(companySubscription.getStorageUsage())
                 .numberOfUsers(companySubscription.getNumberOfUsers())
+                .monthlyFee(companySubscription.getSubscription().getMonthlyFee())
                 .status(companySubscription.getStatus())
                 .build();
     }
