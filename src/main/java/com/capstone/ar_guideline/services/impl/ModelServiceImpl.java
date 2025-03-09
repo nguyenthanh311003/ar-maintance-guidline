@@ -38,11 +38,11 @@ public class ModelServiceImpl implements IModelService {
     IModelTypeService modelTypeService;
     ICompanySubscriptionService companySubscriptionService;
 
-    @Override
-    @Transactional
-    public ModelResponse create(ModelCreationRequest request) throws InterruptedException {
-        try {
-      if (isStorageUsageReach(request.getCompanyId())) {
+  @Override
+  @Transactional
+  public ModelResponse create(ModelCreationRequest request) throws InterruptedException {
+    try {
+      if (isStorageUsageReach(request.getCompanyId(),(double) request.getFile().getSize()/ConstCommon.fileUnit)) {
         throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
       }
 
@@ -68,7 +68,7 @@ public class ModelServiceImpl implements IModelService {
             newModel = modelRepository.save(newModel);
 
       companySubscriptionService.updateStorageUsage(
-          request.getCompanyId(), (double) request.getFile().getSize(), ConstCommon.INCREASE);
+          request.getCompanyId(), (double) request.getFile().getSize() /ConstCommon.fileUnit, ConstCommon.INCREASE);
 
             return ModelMapper.fromEntityToModelResponse(newModel);
         } catch (Exception exception) {
@@ -105,7 +105,15 @@ public class ModelServiceImpl implements IModelService {
                 modelById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
             }
             if (request.getFile() != null) {
+                companySubscriptionService.updateStorageUsage(
+                        request.getCompanyId(), (double) modelById.getSize() /ConstCommon.fileUnit, "");
+
                 modelById.setFile(FileStorageService.storeFile(request.getFile()));
+                companySubscriptionService.updateStorageUsage(
+                        request.getCompanyId(), (double) request.getFile().getSize() /ConstCommon.fileUnit, ConstCommon.INCREASE);
+
+                modelById.setSize((double)request.getFile().getSize()/ConstCommon.fileUnit);
+
             }
             ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
             modelById.setModelType(modelTypeById);
@@ -121,20 +129,20 @@ public class ModelServiceImpl implements IModelService {
         }
     }
 
-    @Override
-    public void delete(String id) {
-        try {
-            Model modelById = findById(id);
-            modelRepository.deleteById(modelById.getId());
-//        companySubscriptionService.updateStorageUsage(
-//            modelById.getCompany().getId(),  modelById.getSize(), "");
-        } catch (Exception exception) {
-            if (exception instanceof AppException) {
-                throw exception;
-            }
-            throw new AppException(ErrorCode.MODEL_DELETE_FAILED);
-        }
+  @Override
+  public void delete(String id) {
+    try {
+      Model modelById = findById(id);
+      modelRepository.deleteById(modelById.getId());
+        companySubscriptionService.updateStorageUsage(
+            modelById.getCompany().getId(),  modelById.getSize(), "");
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_DELETE_FAILED);
     }
+  }
 
     @Override
     public Model findById(String id) {
@@ -220,15 +228,15 @@ public class ModelServiceImpl implements IModelService {
         }
     }
 
-    private boolean isStorageUsageReach(String companyId) {
+  private boolean isStorageUsageReach(String companyId,Double fileSize) {
 
-        CompanySubscription companySubscription = companySubscriptionService.findByCompanyId(companyId);
-        if (companySubscription.getStorageUsage()
-                < companySubscription.getSubscription().getMaxStorageUsage()) {
-            return false;
-        }
-        return true;
+    CompanySubscription companySubscription = companySubscriptionService.findByCompanyId(companyId);
+    if (companySubscription.getStorageUsage() + fileSize
+        < companySubscription.getSubscription().getMaxStorageUsage()) {
+      return false;
     }
+    return true;
+  }
 
     @Override
     public List<Model> findAllByCompanyId(String companyId) {

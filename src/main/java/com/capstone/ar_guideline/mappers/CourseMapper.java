@@ -35,6 +35,7 @@ public class CourseMapper {
         .shortDescription(course.getShortDescription())
         .targetAudience(course.getTargetAudience())
         .duration(course.getDuration())
+            .numberOfScan(course.getNumberOfScan())
         .courseCode(course.getCourseCode())
         .imageUrl(course.getImageUrl())
         .isMandatory(course.getIsMandatory())

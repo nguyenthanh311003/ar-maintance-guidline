@@ -129,6 +129,7 @@ public class CourseServiceImpl implements ICourseService {
       newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
       newCourse.setCourseCode(UUID.randomUUID().toString());
       newCourse.setDuration(0);
+      newCourse.setNumberOfScan(0);
       newCourse.setQrCode(UtilService.generateAndStoreQRCode(newCourse.getCourseCode()));
       newCourse = courseRepository.save(newCourse);
 
@@ -218,6 +219,13 @@ public class CourseServiceImpl implements ICourseService {
       }
       throw new AppException(ErrorCode.COURSE_UPDATE_FAILED);
     }
+  }
+
+  @Override
+  public void updateNumberOfScan(String id) {
+    Course course = findById(id);
+    course.setNumberOfScan(course.getNumberOfScan() +1);
+    courseRepository.save(course);
   }
 
   @Override

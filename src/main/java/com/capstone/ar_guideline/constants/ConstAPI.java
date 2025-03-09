@@ -16,6 +16,8 @@ public class ConstAPI {
     public static final String FIND_COURSE_BY_CODE = "api/v1/course/code/";
     public static final String NO_MANDATORY_COURSE = "api/v1/course/no-mandatory/company/";
     public static final String UPDATE_COURSE_PICTURE = "api/v1/course/picture";
+    public static final String UPDATE_COURSE_SCAN_TIMES = "api/v1/course/scan";
+
   }
 
   public static class ModelAPI {
@@ -103,12 +105,15 @@ public class ConstAPI {
     public static final String CREATE_SUBSCRIPTION = "api/v1/subscription";
     public static final String UPDATE_SUBSCRIPTION = "api/v1/subscription/";
     public static final String DELETE_SUBSCRIPTION = "api/v1/subscription/";
+    public static final String GET_CURRENT_PLAN = "api/v1/subscription/company/";
   }
 
   public static class CompanySubscriptionAPI {
     public static final String CREATE_COMPANY_SUBSCRIPTION = "api/v1/company-subscription";
     public static final String UPDATE_COMPANY_SUBSCRIPTION = "api/v1/company-subscription/";
     public static final String DELETE_COMPANY_SUBSCRIPTION = "api/v1/company-subscription/";
+    public static final String FIND_BY_COMPANY_ID = "api/v1/company-subscription/company/";
+
   }
 
   public static class OrderTransactionAPI {

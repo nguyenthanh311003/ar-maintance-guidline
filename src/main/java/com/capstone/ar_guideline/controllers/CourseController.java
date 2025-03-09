@@ -115,4 +115,11 @@ public class CourseController {
     arGuidelineService.deleteCourseById(courseId);
     return ApiResponse.<String>builder().result("Course has been deleted successfully").build();
   }
+
+  @PutMapping(value =  ConstAPI.CourseAPI.UPDATE_COURSE_SCAN_TIMES+"/{courseId}")
+  public ApiResponse<String> updateScanTimes(@PathVariable String courseId) {
+    courseService.updateNumberOfScan(courseId);
+    return ApiResponse.<String>builder().result("Course has been updated successfully").build();
+  }
+
 }

@@ -77,4 +77,6 @@ public interface UserRepository extends JpaRepository<User, String> {
       @Param("status") String status);
 
   List<User> findByCompanyId(String companyId);
+
+    User findUserByCompanyId(String id);
 }

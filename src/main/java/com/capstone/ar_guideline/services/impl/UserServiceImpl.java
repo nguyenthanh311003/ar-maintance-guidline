@@ -60,7 +60,6 @@ public class UserServiceImpl implements IUserService {
       if (userResponseByEmail.getStatus().equals(INACTIVE_STATUS)) {
         throw new AppException(ErrorCode.USER_DISABLED);
       }
-
       // Authenticate the user
       Authentication authentication =
           authenticationManager.authenticate(
@@ -83,6 +82,10 @@ public class UserServiceImpl implements IUserService {
       }
       throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
     }
+  }
+
+  private void updateDeviceId(){
+
   }
 
   @Override
@@ -347,6 +350,11 @@ public class UserServiceImpl implements IUserService {
       }
       throw new AppException(ErrorCode.USER_UPDATE_FAILED);
     }
+  }
+
+  @Override
+  public User findUserByCompanyId(String id) {
+    return userRepository.findUserByCompanyId(id);
   }
 
   @Override

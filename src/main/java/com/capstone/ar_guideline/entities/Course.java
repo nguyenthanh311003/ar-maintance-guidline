@@ -47,6 +47,7 @@ public class Course implements Serializable {
   private String imageUrl;
   private String qrCode;
   private String courseCode;
+  private Integer numberOfScan;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

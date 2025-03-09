@@ -13,6 +13,8 @@ public class CompanySubscriptionResponse {
   String id;
   String companyId;
   String subscriptionId;
+  String subscriptionCode;
+  Double monthlyFee;
   Double storageUsage;
   Integer numberOfUsers;
   LocalDateTime subscriptionStartDate;
