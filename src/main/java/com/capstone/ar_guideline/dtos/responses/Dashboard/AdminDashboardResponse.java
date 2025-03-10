@@ -1,6 +1,8 @@
 package com.capstone.ar_guideline.dtos.responses.Dashboard;
 
 import java.util.List;
+
+import com.capstone.ar_guideline.dtos.responses.CompanySubscription.CompanySubscriptionResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

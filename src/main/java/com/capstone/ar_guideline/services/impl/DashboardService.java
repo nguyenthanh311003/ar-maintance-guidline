@@ -1,15 +1,15 @@
 package com.capstone.ar_guideline.services.impl;
 
+import com.capstone.ar_guideline.dtos.responses.CompanySubscription.CompanySubscriptionResponse;
 import com.capstone.ar_guideline.dtos.responses.Dashboard.AdminDashboardResponse;
 import com.capstone.ar_guideline.dtos.responses.Dashboard.CompanyDashboardResponse;
 import com.capstone.ar_guideline.entities.Company;
+import com.capstone.ar_guideline.entities.CompanySubscription;
 import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Subscription;
-import com.capstone.ar_guideline.repositories.CourseRepository;
-import com.capstone.ar_guideline.repositories.ModelRepository;
-import com.capstone.ar_guideline.repositories.OrderTransactionRepository;
-import com.capstone.ar_guideline.repositories.SubscriptionRepository;
-import com.capstone.ar_guideline.repositories.UserRepository;
+import com.capstone.ar_guideline.mappers.CompanySubscriptionMapper;
+import com.capstone.ar_guideline.repositories.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,8 @@ public class DashboardService {
 
   @Autowired private OrderTransactionRepository orderTransactionRepository;
 
+  @Autowired private CompanySubscriptionRepository companySubscriptionRepository;
+
   @Autowired private SubscriptionRepository subscriptionRepository;
 
   public AdminDashboardResponse getAdminDashboard() {
@@ -35,7 +37,6 @@ public class DashboardService {
     Integer numberOfGuidelines = courseRepository.countAllBy(null, null);
     Integer activeGuidelines = courseRepository.countAllBy(null, "ACTIVE");
     Integer inactiveGuidelines = courseRepository.countAllBy(null, "INACTIVE");
-
     // Get total number of accounts
     Integer numberOfAccount = userRepository.countAllBy(null, null);
 
@@ -124,6 +125,9 @@ public class DashboardService {
     Integer numberOfGuidelines = courseRepository.countAllBy(companyId, null);
     Integer activeGuidelines = courseRepository.countAllBy(companyId, "ACTIVE");
     Integer inactiveGuidelines = courseRepository.countAllBy(companyId, "INACTIVE");
+    CompanySubscription companySubscription = companySubscriptionRepository.findByCompanyId(companyId);
+    CompanySubscriptionResponse companySubscriptionResponse = CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(companySubscription);
+
 
     // Get total number of accounts for the company
     Integer numberOfAccount = userRepository.countAllBy(companyId, null);
@@ -158,6 +162,7 @@ public class DashboardService {
             .numberOfModels(numberOfModels)
             .numberOfActiveModels(numberOfActiveModels)
             .numberOfInactiveModels(numberOfInactiveModels)
+            .companySubscriptionResponse(companySubscriptionResponse)
             .top3Guidelines(top3GuidelinesList)
             .build();
   }

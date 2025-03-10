@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.dtos.responses.Dashboard;
 
+import com.capstone.ar_guideline.dtos.responses.CompanySubscription.CompanySubscriptionResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class CompanyDashboardResponse {  private Integer numberOfGuidelines;
     private Integer numberOfModels;
     private Integer numberOfActiveModels;
     private Integer numberOfInactiveModels;
+    private CompanySubscriptionResponse companySubscriptionResponse;
     private List<Top3Guidelines> top3Guidelines;
 
     @Data
