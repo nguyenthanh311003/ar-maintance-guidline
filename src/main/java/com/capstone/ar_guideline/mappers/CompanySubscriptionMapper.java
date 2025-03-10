@@ -17,7 +17,9 @@ public class CompanySubscriptionMapper {
     return CompanySubscriptionResponse.builder()
         .id(companySubscription.getId())
         .companyId(companySubscription.getCompany().getId())
-            .subscriptionResponse(SubscriptionMapper.fromEntityToSubscriptionResponse(companySubscription.getSubscription()))
+        .subscriptionResponse(
+            SubscriptionMapper.fromEntityToSubscriptionResponse(
+                companySubscription.getSubscription()))
         .subscriptionStartDate(companySubscription.getSubscriptionStartDate())
         .subscriptionExpireDate(companySubscription.getSubscriptionExpireDate())
         .storageUsage(companySubscription.getStorageUsage())

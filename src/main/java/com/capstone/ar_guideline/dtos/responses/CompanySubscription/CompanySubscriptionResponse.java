@@ -1,8 +1,7 @@
 package com.capstone.ar_guideline.dtos.responses.CompanySubscription;
 
-import java.time.LocalDateTime;
-
 import com.capstone.ar_guideline.dtos.responses.Subscription.SubscriptionResponse;
+import java.time.LocalDateTime;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

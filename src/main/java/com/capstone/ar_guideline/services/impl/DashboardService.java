@@ -9,7 +9,6 @@ import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Subscription;
 import com.capstone.ar_guideline.mappers.CompanySubscriptionMapper;
 import com.capstone.ar_guideline.repositories.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +87,8 @@ public class DashboardService {
     }
 
     int currentYear = java.time.Year.now().getValue();
-    List<Object[]> monthlyRevenues = orderTransactionRepository.getMonthlyPaidOrderAmounts(currentYear);
+    List<Object[]> monthlyRevenues =
+        orderTransactionRepository.getMonthlyPaidOrderAmounts(currentYear);
     List<AdminDashboardResponse.MonthRevenue> monthRevenueList = new ArrayList<>();
 
     for (Object[] result : monthlyRevenues) {
@@ -111,10 +111,10 @@ public class DashboardService {
         .numberOfActiveAccount(numberOfActiveAccount)
         .numberOfInactiveAccount(numberOfInactiveAccount)
         .numberOfModels(numberOfModels)
-            .numberOfInactiveModels(numberOfInactiveModels)
-            .numberOfActiveModels(numberOfActiveModels)
-            .monthRevenueList(monthRevenueList)
-            .totalRevenue(totalRevenue)
+        .numberOfInactiveModels(numberOfInactiveModels)
+        .numberOfActiveModels(numberOfActiveModels)
+        .monthRevenueList(monthRevenueList)
+        .totalRevenue(totalRevenue)
         .companyRevenueList(companyRevenueList)
         .subscriptionRevenueList(subscriptionRevenueList)
         .build();
@@ -125,9 +125,10 @@ public class DashboardService {
     Integer numberOfGuidelines = courseRepository.countAllBy(companyId, null);
     Integer activeGuidelines = courseRepository.countAllBy(companyId, "ACTIVE");
     Integer inactiveGuidelines = courseRepository.countAllBy(companyId, "INACTIVE");
-    CompanySubscription companySubscription = companySubscriptionRepository.findByCompanyId(companyId);
-    CompanySubscriptionResponse companySubscriptionResponse = CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(companySubscription);
-
+    CompanySubscription companySubscription =
+        companySubscriptionRepository.findByCompanyId(companyId);
+    CompanySubscriptionResponse companySubscriptionResponse =
+        CompanySubscriptionMapper.fromEntityToCompanySubscriptionResponse(companySubscription);
 
     // Get total number of accounts for the company
     Integer numberOfAccount = userRepository.countAllBy(companyId, null);
@@ -145,7 +146,8 @@ public class DashboardService {
     List<CompanyDashboardResponse.Top3Guidelines> top3GuidelinesList = new ArrayList<>();
 
     for (Course course : top3Courses) {
-      CompanyDashboardResponse.Top3Guidelines guideline = new CompanyDashboardResponse.Top3Guidelines();
+      CompanyDashboardResponse.Top3Guidelines guideline =
+          new CompanyDashboardResponse.Top3Guidelines();
       guideline.setName(course.getTitle());
       guideline.setScanTimes(course.getNumberOfScan());
       top3GuidelinesList.add(guideline);
@@ -153,17 +155,17 @@ public class DashboardService {
 
     // Build and return the response
     return CompanyDashboardResponse.builder()
-            .numberOfGuidelines(numberOfGuidelines)
-            .numberOfActiveGuidelines(activeGuidelines)
-            .numberOfInactiveGuidelines(inactiveGuidelines)
-            .numberOfAccount(numberOfAccount)
-            .numberOfActiveAccount(numberOfActiveAccount)
-            .numberOfInactiveAccount(numberOfInactiveAccount)
-            .numberOfModels(numberOfModels)
-            .numberOfActiveModels(numberOfActiveModels)
-            .numberOfInactiveModels(numberOfInactiveModels)
-            .companySubscriptionResponse(companySubscriptionResponse)
-            .top3Guidelines(top3GuidelinesList)
-            .build();
+        .numberOfGuidelines(numberOfGuidelines)
+        .numberOfActiveGuidelines(activeGuidelines)
+        .numberOfInactiveGuidelines(inactiveGuidelines)
+        .numberOfAccount(numberOfAccount)
+        .numberOfActiveAccount(numberOfActiveAccount)
+        .numberOfInactiveAccount(numberOfInactiveAccount)
+        .numberOfModels(numberOfModels)
+        .numberOfActiveModels(numberOfActiveModels)
+        .numberOfInactiveModels(numberOfInactiveModels)
+        .companySubscriptionResponse(companySubscriptionResponse)
+        .top3Guidelines(top3GuidelinesList)
+        .build();
   }
 }
