@@ -28,11 +28,10 @@ public class DashboardController {
         .build();
   }
 
-  @GetMapping(value = ConstAPI.DashboardAPI.COMPANY_DASHBOARD+"/{companyId}")
+  @GetMapping(value = ConstAPI.DashboardAPI.COMPANY_DASHBOARD + "/{companyId}")
   ApiResponse<CompanyDashboardResponse> findCompanyDashboard(String companyId) {
     return ApiResponse.<CompanyDashboardResponse>builder()
-            .result(dashboardService.getCompanyDashboardById(companyId))
-            .build();
+        .result(dashboardService.getCompanyDashboardById(companyId))
+        .build();
   }
-
 }

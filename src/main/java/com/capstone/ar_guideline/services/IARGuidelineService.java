@@ -26,4 +26,6 @@ public interface IARGuidelineService {
   void deleteCourseById(String courseId);
 
   ModelResponse updateModel(String id, ModelCreationRequest request);
+
+  void changeStatusCourse(String courseId);
 }
