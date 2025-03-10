@@ -1,33 +1,33 @@
 package com.capstone.ar_guideline.dtos.responses.Dashboard;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyDashboardResponse {  private Integer numberOfGuidelines;
-    private Integer numberOfActiveGuidelines;
-    private Integer numberOfInactiveGuidelines;
-    private Integer numberOfAccount;
-    private Integer numberOfActiveAccount;
-    private Integer numberOfInactiveAccount;
-    private Integer numberOfModels;
-    private Integer numberOfActiveModels;
-    private Integer numberOfInactiveModels;
-    private List<Top3Guidelines> top3Guidelines;
+public class CompanyDashboardResponse {
+  private Integer numberOfGuidelines;
+  private Integer numberOfActiveGuidelines;
+  private Integer numberOfInactiveGuidelines;
+  private Integer numberOfAccount;
+  private Integer numberOfActiveAccount;
+  private Integer numberOfInactiveAccount;
+  private Integer numberOfModels;
+  private Integer numberOfActiveModels;
+  private Integer numberOfInactiveModels;
+  private List<Top3Guidelines> top3Guidelines;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Top3Guidelines {
-        private String name;
-        private Integer scanTimes;
-    }
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class Top3Guidelines {
+    private String name;
+    private Integer scanTimes;
+  }
 }

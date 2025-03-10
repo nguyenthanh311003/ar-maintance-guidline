@@ -42,6 +42,7 @@ public class AdminDashboardResponse {
     private String name;
     private Double revenue;
   }
+
   @Data
   @Builder
   @NoArgsConstructor

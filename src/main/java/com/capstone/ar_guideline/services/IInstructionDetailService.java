@@ -23,4 +23,6 @@ public interface IInstructionDetailService {
   Boolean swapOrder(String instructionDetailIdCurrent, String instructionDetailIdSwap);
 
   Boolean deleteByInstructionId(String instructionId);
+
+  Integer countInstructionDetailByCourseId(String courseId);
 }

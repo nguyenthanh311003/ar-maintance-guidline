@@ -87,7 +87,8 @@ public class DashboardService {
     }
 
     int currentYear = java.time.Year.now().getValue();
-    List<Object[]> monthlyRevenues = orderTransactionRepository.getMonthlyPaidOrderAmounts(currentYear);
+    List<Object[]> monthlyRevenues =
+        orderTransactionRepository.getMonthlyPaidOrderAmounts(currentYear);
     List<AdminDashboardResponse.MonthRevenue> monthRevenueList = new ArrayList<>();
 
     for (Object[] result : monthlyRevenues) {
@@ -110,10 +111,10 @@ public class DashboardService {
         .numberOfActiveAccount(numberOfActiveAccount)
         .numberOfInactiveAccount(numberOfInactiveAccount)
         .numberOfModels(numberOfModels)
-            .numberOfInactiveModels(numberOfInactiveModels)
-            .numberOfActiveModels(numberOfActiveModels)
-            .monthRevenueList(monthRevenueList)
-            .totalRevenue(totalRevenue)
+        .numberOfInactiveModels(numberOfInactiveModels)
+        .numberOfActiveModels(numberOfActiveModels)
+        .monthRevenueList(monthRevenueList)
+        .totalRevenue(totalRevenue)
         .companyRevenueList(companyRevenueList)
         .subscriptionRevenueList(subscriptionRevenueList)
         .build();
@@ -141,7 +142,8 @@ public class DashboardService {
     List<CompanyDashboardResponse.Top3Guidelines> top3GuidelinesList = new ArrayList<>();
 
     for (Course course : top3Courses) {
-      CompanyDashboardResponse.Top3Guidelines guideline = new CompanyDashboardResponse.Top3Guidelines();
+      CompanyDashboardResponse.Top3Guidelines guideline =
+          new CompanyDashboardResponse.Top3Guidelines();
       guideline.setName(course.getTitle());
       guideline.setScanTimes(course.getNumberOfScan());
       top3GuidelinesList.add(guideline);
@@ -149,16 +151,16 @@ public class DashboardService {
 
     // Build and return the response
     return CompanyDashboardResponse.builder()
-            .numberOfGuidelines(numberOfGuidelines)
-            .numberOfActiveGuidelines(activeGuidelines)
-            .numberOfInactiveGuidelines(inactiveGuidelines)
-            .numberOfAccount(numberOfAccount)
-            .numberOfActiveAccount(numberOfActiveAccount)
-            .numberOfInactiveAccount(numberOfInactiveAccount)
-            .numberOfModels(numberOfModels)
-            .numberOfActiveModels(numberOfActiveModels)
-            .numberOfInactiveModels(numberOfInactiveModels)
-            .top3Guidelines(top3GuidelinesList)
-            .build();
+        .numberOfGuidelines(numberOfGuidelines)
+        .numberOfActiveGuidelines(activeGuidelines)
+        .numberOfInactiveGuidelines(inactiveGuidelines)
+        .numberOfAccount(numberOfAccount)
+        .numberOfActiveAccount(numberOfActiveAccount)
+        .numberOfInactiveAccount(numberOfInactiveAccount)
+        .numberOfModels(numberOfModels)
+        .numberOfActiveModels(numberOfActiveModels)
+        .numberOfInactiveModels(numberOfInactiveModels)
+        .top3Guidelines(top3GuidelinesList)
+        .build();
   }
 }

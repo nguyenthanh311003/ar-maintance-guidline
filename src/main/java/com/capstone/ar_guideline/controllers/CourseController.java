@@ -96,7 +96,7 @@ public class CourseController {
 
   @PutMapping(value = ConstAPI.CourseAPI.CHANGE_STATUS_GUIDELINE + "{courseId}")
   public ApiResponse<String> changeStatusByCourseId(@PathVariable String courseId) {
-    courseService.changeStatusByCourseId(courseId);
+    arGuidelineService.changeStatusCourse(courseId);
     return ApiResponse.<String>builder()
         .result("Course status has been changed successfully")
         .build();

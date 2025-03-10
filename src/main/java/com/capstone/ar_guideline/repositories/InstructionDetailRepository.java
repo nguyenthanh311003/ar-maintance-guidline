@@ -18,4 +18,14 @@ public interface InstructionDetailRepository extends JpaRepository<InstructionDe
       value =
           "SELECT i FROM InstructionDetail i WHERE i.instruction.id = :instructionId ORDER BY i.orderNumber ASC")
   List<InstructionDetail> getByInstructionId(@Param("instructionId") String instructionId);
+
+  @Query(
+      """
+        SELECT COUNT(id)
+        FROM InstructionDetail id
+        WHERE id.instruction.id IN (
+            SELECT i.id FROM Instruction i WHERE i.course.id = :courseId
+        )
+        """)
+  Integer countInstructionDetailByCourseId(@Param("courseId") String courseId);
 }

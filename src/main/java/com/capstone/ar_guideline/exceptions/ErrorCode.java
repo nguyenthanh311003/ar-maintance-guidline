@@ -111,6 +111,15 @@ public enum ErrorCode {
   COMPANY_SUBSCRIPTION_USER_OVER_LIMIT(
       1094, "Company User is greater than subscription limit", HttpStatus.BAD_REQUEST),
   MODEL_NAME_EXISTED(1095, "Model existed", HttpStatus.BAD_REQUEST),
+  UPDATE_GUIDELINE_FAIL_MODEL_INACTIVE_STATUS(
+      1096,
+      "Can not change guideline active because model of this guideline is inactive",
+      HttpStatus.BAD_REQUEST),
+  INSTRUCTION_DETAIL_COUNT_FAILED(1097, "Instruction detail count failed", HttpStatus.BAD_REQUEST),
+  UPDATE_GUIDELINE_FAIL_INSTRUCTION_COUNT(
+      1098,
+      "Can not change guideline active because this guideline need more than 1 instruction detail",
+      HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;
