@@ -284,16 +284,17 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
             courseService.changeStatusByCourseId(courseByModelId.getId());
           }
         }
-      } else if (modelById.getId() != null
-          && request.getStatus().equals(ConstStatus.ACTIVE_STATUS)) {
-        Course courseByModelId = courseService.findByModelId(modelById.getId());
-
-        if (!Objects.isNull(courseByModelId)) {
-          if (courseByModelId.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
-            courseService.changeStatusByCourseId(courseByModelId.getId());
-          }
-        }
       }
+      //            else if (modelById.getId() != null
+      //                    && request.getStatus().equals(ConstStatus.ACTIVE_STATUS)) {
+      //                Course courseByModelId = courseService.findByModelId(modelById.getId());
+      //
+      //                if (!Objects.isNull(courseByModelId)) {
+      //                    if (courseByModelId.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
+      //                        courseService.changeStatusByCourseId(courseByModelId.getId());
+      //                    }
+      //                }
+      //            }
 
       modelById = modelService.update(modelById);
 
@@ -303,6 +304,44 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         throw exception;
       }
       throw new AppException(ErrorCode.MODEL_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public void changeStatusCourse(String courseId) {
+    try {
+      Course courseById = courseService.findById(courseId);
+
+      if (courseById.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
+        ModelResponse modelByCourseId = modelService.getByCourseId(courseId);
+        Integer numberOfInstructionDetail =
+            instructionDetailService.countInstructionDetailByCourseId(courseById.getId());
+        if (Objects.isNull(modelByCourseId)) {
+          throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+        }
+
+        if (Objects.isNull(numberOfInstructionDetail)) {
+          throw new AppException(ErrorCode.INSTRUCTION_DETAIL_COUNT_FAILED);
+        }
+
+        if (modelByCourseId.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
+          throw new AppException(ErrorCode.UPDATE_GUIDELINE_FAIL_MODEL_INACTIVE_STATUS);
+        } else if (numberOfInstructionDetail <= 0) {
+          throw new AppException(ErrorCode.UPDATE_GUIDELINE_FAIL_INSTRUCTION_COUNT);
+        } else {
+          courseById.setStatus(ConstStatus.ACTIVE_STATUS);
+        }
+
+      } else {
+        courseById.setStatus(ConstStatus.INACTIVE_STATUS);
+      }
+
+      courseService.save(courseById);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_UPDATE_FAILED);
     }
   }
 }

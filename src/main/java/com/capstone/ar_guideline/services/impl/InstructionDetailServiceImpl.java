@@ -207,6 +207,18 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
     }
   }
 
+  @Override
+  public Integer countInstructionDetailByCourseId(String courseId) {
+    try {
+      return instructionDetailRepository.countInstructionDetailByCourseId(courseId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_DETAIL_COUNT_FAILED);
+    }
+  }
+
   private Integer getHighestOrderNumber(String instructionId) {
     try {
       return instructionDetailRepository.getHighestOrderNumber(instructionId);
