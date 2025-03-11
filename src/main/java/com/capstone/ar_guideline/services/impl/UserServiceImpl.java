@@ -108,7 +108,7 @@ public class UserServiceImpl implements IUserService {
       if (userByEmail.isPresent()) {
         throw new AppException(ErrorCode.USER_EXISTED);
       }
-
+      String passwordToSend = signUpWitRoleRequest.getPassword();
       User user = UserMapper.fromSignUpRequestToEntity(signUpWitRoleRequest);
       user.setRole(role);
       user.setCompany(company);
@@ -119,7 +119,7 @@ public class UserServiceImpl implements IUserService {
 
       var jwt = jwtService.generateToken(user);
       UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
-
+      emailService.sendActiveAccountToCompany(user.getEmail(), user.getUsername(), passwordToSend);
       return AuthenticationResponse.builder()
           .message("User created successfully")
           .token(jwt)
@@ -141,12 +141,12 @@ public class UserServiceImpl implements IUserService {
       if (Objects.isNull(role)) {
         throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
       }
-
+      String passwordToSend = signUpRequest.getPassword();
       CompanyCreationRequest companyCreationRequest =
           CompanyCreationRequest.builder().companyName(signUpRequest.getCompany()).build();
       Company newCompany = companyService.create(companyCreationRequest);
       User user = UserMapper.fromSignUpRequestToEntity(signUpRequest);
-      user.setStatus(ConstStatus.PENDING);
+      user.setStatus(ConstStatus.ACTIVE_STATUS);
       user.setRole(role);
       user.setCompany(newCompany);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -154,6 +154,7 @@ public class UserServiceImpl implements IUserService {
 
       var jwt = jwtService.generateToken(user);
       UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
+      emailService.sendActiveAccountToCompany(user.getEmail(), user.getUsername(), passwordToSend);
 
       return AuthenticationResponse.builder()
           .message("User created successfully")
@@ -389,5 +390,22 @@ public class UserServiceImpl implements IUserService {
 
   private List<User> findAllByCompanyId(String companyId) {
     return userRepository.findByCompanyId(companyId);
+  }
+
+  @Override
+  public Boolean deleteUser(String id) {
+    try {
+      User userById =
+          userRepository
+              .findById(id)
+              .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+      userRepository.delete(userById);
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_DELETE_FAILED);
+    }
   }
 }

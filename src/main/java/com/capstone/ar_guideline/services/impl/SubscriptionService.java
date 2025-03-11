@@ -133,4 +133,17 @@ public class SubscriptionService implements ISubscriptionService {
       throw new AppException(ErrorCode.SUBSCRIPTION_NOT_EXISTED);
     }
   }
+
+  @Override
+  public SubscriptionResponse findByCompanyId(String companyId) {
+    try {
+      Subscription subscription = subscriptionRepository.findByCompanyId(companyId).get();
+      return SubscriptionMapper.fromEntityToSubscriptionResponse(subscription);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.SUBSCRIPTION_NOT_EXISTED);
+    }
+  }
 }

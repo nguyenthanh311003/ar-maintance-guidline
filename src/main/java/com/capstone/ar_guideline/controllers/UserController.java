@@ -134,4 +134,9 @@ public class UserController {
         .result(userService.resetPasswordStaff(userId, newPassword))
         .build();
   }
+
+  @DeleteMapping(value = ConstAPI.UserAPI.PREFIX_USER + "{userId}")
+  ApiResponse<Boolean> deleteUser(@PathVariable String userId) {
+    return ApiResponse.<Boolean>builder().result(userService.deleteUser(userId)).build();
+  }
 }

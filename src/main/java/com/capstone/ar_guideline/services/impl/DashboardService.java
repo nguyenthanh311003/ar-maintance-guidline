@@ -142,7 +142,7 @@ public class DashboardService {
 
     // Get top 3 guidelines by scan times for the company
     Pageable topThree = PageRequest.of(0, 3);
-    List<Course> top3Courses = courseRepository.findTop3CoursesByScanTimes(topThree,companyId);
+    List<Course> top3Courses = courseRepository.findTop3CoursesByScanTimes(topThree, companyId);
     List<CompanyDashboardResponse.Top3Guidelines> top3GuidelinesList = new ArrayList<>();
 
     for (Course course : top3Courses) {

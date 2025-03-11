@@ -50,8 +50,9 @@ public class SubscriptionController {
   }
 
   @GetMapping(value = ConstAPI.SubscriptionAPI.GET_CURRENT_PLAN + "{companyId}")
-  ApiResponse<String> getCurrentPlan(@PathVariable String companyId) {
-    subscriptionService.delete(companyId);
-    return ApiResponse.<String>builder().result("Subscription detail has been deleted").build();
+  ApiResponse<SubscriptionResponse> getCurrentPlan(@PathVariable String companyId) {
+    return ApiResponse.<SubscriptionResponse>builder()
+        .result(subscriptionService.findByCompanyId(companyId))
+        .build();
   }
 }

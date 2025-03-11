@@ -120,6 +120,7 @@ public enum ErrorCode {
       1098,
       "Can not change guideline active because this guideline need more than 1 instruction detail",
       HttpStatus.BAD_REQUEST),
+  USER_DELETE_FAILED(1098, "Delete user failed", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;
