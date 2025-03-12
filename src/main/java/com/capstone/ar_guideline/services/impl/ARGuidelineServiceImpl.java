@@ -259,7 +259,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       modelById.setModelCode(request.getModelCode());
       modelById.setName(request.getName());
       modelById.setDescription(request.getDescription());
-      modelById.setVersion(request.getVersion());
       modelById.setScale(request.getScale());
 
       modelById.setPosition(
@@ -295,9 +294,14 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       //                    }
       //                }
       //            }
+      if (modelById.getVersion() != null) {
+        int currentVersion = Integer.parseInt(modelById.getVersion());
+        modelById.setVersion(String.valueOf(currentVersion + 1));
+      } else {
+        modelById.setVersion("1");
+      }
 
       modelById = modelService.update(modelById);
-
       return ModelMapper.fromEntityToModelResponse(modelById);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
