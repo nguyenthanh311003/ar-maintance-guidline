@@ -3,11 +3,9 @@ package com.capstone.ar_guideline.services.impl;
 import static com.capstone.ar_guideline.constants.ConstAPI.OrderTransactionAPI.HANDLE_ORDER_STATUS;
 
 import com.capstone.ar_guideline.constants.ConstStatus;
-import com.capstone.ar_guideline.dtos.requests.CompanySubscription.ComSubscriptionCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.OrderTransaction.OrderTransactionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.OrderTransaction.OrderTransactionResponse;
 import com.capstone.ar_guideline.entities.OrderTransaction;
-import com.capstone.ar_guideline.entities.Subscription;
 import com.capstone.ar_guideline.payos.CreatePaymentLinkRequestBody;
 import com.capstone.ar_guideline.services.ICompanySubscriptionService;
 import com.capstone.ar_guideline.services.IOrderTransactionService;
@@ -15,8 +13,6 @@ import com.capstone.ar_guideline.services.ISubscriptionService;
 import com.capstone.ar_guideline.services.IUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +43,7 @@ public class PayOsService {
 
   @Lazy @Autowired private ICompanySubscriptionService companySubscriptionService;
 
-  @Autowired
-  WalletServiceImpl walletService;
+  @Autowired WalletServiceImpl walletService;
 
   @Autowired IUserService userService;
 
@@ -74,12 +69,7 @@ public class PayOsService {
 
       returnUrl = returnUrl + orderCode;
       cancelUrl = returnUrl;
-      ItemData item =
-          ItemData.builder()
-              .name("point")
-              .price(price)
-              .quantity(1)
-              .build();
+      ItemData item = ItemData.builder().name("point").price(price).quantity(1).build();
 
       PaymentData paymentData =
           PaymentData.builder()
@@ -168,10 +158,12 @@ public class PayOsService {
     try {
       PaymentLinkData order = payOS.getPaymentLinkInformation(orderId);
       OrderTransaction payment = paymentService.findByOrderCode(orderId);
-      if (order.getStatus().equals(ConstStatus.PAID) && !payment.getStatus().equals(ConstStatus.PAID)) {
+      if (order.getStatus().equals(ConstStatus.PAID)
+          && !payment.getStatus().equals(ConstStatus.PAID)) {
         paymentService.changeStatus(payment.getId(), ConstStatus.PAID);
         // Update wallet balance
-        walletService.updateBalance(payment.getUser().getWallet().getId(), (long) (payment.getAmount() / 100), true);
+        walletService.updateBalance(
+            payment.getUser().getWallet().getId(), (long) (payment.getAmount() / 1000), true);
       } else if (!order.getStatus().equals(ConstStatus.PAID)) {
         paymentService.changeStatus(payment.getId(), ConstStatus.CANCEL);
         return new RedirectView(frontEndHost + "/payment/failed");

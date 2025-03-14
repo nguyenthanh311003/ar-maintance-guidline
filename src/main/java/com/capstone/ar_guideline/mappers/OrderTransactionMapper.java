@@ -8,7 +8,10 @@ import com.capstone.ar_guideline.entities.User;
 public class OrderTransactionMapper {
   public static OrderTransaction fromOrderTransactionCreationRequestToEntity(
       OrderTransactionCreationRequest request, User user) {
-    return OrderTransaction.builder().user(user).amount(Double.valueOf(request.getAmount())).build();
+    return OrderTransaction.builder()
+        .user(user)
+        .amount(Double.valueOf(request.getAmount()))
+        .build();
   }
 
   public static OrderTransactionResponse fromEntityToOrderTransactionResponse(

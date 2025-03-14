@@ -18,7 +18,6 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.UserMapper;
 import com.capstone.ar_guideline.repositories.UserRepository;
 import com.capstone.ar_guideline.services.*;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -155,7 +154,7 @@ public class UserServiceImpl implements IUserService {
       user = userRepository.save(user);
       // Create wallet for user if the role is company
       if (role.getRoleName().equalsIgnoreCase("COMPANY")) {
-        walletService.createWallet(user, BigDecimal.ZERO, "VND");
+        walletService.createWallet(user, 0L, "VND");
       }
 
       var jwt = jwtService.generateToken(user);

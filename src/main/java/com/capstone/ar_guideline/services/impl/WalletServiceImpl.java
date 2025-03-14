@@ -5,7 +5,6 @@ import com.capstone.ar_guideline.entities.User;
 import com.capstone.ar_guideline.entities.Wallet;
 import com.capstone.ar_guideline.mappers.WalletMapper;
 import com.capstone.ar_guideline.repositories.WalletRepository;
-import java.math.BigDecimal;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

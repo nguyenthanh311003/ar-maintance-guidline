@@ -31,9 +31,7 @@ public class ScheduleService {
       User user = userRepository.findUserByCompanyId(companySubscription.getId());
       ObjectNode objectNode =
           payOsService.createPaymentLink(
-              CreatePaymentLinkRequestBody.builder()
-                  .userId(user.getId())
-                  .build());
+              CreatePaymentLinkRequestBody.builder().userId(user.getId()).build());
       emailService.sendSubscriptionReminderEmail(
           user.getEmail(),
           user.getCompany().getCompanyName(),
