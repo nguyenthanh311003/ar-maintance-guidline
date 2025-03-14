@@ -19,7 +19,7 @@ public class WalletServiceImpl {
   @Autowired private WalletRepository walletRepository;
 
   @Transactional
-  public WalletResponse createWallet(User user, BigDecimal initialBalance, String currency) {
+  public WalletResponse createWallet(User user, Long initialBalance, String currency) {
     Wallet wallet = Wallet.builder().user(user).balance(initialBalance).currency(currency).build();
     log.info("Creating wallet for user: {}", user.getId());
     log.info("Wallet details: {}", wallet);
@@ -29,14 +29,14 @@ public class WalletServiceImpl {
     return WalletMapper.toResponse(walletRepository.save(wallet));
   }
 
-  public Wallet updateBalance(String walletId, BigDecimal amount, boolean isPlus) {
+  public Wallet updateBalance(String walletId, Long amount, boolean isPlus) {
     Optional<Wallet> walletOptional = walletRepository.findById(walletId);
     if (walletOptional.isPresent()) {
       Wallet wallet = walletOptional.get();
       if (isPlus) {
-        wallet.setBalance(wallet.getBalance().add(amount));
+        wallet.setBalance(wallet.getBalance() + (amount));
       } else {
-        wallet.setBalance(wallet.getBalance().subtract(amount));
+        wallet.setBalance(wallet.getBalance() - (amount));
       }
       return walletRepository.save(wallet);
     } else {

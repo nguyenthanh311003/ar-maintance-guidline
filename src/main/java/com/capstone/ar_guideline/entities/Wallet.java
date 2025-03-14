@@ -26,8 +26,8 @@ public class Wallet {
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private User user;
 
-  @Column(name = "balance", precision = 19, scale = 2)
-  private BigDecimal balance;
+  @Column(name = "balance")
+  private Long balance;
 
   @Column(name = "currency", length = 10)
   private String currency;

@@ -38,12 +38,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class OrderTransactionServiceImpl implements IOrderTransactionService {
   OrderTransactionRepository orderTransactionRepository;
-  RedisTemplate<String, Object> redisTemplate;
   IUserService userService;
-  ISubscriptionService subscriptionService;
-  ICompanySubscriptionService companySubscriptionService;
-
-  private final String[] keysToRemove = {ConstHashKey.HASH_KEY_ORDER_TRANSACTION};
 
   @Override
   @Transactional
@@ -51,22 +46,14 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
     try {
       User userById = userService.findById(request.getUserId());
 
-      Subscription subscription = subscriptionService.findByCode(request.getItemCode());
-
       OrderTransaction newOrderTransaction =
-          OrderTransactionMapper.fromOrderTransactionCreationRequestToEntity(request, userById);
+              OrderTransactionMapper.fromOrderTransactionCreationRequestToEntity(request, userById);
       newOrderTransaction.setStatus(ConstStatus.PENDING);
 
-      String orderCodeRandom = UUID.randomUUID().toString().replace("-", "");
-
-      newOrderTransaction.setAmount(subscription.getMonthlyFee());
 
       newOrderTransaction = orderTransactionRepository.save(newOrderTransaction);
-      ComSubscriptionCreationRequest comSubscriptionCreationRequest =
-          ComSubscriptionCreationRequest.builder()
-              .companyId(userById.getCompany().getId())
-              .subscriptionId(subscription.getId())
-              .build();
+
+
       return OrderTransactionMapper.fromEntityToOrderTransactionResponse(newOrderTransaction);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
@@ -84,17 +71,6 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
       User userById = userService.findById(request.getUserId());
 
       orderTransactionById.setUser(userById);
-      orderTransactionById.setItemCode(request.getItemCode());
-
-      orderTransactionById = orderTransactionRepository.save(orderTransactionById);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return OrderTransactionMapper.fromEntityToOrderTransactionResponse(orderTransactionById);
     } catch (Exception exception) {
@@ -112,13 +88,6 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
 
       orderTransactionRepository.deleteById(orderTransactionById.getId());
 
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_OBJECT)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
     } catch (Exception exception) {
       if (exception instanceof AppException) {

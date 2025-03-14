@@ -15,6 +15,8 @@ import com.capstone.ar_guideline.services.ISubscriptionService;
 import com.capstone.ar_guideline.services.IUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,23 +47,24 @@ public class PayOsService {
 
   @Lazy @Autowired private ICompanySubscriptionService companySubscriptionService;
 
+  @Autowired
+  WalletServiceImpl walletService;
+
   @Autowired IUserService userService;
 
   public ObjectNode createPaymentLink(CreatePaymentLinkRequestBody requestBody) {
     ObjectMapper objectMapper = new ObjectMapper();
     ObjectNode response = objectMapper.createObjectNode();
     try {
-      Subscription subscription = subscriptionService.findByCode(requestBody.getProductName());
 
-      final String description = subscription.getSubscriptionCode() + ".";
       String returnUrl = backEndHost + "/" + HANDLE_ORDER_STATUS;
       String cancelUrl = "";
-      final int price = Integer.parseInt(subscription.getMonthlyFee().toString().replace(".0", ""));
+      final Integer price = requestBody.getAmount();
 
       // create order
       OrderTransactionCreationRequest paymentRequest = new OrderTransactionCreationRequest();
       paymentRequest.setUserId(requestBody.getUserId());
-      paymentRequest.setItemCode(subscription.getSubscriptionCode());
+      paymentRequest.setAmount(requestBody.getAmount());
       OrderTransactionResponse payment = paymentService.create(paymentRequest);
 
       // Gen order code
@@ -73,7 +76,7 @@ public class PayOsService {
       cancelUrl = returnUrl;
       ItemData item =
           ItemData.builder()
-              .name(subscription.getSubscriptionCode())
+              .name("point")
               .price(price)
               .quantity(1)
               .build();
@@ -81,7 +84,7 @@ public class PayOsService {
       PaymentData paymentData =
           PaymentData.builder()
               .orderCode(orderCode)
-              .description(description)
+              .description("Point")
               .amount(price)
               .item(item)
               .returnUrl(returnUrl)
@@ -163,23 +166,14 @@ public class PayOsService {
 
   public RedirectView handleOrderStatus(long orderId) {
     try {
-      PaymentLinkData order = null;
-      order = payOS.getPaymentLinkInformation(orderId);
+      PaymentLinkData order = payOS.getPaymentLinkInformation(orderId);
       OrderTransaction payment = paymentService.findByOrderCode(orderId);
-      if (order.getStatus().equals(ConstStatus.PAID)
-          && payment.getStatus().equals(ConstStatus.PAID)) {
-        return new RedirectView(frontEndHost + "/payment/success");
-      }
-      if (order.getStatus().equals(ConstStatus.PAID)
-          && !payment.getStatus().equals(ConstStatus.PAID)) {
+      if (order.getStatus().equals(ConstStatus.PAID) && !payment.getStatus().equals(ConstStatus.PAID)) {
         paymentService.changeStatus(payment.getId(), ConstStatus.PAID);
-        ComSubscriptionCreationRequest request = new ComSubscriptionCreationRequest();
-        Subscription subscription = subscriptionService.findByCode(payment.getItemCode());
-        request.setCompanyId(payment.getUser().getCompany().getId());
-        request.setSubscriptionId(subscription.getId());
-        companySubscriptionService.create(request);
-      } else {
-        paymentService.changeStatus(ConstStatus.CANCEL, payment.getId());
+        // Update wallet balance
+        walletService.updateBalance(payment.getUser().getWallet().getId(), (long) (payment.getAmount() / 100), true);
+      } else if (!order.getStatus().equals(ConstStatus.PAID)) {
+        paymentService.changeStatus(payment.getId(), ConstStatus.CANCEL);
         return new RedirectView(frontEndHost + "/payment/failed");
       }
       return new RedirectView(frontEndHost + "/payment/success");

@@ -32,7 +32,6 @@ public class ScheduleService {
       ObjectNode objectNode =
           payOsService.createPaymentLink(
               CreatePaymentLinkRequestBody.builder()
-                  .productName(companySubscription.getSubscription().getSubscriptionCode())
                   .userId(user.getId())
                   .build());
       emailService.sendSubscriptionReminderEmail(

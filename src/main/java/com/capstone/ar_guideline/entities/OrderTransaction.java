@@ -21,7 +21,6 @@ public class OrderTransaction {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  private String itemCode;
   private Long orderCode;
   private String status;
   private Double amount;
