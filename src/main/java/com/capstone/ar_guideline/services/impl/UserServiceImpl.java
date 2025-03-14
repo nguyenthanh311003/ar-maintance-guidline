@@ -18,6 +18,7 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.UserMapper;
 import com.capstone.ar_guideline.repositories.UserRepository;
 import com.capstone.ar_guideline.services.*;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -48,6 +49,7 @@ public class UserServiceImpl implements IUserService {
   ICompanyService companyService;
   EmailService emailService;
   ICompanySubscriptionService companySubscriptionService;
+  WalletServiceImpl walletService;
 
   @Override
   public AuthenticationResponse login(LoginRequest loginRequest) {
@@ -151,6 +153,10 @@ public class UserServiceImpl implements IUserService {
       user.setCompany(newCompany);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
+      // Create wallet for user if the role is company
+      if (role.getRoleName().equalsIgnoreCase("COMPANY")) {
+        walletService.createWallet(user, BigDecimal.ZERO, "VND");
+      }
 
       var jwt = jwtService.generateToken(user);
       UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);

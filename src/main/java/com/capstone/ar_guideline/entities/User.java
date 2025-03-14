@@ -61,6 +61,9 @@ public class User implements UserDetails, Serializable {
   private String deviceId;
   private Boolean isPayAdmin;
 
+  @OneToOne(mappedBy = "user")
+  private Wallet wallet;
+
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
   private LocalDateTime createdDate;

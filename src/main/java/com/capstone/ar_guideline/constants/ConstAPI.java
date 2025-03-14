@@ -164,4 +164,8 @@ public class ConstAPI {
     public static final String ADMIN_DASHBOARD = "api/v1/dashboard/admin";
     public static final String COMPANY_DASHBOARD = "api/v1/dashboard/company";
   }
+
+  public static class WalletAPI {
+    public static final String WALLET = "api/v1/wallets/user";
+  }
 }
