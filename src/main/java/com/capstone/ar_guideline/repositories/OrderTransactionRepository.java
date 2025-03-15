@@ -35,18 +35,6 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
   List<Object[]> getCompaniesWithTotalPaidOrders();
 
   @Query(
-      "SELECT s, COALESCE(SUM(ot.amount), 0) AS totalAmount "
-          + "FROM Subscription s "
-          + "JOIN s.companySubscriptions cs "
-          + "JOIN cs.company c "
-          + "JOIN c.users u "
-          + "JOIN u.orderTransactions ot "
-          + "WHERE ot.status = 'PAID' "
-          + "GROUP BY s "
-          + "ORDER BY totalAmount DESC")
-  List<Object[]> getSubcriptionWithTotalPaidOrders();
-
-  @Query(
       value =
           "SELECT m.month, COALESCE(SUM(ot.amount), 0) AS totalAmount "
               + "FROM (SELECT 1 AS month UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) AS m "

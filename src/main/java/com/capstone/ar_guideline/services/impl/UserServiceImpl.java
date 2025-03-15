@@ -178,7 +178,9 @@ public class UserServiceImpl implements IUserService {
       int page, int size, String companyId, String keyword, String isAssign, String courseId) {
     try {
       Pageable pageable = PageRequest.of(page - 1, size);
-      return userRepository.getUserByCompanyId(pageable, companyId, keyword, isAssign, courseId);
+      //      return userRepository.getUserByCompanyId(pageable, companyId, keyword, isAssign,
+      // courseId);
+      return null;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -205,7 +207,8 @@ public class UserServiceImpl implements IUserService {
   @Override
   public int countUsersByCompanyId(
       String companyId, String keyword, String isAssign, String courseId) {
-    return userRepository.countUsersByCompanyId(companyId, keyword, isAssign, courseId);
+    // return userRepository.countUsersByCompanyId(companyId, keyword, isAssign, courseId);
+    return 0;
   }
 
   @Override

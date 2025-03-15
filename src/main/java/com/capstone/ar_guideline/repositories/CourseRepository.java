@@ -20,15 +20,6 @@ public interface CourseRepository extends JpaRepository<Course, String> {
       @Param("status") String status,
       @Param("companyId") String companyId);
 
-  @Query(
-      "SELECT e.course FROM Enrollment e WHERE e.user.id = :userId AND (e.course.isMandatory = :isMandatory or e.course.isMandatory IS NULL) AND (e.course.title = :searchTemp OR e.course.description = :searchTemp OR :searchTemp IS NULL) AND (e.course.status = :status OR :status IS NULL)")
-  List<Course> findAllCourseEnrolledBy(
-      Pageable pageable,
-      @Param("isMandatory") Boolean isMandatory,
-      @Param("userId") String userId,
-      @Param("searchTemp") String searchTemp,
-      @Param("status") String status);
-
   Optional<Course> findByTitle(String title);
 
   @Query(

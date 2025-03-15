@@ -7,8 +7,6 @@ import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.User.AuthenticationResponse;
 import com.capstone.ar_guideline.dtos.responses.User.UserResponse;
-import com.capstone.ar_guideline.dtos.responses.User.UserToAssignResponse;
-import com.capstone.ar_guideline.services.IUserAssignmentService;
 import com.capstone.ar_guideline.services.IUserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,22 +21,22 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class UserController {
   IUserService userService;
-  IUserAssignmentService userAssignmentService;
 
-  @GetMapping(value = ConstAPI.UserAPI.PREFIX_USER + "company/{companyId}/" + "course/{courseId}")
-  public ApiResponse<PagingModel<UserToAssignResponse>> getUserToAssign(
-      @RequestParam(defaultValue = "1") int page,
-      @RequestParam(defaultValue = "10") int size,
-      @RequestParam String keyword,
-      @RequestParam(defaultValue = "") String isAssign,
-      @PathVariable String companyId,
-      @PathVariable String courseId) {
-    return ApiResponse.<PagingModel<UserToAssignResponse>>builder()
-        .result(
-            userAssignmentService.getUsersToAssign(
-                page, size, companyId, courseId, keyword, isAssign))
-        .build();
-  }
+  //  @GetMapping(value = ConstAPI.UserAPI.PREFIX_USER + "company/{companyId}/" +
+  // "course/{courseId}")
+  //  public ApiResponse<PagingModel<UserToAssignResponse>> getUserToAssign(
+  //      @RequestParam(defaultValue = "1") int page,
+  //      @RequestParam(defaultValue = "10") int size,
+  //      @RequestParam String keyword,
+  //      @RequestParam(defaultValue = "") String isAssign,
+  //      @PathVariable String companyId,
+  //      @PathVariable String courseId) {
+  //    return ApiResponse.<PagingModel<UserToAssignResponse>>builder()
+  //        .result(
+  //            userAssignmentService.getUsersToAssign(
+  //                page, size, companyId, courseId, keyword, isAssign))
+  //        .build();
+  //  }
 
   @GetMapping(value = ConstAPI.UserAPI.GET_USERS)
   public ApiResponse<PagingModel<UserResponse>> getUsers(

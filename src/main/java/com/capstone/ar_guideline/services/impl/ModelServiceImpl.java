@@ -5,7 +5,6 @@ import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.entities.Model;
-import com.capstone.ar_guideline.entities.ModelType;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.ModelMapper;
@@ -96,8 +95,6 @@ public class ModelServiceImpl implements IModelService {
 
         modelById.setSize((double) request.getFile().getSize() / ConstCommon.fileUnit);
       }
-      ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
-      modelById.setModelType(modelTypeById);
 
       modelById = modelRepository.save(modelById);
 

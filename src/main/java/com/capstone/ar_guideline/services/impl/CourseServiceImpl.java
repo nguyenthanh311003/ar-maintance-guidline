@@ -75,13 +75,6 @@ public class CourseServiceImpl implements ICourseService {
                 .collect(Collectors.toList());
       } else {
         // get data from database
-        if (isEnrolled) {
-          courses =
-              courseRepository.findAllCourseEnrolledBy(
-                  pageable, isMandatory, userId, searchTemp, status);
-        } else {
-          courses = courseRepository.findAllBy(pageable, searchTemp, status, companyId);
-        }
         courseResponses =
             courses.stream()
                 .map(

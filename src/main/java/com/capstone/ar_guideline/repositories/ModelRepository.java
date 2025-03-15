@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 public interface ModelRepository extends JpaRepository<Model, String> {
   @Query(
       "SELECT m FROM Model m WHERE m.company.id = :companyId "
-          + "AND (:type IS NULL OR :type = '' OR LOWER(m.modelType.name) LIKE LOWER(CONCAT('%', :type, '%'))) "
           + "AND (:name IS NULL OR :name = '' OR LOWER(m.name) LIKE LOWER(CONCAT('%', :name, '%'))) "
           + "AND (:code IS NULL OR :code = '' OR LOWER(m.modelCode) LIKE LOWER(CONCAT('%', :code, '%')))"
           + "ORDER BY m.createdDate DESC")

@@ -141,14 +141,12 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                     ModelResponse modelResponse =
                         ModelResponse.builder()
                             .id(m.getId())
-                            .modelTypeId(m.getModelType().getId())
                             .modelCode(m.getModelCode())
                             .status(m.getStatus())
                             .name(m.getName())
                             .description(m.getDescription())
                             .imageUrl(m.getImageUrl())
                             .version(m.getVersion())
-                            .modelTypeName(m.getModelType().getName())
                             .scale(m.getScale())
                             .isUsed(m.getIsUsed())
                             .file(m.getFile())
@@ -274,7 +272,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         modelById.setFile(FileStorageService.storeFile(request.getFile()));
       }
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
-      modelById.setModelType(modelTypeById);
 
       if (modelById.getId() != null && request.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
         Course courseByModelId = courseService.findByModelId(modelById.getId());
