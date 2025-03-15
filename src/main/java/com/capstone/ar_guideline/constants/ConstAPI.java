@@ -168,4 +168,8 @@ public class ConstAPI {
   public static class WalletAPI {
     public static final String WALLET = "api/v1/wallets/user";
   }
+
+  public static class AssignGuidelineAPI {
+    public static final String ASSIGN_GUIDELINES = "api/v1/assign-guideline";
+  }
 }

@@ -106,4 +106,25 @@ public class EmailService {
       log.error("Failed to send subscription reminder email to {}: {}", toEmail, e.getMessage());
     }
   }
+
+  public void sendAssignGuidelineEmail(String toEmail, String managerEmail, String courseName) {
+    try {
+      SimpleMailMessage message = new SimpleMailMessage();
+      message.setTo(toEmail);
+      message.setSubject("AR Guideline - New Guideline Assigned!");
+      message.setText(
+          "You has been assigned to new course "
+              + courseName
+              + " by "
+              + managerEmail
+              + ".\n\n"
+              + "Please login to the AR guideline mobile app and process your guideline.\n\n"
+              + "\n\n"
+              + "Thank you!");
+
+      mailSender.send(message);
+    } catch (Exception e) {
+      log.error("Failed to send assigned  reminder email to {}: {}", toEmail, e.getMessage());
+    }
+  }
 }
