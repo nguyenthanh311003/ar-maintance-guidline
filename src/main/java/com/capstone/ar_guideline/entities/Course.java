@@ -30,12 +30,6 @@ public class Course implements Serializable {
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
   private List<Instruction> instructions;
 
-  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-  private List<Lesson> lessons;
-
-  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-  private List<Enrollment> enrollments;
-
   private String title;
   private String description;
   private String shortDescription;

@@ -24,22 +24,7 @@ public class User implements UserDetails, Serializable {
   private String id;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<Enrollment> enrollments;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<Result> results;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<LessonProcess> lessonProcesses;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<Log> logs;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private List<OrderTransaction> orderTransactions;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<RequestRecipient> requestRecipients;
 
   @ManyToOne
   @JoinColumn(name = "role_id", nullable = false)

@@ -23,9 +23,6 @@ public class Company implements Serializable {
   private List<User> users;
 
   @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
-  private List<CompanySubscription> companySubscriptions;
-
-  @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
   private List<Course> courses;
 
   @Column(unique = true, nullable = false)

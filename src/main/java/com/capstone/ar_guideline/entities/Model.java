@@ -3,7 +3,6 @@ package com.capstone.ar_guideline.entities;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -14,6 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "asset_model")
 public class Model implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,12 +26,6 @@ public class Model implements Serializable {
   @ManyToOne
   @JoinColumn(name = "company_id")
   private Company company;
-
-  @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
-  private List<Course> courses;
-
-  @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
-  private List<ModelRequest> modelRequests;
 
   private String modelCode;
   private Boolean isUsed;

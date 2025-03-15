@@ -7,9 +7,7 @@ import com.capstone.ar_guideline.dtos.requests.OrderTransaction.OrderTransaction
 import com.capstone.ar_guideline.dtos.responses.OrderTransaction.OrderTransactionResponse;
 import com.capstone.ar_guideline.entities.OrderTransaction;
 import com.capstone.ar_guideline.payos.CreatePaymentLinkRequestBody;
-import com.capstone.ar_guideline.services.ICompanySubscriptionService;
 import com.capstone.ar_guideline.services.IOrderTransactionService;
-import com.capstone.ar_guideline.services.ISubscriptionService;
 import com.capstone.ar_guideline.services.IUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -17,7 +15,6 @@ import java.util.Date;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.RedirectView;
 import vn.payos.PayOS;
@@ -37,11 +34,7 @@ public class PayOsService {
   @Value("${frontend.url}")
   private String frontEndHost;
 
-  @Autowired private ISubscriptionService subscriptionService;
-
   @Autowired private IOrderTransactionService paymentService;
-
-  @Lazy @Autowired private ICompanySubscriptionService companySubscriptionService;
 
   @Autowired WalletServiceImpl walletService;
 

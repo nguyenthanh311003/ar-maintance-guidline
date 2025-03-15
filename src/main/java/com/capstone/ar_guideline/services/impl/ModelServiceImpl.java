@@ -4,14 +4,12 @@ import com.capstone.ar_guideline.constants.ConstCommon;
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
-import com.capstone.ar_guideline.entities.CompanySubscription;
 import com.capstone.ar_guideline.entities.Model;
 import com.capstone.ar_guideline.entities.ModelType;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.ModelMapper;
 import com.capstone.ar_guideline.repositories.ModelRepository;
-import com.capstone.ar_guideline.services.ICompanySubscriptionService;
 import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.services.IModelTypeService;
 import jakarta.transaction.Transactional;
@@ -33,16 +31,11 @@ import org.springframework.stereotype.Service;
 public class ModelServiceImpl implements IModelService {
   ModelRepository modelRepository;
   IModelTypeService modelTypeService;
-  ICompanySubscriptionService companySubscriptionService;
 
   @Override
   @Transactional
   public ModelResponse create(ModelCreationRequest request) throws InterruptedException {
     try {
-      if (isStorageUsageReach(
-          request.getCompanyId(), (double) request.getFile().getSize() / ConstCommon.fileUnit)) {
-        throw new AppException(ErrorCode.COMPANY_SUBSCRIPTION_MODEL_OVER_LIMIT);
-      }
 
       Model modelByName = modelRepository.findByName(request.getName());
 
@@ -63,11 +56,6 @@ public class ModelServiceImpl implements IModelService {
       newModel.setRotation(
           request.getRotation().stream().map(String::valueOf).collect(Collectors.joining(",")));
       newModel = modelRepository.save(newModel);
-
-      companySubscriptionService.updateStorageUsage(
-          request.getCompanyId(),
-          (double) request.getFile().getSize() / ConstCommon.fileUnit,
-          ConstCommon.INCREASE);
 
       return ModelMapper.fromEntityToModelResponse(newModel);
     } catch (Exception exception) {
@@ -104,14 +92,7 @@ public class ModelServiceImpl implements IModelService {
         modelById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       }
       if (request.getFile() != null) {
-        companySubscriptionService.updateStorageUsage(
-            request.getCompanyId(), (double) modelById.getSize() / ConstCommon.fileUnit, "");
-
         modelById.setFile(FileStorageService.storeFile(request.getFile()));
-        companySubscriptionService.updateStorageUsage(
-            request.getCompanyId(),
-            (double) request.getFile().getSize() / ConstCommon.fileUnit,
-            ConstCommon.INCREASE);
 
         modelById.setSize((double) request.getFile().getSize() / ConstCommon.fileUnit);
       }
@@ -134,8 +115,6 @@ public class ModelServiceImpl implements IModelService {
     try {
       Model modelById = findById(id);
       modelRepository.deleteById(modelById.getId());
-      companySubscriptionService.updateStorageUsage(
-          modelById.getCompany().getId(), modelById.getSize(), "");
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -226,16 +205,6 @@ public class ModelServiceImpl implements IModelService {
       }
       throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
     }
-  }
-
-  private boolean isStorageUsageReach(String companyId, Double fileSize) {
-
-    CompanySubscription companySubscription = companySubscriptionService.findByCompanyId(companyId);
-    if (companySubscription.getStorageUsage() + fileSize
-        < companySubscription.getSubscription().getMaxStorageUsage()) {
-      return false;
-    }
-    return true;
   }
 
   @Override

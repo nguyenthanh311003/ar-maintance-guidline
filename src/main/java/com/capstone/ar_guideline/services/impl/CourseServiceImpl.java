@@ -22,8 +22,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -41,9 +39,6 @@ public class CourseServiceImpl implements ICourseService {
   ICompanyService companyService;
   IModelService modelService;
   IInstructionService instructionService;
-
-  @Autowired @Lazy MiddleEnrollmentServiceImpl middleService;
-  @Autowired @Lazy ILessonService lessonService;
 
   private final String[] keysToRemove = {
     ConstHashKey.HASH_KEY_COURSE,
@@ -92,11 +87,6 @@ public class CourseServiceImpl implements ICourseService {
                 .map(
                     course -> {
                       CourseResponse response = CourseMapper.fromEntityToCourseResponse(course);
-                      response.setNumberOfParticipants(
-                          middleService.countByCourseId(course.getId()));
-                      response.setNumberOfLessons(lessonService.countByCourseId(course.getId()));
-                      response.setDuration(
-                          middleService.getDurationOfCourseByCourseId(course.getId()));
                       return response;
                     })
                 .collect(Collectors.toList());
@@ -264,8 +254,6 @@ public class CourseServiceImpl implements ICourseService {
     try {
       Course courseById = findById(id);
       CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(courseById);
-      courseResponse.setNumberOfParticipants(middleService.countByCourseId(courseById.getId()));
-      courseResponse.setNumberOfLessons(lessonService.countByCourseId(courseById.getId()));
       courseResponse.setInstructions(instructionService.findByCourseId(courseById.getId()));
       return courseResponse;
     } catch (Exception exception) {
@@ -303,11 +291,7 @@ public class CourseServiceImpl implements ICourseService {
           .map(
               course -> {
                 CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(course);
-                courseResponse.setNumberOfParticipants(
-                    middleService.countByCourseId(course.getId()));
-                courseResponse.setNumberOfLessons(lessonService.countByCourseId(course.getId()));
-                courseResponse.setDuration(
-                    middleService.getDurationOfCourseByCourseId(course.getId()));
+
                 return courseResponse;
               })
           .toList();
@@ -331,11 +315,6 @@ public class CourseServiceImpl implements ICourseService {
               .map(
                   c -> {
                     CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(c);
-                    courseResponse.setNumberOfParticipants(
-                        middleService.countByCourseId(c.getId()));
-                    courseResponse.setNumberOfLessons(lessonService.countByCourseId(c.getId()));
-                    courseResponse.setDuration(
-                        middleService.getDurationOfCourseByCourseId(c.getId()));
                     return courseResponse;
                   })
               .toList();
