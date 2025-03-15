@@ -167,6 +167,7 @@ public class ConstAPI {
 
   public static class WalletAPI {
     public static final String WALLET = "api/v1/wallets/user";
+    public static final String WALLET_HISTORY = "api/v1/wallets/history/user";
   }
 
   public static class AssignGuidelineAPI {

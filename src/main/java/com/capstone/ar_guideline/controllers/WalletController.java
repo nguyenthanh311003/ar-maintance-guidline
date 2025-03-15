@@ -26,4 +26,11 @@ public class WalletController {
         .result(walletService.findWalletByUserId(userId))
         .build();
   }
+
+  @GetMapping(value = ConstAPI.WalletAPI.WALLET_HISTORY + "/{userId}")
+  ApiResponse<WalletResponse> getWalletHistoryByUserId(@PathVariable String userId) {
+    return ApiResponse.<WalletResponse>builder()
+        .result(walletService.findWalletByUserId(userId))
+        .build();
+  }
 }

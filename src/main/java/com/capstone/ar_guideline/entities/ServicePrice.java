@@ -12,18 +12,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class WalletTransaction {
+public class ServicePrice {
+
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  private String type;
+  private String name;
 
-  @ManyToOne
-  @JoinColumn(name = "service_price_id", referencedColumnName = "id")
-  private ServicePrice servicePrice;
-
-  private Long amount;
+  private Long price;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
