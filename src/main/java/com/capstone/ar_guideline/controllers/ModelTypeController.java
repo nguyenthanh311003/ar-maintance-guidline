@@ -7,6 +7,7 @@ import com.capstone.ar_guideline.dtos.responses.ModelType.ModelTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IModelTypeService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -25,6 +26,13 @@ public class ModelTypeController {
       @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "30") int size) {
     return ApiResponse.<PagingModel<ModelTypeResponse>>builder()
         .result(modelTypeService.getAll(page, size))
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.ModelTypeAPI.GET_MODEL_TYPE_BY_COMPANY + "{companyId}")
+  ApiResponse<List<ModelTypeResponse>> getByCompanyId(@PathVariable String companyId) {
+    return ApiResponse.<List<ModelTypeResponse>>builder()
+        .result(modelTypeService.getModelTypeByCompanyId(companyId))
         .build();
   }
 
