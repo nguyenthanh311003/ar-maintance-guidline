@@ -12,6 +12,6 @@ public class WalletTransactionService {
   @Autowired private WalletTransactionRepository walletTransactionRepository;
 
   public List<WalletTransaction> getAllByUserId(String userId) {
-    return walletTransactionRepository.findAllByUserId(userId);
+    return walletTransactionRepository.findAllByWalletUserId(userId);
   }
 }

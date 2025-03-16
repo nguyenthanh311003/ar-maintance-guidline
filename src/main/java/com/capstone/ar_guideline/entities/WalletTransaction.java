@@ -20,6 +20,10 @@ public class WalletTransaction {
   private String type;
 
   @ManyToOne
+  @JoinColumn(name = "wallet_id", referencedColumnName = "id")
+  private Wallet wallet;
+
+  @ManyToOne
   @JoinColumn(name = "service_price_id", referencedColumnName = "id")
   private ServicePrice servicePrice;
 

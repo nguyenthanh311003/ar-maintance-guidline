@@ -2,6 +2,8 @@ package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +26,9 @@ public class Wallet {
   @OneToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private User user;
+
+  @OneToMany
+  private List<WalletTransaction> transactions;
 
   @Column(name = "balance")
   private Long balance;
