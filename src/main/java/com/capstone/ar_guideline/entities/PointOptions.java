@@ -25,7 +25,8 @@ public class PointOptions {
 
   private Long point;
 
-  @ManyToOne private List<OrderTransaction> orderTransactions;
+  @OneToMany(mappedBy = "pointOptions")
+  private List<OrderTransaction> orderTransactions;
 
   @Column(name = "currency", length = 10)
   private String currency;
