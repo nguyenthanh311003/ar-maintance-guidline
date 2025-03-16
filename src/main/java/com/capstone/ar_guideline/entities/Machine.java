@@ -14,24 +14,23 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class ModelType implements Serializable {
+public class Machine implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  @OneToMany(mappedBy = "modelType", cascade = CascadeType.ALL)
-  private List<Machine> machines;
-
-  @OneToMany(mappedBy = "modelType", cascade = CascadeType.ALL)
-  private List<MachineTypeAttribute> machineTypeAttributes;
+  @ManyToOne
+  @JoinColumn(name = "modelType_id")
+  private ModelType modelType;
 
   @ManyToOne
   @JoinColumn(name = "company_id")
   private Company company;
 
-  private String name;
-  private String image;
-  private String description;
+  @OneToMany(mappedBy = "machine", cascade = CascadeType.ALL)
+  private List<MachineTypeValue> machineTypeValues;
+
+  String name;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

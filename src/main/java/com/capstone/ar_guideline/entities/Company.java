@@ -23,7 +23,13 @@ public class Company implements Serializable {
   private List<User> users;
 
   @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+  private List<Machine> machines;
+
+  @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
   private List<Course> courses;
+
+  @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+  private List<ModelType> modelTypes;
 
   @Column(unique = true, nullable = false)
   private String companyName;

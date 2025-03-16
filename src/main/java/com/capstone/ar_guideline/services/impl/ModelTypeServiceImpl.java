@@ -13,6 +13,7 @@ import com.capstone.ar_guideline.services.IModelTypeService;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -64,12 +65,14 @@ public class ModelTypeServiceImpl implements IModelTypeService {
   @Override
   public ModelTypeResponse create(ModelTypeCreationRequest request) {
     try {
+      ModelType modelTypeById = modelTypeRepository.findByName(request.getName());
+
+      if (!Objects.isNull(modelTypeById)) {
+        throw new AppException(ErrorCode.MACHINE_TYPE_NAME_EXISTED);
+      }
+
       ModelType newModelType = ModelTypeMapper.fromModelTypeCreationRequestToEntity(request);
       newModelType = modelTypeRepository.save(newModelType);
-
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return ModelTypeMapper.fromEntityToModelTypeResponse(newModelType);
     } catch (Exception exception) {
@@ -141,6 +144,22 @@ public class ModelTypeServiceImpl implements IModelTypeService {
       return modelTypeRepository
           .findById(id)
           .orElseThrow(() -> new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED));
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<ModelTypeResponse> getModelTypeByCompanyId(String companyId) {
+    try {
+      List<ModelType> modelTypeByCompanyId = modelTypeRepository.findByCompanyId(companyId);
+
+      return modelTypeByCompanyId.stream()
+          .map(ModelTypeMapper::fromEntityToModelTypeResponse)
+          .toList();
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

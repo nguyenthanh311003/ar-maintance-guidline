@@ -3,7 +3,6 @@ package com.capstone.ar_guideline.entities;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -14,24 +13,21 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class ModelType implements Serializable {
+@Table(name = "Machine_Attribute_Value")
+public class MachineTypeValue implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  @OneToMany(mappedBy = "modelType", cascade = CascadeType.ALL)
-  private List<Machine> machines;
-
-  @OneToMany(mappedBy = "modelType", cascade = CascadeType.ALL)
-  private List<MachineTypeAttribute> machineTypeAttributes;
+  @ManyToOne
+  @JoinColumn(name = "modelTypeAttribute_id")
+  private MachineTypeAttribute machineTypeAttribute;
 
   @ManyToOne
-  @JoinColumn(name = "company_id")
-  private Company company;
+  @JoinColumn(name = "machine_id", nullable = true)
+  private Machine machine;
 
-  private String name;
-  private String image;
-  private String description;
+  String valueAttribute;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

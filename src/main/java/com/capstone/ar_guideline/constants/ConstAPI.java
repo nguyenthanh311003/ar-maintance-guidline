@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.constants;
 public class ConstAPI {
   public static class ModelTypeAPI {
     public static final String GET_ALL_MODEL_TYPE = "api/v1/model-types";
+    public static final String GET_MODEL_TYPE_BY_COMPANY = "api/v1/model-types/company/";
     public static final String CREATE_MODEL_TYPE = "api/v1/model-types";
     public static final String UPDATE_MODEL_TYPE = "api/v1/model-types/";
     public static final String DELETE_MODEL_TYPE = "api/v1/model-types/";
@@ -172,5 +173,22 @@ public class ConstAPI {
 
   public static class AssignGuidelineAPI {
     public static final String ASSIGN_GUIDELINES = "api/v1/assign-guideline";
+  }
+
+  public static class CompanyRequestAPI {
+    public static final String COMPANY_REQUEST = "api/v1/company-request";
+  }
+
+  public static class MachineAPI {
+    public static final String GET_MACHINES_BY_COMPANY = "api/v1/machine/company/";
+    public static final String GET_MACHINES_BY_ID = "api/v1/machine/";
+    public static final String CREATE_MACHINE = "api/v1/machine";
+    public static final String UPDATE_MACHINE = "api/v1/machine/";
+  }
+
+  public static class MachineTypeAttributeAPI {
+    public static final String GET_MACHINES_TYPE_ATTRIBUTE_BY_MACHINE_TYPE =
+        "api/v1/machine-type-attribute/machine-type/";
+    public static final String CREATE_MACHINE_TYPE_ATTRIBUTE = "api/v1/machine-type-attribute";
   }
 }
