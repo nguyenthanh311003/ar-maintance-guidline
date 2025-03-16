@@ -12,7 +12,6 @@ import com.capstone.ar_guideline.dtos.responses.MachineTypeAttribute.MachineType
 import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValueResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
-
 import java.util.List;
 
 public interface IARGuidelineService {
@@ -41,9 +40,11 @@ public interface IARGuidelineService {
 
   MachineResponse createMachine(MachineCreationRequest request);
 
-  MachineTypeAttributeResponse createMachineTypeAttribute(MachineTypeAttributeCreationRequest request);
+  MachineTypeAttributeResponse createMachineTypeAttribute(
+      MachineTypeAttributeCreationRequest request);
 
-  List<MachineTypeValueResponse> getMachineTypeAttributeByMachineTypeId(String machineTypeId, String companyId);
+  List<MachineTypeValueResponse> getMachineTypeAttributeByMachineTypeId(
+      String machineTypeId, String companyId);
 
   MachineResponse getMachineById(String machineId);
 

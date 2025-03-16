@@ -9,8 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MachineTypeValueResponse {
-    String id;
-    String machineTypeAttributeId;
-    String machineTypeAttributeName;
-    String valueAttribute;
+  String id;
+  String machineTypeAttributeId;
+  String machineTypeAttributeName;
+  String valueAttribute;
 }

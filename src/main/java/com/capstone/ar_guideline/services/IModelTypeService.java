@@ -4,7 +4,6 @@ import com.capstone.ar_guideline.dtos.requests.ModelType.ModelTypeCreationReques
 import com.capstone.ar_guideline.dtos.responses.ModelType.ModelTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.ModelType;
-
 import java.util.List;
 
 public interface IModelTypeService {

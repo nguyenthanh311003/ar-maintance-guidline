@@ -1,10 +1,9 @@
 package com.capstone.ar_guideline.dtos.responses.Machine;
 
 import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValueResponse;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @Builder
@@ -12,8 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MachineResponse {
-    String id;
-    String machineName;
-    String machineType;
-    List<MachineTypeValueResponse> machineTypeValueResponses;
+  String id;
+  String machineName;
+  String machineType;
+  List<MachineTypeValueResponse> machineTypeValueResponses;
 }

@@ -9,8 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MachineTypeValueModifyRequest {
-    String machineTypeValueId;
-    String machineTypeAttributeId;
-    String machineTypeAttributeName;
-    String valueAttribute;
+  String machineTypeValueId;
+  String machineTypeAttributeId;
+  String machineTypeAttributeName;
+  String valueAttribute;
 }

@@ -5,15 +5,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IMachineService {
-    Machine create(Machine machine);
+  Machine create(Machine machine);
 
-    Machine update(String id, Machine machine);
+  Machine update(String id, Machine machine);
 
-    void delete(String id);
+  void delete(String id);
 
-    Machine findById(String id);
+  Machine findById(String id);
 
-    Page<Machine> getMachineByCompanyId(Pageable pageable, String companyId);
+  Page<Machine> getMachineByCompanyId(Pageable pageable, String companyId);
 
-    Machine getMachineByName(String name);
+  Machine getMachineByName(String name);
 }

@@ -187,7 +187,8 @@ public class ConstAPI {
   }
 
   public static class MachineTypeAttributeAPI {
-    public static final String GET_MACHINES_TYPE_ATTRIBUTE_BY_MACHINE_TYPE = "api/v1/machine-type-attribute/machine-type/";
+    public static final String GET_MACHINES_TYPE_ATTRIBUTE_BY_MACHINE_TYPE =
+        "api/v1/machine-type-attribute/machine-type/";
     public static final String CREATE_MACHINE_TYPE_ATTRIBUTE = "api/v1/machine-type-attribute";
   }
 }

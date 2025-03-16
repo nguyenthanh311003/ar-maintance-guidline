@@ -7,13 +7,12 @@ import com.capstone.ar_guideline.dtos.responses.ModelType.ModelTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IModelTypeService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,8 +32,8 @@ public class ModelTypeController {
   @GetMapping(value = ConstAPI.ModelTypeAPI.GET_MODEL_TYPE_BY_COMPANY + "{companyId}")
   ApiResponse<List<ModelTypeResponse>> getByCompanyId(@PathVariable String companyId) {
     return ApiResponse.<List<ModelTypeResponse>>builder()
-            .result(modelTypeService.getModelTypeByCompanyId(companyId))
-            .build();
+        .result(modelTypeService.getModelTypeByCompanyId(companyId))
+        .build();
   }
 
   @PostMapping(value = ConstAPI.ModelTypeAPI.CREATE_MODEL_TYPE)

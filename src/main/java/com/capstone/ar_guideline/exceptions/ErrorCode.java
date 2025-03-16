@@ -127,11 +127,16 @@ public enum ErrorCode {
   MACHINE_DELETE_FAILED(1103, "Machine delete fail", HttpStatus.BAD_REQUEST),
   MACHINE_NOT_EXISTED(1104, "Machine not existed", HttpStatus.NOT_FOUND),
   MACHINE_NAME_EXISTED(1105, "Machine name existed !", HttpStatus.BAD_REQUEST),
-  MACHINE_TYPE_ATTRIBUTE_CREATE_FAILED(1106, "Machine Type Attribute create fail", HttpStatus.BAD_REQUEST),
-  MACHINE_TYPE_ATTRIBUTE_UPDATE_FAILED(1107, "Machine Type Attribute update fail", HttpStatus.BAD_REQUEST),
-  MACHINE_TYPE_ATTRIBUTE_DELETE_FAILED(1108, "Machine Type Attribute delete fail", HttpStatus.BAD_REQUEST),
-  MACHINE_TYPE_ATTRIBUTE_NOT_EXISTED(1109, "Machine Type Attribute not existed", HttpStatus.NOT_FOUND),
-  MACHINE_TYPE_ATTRIBUTE_NAME_EXISTED(1110, "Machine Type Attribute name existed !", HttpStatus.BAD_REQUEST),
+  MACHINE_TYPE_ATTRIBUTE_CREATE_FAILED(
+      1106, "Machine Type Attribute create fail", HttpStatus.BAD_REQUEST),
+  MACHINE_TYPE_ATTRIBUTE_UPDATE_FAILED(
+      1107, "Machine Type Attribute update fail", HttpStatus.BAD_REQUEST),
+  MACHINE_TYPE_ATTRIBUTE_DELETE_FAILED(
+      1108, "Machine Type Attribute delete fail", HttpStatus.BAD_REQUEST),
+  MACHINE_TYPE_ATTRIBUTE_NOT_EXISTED(
+      1109, "Machine Type Attribute not existed", HttpStatus.NOT_FOUND),
+  MACHINE_TYPE_ATTRIBUTE_NAME_EXISTED(
+      1110, "Machine Type Attribute name existed !", HttpStatus.BAD_REQUEST),
   MACHINE_TYPE_VALUE_CREATE_FAILED(1111, "Machine Type Value create fail", HttpStatus.BAD_REQUEST),
   MACHINE_TYPE_VALUE_UPDATE_FAILED(1112, "Machine Type Value update fail", HttpStatus.BAD_REQUEST),
   MACHINE_TYPE_VALUE_DELETE_FAILED(1113, "Machine Type Value delete fail", HttpStatus.BAD_REQUEST),
@@ -140,10 +145,9 @@ public enum ErrorCode {
   GET_ASSIGN_GUIDELINES_BY_GUIDELINE_ID_FAILED(
       2000, "Get all assign guidelines by guideline id failed", HttpStatus.BAD_REQUEST),
   CREATE_ASSIGN_GUIDELINE_FAILED(
-          2001, "Get all assign guidelines by guideline id failed", HttpStatus.BAD_REQUEST),
-  COMPANY_REQUEST_FAILED(
-      2706, "COMPANY REQUEST FEATURES ERROR", HttpStatus.BAD_REQUEST),
-          ;
+      2001, "Get all assign guidelines by guideline id failed", HttpStatus.BAD_REQUEST),
+  COMPANY_REQUEST_FAILED(2706, "COMPANY REQUEST FEATURES ERROR", HttpStatus.BAD_REQUEST),
+  ;
 
   private final int code;
   private final String message;
