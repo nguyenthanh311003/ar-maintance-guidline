@@ -173,4 +173,8 @@ public class ConstAPI {
   public static class AssignGuidelineAPI {
     public static final String ASSIGN_GUIDELINES = "api/v1/assign-guideline";
   }
+
+  public static class CompanyRequestAPI {
+    public static final String COMPANY_REQUEST = "api/v1/company-request";
+  }
 }

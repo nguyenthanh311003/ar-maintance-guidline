@@ -125,8 +125,10 @@ public enum ErrorCode {
   GET_ASSIGN_GUIDELINES_BY_GUIDELINE_ID_FAILED(
       2000, "Get all assign guidelines by guideline id failed", HttpStatus.BAD_REQUEST),
   CREATE_ASSIGN_GUIDELINE_FAILED(
-      2001, "Get all assign guidelines by guideline id failed", HttpStatus.BAD_REQUEST),
-  ;
+          2001, "Get all assign guidelines by guideline id failed", HttpStatus.BAD_REQUEST),
+  COMPANY_REQUEST_FAILED(
+      2706, "COMPANY REQUEST FEATURES ERROR", HttpStatus.BAD_REQUEST),
+          ;
 
   private final int code;
   private final String message;
