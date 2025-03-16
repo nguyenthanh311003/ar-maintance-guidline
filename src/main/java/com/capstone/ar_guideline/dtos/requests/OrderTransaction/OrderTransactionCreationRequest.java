@@ -10,5 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderTransactionCreationRequest {
   String userId;
-  Integer amount;
+  String pointOptionsId;
+  Long amount;
+  Long point;
 }

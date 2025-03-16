@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.mappers;
 import com.capstone.ar_guideline.dtos.requests.OrderTransaction.OrderTransactionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.OrderTransaction.OrderTransactionResponse;
 import com.capstone.ar_guideline.entities.OrderTransaction;
+import com.capstone.ar_guideline.entities.PointOptions;
 import com.capstone.ar_guideline.entities.User;
 
 public class OrderTransactionMapper {
@@ -10,7 +11,9 @@ public class OrderTransactionMapper {
       OrderTransactionCreationRequest request, User user) {
     return OrderTransaction.builder()
         .user(user)
-        .amount(Double.valueOf(request.getAmount()))
+        .pointOptions(PointOptions.builder().id(request.getPointOptionsId()).build())
+        .amount(request.getAmount())
+        .point(request.getPoint())
         .build();
   }
 
@@ -22,6 +25,8 @@ public class OrderTransactionMapper {
         .orderCode(orderTransaction.getOrderCode())
         .status(orderTransaction.getStatus())
         .amount(orderTransaction.getAmount())
+        .optionName(orderTransaction.getPointOptions().getName())
+        .point(orderTransaction.getPointOptions().getPoint())
         .createdDate(orderTransaction.getCreatedDate())
         .updatedDate(orderTransaction.getUpdatedDate())
         .build();

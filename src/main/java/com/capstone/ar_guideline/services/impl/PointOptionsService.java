@@ -31,7 +31,7 @@ public class PointOptionsService {
   }
 
   public List<PointOptions> getAll() {
-    return pointOptionsRepository.findAll();
+    return pointOptionsRepository.findAllByOrderByPointAsc();
   }
 
   public void delete(String id) {
@@ -46,5 +46,9 @@ public class PointOptionsService {
     } else {
       throw new RuntimeException("PointOptions not found");
     }
+  }
+
+  public PointOptions findById(String id) {
+    return pointOptionsRepository.findById(id).get();
   }
 }

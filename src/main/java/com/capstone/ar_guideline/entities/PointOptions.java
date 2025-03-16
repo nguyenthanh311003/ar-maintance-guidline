@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,10 +27,11 @@ public class PointOptions {
   private Long point;
 
   @OneToMany(mappedBy = "pointOptions")
+  @JsonIgnore
   private List<OrderTransaction> orderTransactions;
 
-  @Column(name = "currency", length = 10)
-  private String currency;
+  @Column(name = "currency", length = 10, columnDefinition = "varchar(10) default 'VND'")
+  private String currency = "VND";
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

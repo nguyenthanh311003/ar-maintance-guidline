@@ -27,7 +27,8 @@ public class OrderTransaction {
 
   private Long orderCode;
   private String status;
-  private Double amount;
+  private Long amount;
+  private Long point;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

@@ -9,5 +9,5 @@ import lombok.*;
 @NoArgsConstructor
 public class CreatePaymentLinkRequestBody {
   private String userId;
-  private Integer amount;
+  private String pointOptionsId;
 }

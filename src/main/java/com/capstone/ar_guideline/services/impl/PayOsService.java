@@ -6,6 +6,7 @@ import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.OrderTransaction.OrderTransactionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.OrderTransaction.OrderTransactionResponse;
 import com.capstone.ar_guideline.entities.OrderTransaction;
+import com.capstone.ar_guideline.entities.PointOptions;
 import com.capstone.ar_guideline.payos.CreatePaymentLinkRequestBody;
 import com.capstone.ar_guideline.services.IOrderTransactionService;
 import com.capstone.ar_guideline.services.IUserService;
@@ -38,6 +39,8 @@ public class PayOsService {
 
   @Autowired WalletServiceImpl walletService;
 
+  @Autowired private PointOptionsService pointOptionsService;
+
   @Autowired IUserService userService;
 
   public ObjectNode createPaymentLink(CreatePaymentLinkRequestBody requestBody) {
@@ -47,12 +50,13 @@ public class PayOsService {
 
       String returnUrl = backEndHost + "/" + HANDLE_ORDER_STATUS;
       String cancelUrl = "";
-      final Integer price = requestBody.getAmount();
-
+      PointOptions pointOptions = pointOptionsService.findById(requestBody.getPointOptionsId());
       // create order
       OrderTransactionCreationRequest paymentRequest = new OrderTransactionCreationRequest();
       paymentRequest.setUserId(requestBody.getUserId());
-      paymentRequest.setAmount(requestBody.getAmount());
+      paymentRequest.setAmount(pointOptions.getAmount());
+      paymentRequest.setPoint(pointOptions.getPoint());
+      paymentRequest.setPointOptionsId(pointOptions.getId());
       OrderTransactionResponse payment = paymentService.create(paymentRequest);
 
       // Gen order code
@@ -62,13 +66,18 @@ public class PayOsService {
 
       returnUrl = returnUrl + orderCode;
       cancelUrl = returnUrl;
-      ItemData item = ItemData.builder().name("point").price(price).quantity(1).build();
+      ItemData item =
+          ItemData.builder()
+              .name("point")
+              .price(Math.toIntExact(pointOptions.getAmount()))
+              .quantity(1)
+              .build();
 
       PaymentData paymentData =
           PaymentData.builder()
               .orderCode(orderCode)
-              .description("Point")
-              .amount(price)
+              .description(pointOptions.getName())
+              .amount(Math.toIntExact(pointOptions.getAmount()))
               .item(item)
               .returnUrl(returnUrl)
               .cancelUrl(cancelUrl)
