@@ -21,6 +21,10 @@ public class OrderTransaction {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
+  @ManyToOne
+  @JoinColumn(name = "point_options_id", nullable = false)
+  private PointOptions pointOptions;
+
   private Long orderCode;
   private String status;
   private Double amount;
