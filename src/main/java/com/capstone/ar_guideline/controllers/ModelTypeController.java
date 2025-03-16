@@ -13,6 +13,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -26,6 +28,13 @@ public class ModelTypeController {
     return ApiResponse.<PagingModel<ModelTypeResponse>>builder()
         .result(modelTypeService.getAll(page, size))
         .build();
+  }
+
+  @GetMapping(value = ConstAPI.ModelTypeAPI.GET_MODEL_TYPE_BY_COMPANY + "{companyId}")
+  ApiResponse<List<ModelTypeResponse>> getByCompanyId(@PathVariable String companyId) {
+    return ApiResponse.<List<ModelTypeResponse>>builder()
+            .result(modelTypeService.getModelTypeByCompanyId(companyId))
+            .build();
   }
 
   @PostMapping(value = ConstAPI.ModelTypeAPI.CREATE_MODEL_TYPE)
