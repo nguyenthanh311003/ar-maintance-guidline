@@ -3,11 +3,13 @@ package com.capstone.ar_guideline.services;
 import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Machine.MachineCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Machine.MachineModifyRequest;
+import com.capstone.ar_guideline.dtos.requests.MachineType.MachineTypeCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.MachineTypeAttribute.MachineTypeAttributeCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
+import com.capstone.ar_guideline.dtos.responses.MachineType.MachineTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeAttribute.MachineTypeAttributeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValueResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
@@ -49,4 +51,12 @@ public interface IARGuidelineService {
   MachineResponse getMachineById(String machineId);
 
   MachineResponse updateMachineById(String machineId, MachineModifyRequest request);
+
+  MachineTypeResponse createMachineType(MachineTypeCreationRequest request);
+
+  PagingModel<MachineTypeResponse> getMachineTypesByCompanyId(int page, int size, String companyId);
+
+  MachineTypeResponse getMachineTypesById(String machineTypeId);
+
+  MachineTypeResponse updateMachineType(String machineTypeId, MachineTypeCreationRequest request);
 }

@@ -11,7 +11,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MachineTypeCreationRequest {
-  String machineName;
+  String companyId;
+  String machineTypeName;
   String description;
   List<MachineTypeAttributeCreationRequest> machineTypeAttributeCreationRequestList;
 }

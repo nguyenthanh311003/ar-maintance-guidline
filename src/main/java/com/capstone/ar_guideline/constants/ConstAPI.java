@@ -190,5 +190,15 @@ public class ConstAPI {
     public static final String GET_MACHINES_TYPE_ATTRIBUTE_BY_MACHINE_TYPE =
         "api/v1/machine-type-attribute/machine-type/";
     public static final String CREATE_MACHINE_TYPE_ATTRIBUTE = "api/v1/machine-type-attribute";
+    public static final String DELETE_MACHINE_TYPE_ATTRIBUTE = "api/v1/machine-type-attribute/";
+  }
+
+  public static class MachineTypeAPI {
+    ;
+    public static final String CREATE_MACHINE_TYPE = "api/v1/machine-type";
+    public static final String UPDATE_MACHINE_TYPE = "api/v1/machine-type/";
+    public static final String GET_MACHINE_TYPES_BY_COMPANY_ID = "api/v1/machine-type/company/";
+    public static final String GET_MACHINE_TYPES_BY_ID = "api/v1/machine-type/";
+    public static final String DELETE_MACHINE_TYPES = "api/v1/machine-type/";
   }
 }

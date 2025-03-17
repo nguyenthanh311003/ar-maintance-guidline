@@ -10,5 +10,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MachineTypeAttributeCreationRequest {
   String machineTypeId;
+  String machineTypeAttributeId;
   String attributeName;
 }
