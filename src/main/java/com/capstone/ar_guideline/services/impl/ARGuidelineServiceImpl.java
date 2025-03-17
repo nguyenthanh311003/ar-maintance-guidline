@@ -4,12 +4,14 @@ import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Machine.MachineCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Machine.MachineModifyRequest;
+import com.capstone.ar_guideline.dtos.requests.MachineType.MachineTypeCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.MachineTypeAttribute.MachineTypeAttributeCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
+import com.capstone.ar_guideline.dtos.responses.MachineType.MachineTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeAttribute.MachineTypeAttributeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValueResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
@@ -46,6 +48,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   ICompanyService companyService;
   IMachineTypeAttributeService machineTypeAttributeService;
   IMachineTypeValueService machineTypeValueService;
+  IMachineTypeService machineTypeService;
 
   @Override
   public InstructionResponse createInstruction(InstructionCreationRequest request) {
@@ -568,6 +571,155 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         throw exception;
       }
       throw new AppException(ErrorCode.MACHINE_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public MachineTypeResponse createMachineType(MachineTypeCreationRequest request) {
+    try {
+      Company companyById = companyService.findByIdReturnEntity(request.getCompanyId());
+
+      ModelType newMachineType = new ModelType();
+      newMachineType.setName(request.getMachineTypeName());
+      newMachineType.setCompany(companyById);
+
+      newMachineType = machineTypeService.create(newMachineType);
+
+      ModelType finalNewMachineType = newMachineType;
+      List<MachineTypeAttributeResponse> machineTypeAttributeResponses =
+          request.getMachineTypeAttributeCreationRequestList().stream()
+              .map(
+                  mtr -> {
+                    MachineTypeAttribute newMachineTypeAttribute =
+                        MachineTypeAttributeMapper.fromMachineTypeAttributeCreationRequestToEntity(
+                            mtr);
+                    newMachineTypeAttribute.setModelType(finalNewMachineType);
+                    newMachineTypeAttribute =
+                        machineTypeAttributeService.create(newMachineTypeAttribute);
+
+                    return MachineTypeAttributeMapper.fromEntityToMachineTypeAttributeResponse(
+                        newMachineTypeAttribute);
+                  })
+              .toList();
+
+      return MachineTypeMapper.fromEntityToMachineTypeResponse(
+          newMachineType, machineTypeAttributeResponses);
+
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_TYPE_CREATE_FAILED);
+    }
+  }
+
+  @Override
+  public PagingModel<MachineTypeResponse> getMachineTypesByCompanyId(
+      int page, int size, String companyId) {
+    try {
+      PagingModel<MachineTypeResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+
+      Page<ModelType> machineTypes =
+          machineTypeService.getMachineTypeByCompanyId(pageable, companyId);
+      List<MachineTypeResponse> machineTypeResponses =
+          machineTypes.getContent().stream()
+              .map(
+                  mt -> {
+                    MachineTypeResponse machineTypeResponse =
+                        MachineTypeResponse.builder()
+                            .machineTypeId(mt.getId())
+                            .machineTypeName(mt.getName())
+                            .build();
+                    Integer numOfAttribute =
+                        machineTypeAttributeService.countNumOfAttributeByMachineTypeId(mt.getId());
+
+                    if (!Objects.isNull(numOfAttribute)) {
+                      machineTypeResponse.setNumOfAttribute(numOfAttribute);
+                    }
+                    return machineTypeResponse;
+                  })
+              .toList();
+
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) machineTypes.getTotalElements());
+      pagingModel.setTotalPages(machineTypes.getTotalPages());
+      pagingModel.setObjectList(machineTypeResponses);
+      return pagingModel;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public MachineTypeResponse getMachineTypesById(String machineTypeId) {
+    try {
+      ModelType modelTypeById = machineTypeService.findById(machineTypeId);
+
+      List<MachineTypeAttribute> machineTypeAttributesByMachineTypeId =
+          machineTypeAttributeService.getByMachineTypeId(machineTypeId);
+
+      List<MachineTypeAttributeResponse> machineTypeAttributeResponses =
+          machineTypeAttributesByMachineTypeId.stream()
+              .map(MachineTypeAttributeMapper::fromEntityToMachineTypeAttributeResponse)
+              .toList();
+
+      return MachineTypeMapper.fromEntityToMachineTypeResponse(
+          modelTypeById, machineTypeAttributeResponses);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public MachineTypeResponse updateMachineType(
+      String machineTypeId, MachineTypeCreationRequest request) {
+    try {
+      ModelType modelTypeById = machineTypeService.findById(machineTypeId);
+
+      modelTypeById.setName(request.getMachineTypeName());
+
+      List<MachineTypeAttributeResponse> machineTypeAttributeResponses =
+          request.getMachineTypeAttributeCreationRequestList().stream()
+              .map(
+                  mtr -> {
+                    MachineTypeAttribute machineTypeAttributeById =
+                        machineTypeAttributeService.findByIdNotThrowException(
+                            mtr.getMachineTypeAttributeId());
+
+                    if (Objects.isNull(machineTypeAttributeById)) {
+                      MachineTypeAttribute newMachineTypeAttribute = new MachineTypeAttribute();
+                      newMachineTypeAttribute.setAttributeName(mtr.getAttributeName());
+                      newMachineTypeAttribute.setModelType(modelTypeById);
+                      newMachineTypeAttribute =
+                          machineTypeAttributeService.create(newMachineTypeAttribute);
+                      return MachineTypeAttributeMapper.fromEntityToMachineTypeAttributeResponse(
+                          newMachineTypeAttribute);
+                    } else {
+                      machineTypeAttributeById.setAttributeName(mtr.getAttributeName());
+                      machineTypeAttributeById =
+                          machineTypeAttributeService.update(
+                              machineTypeAttributeById.getId(), machineTypeAttributeById);
+                      return MachineTypeAttributeMapper.fromEntityToMachineTypeAttributeResponse(
+                          machineTypeAttributeById);
+                    }
+                  })
+              .toList();
+
+      return MachineTypeMapper.fromEntityToMachineTypeResponse(
+          modelTypeById, machineTypeAttributeResponses);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_TYPE_UPDATE_FAILED);
     }
   }
 }

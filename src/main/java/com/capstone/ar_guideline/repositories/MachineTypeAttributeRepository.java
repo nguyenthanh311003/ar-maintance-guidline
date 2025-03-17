@@ -13,4 +13,8 @@ public interface MachineTypeAttributeRepository
   @Query(value = "SELECT mta FROM MachineTypeAttribute mta WHERE mta.modelType.id = :machineTypeId")
   List<MachineTypeAttribute> getMachineTypeAttributeByMachineTypeId(
       @Param("machineTypeId") String machineTypeId);
+
+  @Query(
+      "SELECT COUNT(mta) FROM MachineTypeAttribute mta WHERE mta.modelType.id = :machineTypeId GROUP BY mta.modelType.id")
+  Integer countNumOfAttributeById(@Param("machineTypeId") String machineTypeId);
 }

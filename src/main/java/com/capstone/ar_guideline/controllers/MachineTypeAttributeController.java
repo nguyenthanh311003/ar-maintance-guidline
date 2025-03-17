@@ -39,4 +39,16 @@ public class MachineTypeAttributeController {
         .result(arGuidelineService.createMachineTypeAttribute(request))
         .build();
   }
+
+  @DeleteMapping(
+      value =
+          ConstAPI.MachineTypeAttributeAPI.DELETE_MACHINE_TYPE_ATTRIBUTE
+              + "{machineTypeAttributeId}")
+  public ApiResponse<String> deleteCMachineTypeAttribute(
+      @PathVariable String machineTypeAttributeId) {
+    machineTypeAttributeService.delete(machineTypeAttributeId);
+    return ApiResponse.<String>builder()
+        .result("Machine Type Attribute has been deleted successfully")
+        .build();
+  }
 }

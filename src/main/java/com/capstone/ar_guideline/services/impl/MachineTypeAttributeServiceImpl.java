@@ -8,6 +8,7 @@ import com.capstone.ar_guideline.mappers.MachineTypeAttributeMapper;
 import com.capstone.ar_guideline.repositories.MachineTypeAttributeRepository;
 import com.capstone.ar_guideline.services.IMachineTypeAttributeService;
 import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -75,6 +76,22 @@ public class MachineTypeAttributeServiceImpl implements IMachineTypeAttributeSer
   }
 
   @Override
+  public MachineTypeAttribute findByIdNotThrowException(String id) {
+    try {
+      Optional<MachineTypeAttribute> machineTypeAttributeById =
+          machineTypeAttributeRepository.findById(id);
+
+      return machineTypeAttributeById.orElse(null);
+
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_TYPE_ATTRIBUTE_NOT_EXISTED);
+    }
+  }
+
+  @Override
   public List<MachineTypeAttributeResponse> getMachineTypeAttributeByMachineTypeId(
       String machineTypeId) {
     try {
@@ -100,7 +117,19 @@ public class MachineTypeAttributeServiceImpl implements IMachineTypeAttributeSer
       if (exception instanceof AppException) {
         throw exception;
       }
-      throw new AppException(ErrorCode.MACHINE_TYPE_VALUE_NOT_EXISTED);
+      throw new AppException(ErrorCode.MACHINE_TYPE_ATTRIBUTE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public Integer countNumOfAttributeByMachineTypeId(String machineTypeId) {
+    try {
+      return machineTypeAttributeRepository.countNumOfAttributeById(machineTypeId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_TYPE_ATTRIBUTE_NOT_EXISTED);
     }
   }
 }

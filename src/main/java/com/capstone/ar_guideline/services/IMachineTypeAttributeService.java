@@ -13,7 +13,11 @@ public interface IMachineTypeAttributeService {
 
   MachineTypeAttribute findById(String id);
 
+  MachineTypeAttribute findByIdNotThrowException(String id);
+
   List<MachineTypeAttributeResponse> getMachineTypeAttributeByMachineTypeId(String machineTypeId);
 
   List<MachineTypeAttribute> getByMachineTypeId(String machineTypeId);
+
+  Integer countNumOfAttributeByMachineTypeId(String machineTypeId);
 }
