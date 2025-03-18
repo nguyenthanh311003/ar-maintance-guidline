@@ -24,4 +24,5 @@ public class CourseCreationRequest {
   String status;
   Boolean isMandatory;
   String type;
+  String machineTypeId;
 }

@@ -7,6 +7,7 @@ import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Model;
+import com.capstone.ar_guideline.entities.ModelType;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CourseMapper;
@@ -39,6 +40,7 @@ public class CourseServiceImpl implements ICourseService {
   ICompanyService companyService;
   IModelService modelService;
   IInstructionService instructionService;
+  IMachineTypeService machineTypeService;
 
   private final String[] keysToRemove = {
     ConstHashKey.HASH_KEY_COURSE,
@@ -108,6 +110,8 @@ public class CourseServiceImpl implements ICourseService {
       Course newCourse = CourseMapper.fromCourseCreationRequestToEntity(request);
       modelService.findById(request.getModelId());
       companyService.findById(request.getCompanyId());
+      ModelType machineTypeById = machineTypeService.findById(request.getMachineTypeId());
+      newCourse.setModelType(machineTypeById);
       newCourse.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
       newCourse.setCourseCode(UUID.randomUUID().toString());

@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.repositories;
 
 import com.capstone.ar_guideline.entities.Machine;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,9 @@ public interface MachineRepository extends JpaRepository<Machine, String> {
 
   @Query(value = "SELECT m FROM Machine m WHERE m.name = :name")
   Machine getMachineByName(@Param("name") String name);
+
+  @Query(
+      value =
+          "SELECT m FROM Machine m WHERE m.modelType.id = :machineTypeId ORDER BY m.createdDate DESC")
+  List<Machine> getMachineByMachineTypeId(@Param("machineTypeId") String machineTypeId);
 }

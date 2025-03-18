@@ -12,4 +12,5 @@ public class MachineTypeAttributeResponse {
   String id;
   String modelTypeId;
   String attributeName;
+  String valueAttribute;
 }

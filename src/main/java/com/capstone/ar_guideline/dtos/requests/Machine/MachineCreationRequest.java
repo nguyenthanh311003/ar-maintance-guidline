@@ -14,5 +14,7 @@ public class MachineCreationRequest {
   String machineName;
   String modelTypeId;
   String companyId;
+  String apiUrl;
+  String token;
   List<MachineTypeValueCreationRequest> machineTypeValueCreationRequest;
 }

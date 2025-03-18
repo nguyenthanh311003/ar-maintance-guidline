@@ -12,4 +12,5 @@ public class MachineTypeAttributeCreationRequest {
   String machineTypeId;
   String machineTypeAttributeId;
   String attributeName;
+  String attributeValue;
 }

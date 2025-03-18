@@ -8,7 +8,11 @@ import java.util.List;
 
 public class MachineMapper {
   public static Machine fromMachineCreationRequestToEntity(MachineCreationRequest request) {
-    return Machine.builder().name(request.getMachineName()).build();
+    return Machine.builder()
+        .name(request.getMachineName())
+        .apiUrl(request.getApiUrl())
+        .requestToken(request.getToken())
+        .build();
   }
 
   public static MachineResponse fromEntityToMachineResponse(Machine machine) {
@@ -16,6 +20,8 @@ public class MachineMapper {
         .id(machine.getId())
         .machineName(machine.getName())
         .machineType(machine.getModelType().getName())
+        .machineCode(machine.getMachineCode())
+        .qrCode(machine.getQrCode())
         .build();
   }
 
@@ -25,6 +31,9 @@ public class MachineMapper {
         .id(machine.getId())
         .machineName(machine.getName())
         .machineType(machine.getModelType().getName())
+        .apiUrl(machine.getApiUrl())
+        .token(machine.getRequestToken())
+        .qrCode(machine.getQrCode())
         .machineTypeValueResponses(machineTypeValueResponses)
         .build();
   }

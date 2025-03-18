@@ -24,6 +24,10 @@ public class Course implements Serializable {
   private Company company;
 
   @ManyToOne
+  @JoinColumn(name = "machineType_id", nullable = false)
+  private ModelType modelType;
+
+  @ManyToOne
   @JoinColumn(name = "model_id", unique = true)
   private Model model;
 
