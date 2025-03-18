@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.constants.ConstStatus;
+import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Machine.MachineCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Machine.MachineModifyRequest;
@@ -21,9 +22,11 @@ import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.*;
 import com.capstone.ar_guideline.services.*;
+import com.capstone.ar_guideline.util.UtilService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -384,11 +387,11 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
     try {
       ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
-      Machine machineByName = machineService.getMachineByName(request.getMachineName());
-
-      if (!Objects.isNull(machineByName)) {
-        throw new AppException(ErrorCode.MACHINE_NAME_EXISTED);
-      }
+      //      Machine machineByName = machineService.getMachineByName(request.getMachineName());
+      //
+      //      if (!Objects.isNull(machineByName)) {
+      //        throw new AppException(ErrorCode.MACHINE_NAME_EXISTED);
+      //      }
 
       Company companyById = companyService.findByIdReturnEntity(request.getCompanyId());
 
@@ -399,6 +402,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       Machine newMachine = MachineMapper.fromMachineCreationRequestToEntity(request);
       newMachine.setModelType(modelTypeById);
       newMachine.setCompany(companyById);
+      newMachine.setMachineCode(generateMachineCode());
 
       newMachine = machineService.create(newMachine);
 
@@ -416,7 +420,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                       MachineTypeValue newMachineTypeValue =
                           MachineTypeValueMapper.fromMachineTypeValueCreationRequestToEntity(mtr);
                       newMachineTypeValue.setMachineTypeAttribute(machineTypeAttributeById);
-                      newMachineTypeValue.setMachine(finalNewMachine);
                       newMachineTypeValue = machineTypeValueService.create(newMachineTypeValue);
 
                       return MachineTypeValueMapper.fromEntityToMachineTypeValueResponse(
@@ -433,6 +436,11 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       }
       throw new AppException(ErrorCode.MACHINE_CREATE_FAILED);
     }
+  }
+
+  // Hàm generate machineCode ngẫu nhiên
+  private String generateMachineCode() {
+    return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
   }
 
   @Override
@@ -519,6 +527,8 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       Machine machineById = machineService.findById(machineId);
 
       machineById.setName(request.getMachineName());
+      machineById.setApiUrl(request.getApiUrl());
+      machineById.setRequestToken(request.getToken());
 
       Machine finalMachineById = machineById;
       List<MachineTypeValueResponse> machineTypeValueResponses =
@@ -532,7 +542,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                     if (mtr.getMachineTypeValueId().equals("N/A")) {
                       MachineTypeValue newMachineTypeValue =
                           MachineTypeValueMapper.fromMachineTypeValueModifyRequestToEntity(mtr);
-                      newMachineTypeValue.setMachine(finalMachineById);
                       newMachineTypeValue.setMachineTypeAttribute(machineTypeAttributeById);
                       newMachineTypeValue = machineTypeValueService.create(newMachineTypeValue);
                       machineTypeValueResponse.setId(newMachineTypeValue.getId());
@@ -596,6 +605,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                     newMachineTypeAttribute.setModelType(finalNewMachineType);
                     newMachineTypeAttribute =
                         machineTypeAttributeService.create(newMachineTypeAttribute);
+                    MachineTypeValue newMachineTypeValue = new MachineTypeValue();
 
                     return MachineTypeAttributeMapper.fromEntityToMachineTypeAttributeResponse(
                         newMachineTypeAttribute);
@@ -720,6 +730,70 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         throw exception;
       }
       throw new AppException(ErrorCode.MODEL_TYPE_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public void updateQrCodeForMachine(String guidelineCode, Machine machineToUpdate) {
+    try {
+      if (machineToUpdate == null) {
+        throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+      }
+
+      String qrCode = machineToUpdate.getMachineCode() + " @ " + guidelineCode;
+
+      machineToUpdate.setQrCode(UtilService.generateAndStoreQRCode(qrCode));
+
+      machineService.update(machineToUpdate.getId(), machineToUpdate);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public CourseResponse createGuideline(CourseCreationRequest request) {
+    try {
+      Course newCourse = CourseMapper.fromCourseCreationRequestToEntity(request);
+      modelService.findById(request.getModelId());
+      companyService.findById(request.getCompanyId());
+      ModelType machineTypeById = machineTypeService.findById(request.getMachineTypeId());
+      newCourse.setModelType(machineTypeById);
+      newCourse.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
+      newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
+      newCourse.setCourseCode(UUID.randomUUID().toString());
+      newCourse.setDuration(0);
+      newCourse.setNumberOfScan(0);
+      newCourse.setQrCode(UtilService.generateAndStoreQRCode(newCourse.getCourseCode()));
+      newCourse = courseService.save(newCourse);
+
+      List<Machine> machinesByMachineTypeId =
+          machineService.getMachineByMachineType(newCourse.getModelType().getId());
+
+      if (!machinesByMachineTypeId.isEmpty()) {
+        Course finalNewCourse = newCourse;
+        machinesByMachineTypeId.forEach(
+            machine -> {
+              updateQrCodeForMachine(finalNewCourse.getCourseCode(), machine);
+            });
+      }
+
+      if (newCourse.getId() != null) {
+        Model modelById = modelService.findById(newCourse.getModel().getId());
+        modelService.updateIsUsed(true, modelById);
+      }
+      //      Arrays.stream(keysToRemove)
+      //          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
+      //          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+
+      return CourseMapper.fromEntityToCourseResponse(newCourse);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_CREATE_FAILED);
     }
   }
 }

@@ -23,9 +23,9 @@ public class MachineTypeValue implements Serializable {
   @JoinColumn(name = "modelTypeAttribute_id")
   private MachineTypeAttribute machineTypeAttribute;
 
-  @ManyToOne
-  @JoinColumn(name = "machine_id", nullable = true)
-  private Machine machine;
+  //  @ManyToOne
+  //  @JoinColumn(name = "machine_id", nullable = true)
+  //  private Machine machine;
 
   String valueAttribute;
 

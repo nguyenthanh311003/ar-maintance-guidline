@@ -83,7 +83,9 @@ public class CourseController {
   @PostMapping(value = ConstAPI.CourseAPI.COURSE)
   public ApiResponse<CourseResponse> createCourse(
       @ModelAttribute @Valid CourseCreationRequest request) {
-    return ApiResponse.<CourseResponse>builder().result(courseService.create(request)).build();
+    return ApiResponse.<CourseResponse>builder()
+        .result(arGuidelineService.createGuideline(request))
+        .build();
   }
 
   @PutMapping(value = ConstAPI.CourseAPI.COURSE + "/{courseId}")

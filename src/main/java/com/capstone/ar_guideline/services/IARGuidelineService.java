@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.services;
 
+import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Instruction.InstructionCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Machine.MachineCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Machine.MachineModifyRequest;
@@ -14,6 +15,7 @@ import com.capstone.ar_guideline.dtos.responses.MachineTypeAttribute.MachineType
 import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValueResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
+import com.capstone.ar_guideline.entities.Machine;
 import java.util.List;
 
 public interface IARGuidelineService {
@@ -59,4 +61,8 @@ public interface IARGuidelineService {
   MachineTypeResponse getMachineTypesById(String machineTypeId);
 
   MachineTypeResponse updateMachineType(String machineTypeId, MachineTypeCreationRequest request);
+
+  void updateQrCodeForMachine(String guidelineCode, Machine machineToUpdate);
+
+  CourseResponse createGuideline(CourseCreationRequest request);
 }

@@ -5,6 +5,7 @@ import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.repositories.MachineRepository;
 import com.capstone.ar_guideline.services.IMachineService;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -89,6 +90,18 @@ public class MachineServiceImpl implements IMachineService {
   public Machine getMachineByName(String name) {
     try {
       return machineRepository.getMachineByName(name);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<Machine> getMachineByMachineType(String machineTypeId) {
+    try {
+      return machineRepository.getMachineByMachineTypeId(machineTypeId);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
