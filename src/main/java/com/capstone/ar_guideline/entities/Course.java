@@ -14,6 +14,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "guideline")
 public class Course implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)

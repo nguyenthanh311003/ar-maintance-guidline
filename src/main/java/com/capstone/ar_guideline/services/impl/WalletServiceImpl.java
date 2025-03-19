@@ -1,11 +1,12 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.dtos.responses.Wallet.WalletResponse;
-import com.capstone.ar_guideline.entities.User;
-import com.capstone.ar_guideline.entities.Wallet;
+import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.mappers.WalletMapper;
 import com.capstone.ar_guideline.repositories.WalletRepository;
 import java.util.Optional;
+
+import com.capstone.ar_guideline.repositories.WalletTransactionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class WalletServiceImpl {
 
   @Autowired private WalletRepository walletRepository;
+
+  @Autowired private WalletTransactionRepository walletTransactionRepository;
 
   @Transactional
   public WalletResponse createWallet(User user, Long initialBalance, String currency) {
@@ -28,15 +31,25 @@ public class WalletServiceImpl {
     return WalletMapper.toResponse(walletRepository.save(wallet));
   }
 
-  public Wallet updateBalance(String walletId, Long amount, boolean isPlus) {
+  public Wallet updateBalance(String walletId, Long amount, boolean isPlus, String servicePriceId, String userId, String guidelineId) {
     Optional<Wallet> walletOptional = walletRepository.findById(walletId);
     if (walletOptional.isPresent()) {
       Wallet wallet = walletOptional.get();
-      if (isPlus) {
-        wallet.setBalance(wallet.getBalance() + (amount));
-      } else {
-        wallet.setBalance(wallet.getBalance() - (amount));
-      }
+      Long newBalance = isPlus ? wallet.getBalance() + amount : wallet.getBalance() - amount;
+      wallet.setBalance(newBalance);
+
+      // Create WalletTransaction
+      WalletTransaction transaction = WalletTransaction.builder()
+              .wallet(wallet)
+              .amount(amount)
+              .balance(newBalance)
+              .type(isPlus ? "CREDIT" : "DEBIT")
+              .servicePrice(ServicePrice.builder().id(servicePriceId).build())
+              .user(User.builder().id(userId).build())
+              .course(Course.builder().id(guidelineId).build())
+              .build();
+      walletTransactionRepository.save(transaction);
+
       return walletRepository.save(wallet);
     } else {
       throw new RuntimeException("Wallet not found");

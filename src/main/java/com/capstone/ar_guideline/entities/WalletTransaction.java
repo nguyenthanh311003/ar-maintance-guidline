@@ -27,7 +27,17 @@ public class WalletTransaction {
   @JoinColumn(name = "service_price_id", referencedColumnName = "id")
   private ServicePrice servicePrice;
 
+  @ManyToOne
+  @JoinColumn(name = "guideline_id", referencedColumnName = "id")
+  private Course course;
+
+  @ManyToOne
+  @JoinColumn(name = "user_id", referencedColumnName = "id")
+  private User user;
+
   private Long amount;
+
+  private Long balance;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
