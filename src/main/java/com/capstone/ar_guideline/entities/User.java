@@ -31,7 +31,7 @@ public class User implements UserDetails, Serializable {
   private Role role;
 
   @ManyToOne
-  @JoinColumn(name = "company_id", nullable = false)
+  @JoinColumn(name = "company_id")
   private Company company;
 
   @Column(unique = true, nullable = false)

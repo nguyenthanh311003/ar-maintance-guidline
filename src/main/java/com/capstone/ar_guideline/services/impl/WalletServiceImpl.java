@@ -2,6 +2,8 @@ package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.dtos.responses.Wallet.WalletResponse;
 import com.capstone.ar_guideline.entities.*;
+import com.capstone.ar_guideline.exceptions.AppException;
+import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.WalletMapper;
 import com.capstone.ar_guideline.repositories.WalletRepository;
 import java.util.Optional;
@@ -20,7 +22,6 @@ public class WalletServiceImpl {
 
   @Autowired private WalletTransactionRepository walletTransactionRepository;
 
-  @Transactional
   public WalletResponse createWallet(User user, Long initialBalance, String currency) {
     Wallet wallet = Wallet.builder().user(user).balance(initialBalance).currency(currency).build();
     log.info("Creating wallet for user: {}", user.getId());
@@ -33,6 +34,10 @@ public class WalletServiceImpl {
 
   public Wallet updateBalance(String walletId, Long amount, boolean isPlus, String servicePriceId, String userId, String guidelineId) {
     Optional<Wallet> walletOptional = walletRepository.findById(walletId);
+    if(walletOptional.get().getBalance() ==0 || walletOptional.get().getBalance() - amount <0)
+    {
+      throw new RuntimeException("Wallet not have enough balance");
+    }
     if (walletOptional.isPresent()) {
       Wallet wallet = walletOptional.get();
       Long newBalance = isPlus ? wallet.getBalance() + amount : wallet.getBalance() - amount;

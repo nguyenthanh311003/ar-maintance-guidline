@@ -5,13 +5,14 @@ import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
-import com.capstone.ar_guideline.entities.Course;
-import com.capstone.ar_guideline.entities.Model;
-import com.capstone.ar_guideline.entities.ModelType;
+import com.capstone.ar_guideline.dtos.responses.Wallet.WalletResponse;
+import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CourseMapper;
 import com.capstone.ar_guideline.repositories.CourseRepository;
+import com.capstone.ar_guideline.repositories.InstructionDetailRepository;
+import com.capstone.ar_guideline.repositories.ServicePricerRepository;
 import com.capstone.ar_guideline.services.*;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -41,6 +43,9 @@ public class CourseServiceImpl implements ICourseService {
   IModelService modelService;
   IInstructionService instructionService;
   IMachineTypeService machineTypeService;
+  InstructionDetailRepository instructionDetailRepository;
+  ServicePricerRepository servicePricerRepository;
+  WalletServiceImpl walletService;
 
   private final String[] keysToRemove = {
     ConstHashKey.HASH_KEY_COURSE,
@@ -113,17 +118,13 @@ public class CourseServiceImpl implements ICourseService {
       ModelType machineTypeById = machineTypeService.findById(request.getMachineTypeId());
       newCourse.setModelType(machineTypeById);
       newCourse.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
-      newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
+      newCourse.setStatus("DRAFTED");
       newCourse.setCourseCode(UUID.randomUUID().toString());
       newCourse.setDuration(0);
       newCourse.setNumberOfScan(0);
       newCourse.setQrCode(UtilService.generateAndStoreQRCode(newCourse.getCourseCode()));
       newCourse = courseRepository.save(newCourse);
 
-      if (newCourse.getId() != null) {
-        Model modelById = modelService.findById(newCourse.getModel().getId());
-        modelService.updateIsUsed(true, modelById);
-      }
       //      Arrays.stream(keysToRemove)
       //          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
       //          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
@@ -212,9 +213,38 @@ public class CourseServiceImpl implements ICourseService {
   public void updateNumberOfScan(String id) {
     Course course = findById(id);
     course.setNumberOfScan(course.getNumberOfScan() + 1);
+    course.setStatus("ARCHIVED");
     courseRepository.save(course);
   }
 
+  @Override
+  @Transactional
+  public void publishGuidelineFirstTime(String courseId,String userId) {
+    Course course = courseRepository.findById(courseId)
+            .orElseThrow(() -> new RuntimeException("Course not found"));
+
+
+    // Count the number of InstructionDetail
+    int instructionDetailCount = instructionDetailRepository.countInstructionDetailByCourseId(courseId);
+
+    if(instructionDetailCount<0)
+    {
+      throw new RuntimeException("Must have at lease 1 instruction detail");
+    }
+
+    // Find the ServicePrice with the name "Instruction Detail"
+    ServicePrice servicePrice = servicePricerRepository.findByName("Instruction Detail");
+    if (servicePrice == null) {
+      throw new RuntimeException("ServicePrice 'Instruction Detail' not found");
+    }
+
+    // Calculate the total price
+    long totalPrice = instructionDetailCount * servicePrice.getPrice();
+
+    // Update the balance of the user's wallet
+    WalletResponse wallet = walletService.findWalletByUserId(userId);// Assuming the first user in the company
+    walletService.updateBalance(wallet.getId(), totalPrice, false, servicePrice.getId(), userId, courseId);
+  }
   @Override
   public void delete(String id) {
     try {

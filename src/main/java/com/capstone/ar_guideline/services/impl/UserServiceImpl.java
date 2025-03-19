@@ -138,7 +138,7 @@ public class UserServiceImpl implements IUserService {
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
       // Create wallet for user if the role is company
-      if (role.getRoleName().equalsIgnoreCase("COMPANY")) {
+      if (role.getRoleName().equalsIgnoreCase("COMPANY") || role.getRoleName().equalsIgnoreCase("STAFF") ) {
         walletService.createWallet(user, 0L, "VND");
       }
 

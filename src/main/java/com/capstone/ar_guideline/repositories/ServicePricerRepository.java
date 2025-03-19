@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ServicePricerRepository extends JpaRepository<ServicePrice, String> {
   boolean existsByName(String name);
+  ServicePrice findByName(String name);
 }

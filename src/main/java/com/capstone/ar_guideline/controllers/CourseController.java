@@ -123,4 +123,11 @@ public class CourseController {
     courseService.updateNumberOfScan(courseId);
     return ApiResponse.<String>builder().result("Course has been updated successfully").build();
   }
+  @PutMapping(value = ConstAPI.CourseAPI.PUBLIC_GUIDELINE_FIRST_TIME + "/{courseId}")
+  public ApiResponse<String> publicGuidelineFirstTime(@PathVariable String courseId, @RequestParam(name = "userId") String userId) {
+    courseService.publishGuidelineFirstTime(courseId,userId);
+    return ApiResponse.<String>builder()
+            .result("Course has been published and wallet balance updated successfully")
+            .build();
+  }
 }
