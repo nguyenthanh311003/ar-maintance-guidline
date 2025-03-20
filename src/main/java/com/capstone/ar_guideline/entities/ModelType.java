@@ -27,6 +27,9 @@ public class ModelType implements Serializable {
   private List<MachineTypeAttribute> machineTypeAttributes;
 
   @OneToMany(mappedBy = "modelType", cascade = CascadeType.ALL)
+  private List<Model> machineTypeValues;
+
+  @OneToMany(mappedBy = "modelType", cascade = CascadeType.ALL)
   private List<Course> courses;
 
   @ManyToOne
