@@ -23,6 +23,10 @@ public class Model implements Serializable {
   @JoinColumn(name = "company_id")
   private Company company;
 
+  @ManyToOne
+  @JoinColumn(name = "model_type_id")
+  private ModelType modelType;
+
   private String modelCode;
   private Boolean isUsed;
   private String status;
