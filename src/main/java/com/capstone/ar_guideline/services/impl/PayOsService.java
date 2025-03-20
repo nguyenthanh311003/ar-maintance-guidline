@@ -165,7 +165,12 @@ public class PayOsService {
         paymentService.changeStatus(payment.getId(), ConstStatus.PAID);
         // Update wallet balance
         walletService.updateBalance(
-            payment.getUser().getWallet().getId(), (long) (payment.getAmount() / 1000), true,null,payment.getUser().getId(),null);
+            payment.getUser().getWallet().getId(),
+            (long) (payment.getAmount() / 1000),
+            true,
+            null,
+            payment.getUser().getId(),
+            null);
       } else if (!order.getStatus().equals(ConstStatus.PAID)) {
         paymentService.changeStatus(payment.getId(), ConstStatus.CANCEL);
         return new RedirectView(frontEndHost + "/payment/failed");

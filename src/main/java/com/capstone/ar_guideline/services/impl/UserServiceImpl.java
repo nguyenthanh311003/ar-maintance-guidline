@@ -138,7 +138,8 @@ public class UserServiceImpl implements IUserService {
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
       // Create wallet for user if the role is company
-      if (role.getRoleName().equalsIgnoreCase("COMPANY") || role.getRoleName().equalsIgnoreCase("STAFF") ) {
+      if (role.getRoleName().equalsIgnoreCase("COMPANY")
+          || role.getRoleName().equalsIgnoreCase("STAFF")) {
         walletService.createWallet(user, 0L, "VND");
       }
 
@@ -289,7 +290,11 @@ public class UserServiceImpl implements IUserService {
           userRepository
               .findById(userId)
               .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
+      if (userById.getStatus().equals(ConstStatus.ACTIVE_STATUS)) {
+        userById.setStatus(ConstStatus.INACTIVE_STATUS);
+      } else {
+        userById.setStatus(ConstStatus.ACTIVE_STATUS);
+      }
       userRepository.save(userById);
 
       return true;

@@ -20,6 +20,10 @@ public class CompanyRequest implements Serializable {
   @Column(name = "request_id", updatable = false, nullable = false)
   private String requestId;
 
+  private String requestSubject;
+
+  private String requestDescription;
+
   @ManyToOne(optional = false)
   @JoinColumn(name = "company_id", nullable = false)
   private Company company;
@@ -28,11 +32,19 @@ public class CompanyRequest implements Serializable {
   @JoinColumn(name = "designer_id")
   private User designer;
 
+  @ManyToOne
+  @JoinColumn(name = "machine_id")
+  private Machine machine;
+
+  @ManyToOne
+  @JoinColumn(name = "asset_model_id")
+  private Model assetModel;
+
   @Column(name = "status", length = 20)
   private String status;
 
   @CreationTimestamp
-  @Column(name = "created_at", insertable = false, updatable = false)
+  @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
   @Column(name = "completed_at")

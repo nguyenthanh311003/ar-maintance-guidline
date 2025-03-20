@@ -2,17 +2,13 @@ package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.dtos.responses.Wallet.WalletResponse;
 import com.capstone.ar_guideline.entities.*;
-import com.capstone.ar_guideline.exceptions.AppException;
-import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.WalletMapper;
 import com.capstone.ar_guideline.repositories.WalletRepository;
-import java.util.Optional;
-
 import com.capstone.ar_guideline.repositories.WalletTransactionRepository;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -32,10 +28,15 @@ public class WalletServiceImpl {
     return WalletMapper.toResponse(walletRepository.save(wallet));
   }
 
-  public Wallet updateBalance(String walletId, Long amount, boolean isPlus, String servicePriceId, String userId, String guidelineId) {
+  public Wallet updateBalance(
+      String walletId,
+      Long amount,
+      boolean isPlus,
+      String servicePriceId,
+      String userId,
+      String guidelineId) {
     Optional<Wallet> walletOptional = walletRepository.findById(walletId);
-    if(walletOptional.get().getBalance() ==0 || walletOptional.get().getBalance() - amount <0)
-    {
+    if (walletOptional.get().getBalance() == 0 || walletOptional.get().getBalance() - amount < 0) {
       throw new RuntimeException("Wallet not have enough balance");
     }
     if (walletOptional.isPresent()) {
@@ -44,7 +45,8 @@ public class WalletServiceImpl {
       wallet.setBalance(newBalance);
 
       // Create WalletTransaction
-      WalletTransaction transaction = WalletTransaction.builder()
+      WalletTransaction transaction =
+          WalletTransaction.builder()
               .wallet(wallet)
               .amount(amount)
               .balance(newBalance)

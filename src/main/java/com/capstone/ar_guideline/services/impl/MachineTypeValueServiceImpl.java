@@ -89,7 +89,7 @@ public class MachineTypeValueServiceImpl implements IMachineTypeValueService {
   @Override
   public MachineTypeValue findByMachineTypeAttributeId(String machineTypeAttributeId) {
     try {
-          return machineTypeValueRepository.getByMachineTypeAttributeId(machineTypeAttributeId);
+      return machineTypeValueRepository.getByMachineTypeAttributeId(machineTypeAttributeId);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

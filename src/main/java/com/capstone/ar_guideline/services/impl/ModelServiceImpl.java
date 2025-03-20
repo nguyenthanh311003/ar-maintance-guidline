@@ -46,7 +46,7 @@ public class ModelServiceImpl implements IModelService {
       newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       newModel.setFile(FileStorageService.storeFile(request.getFile()));
       newModel.setIsUsed(false);
-      newModel.setStatus(ConstStatus.ACTIVE_STATUS);
+      newModel.setStatus(ConstStatus.INACTIVE_STATUS);
       newModel.setSize((double) request.getFile().getSize() / ConstCommon.fileUnit);
       newModel.setSize((double) request.getFile().getSize());
       newModel.setPosition(

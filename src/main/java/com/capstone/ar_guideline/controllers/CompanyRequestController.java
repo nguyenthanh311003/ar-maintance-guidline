@@ -1,9 +1,11 @@
 package com.capstone.ar_guideline.controllers;
 
 import com.capstone.ar_guideline.constants.ConstAPI;
+import com.capstone.ar_guideline.dtos.requests.CompanyRequestCreation.CompanyRequestCreation;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
 import com.capstone.ar_guideline.services.ICompanyRequestService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,21 +28,30 @@ public class CompanyRequestController {
         .build();
   }
 
-  //  @GetMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST + "/{companyId}")
-  //  ApiResponse<List<CompanyRequestResponse>> getAllCompanyRequestsByCompanyId(@PathVariable Long
-  // companyId) {
-  //    return ApiResponse.<List<CompanyRequestResponse>>builder()
-  //            .message("Get all company requests")
-  //            .result(companyRequestService.findByCompanyId(companyId))
-  //            .build();
-  //  }
-  //
-  //  @PostMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST)
-  //  ApiResponse<AssignGuidelineResponse> createAssignGuideline(
-  //      @RequestBody @Valid AssignGuidelineCreationRequest request) {
-  //    return ApiResponse.<AssignGuidelineResponse>builder()
-  //        .message("Create assign guideline")
-  //        .result(assignGuidelineService.createAssignGuideline(request))
-  //        .build();
-  //  }
+  @GetMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST + "/{companyId}")
+  ApiResponse<List<CompanyRequestResponse>> getAllCompanyRequestsByCompanyId(
+      @PathVariable String companyId) {
+    return ApiResponse.<List<CompanyRequestResponse>>builder()
+        .message("Get all company requests by Company Id")
+        .result(companyRequestService.findByCompanyId(companyId))
+        .build();
+  }
+
+  @PostMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST)
+  ApiResponse<CompanyRequestResponse> createCompanyRequest(
+      @RequestBody @Valid CompanyRequestCreation request) {
+    return ApiResponse.<CompanyRequestResponse>builder()
+        .message("Create Company Request")
+        .result(companyRequestService.create(request))
+        .build();
+  }
+
+  @PutMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST + "/{requestId}")
+  ApiResponse<CompanyRequestResponse> updateCompanyRequest(
+      @PathVariable String requestId, @RequestBody @Valid CompanyRequestCreation request) {
+    return ApiResponse.<CompanyRequestResponse>builder()
+        .message("Update Company Request")
+        .result(companyRequestService.update(requestId, request))
+        .build();
+  }
 }
