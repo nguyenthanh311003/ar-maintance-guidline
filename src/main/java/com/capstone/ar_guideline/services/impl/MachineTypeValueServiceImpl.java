@@ -85,4 +85,16 @@ public class MachineTypeValueServiceImpl implements IMachineTypeValueService {
       throw new AppException(ErrorCode.MACHINE_TYPE_VALUE_NOT_EXISTED);
     }
   }
+
+  @Override
+  public MachineTypeValue findByMachineTypeAttributeId(String machineTypeAttributeId) {
+    try {
+          return machineTypeValueRepository.getByMachineTypeAttributeId(machineTypeAttributeId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_TYPE_VALUE_NOT_EXISTED);
+    }
+  }
 }

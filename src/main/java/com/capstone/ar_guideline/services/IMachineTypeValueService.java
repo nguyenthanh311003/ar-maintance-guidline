@@ -13,4 +13,6 @@ public interface IMachineTypeValueService {
 
   MachineTypeValue findByMachineTypeAttributeIdAndMachineId(
       String machineTypeAttributeId, String machineId);
+
+  MachineTypeValue findByMachineTypeAttributeId(String machineTypeAttributeId);
 }

@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.mappers;
 import com.capstone.ar_guideline.dtos.requests.MachineTypeAttribute.MachineTypeAttributeCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeAttribute.MachineTypeAttributeResponse;
 import com.capstone.ar_guideline.entities.MachineTypeAttribute;
+import com.capstone.ar_guideline.entities.MachineTypeValue;
 
 public class MachineTypeAttributeMapper {
   public static MachineTypeAttribute fromMachineTypeAttributeCreationRequestToEntity(
@@ -17,5 +18,15 @@ public class MachineTypeAttributeMapper {
         .modelTypeId(machineTypeAttribute.getModelType().getId())
         .attributeName(machineTypeAttribute.getAttributeName())
         .build();
+  }
+
+  public static MachineTypeAttributeResponse fromEntityToMachineTypeAttributeResponse(
+          MachineTypeAttribute machineTypeAttribute, MachineTypeValue machineTypeValue) {
+    return MachineTypeAttributeResponse.builder()
+            .id(machineTypeAttribute.getId())
+            .modelTypeId(machineTypeAttribute.getModelType().getId())
+            .attributeName(machineTypeAttribute.getAttributeName())
+            .valueAttribute(machineTypeValue.getValueAttribute())
+            .build();
   }
 }
