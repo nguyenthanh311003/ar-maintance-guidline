@@ -15,7 +15,7 @@ public interface ICompanyRequestService {
 
   CompanyRequestResponse create(CompanyRequestCreation request);
 
-  CompanyRequestResponse update(Long id, CompanyRequestCreation request);
+  CompanyRequestResponse update(String requestId, CompanyRequestCreation request);
 
   void delete(Long id);
 }

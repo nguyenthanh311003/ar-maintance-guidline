@@ -11,4 +11,7 @@ public class ConstStatus {
   public static final String CANCEL = "CANCEL";
   public static final String PASS = "PASS";
   public static final String PROCESSING = "PROCESSING";
+  public static final String ARCHIVED = "ARCHIVED";
+  public static final String APPROVED = "APPROVED";
+  public static final String CANCELLED = "CANCELLED";
 }

@@ -21,12 +21,12 @@ public class MachineTypeAttributeMapper {
   }
 
   public static MachineTypeAttributeResponse fromEntityToMachineTypeAttributeResponse(
-          MachineTypeAttribute machineTypeAttribute, MachineTypeValue machineTypeValue) {
+      MachineTypeAttribute machineTypeAttribute, MachineTypeValue machineTypeValue) {
     return MachineTypeAttributeResponse.builder()
-            .id(machineTypeAttribute.getId())
-            .modelTypeId(machineTypeAttribute.getModelType().getId())
-            .attributeName(machineTypeAttribute.getAttributeName())
-            .valueAttribute(machineTypeValue.getValueAttribute())
-            .build();
+        .id(machineTypeAttribute.getId())
+        .modelTypeId(machineTypeAttribute.getModelType().getId())
+        .attributeName(machineTypeAttribute.getAttributeName())
+        .valueAttribute(machineTypeValue.getValueAttribute())
+        .build();
   }
 }

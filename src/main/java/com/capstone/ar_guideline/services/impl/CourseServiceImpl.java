@@ -219,16 +219,17 @@ public class CourseServiceImpl implements ICourseService {
 
   @Override
   @Transactional
-  public void publishGuidelineFirstTime(String courseId,String userId) {
-    Course course = courseRepository.findById(courseId)
+  public void publishGuidelineFirstTime(String courseId, String userId) {
+    Course course =
+        courseRepository
+            .findById(courseId)
             .orElseThrow(() -> new RuntimeException("Course not found"));
 
-
     // Count the number of InstructionDetail
-    int instructionDetailCount = instructionDetailRepository.countInstructionDetailByCourseId(courseId);
+    int instructionDetailCount =
+        instructionDetailRepository.countInstructionDetailByCourseId(courseId);
 
-    if(instructionDetailCount<0)
-    {
+    if (instructionDetailCount < 0) {
       throw new RuntimeException("Must have at lease 1 instruction detail");
     }
 
@@ -242,9 +243,12 @@ public class CourseServiceImpl implements ICourseService {
     long totalPrice = instructionDetailCount * servicePrice.getPrice();
 
     // Update the balance of the user's wallet
-    WalletResponse wallet = walletService.findWalletByUserId(userId);// Assuming the first user in the company
-    walletService.updateBalance(wallet.getId(), totalPrice, false, servicePrice.getId(), userId, courseId);
+    WalletResponse wallet =
+        walletService.findWalletByUserId(userId); // Assuming the first user in the company
+    walletService.updateBalance(
+        wallet.getId(), totalPrice, false, servicePrice.getId(), userId, courseId);
   }
+
   @Override
   public void delete(String id) {
     try {
