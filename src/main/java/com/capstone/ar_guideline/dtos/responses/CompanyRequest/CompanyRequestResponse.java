@@ -20,6 +20,7 @@ public class CompanyRequestResponse {
   private String requestDescription;
   private CompanyResponse company;
   private UserResponse designer;
+  private UserResponse requester;
   private MachineResponse machine;
   private String status;
   private ModelResponse assetModel;
