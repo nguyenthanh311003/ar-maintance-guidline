@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.services.impl;
 
+import com.capstone.ar_guideline.entities.CompanyRequest;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -125,6 +126,60 @@ public class EmailService {
       mailSender.send(message);
     } catch (Exception e) {
       log.error("Failed to send assigned  reminder email to {}: {}", toEmail, e.getMessage());
+    }
+  }
+
+  public void sendCompanyRequestEmail(String toEmail, CompanyRequest companyRequest) {
+    try {
+      SimpleMailMessage message = new SimpleMailMessage();
+      message.setTo(toEmail);
+      message.setSubject("AR Guideline - Request Approved!");
+
+      String designerName =
+          companyRequest.getDesigner() != null
+              ? companyRequest.getDesigner().getEmail()
+              : "a designer";
+
+      message.setText(
+          "Good news! Your request \""
+              + companyRequest.getRequestSubject()
+              + "\" has been approved by "
+              + designerName
+              + ".\n\n"
+              + "You can now contact with the designer to discuss about new asset model.\n\n"
+              + "Thank you for using our platform!");
+
+      mailSender.send(message);
+    } catch (Exception e) {
+      log.error("Failed to send approval notification email to {}: {}", toEmail, e.getMessage());
+    }
+  }
+
+  public void sendDesignerCancelledEmail(String toEmail, CompanyRequest companyRequest) {
+    try {
+      SimpleMailMessage message = new SimpleMailMessage();
+      message.setTo(toEmail);
+      message.setSubject("AR Guideline - Request Cancelled by Designer");
+
+      String designerName =
+          companyRequest.getDesigner() != null
+              ? companyRequest.getDesigner().getEmail()
+              : "the assigned designer";
+
+      message.setText(
+          "Your request \""
+              + companyRequest.getRequestSubject()
+              + "\" has been cancelled by "
+              + designerName
+              + ".\n\n"
+              + "Your request will be reopened for other designers to pick up. "
+              + "You'll be notified when a new designer accepts your request.\n\n"
+              + "Thank you for using our platform!");
+
+      mailSender.send(message);
+      log.info("Designer cancellation email sent to {}", toEmail);
+    } catch (Exception e) {
+      log.error("Failed to send designer cancellation email to {}: {}", toEmail, e.getMessage());
     }
   }
 }

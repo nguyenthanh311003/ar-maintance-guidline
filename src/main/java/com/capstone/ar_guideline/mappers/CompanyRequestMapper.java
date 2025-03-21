@@ -37,6 +37,10 @@ public class CompanyRequestMapper {
             entity.getAssetModel() == null
                 ? null
                 : ModelMapper.fromEntityToModelResponse(entity.getAssetModel()))
+        .requester(
+            entity.getRequester() == null
+                ? null
+                : UserMapper.fromEntityToUserResponse(entity.getRequester()))
         .completedAt(entity.getCompletedAt())
         .cancelledAt(entity.getCancelledAt())
         .status(entity.getStatus())
