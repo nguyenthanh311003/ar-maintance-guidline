@@ -168,6 +168,7 @@ public class ModelServiceImpl implements IModelService {
   public Boolean updateIsUsed(boolean isCreate, Model model) {
     try {
       model.setIsUsed(isCreate);
+      model.setStatus(ConstStatus.ARCHIVED);
 
       model = modelRepository.save(model);
 

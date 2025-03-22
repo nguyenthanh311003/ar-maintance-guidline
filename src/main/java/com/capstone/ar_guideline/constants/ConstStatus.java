@@ -15,4 +15,5 @@ public class ConstStatus {
   public static final String APPROVED = "APPROVED";
   public static final String COMPANY_CANCELLED = "COMPANY_CANCELLED";
   public static final String DESIGNER_CANCELLED = "DESIGNER_CANCELLED";
+  public static final String ARCHIVED = "ARCHIVED";
 }
