@@ -73,6 +73,7 @@ public class ConstAPI {
 
   public static class CompanyAPI {
     public static final String GET_COMPANIES = "api/v1/companies";
+    public static final String GET_COMPANY_MANAGEMENT = "api/v1/company/all";
     public static final String GET_COMPANY_BY_ID = "api/v1/company/id";
     public static final String GET_COMPANY_BY_NAME = "api/v1/company/name";
     public static final String CREATE_COMPANY = "api/v1/company";

@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.controllers;
 import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponse;
+import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponseManagement;
 import com.capstone.ar_guideline.services.ICompanyService;
 import java.util.List;
 import lombok.AccessLevel;
@@ -23,6 +24,14 @@ public class CompanyController {
     return ApiResponse.<List<CompanyResponse>>builder()
         .result(companyService.findAll())
         .message("Get all company")
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.CompanyAPI.GET_COMPANY_MANAGEMENT)
+  ApiResponse<List<CompanyResponseManagement>> getCompaniesForManagement() {
+    return ApiResponse.<List<CompanyResponseManagement>>builder()
+        .result(companyService.findAllForManagement())
+        .message("Get all company for management")
         .build();
   }
 
