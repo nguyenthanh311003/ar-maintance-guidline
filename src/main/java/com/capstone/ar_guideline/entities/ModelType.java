@@ -14,7 +14,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "machine_type")
+@Table(name = "Machine_Type")
 public class ModelType implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
