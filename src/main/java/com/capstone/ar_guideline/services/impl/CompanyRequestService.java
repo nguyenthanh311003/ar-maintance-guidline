@@ -160,8 +160,10 @@ public class CompanyRequestService implements ICompanyRequestService {
         emailService.sendRequesterCancelledEmail(
             companyRequest.getDesigner().getEmail(), companyRequest);
         companyRequest.setStatus(CANCEL);
-        modelNeedToDelete = companyRequest.getAssetModel().getId();
-        companyRequest.setAssetModel(null);
+        if (companyRequest.getAssetModel() != null) {
+          modelNeedToDelete = companyRequest.getAssetModel().getId();
+          companyRequest.setAssetModel(null);
+        }
       }
 
       companyRequest = companyRequestRepository.save(companyRequest);

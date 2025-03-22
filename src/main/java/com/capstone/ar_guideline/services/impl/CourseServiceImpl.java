@@ -246,7 +246,7 @@ public class CourseServiceImpl implements ICourseService {
     WalletResponse wallet =
         walletService.findWalletByUserId(userId); // Assuming the first user in the company
     walletService.updateBalance(
-        wallet.getId(), totalPrice, false, servicePrice.getId(), userId, courseId,null);
+        wallet.getId(), totalPrice, false, servicePrice.getId(), userId, courseId, null);
   }
 
   @Override
