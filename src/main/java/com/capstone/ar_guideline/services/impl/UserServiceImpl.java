@@ -95,7 +95,6 @@ public class UserServiceImpl implements IUserService {
       if(!signUpWitRoleRequest.getRoleName().equals("DESIGNER")){
         var company = companyService.findCompanyEntityByName(signUpWitRoleRequest.getCompany());
         user.setCompany(company);
-        walletService.createWallet(user, 0L, "VND");
       }
       var userByEmail = userRepository.findByEmail(signUpWitRoleRequest.getEmail());
       if (userByEmail.isPresent()) {
@@ -106,9 +105,14 @@ public class UserServiceImpl implements IUserService {
       user.setStatus(ConstStatus.ACTIVE_STATUS);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
+      if(!signUpWitRoleRequest.getRoleName().equals("DESIGNER"))
+      {
+        walletService.createWallet(user, 0L, "VND");
+      }
 
       var jwt = jwtService.generateToken(user);
       UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
+
       emailService.sendActiveAccountToCompany(user.getEmail(), user.getUsername(), passwordToSend);
       return AuthenticationResponse.builder()
           .message("User created successfully")
