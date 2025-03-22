@@ -170,7 +170,7 @@ public class PayOsService {
             true,
             null,
             payment.getUser().getId(),
-            null);
+            null, payment.getPointOptions().getId());
       } else if (!order.getStatus().equals(ConstStatus.PAID)) {
         paymentService.changeStatus(payment.getId(), ConstStatus.CANCEL);
         return new RedirectView(frontEndHost + "/payment/failed");

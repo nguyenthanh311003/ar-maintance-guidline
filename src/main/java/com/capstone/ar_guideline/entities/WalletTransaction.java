@@ -28,6 +28,10 @@ public class WalletTransaction {
   private ServicePrice servicePrice;
 
   @ManyToOne
+  @JoinColumn(name = "point_options_id", referencedColumnName = "id")
+  private PointOptions pointOptions;
+
+  @ManyToOne
   @JoinColumn(name = "guideline_id", referencedColumnName = "id")
   private Course course;
 

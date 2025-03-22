@@ -3,7 +3,7 @@ package com.capstone.ar_guideline.controllers;
 import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Wallet.WalletResponse;
-import com.capstone.ar_guideline.entities.WalletTransaction;
+import com.capstone.ar_guideline.dtos.responses.Wallet.WalletTransactionResponse;
 import com.capstone.ar_guideline.services.impl.WalletServiceImpl;
 import com.capstone.ar_guideline.services.impl.WalletTransactionService;
 import java.util.List;
@@ -32,9 +32,9 @@ public class WalletController {
   }
 
   @GetMapping(value = ConstAPI.WalletAPI.WALLET_HISTORY + "/{userId}")
-  public ApiResponse<List<WalletTransaction>> getAllByUserId(@PathVariable String userId) {
-    List<WalletTransaction> transactions = walletTransactionService.getAllByUserId(userId);
-    return ApiResponse.<List<WalletTransaction>>builder()
+  public ApiResponse<List<WalletTransactionResponse>> getAllByUserId(@PathVariable String userId) {
+    List<WalletTransactionResponse> transactions = walletTransactionService.getAllByUserId(userId);
+    return ApiResponse.<List<WalletTransactionResponse>>builder()
         .result(transactions)
         .message("Wallet transactions retrieved successfully")
         .build();

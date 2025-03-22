@@ -9,8 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Machine_QRResponse {
-    String machineQrId;
-    String machineId;
-    String guidelineName;
-    String qrUrl;
+  String machineQrId;
+  String machineId;
+  String guidelineName;
+  String qrUrl;
 }

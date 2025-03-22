@@ -92,7 +92,7 @@ public class UserServiceImpl implements IUserService {
       var role = roleService.findRoleEntityByName(signUpWitRoleRequest.getRoleName());
       User user = UserMapper.fromSignUpRequestToEntity(signUpWitRoleRequest);
 
-      if(!signUpWitRoleRequest.getRoleName().equals("DESIGNER")){
+      if (!signUpWitRoleRequest.getRoleName().equals("DESIGNER")) {
         var company = companyService.findCompanyEntityByName(signUpWitRoleRequest.getCompany());
         user.setCompany(company);
       }
@@ -105,8 +105,7 @@ public class UserServiceImpl implements IUserService {
       user.setStatus(ConstStatus.ACTIVE_STATUS);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
-      if(!signUpWitRoleRequest.getRoleName().equals("DESIGNER"))
-      {
+      if (!signUpWitRoleRequest.getRoleName().equals("DESIGNER")) {
         walletService.createWallet(user, 0L, "VND");
       }
 

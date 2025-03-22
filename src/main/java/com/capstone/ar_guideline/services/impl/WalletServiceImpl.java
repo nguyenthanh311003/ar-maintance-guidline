@@ -34,27 +34,33 @@ public class WalletServiceImpl {
       boolean isPlus,
       String servicePriceId,
       String userId,
-      String guidelineId) {
+      String guidelineId,
+      String pointOptionsId) {
     Optional<Wallet> walletOptional = walletRepository.findById(walletId);
-    if (walletOptional.get().getBalance() == 0 || walletOptional.get().getBalance() - amount < 0) {
+    if ((walletOptional.get().getBalance() == 0 || walletOptional.get().getBalance() - amount < 0)
+        && !isPlus) {
       throw new RuntimeException("Wallet not have enough balance");
     }
     if (walletOptional.isPresent()) {
       Wallet wallet = walletOptional.get();
       Long newBalance = isPlus ? wallet.getBalance() + amount : wallet.getBalance() - amount;
       wallet.setBalance(newBalance);
-
-      // Create WalletTransaction
       WalletTransaction transaction =
           WalletTransaction.builder()
               .wallet(wallet)
               .amount(amount)
               .balance(newBalance)
               .type(isPlus ? "CREDIT" : "DEBIT")
-              .servicePrice(ServicePrice.builder().id(servicePriceId).build())
               .user(User.builder().id(userId).build())
-              .course(Course.builder().id(guidelineId).build())
               .build();
+
+      if (pointOptionsId != null) {
+        PointOptions pointOptions = PointOptions.builder().id(pointOptionsId).build();
+        transaction.setPointOptions(pointOptions);
+      } else {
+        transaction.setServicePrice(ServicePrice.builder().id(servicePriceId).build());
+        transaction.setCourse(Course.builder().id(guidelineId).build());
+      }
       walletTransactionRepository.save(transaction);
 
       return walletRepository.save(wallet);

@@ -246,7 +246,7 @@ public class CourseServiceImpl implements ICourseService {
     WalletResponse wallet =
         walletService.findWalletByUserId(userId); // Assuming the first user in the company
     walletService.updateBalance(
-        wallet.getId(), totalPrice, false, servicePrice.getId(), userId, courseId);
+        wallet.getId(), totalPrice, false, servicePrice.getId(), userId, courseId,null);
   }
 
   @Override
@@ -254,10 +254,9 @@ public class CourseServiceImpl implements ICourseService {
     try {
       Course courseById = findById(id);
       courseRepository.deleteById(courseById.getId());
-   if(checkCourseInUse(courseById))
-   {
+      if (checkCourseInUse(courseById)) {
         throw new RuntimeException("Course is in use, cannot delete");
-   }
+      }
       Arrays.stream(keysToRemove)
           .map(k -> k + ConstHashKey.HASH_KEY_ALL)
           .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
@@ -270,7 +269,7 @@ public class CourseServiceImpl implements ICourseService {
   }
 
   private Boolean checkCourseInUse(Course course) {
-    if(course.getNumberOfScan() > 0) {
+    if (course.getNumberOfScan() > 0) {
       return true;
     }
     return false;
