@@ -213,7 +213,6 @@ public class CourseServiceImpl implements ICourseService {
   public void updateNumberOfScan(String id) {
     Course course = findById(id);
     course.setNumberOfScan(course.getNumberOfScan() + 1);
-    course.setStatus("ARCHIVED");
     courseRepository.save(course);
   }
 
@@ -241,7 +240,8 @@ public class CourseServiceImpl implements ICourseService {
 
     // Calculate the total price
     long totalPrice = instructionDetailCount * servicePrice.getPrice();
-
+    course.setStatus(ConstStatus.ACTIVE_STATUS);
+    courseRepository.save(course);
     // Update the balance of the user's wallet
     WalletResponse wallet =
         walletService.findWalletByUserId(userId); // Assuming the first user in the company
@@ -254,6 +254,10 @@ public class CourseServiceImpl implements ICourseService {
     try {
       Course courseById = findById(id);
       courseRepository.deleteById(courseById.getId());
+   if(checkCourseInUse(courseById))
+   {
+        throw new RuntimeException("Course is in use, cannot delete");
+   }
       Arrays.stream(keysToRemove)
           .map(k -> k + ConstHashKey.HASH_KEY_ALL)
           .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
@@ -263,6 +267,13 @@ public class CourseServiceImpl implements ICourseService {
       }
       throw new AppException(ErrorCode.COURSE_DELETE_FAILED);
     }
+  }
+
+  private Boolean checkCourseInUse(Course course) {
+    if(course.getNumberOfScan() > 0) {
+      return true;
+    }
+    return false;
   }
 
   @Override
