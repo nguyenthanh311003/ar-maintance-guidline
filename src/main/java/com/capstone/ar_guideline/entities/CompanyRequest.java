@@ -50,7 +50,7 @@ public class CompanyRequest implements Serializable {
   private String status;
 
   @Column(name = "request_number", nullable = false, updatable = false, unique = true)
-  private Long requestNumber;
+  private String requestNumber;
 
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)

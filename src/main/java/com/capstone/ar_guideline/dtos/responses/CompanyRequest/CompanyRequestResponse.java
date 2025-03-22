@@ -20,7 +20,7 @@ public class CompanyRequestResponse implements Serializable {
   private UserResponse designer;
   private UserResponse requester;
   private MachineTypeResponse machineType;
-  private Long requestNumber;
+  private String requestNumber;
   private String status;
   private ModelResponse assetModel;
   private LocalDateTime createdAt;

@@ -15,6 +15,6 @@ public interface CompanyRequestRepository extends JpaRepository<CompanyRequest, 
   @Query(" select c from CompanyRequest c order by c.createdAt desc ")
   List<CompanyRequest> findAll();
 
-  @Query("SELECT MAX(c.requestNumber) FROM CompanyRequest c")
-  Long findMaxRequestNumber();
+  @Query("SELECT c.requestNumber FROM CompanyRequest c")
+  List<String> findAllRequestNumbers();
 }
