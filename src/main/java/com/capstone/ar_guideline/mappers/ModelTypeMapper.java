@@ -19,6 +19,10 @@ public class ModelTypeMapper {
         .name(modelType.getName())
         .image(modelType.getImage())
         .description(modelType.getDescription())
+        .company(
+            modelType.getCompany() == null
+                ? null
+                : CompanyMapper.fromEntityToCompanyResponse(modelType.getCompany()))
         .build();
   }
 
@@ -28,6 +32,10 @@ public class ModelTypeMapper {
         .name(response.getName())
         .image(response.getImage())
         .description(response.getDescription())
+        .company(
+            response.getCompany() == null
+                ? null
+                : CompanyMapper.fromCompanyResponseToEntity(response.getCompany()))
         .build();
   }
 }

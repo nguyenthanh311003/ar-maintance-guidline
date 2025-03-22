@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.dtos.responses.ModelType;
 
+import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponse;
 import java.io.Serializable;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -14,4 +15,5 @@ public class ModelTypeResponse implements Serializable {
   String name;
   String image;
   String description;
+  CompanyResponse company;
 }

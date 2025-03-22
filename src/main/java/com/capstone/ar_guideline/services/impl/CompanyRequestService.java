@@ -26,7 +26,7 @@ public class CompanyRequestService implements ICompanyRequestService {
   private final CompanyRequestRepository companyRequestRepository;
   private final ICompanyService companyService;
   private final IUserService userService;
-  private final IMachineService machineService;
+  private final IMachineTypeService machineTypeService;
   private final IModelService assetModelService;
   private final EmailService emailService;
 
@@ -91,11 +91,11 @@ public class CompanyRequestService implements ICompanyRequestService {
       Company company =
           CompanyMapper.fromCompanyResponseToEntity(
               companyService.findById(request.getCompanyId()));
-      User requester = userService.findById(request.getRequestId());
-      Machine machine = machineService.findById(request.getMachineId());
+      User requester = userService.findById(request.getRequesterId());
+      ModelType modelType = machineTypeService.findById(request.getMachineTypeId());
       CompanyRequest companyRequest = CompanyRequestMapper.fromCreationRequestToEntity(request);
       companyRequest.setCompany(company);
-      companyRequest.setMachine(machine);
+      companyRequest.setMachineType(modelType);
       companyRequest.setDesigner(null);
       companyRequest.setStatus(PENDING);
       companyRequest.setRequester(requester);
@@ -113,7 +113,10 @@ public class CompanyRequestService implements ICompanyRequestService {
   public CompanyRequestResponse update(String requestId, CompanyRequestCreation request) {
     try {
       CompanyRequest companyRequest = companyRequestRepository.findByRequestId(requestId);
-      if (request.getStatus() != null) companyRequest.setStatus(request.getStatus());
+      if (request.getStatus() != null
+          && !request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)
+          && !request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED))
+        companyRequest.setStatus(request.getStatus());
       if (request.getDesignerId() != null)
         companyRequest.setDesigner(userService.findById(request.getDesignerId()));
 
@@ -148,9 +151,25 @@ public class CompanyRequestService implements ICompanyRequestService {
       if (request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)) {
         emailService.sendDesignerCancelledEmail(
             companyRequest.getRequester().getEmail(), companyRequest);
+        companyRequest.setStatus(PENDING);
+      }
+
+      String modelNeedToDelete = null;
+
+      if (request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED)) {
+        emailService.sendRequesterCancelledEmail(
+            companyRequest.getDesigner().getEmail(), companyRequest);
+        companyRequest.setStatus(CANCEL);
+        modelNeedToDelete = companyRequest.getAssetModel().getId();
+        companyRequest.setAssetModel(null);
       }
 
       companyRequest = companyRequestRepository.save(companyRequest);
+
+      if (request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED) && modelNeedToDelete != null) {
+        assetModelService.delete(modelNeedToDelete);
+      }
+
       return CompanyRequestMapper.fromEntityToResponse(companyRequest);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
