@@ -32,7 +32,7 @@ public class UserMapper {
         .role(RoleMapper.fromEntityToRoleResponse(user.getRole()))
         .avatar(user.getAvatar())
         .roleName(user.getRole().getRoleName())
-        .company(CompanyMapper.fromEntityToCompanyResponse(user.getCompany()))
+        .company(user.getCompany()!=null?CompanyMapper.fromEntityToCompanyResponse(user.getCompany()):null)
         .isPayAdmin(user.getIsPayAdmin())
         .status(user.getStatus())
         .deviceId(user.getDeviceId())

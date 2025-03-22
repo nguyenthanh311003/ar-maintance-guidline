@@ -90,16 +90,20 @@ public class UserServiceImpl implements IUserService {
 
       // Validate the role name
       var role = roleService.findRoleEntityByName(signUpWitRoleRequest.getRoleName());
-      var company = companyService.findCompanyEntityByName(signUpWitRoleRequest.getCompany());
+      User user = UserMapper.fromSignUpRequestToEntity(signUpWitRoleRequest);
 
+      if(!signUpWitRoleRequest.getRoleName().equals("DESIGNER")){
+        var company = companyService.findCompanyEntityByName(signUpWitRoleRequest.getCompany());
+        user.setCompany(company);
+        walletService.createWallet(user, 0L, "VND");
+      }
       var userByEmail = userRepository.findByEmail(signUpWitRoleRequest.getEmail());
       if (userByEmail.isPresent()) {
         throw new AppException(ErrorCode.USER_EXISTED);
       }
       String passwordToSend = signUpWitRoleRequest.getPassword();
-      User user = UserMapper.fromSignUpRequestToEntity(signUpWitRoleRequest);
       user.setRole(role);
-      user.setCompany(company);
+      user.setStatus(ConstStatus.ACTIVE_STATUS);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
 
