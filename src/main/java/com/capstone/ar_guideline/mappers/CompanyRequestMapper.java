@@ -46,6 +46,7 @@ public class CompanyRequestMapper {
             entity.getRequester() == null
                 ? null
                 : UserMapper.fromEntityToUserResponse(entity.getRequester()))
+        .requestNumber(entity.getRequestNumber())
         .completedAt(entity.getCompletedAt())
         .cancelledAt(entity.getCancelledAt())
         .status(entity.getStatus())

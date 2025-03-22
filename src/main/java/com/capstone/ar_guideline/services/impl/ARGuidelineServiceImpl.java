@@ -287,7 +287,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       if (request.getFile() != null) {
         modelById.setFile(FileStorageService.storeFile(request.getFile()));
       }
-      ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
+      //      ModelType modelTypeById = modelTypeService.findById(request.getModelTypeId());
 
       if (modelById.getId() != null && request.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
         Course courseByModelId = courseService.findByModelId(modelById.getId());
@@ -826,10 +826,9 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   public CourseResponse createGuideline(CourseCreationRequest request) {
     try {
       Course newCourse = CourseMapper.fromCourseCreationRequestToEntity(request);
-      modelService.findById(request.getModelId());
+      Model model = modelService.findById(request.getModelId());
       companyService.findById(request.getCompanyId());
-      ModelType machineTypeById = machineTypeService.findById(request.getMachineTypeId());
-      newCourse.setModelType(machineTypeById);
+      newCourse.setModelType(model.getModelType());
       newCourse.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
       newCourse.setCourseCode(UUID.randomUUID().toString());
@@ -839,7 +838,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       newCourse = courseService.save(newCourse);
 
       List<Machine> machinesByMachineTypeId =
-          machineService.getMachineByMachineType(newCourse.getModelType().getId());
+          machineService.getMachineByMachineType(model.getModelType().getId());
 
       //      if (!machinesByMachineTypeId.isEmpty()) {
       //        Course finalNewCourse = newCourse;

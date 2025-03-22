@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.entities;
 
+import com.capstone.ar_guideline.configurations.CompanyRequestListener;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@EntityListeners(CompanyRequestListener.class)
 @Table(name = "company_request")
 public class CompanyRequest implements Serializable {
 
@@ -46,6 +48,9 @@ public class CompanyRequest implements Serializable {
 
   @Column(name = "status", length = 20)
   private String status;
+
+  @Column(name = "request_number", nullable = false, updatable = false, unique = true)
+  private String requestNumber;
 
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)

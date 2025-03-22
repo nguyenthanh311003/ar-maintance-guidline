@@ -113,10 +113,9 @@ public class CourseServiceImpl implements ICourseService {
   public CourseResponse create(CourseCreationRequest request) {
     try {
       Course newCourse = CourseMapper.fromCourseCreationRequestToEntity(request);
-      modelService.findById(request.getModelId());
+      Model model = modelService.findById(request.getModelId());
       companyService.findById(request.getCompanyId());
-      ModelType machineTypeById = machineTypeService.findById(request.getMachineTypeId());
-      newCourse.setModelType(machineTypeById);
+      newCourse.setModelType(model.getModelType());
       newCourse.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       newCourse.setStatus("DRAFTED");
       newCourse.setCourseCode(UUID.randomUUID().toString());
@@ -246,7 +245,7 @@ public class CourseServiceImpl implements ICourseService {
     WalletResponse wallet =
         walletService.findWalletByUserId(userId); // Assuming the first user in the company
     walletService.updateBalance(
-        wallet.getId(), totalPrice, false, servicePrice.getId(), userId, courseId,null);
+        wallet.getId(), totalPrice, false, servicePrice.getId(), userId, courseId, null);
   }
 
   @Override

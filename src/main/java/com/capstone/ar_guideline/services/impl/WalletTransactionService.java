@@ -22,20 +22,18 @@ public class WalletTransactionService {
                 WalletTransactionResponse.builder()
                     .id(transaction.getId())
                     .type(transaction.getType())
-                        .serviceName(
-                                transaction.getServicePrice() != null
-                                        ? transaction.getServicePrice().getName()
-                                        : null)
-                        .guidelineName(
-                                transaction.getCourse() != null
-                                        ? transaction.getCourse().getTitle()
-                                        : null)
+                    .serviceName(
+                        transaction.getServicePrice() != null
+                            ? transaction.getServicePrice().getName()
+                            : null)
+                    .guidelineName(
+                        transaction.getCourse() != null ? transaction.getCourse().getTitle() : null)
                     .amount(transaction.getAmount())
                     .balance(transaction.getBalance())
-                        .optionName(
-                            transaction.getPointOptions() != null
-                                ? transaction.getPointOptions().getName()
-                                : null)
+                    .optionName(
+                        transaction.getPointOptions() != null
+                            ? transaction.getPointOptions().getName()
+                            : null)
                     .createdDate(transaction.getCreatedDate())
                     .build())
         .collect(Collectors.toList());
