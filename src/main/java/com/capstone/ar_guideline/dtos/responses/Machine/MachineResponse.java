@@ -2,6 +2,8 @@ package com.capstone.ar_guideline.dtos.responses.Machine;
 
 import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValueResponse;
 import java.util.List;
+
+import com.capstone.ar_guideline.dtos.responses.Machine_QR.Machine_QRResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,4 +21,5 @@ public class MachineResponse {
   String token;
   String qrCode;
   List<MachineTypeValueResponse> machineTypeValueResponses;
+  List<Machine_QRResponse> machineQrsResponses;
 }
