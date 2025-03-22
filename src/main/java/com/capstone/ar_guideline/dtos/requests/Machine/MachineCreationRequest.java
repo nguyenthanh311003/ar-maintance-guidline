@@ -16,5 +16,6 @@ public class MachineCreationRequest {
   String companyId;
   String apiUrl;
   String token;
-  List<MachineTypeValueCreationRequest> machineTypeValueCreationRequest;
+//  List<MachineTypeValueCreationRequest> machineTypeValueCreationRequest;
+  List<HeaderRequest> headerRequests;
 }
