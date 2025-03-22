@@ -4,10 +4,7 @@ import static com.capstone.ar_guideline.constants.ConstStatus.*;
 
 import com.capstone.ar_guideline.dtos.requests.CompanyRequestCreation.CompanyRequestCreation;
 import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
-import com.capstone.ar_guideline.entities.Company;
-import com.capstone.ar_guideline.entities.CompanyRequest;
-import com.capstone.ar_guideline.entities.Machine;
-import com.capstone.ar_guideline.entities.Model;
+import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CompanyMapper;
@@ -16,6 +13,7 @@ import com.capstone.ar_guideline.repositories.CompanyRequestRepository;
 import com.capstone.ar_guideline.services.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +28,7 @@ public class CompanyRequestService implements ICompanyRequestService {
   private final IUserService userService;
   private final IMachineService machineService;
   private final IModelService assetModelService;
+  private final EmailService emailService;
 
   @Override
   public List<CompanyRequestResponse> findAll() {
@@ -92,12 +91,14 @@ public class CompanyRequestService implements ICompanyRequestService {
       Company company =
           CompanyMapper.fromCompanyResponseToEntity(
               companyService.findById(request.getCompanyId()));
+      User requester = userService.findById(request.getRequestId());
       Machine machine = machineService.findById(request.getMachineId());
       CompanyRequest companyRequest = CompanyRequestMapper.fromCreationRequestToEntity(request);
       companyRequest.setCompany(company);
       companyRequest.setMachine(machine);
       companyRequest.setDesigner(null);
       companyRequest.setStatus(PENDING);
+      companyRequest.setRequester(requester);
       companyRequest = companyRequestRepository.save(companyRequest);
       return CompanyRequestMapper.fromEntityToResponse(companyRequest);
     } catch (Exception exception) {
@@ -120,11 +121,16 @@ public class CompanyRequestService implements ICompanyRequestService {
         companyRequest.setAssetModel(assetModelService.findById(request.getAssetModelId()));
       }
 
-      if (request.getStatus().equalsIgnoreCase(ARCHIVED)
-          && companyRequest.getAssetModel() != null) {
+      if (request.getStatus().equalsIgnoreCase(DRAFTED) && companyRequest.getAssetModel() != null) {
         Model assetModel = companyRequest.getAssetModel();
-        assetModel.setStatus(ARCHIVED);
+        assetModel.setStatus(DRAFTED);
         assetModelService.update(assetModel);
+      }
+
+      if (request.getStatus().equalsIgnoreCase(PROCESSING)
+          && Objects.nonNull(request.getRequesterId())
+          && Objects.nonNull(companyRequest.getRequester())) {
+        emailService.sendCompanyRequestEmail(request.getRequesterId(), companyRequest);
       }
 
       if (request.getStatus().equalsIgnoreCase(APPROVED)
@@ -134,8 +140,14 @@ public class CompanyRequestService implements ICompanyRequestService {
         assetModelService.update(assetModel);
       }
 
-      if (request.getStatus().equalsIgnoreCase(CANCELLED)) {
+      if (request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED)
+          || request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)) {
         companyRequest.setCancelledAt(LocalDateTime.now());
+      }
+
+      if (request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)) {
+        emailService.sendDesignerCancelledEmail(
+            companyRequest.getRequester().getEmail(), companyRequest);
       }
 
       companyRequest = companyRequestRepository.save(companyRequest);

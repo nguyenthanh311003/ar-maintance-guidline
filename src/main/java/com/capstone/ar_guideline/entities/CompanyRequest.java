@@ -33,6 +33,10 @@ public class CompanyRequest implements Serializable {
   private User designer;
 
   @ManyToOne
+  @JoinColumn(name = "requester_id")
+  private User requester;
+
+  @ManyToOne
   @JoinColumn(name = "machine_id")
   private Machine machine;
 
