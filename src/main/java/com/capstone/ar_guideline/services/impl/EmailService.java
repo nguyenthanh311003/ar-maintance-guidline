@@ -182,4 +182,35 @@ public class EmailService {
       log.error("Failed to send designer cancellation email to {}: {}", toEmail, e.getMessage());
     }
   }
+
+  public void sendRequesterCancelledEmail(String toEmail, CompanyRequest companyRequest) {
+    try {
+      SimpleMailMessage message = new SimpleMailMessage();
+      message.setTo(toEmail);
+      message.setSubject("AR Guideline - Request Cancelled by Requester");
+
+      String requesterName =
+          companyRequest.getRequester() != null
+              ? companyRequest.getRequester().getEmail()
+              : "the requester";
+
+      message.setText(
+          "The request \""
+              + companyRequest.getRequestSubject()
+              + "\" has been cancelled by "
+              + requesterName
+              + ".\n\n"
+              + "The request will no longer be available in your tasks. "
+              + "Thank you for your participation.\n\n"
+              + "Thank you for using our platform!");
+
+      mailSender.send(message);
+      log.info("Requester cancellation email sent to designer {}", toEmail);
+    } catch (Exception e) {
+      log.error(
+          "Failed to send requester cancellation email to designer {}: {}",
+          toEmail,
+          e.getMessage());
+    }
+  }
 }

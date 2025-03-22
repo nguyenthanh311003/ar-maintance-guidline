@@ -15,7 +15,7 @@ public class CompanyRequestCreation {
   private String requestSubject;
   private String requestDescription;
   private String companyId;
-  private String machineId;
+  private String machineTypeId;
   private String designerId;
   private String requesterId;
   private String assetModelId;

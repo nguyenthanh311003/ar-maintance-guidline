@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.mappers;
 import com.capstone.ar_guideline.dtos.requests.CompanyRequestCreation.CompanyRequestCreation;
 import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
 import com.capstone.ar_guideline.entities.CompanyRequest;
+import java.util.stream.Collectors;
 
 public class CompanyRequestMapper {
   public static CompanyRequest fromCreationRequestToEntity(CompanyRequestCreation request) {
@@ -29,10 +30,14 @@ public class CompanyRequestMapper {
             entity.getDesigner() == null
                 ? null
                 : UserMapper.fromEntityToUserResponse(entity.getDesigner()))
-        .machine(
-            entity.getMachine() == null
+        .machineType(
+            entity.getMachineType() == null
                 ? null
-                : MachineMapper.fromEntityToMachineResponse(entity.getMachine()))
+                : MachineTypeMapper.fromEntityToMachineTypeResponse(
+                    entity.getMachineType(),
+                    entity.getMachineType().getMachineTypeAttributes().stream()
+                        .map(MachineTypeAttributeMapper::fromEntityToMachineTypeAttributeResponse)
+                        .collect(Collectors.toList())))
         .assetModel(
             entity.getAssetModel() == null
                 ? null

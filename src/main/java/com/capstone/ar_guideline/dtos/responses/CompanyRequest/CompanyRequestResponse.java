@@ -1,27 +1,25 @@
 package com.capstone.ar_guideline.dtos.responses.CompanyRequest;
 
 import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponse;
-import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
+import com.capstone.ar_guideline.dtos.responses.MachineType.MachineTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.dtos.responses.User.UserResponse;
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyRequestResponse {
+public class CompanyRequestResponse implements Serializable {
   private String requestId;
   private String requestSubject;
   private String requestDescription;
   private CompanyResponse company;
   private UserResponse designer;
   private UserResponse requester;
-  private MachineResponse machine;
+  private MachineTypeResponse machineType;
   private String status;
   private ModelResponse assetModel;
   private LocalDateTime createdAt;

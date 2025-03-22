@@ -37,8 +37,8 @@ public class CompanyRequest implements Serializable {
   private User requester;
 
   @ManyToOne
-  @JoinColumn(name = "machine_id")
-  private Machine machine;
+  @JoinColumn(name = "machine_type_id")
+  private ModelType machineType;
 
   @ManyToOne
   @JoinColumn(name = "asset_model_id")

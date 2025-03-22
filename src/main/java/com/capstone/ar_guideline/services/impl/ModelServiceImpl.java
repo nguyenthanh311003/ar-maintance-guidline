@@ -5,6 +5,7 @@ import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.entities.Model;
+import com.capstone.ar_guideline.entities.ModelType;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.ModelMapper;
@@ -43,6 +44,7 @@ public class ModelServiceImpl implements IModelService {
       }
 
       Model newModel = ModelMapper.fromModelCreationRequestToEntity(request);
+      ModelType modelType = modelTypeService.findById(request.getModelTypeId());
       newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       newModel.setFile(FileStorageService.storeFile(request.getFile()));
       newModel.setIsUsed(false);
@@ -54,6 +56,7 @@ public class ModelServiceImpl implements IModelService {
 
       newModel.setRotation(
           request.getRotation().stream().map(String::valueOf).collect(Collectors.joining(",")));
+      newModel.setModelType(modelType);
       newModel = modelRepository.save(newModel);
 
       return ModelMapper.fromEntityToModelResponse(newModel);
