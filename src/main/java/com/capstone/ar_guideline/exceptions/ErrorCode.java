@@ -141,12 +141,16 @@ public enum ErrorCode {
   MACHINE_TYPE_VALUE_UPDATE_FAILED(1112, "Machine Type Value update fail", HttpStatus.BAD_REQUEST),
   MACHINE_TYPE_VALUE_DELETE_FAILED(1113, "Machine Type Value delete fail", HttpStatus.BAD_REQUEST),
   MACHINE_TYPE_VALUE_NOT_EXISTED(1114, "Machine Type Value not existed", HttpStatus.NOT_FOUND),
-
   GET_ASSIGN_GUIDELINES_BY_GUIDELINE_ID_FAILED(
       2000, "Get all assign guidelines by guideline id failed", HttpStatus.BAD_REQUEST),
   CREATE_ASSIGN_GUIDELINE_FAILED(
       2001, "Get all assign guidelines by guideline id failed", HttpStatus.BAD_REQUEST),
-  COMPANY_REQUEST_FAILED(2706, "COMPANY REQUEST FEATURES ERROR", HttpStatus.BAD_REQUEST),
+  COMPANY_REQUEST_FAILED(1115, "COMPANY REQUEST FEATURES ERROR", HttpStatus.BAD_REQUEST),
+  MACHINE_QR_CREATE_FAILED(1116, "Machine QR create fail", HttpStatus.BAD_REQUEST),
+  MACHINE_QR_UPDATE_FAILED(1117, "Machine QR update fail", HttpStatus.BAD_REQUEST),
+  MACHINE_QR_DELETE_FAILED(1118, "Machine QR delete fail", HttpStatus.BAD_REQUEST),
+  MACHINE_QR_NOT_EXISTED(1119, "Machine QR not existed", HttpStatus.NOT_FOUND),
+  JSON_PROCESSING_ERROR(1120, "JSON PROCESSING fail", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;

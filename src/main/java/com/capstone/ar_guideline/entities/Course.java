@@ -35,6 +35,9 @@ public class Course implements Serializable {
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
   private List<Instruction> instructions;
 
+  @OneToMany(mappedBy = "guideline", cascade = CascadeType.ALL)
+  private List<Machine_QR> machineQrs;
+
   private String title;
   private String description;
   private String shortDescription;
