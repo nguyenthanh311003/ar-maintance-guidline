@@ -16,9 +16,9 @@ public class ModelMapper {
     return Model.builder()
         .status(request.getStatus())
         .modelCode(request.getModelCode())
-        .name(request.getName())
+        .name(request.getName() != null ? request.getName() : null)
         .company(Company.builder().id(request.getCompanyId()).build())
-        .description(request.getDescription())
+        .description(request.getDescription() != null ? request.getDescription() : null)
         .version(request.getVersion())
         .scale(request.getScale())
         .position(
