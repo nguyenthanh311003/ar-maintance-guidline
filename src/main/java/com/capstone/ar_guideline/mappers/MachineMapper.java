@@ -37,4 +37,15 @@ public class MachineMapper {
         .machineTypeValueResponses(machineTypeValueResponses)
         .build();
   }
+
+  public static MachineResponse fromEntityToMachineResponseForCreate(Machine machine) {
+    return MachineResponse.builder()
+        .id(machine.getId())
+        .machineName(machine.getName())
+        .machineType(machine.getModelType().getName())
+        .apiUrl(machine.getApiUrl())
+        .token(machine.getRequestToken())
+        .qrCode(machine.getQrCode())
+        .build();
+  }
 }

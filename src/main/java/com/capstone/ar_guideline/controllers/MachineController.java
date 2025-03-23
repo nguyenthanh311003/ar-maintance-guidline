@@ -37,6 +37,13 @@ public class MachineController {
         .build();
   }
 
+  @GetMapping(value = ConstAPI.MachineAPI.GET_MACHINES_BY_CODE + "{machineCode}")
+  public ApiResponse<MachineResponse> getMachineByCode(@PathVariable String machineCode) {
+    return ApiResponse.<MachineResponse>builder()
+        .result(arGuidelineService.getMachineByCode(machineCode))
+        .build();
+  }
+
   @PostMapping(value = ConstAPI.MachineAPI.CREATE_MACHINE)
   public ApiResponse<MachineResponse> createMachine(@RequestBody MachineCreationRequest request) {
     return ApiResponse.<MachineResponse>builder()

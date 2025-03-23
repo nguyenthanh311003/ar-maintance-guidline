@@ -14,6 +14,7 @@ public class MachineCreationRequest {
   String modelTypeId;
   String companyId;
   String apiUrl;
+  String machineCode;
   String token;
   //  List<MachineTypeValueCreationRequest> machineTypeValueCreationRequest;
   List<HeaderRequest> headerRequests;
