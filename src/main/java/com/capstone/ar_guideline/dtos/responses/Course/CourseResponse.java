@@ -30,4 +30,5 @@ public class CourseResponse implements Serializable {
   Integer numberOfScan;
   String status;
   String type;
+  String machineTypeId;
 }

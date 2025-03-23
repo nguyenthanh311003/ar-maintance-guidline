@@ -8,7 +8,10 @@ import com.capstone.ar_guideline.entities.MachineTypeValue;
 public class MachineTypeAttributeMapper {
   public static MachineTypeAttribute fromMachineTypeAttributeCreationRequestToEntity(
       MachineTypeAttributeCreationRequest request) {
-    return MachineTypeAttribute.builder().attributeName(request.getAttributeName()).build();
+    return MachineTypeAttribute.builder()
+        .attributeName(request.getAttributeName())
+        .valueOfAttribute(request.getAttributeValue())
+        .build();
   }
 
   public static MachineTypeAttributeResponse fromEntityToMachineTypeAttributeResponse(
@@ -17,6 +20,7 @@ public class MachineTypeAttributeMapper {
         .id(machineTypeAttribute.getId())
         .modelTypeId(machineTypeAttribute.getModelType().getId())
         .attributeName(machineTypeAttribute.getAttributeName())
+        .valueAttribute(machineTypeAttribute.getValueOfAttribute())
         .build();
   }
 

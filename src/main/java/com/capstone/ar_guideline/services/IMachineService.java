@@ -14,9 +14,13 @@ public interface IMachineService {
 
   Machine findById(String id);
 
+  Machine findByCode(String machineCode);
+
   Page<Machine> getMachineByCompanyId(Pageable pageable, String companyId);
 
   Machine getMachineByName(String name);
 
   List<Machine> getMachineByMachineType(String machineTypeId);
+
+  Boolean isMachineCodeExisted(String companyId, String machineCode);
 }
