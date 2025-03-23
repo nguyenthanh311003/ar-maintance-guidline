@@ -37,6 +37,7 @@ public class UserMapper {
                 ? CompanyMapper.fromEntityToCompanyResponse(user.getCompany())
                 : null)
         .isPayAdmin(user.getIsPayAdmin())
+            .points(user.getWallet() != null ? user.getWallet().getBalance() : null)
         .status(user.getStatus())
         .deviceId(user.getDeviceId())
         .username(user.getUsername())

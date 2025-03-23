@@ -91,10 +91,11 @@ public class UserServiceImpl implements IUserService {
       // Validate the role name
       var role = roleService.findRoleEntityByName(signUpWitRoleRequest.getRoleName());
       User user = UserMapper.fromSignUpRequestToEntity(signUpWitRoleRequest);
-
+      User companyUser =null;
       if (!signUpWitRoleRequest.getRoleName().equals("DESIGNER")) {
         var company = companyService.findCompanyEntityByName(signUpWitRoleRequest.getCompany());
         user.setCompany(company);
+        companyUser = userRepository.findUserByCompanyIdAndAdminRole(company.getId());
       }
       var userByEmail = userRepository.findByEmail(signUpWitRoleRequest.getEmail());
       if (userByEmail.isPresent()) {
@@ -107,11 +108,13 @@ public class UserServiceImpl implements IUserService {
       user = userRepository.save(user);
       if (!signUpWitRoleRequest.getRoleName().equals("DESIGNER")) {
         walletService.createWallet(user, 0L, "VND");
+        if(signUpWitRoleRequest.getPoints() >0)
+        {
+          walletService.updateBalanceBySend(signUpWitRoleRequest.getPoints(), user.getId(), companyUser.getId());
+        }
       }
-
       var jwt = jwtService.generateToken(user);
       UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
-
       emailService.sendActiveAccountToCompany(user.getEmail(), user.getUsername(), passwordToSend);
       return AuthenticationResponse.builder()
           .message("User created successfully")

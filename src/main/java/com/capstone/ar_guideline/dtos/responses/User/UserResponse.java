@@ -24,6 +24,7 @@ public class UserResponse implements Serializable {
   private String deviceId;
   private String phone;
   private String status;
+  private Long points;
   private String expirationDate;
   private Boolean isPayAdmin;
   private LocalDateTime createdDate;

@@ -43,6 +43,10 @@ public class WalletTransaction {
   @JoinColumn(name = "reciver_id", referencedColumnName = "id")
   private User receiver;
 
+  @ManyToOne
+  @JoinColumn(name = "sender_id", referencedColumnName = "id")
+  private User sender;
+
   private Long amount;
 
   private Long balance;

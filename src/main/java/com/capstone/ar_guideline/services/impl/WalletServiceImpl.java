@@ -3,10 +3,7 @@ package com.capstone.ar_guideline.services.impl;
 import com.capstone.ar_guideline.dtos.responses.Wallet.WalletResponse;
 import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.mappers.WalletMapper;
-import com.capstone.ar_guideline.repositories.CompanyRepository;
-import com.capstone.ar_guideline.repositories.UserRepository;
-import com.capstone.ar_guideline.repositories.WalletRepository;
-import com.capstone.ar_guideline.repositories.WalletTransactionRepository;
+import com.capstone.ar_guideline.repositories.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +22,8 @@ public class WalletServiceImpl {
   @Autowired private UserRepository userRepository;
 
   @Autowired private CompanyRepository companyRepository;
+
+  @Autowired private PointOptionsRepository pointOptionsRepository;
 
   public WalletResponse createWallet(User user, Long initialBalance, String currency) {
     Wallet wallet = Wallet.builder().user(user).balance(initialBalance).currency(currency).build();
@@ -63,7 +62,7 @@ public class WalletServiceImpl {
               .build();
 
       if (pointOptionsId != null) {
-        PointOptions pointOptions = PointOptions.builder().id(pointOptionsId).build();
+        PointOptions pointOptions = pointOptionsRepository.findById(pointOptionsId).get();
         transaction.setPointOptions(pointOptions);
         transaction.setAmount(pointOptions.getPoint());
         transaction.setBalance(wallet.getBalance() + pointOptions.getPoint());
@@ -81,7 +80,6 @@ public class WalletServiceImpl {
 
 public Wallet updateBalanceBySend(
     Long amount,
-    String guidelineId,
     String receiverId,
     String senderId
 ) {
@@ -111,7 +109,6 @@ public Wallet updateBalanceBySend(
             .balance(newSenderBalance)
             .type("DEBIT")
             .user(User.builder().id(senderId).build())
-            .course(Course.builder().id(guidelineId).build())
             .receiver(User.builder().id(receiverId).build())
             .build();
         walletTransactionRepository.save(senderTransaction);
@@ -123,8 +120,7 @@ public Wallet updateBalanceBySend(
             .balance(newReceiverBalance)
             .type("CREDIT")
             .user(User.builder().id(receiverId).build())
-            .course(Course.builder().id(guidelineId).build())
-            .receiver(User.builder().id(senderId).build())
+            .sender(User.builder().id(senderId).build())
             .build();
         walletTransactionRepository.save(receiverTransaction);
 
@@ -146,6 +142,18 @@ public void updatePointForAllEmployeeByCompanyId(String companyId, Long limitPoi
   // Find all users by companyId
   List<User> users = userRepository.findByCompanyId(companyId);
   User company = userRepository.findUserByCompanyIdAndAdminRole(companyId);
+  Long totalOfPoints = 0L;
+    for (User user : users) {
+        if (!user.getRole().getRoleName().equals("COMPANY") && user.getWallet().getBalance() < limitPoint) {
+            // Calculate the gap to the limit point
+            Long gap = limitPoint - user.getWallet().getBalance();
+            totalOfPoints = totalOfPoints + gap;
+        }
+    }
+
+    if(totalOfPoints > company.getWallet().getBalance()){
+        throw new RuntimeException("Company wallet does not have enough balance");
+    }
     // Distribute points to other users
   for (User user : users) {
     if (!user.getRole().getRoleName().equals("COMPANY") && user.getWallet().getBalance() < limitPoint) {
@@ -153,7 +161,7 @@ public void updatePointForAllEmployeeByCompanyId(String companyId, Long limitPoi
       Long gap = limitPoint - user.getWallet().getBalance();
 
       // Update the wallet balance
-      updateBalanceBySend(gap, null, user.getId(), company.getId());
+      updateBalanceBySend(gap, user.getId(), company.getId());
     }
   }
 
