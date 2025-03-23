@@ -75,7 +75,10 @@ public interface UserRepository extends JpaRepository<User, String> {
   List<User> findByCompanyId(String companyId);
 
   User findUserByCompanyId(String id);
-
+  @Query(
+      value =
+          "SELECT u FROM User u WHERE u.company.id = :companyId AND u.role.roleName = 'ADMIN' AND u.status = 'ACTIVE'")
+  User findUserByCompanyIdAndAdminRole(String id);
   @Query(
       value =
           "SELECT COUNT(u) FROM User u WHERE (u.company.id = :companyId OR :companyId IS NULL) AND (u.status = :status OR u.status IS NULL )")
