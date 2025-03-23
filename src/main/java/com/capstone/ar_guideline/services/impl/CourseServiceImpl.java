@@ -232,7 +232,7 @@ public class CourseServiceImpl implements ICourseService {
     }
 
     // Find the ServicePrice with the name "Instruction Detail"
-    ServicePrice servicePrice = servicePricerRepository.findByName("Instruction Detail");
+    ServicePrice servicePrice = servicePricerRepository.findByName("Create Guideline");
     if (servicePrice == null) {
       throw new RuntimeException("ServicePrice 'Instruction Detail' not found");
     }

@@ -803,6 +803,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       newCourse.setDuration(0);
       newCourse.setNumberOfScan(0);
       newCourse.setQrCode(UtilService.generateAndStoreQRCode(newCourse.getCourseCode()));
+      newCourse.setModel(model);
       newCourse = courseService.save(newCourse);
 
       List<Machine> machinesByMachineTypeId =
