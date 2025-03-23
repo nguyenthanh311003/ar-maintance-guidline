@@ -29,7 +29,7 @@ public class Course implements Serializable {
   private ModelType modelType;
 
   @ManyToOne
-  @JoinColumn(name = "model_id", unique = true)
+  @JoinColumn(name = "model_id")
   private Model model;
 
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)

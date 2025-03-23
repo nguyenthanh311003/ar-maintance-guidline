@@ -830,7 +830,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       companyService.findById(request.getCompanyId());
       newCourse.setModelType(model.getModelType());
       newCourse.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
-      newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
+      newCourse.setStatus(ConstStatus.DRAFTED);
       newCourse.setCourseCode(UUID.randomUUID().toString());
       newCourse.setDuration(0);
       newCourse.setNumberOfScan(0);
