@@ -15,7 +15,7 @@ public interface ModelRepository extends JpaRepository<Model, String> {
       "SELECT m FROM Model m WHERE m.company.id = :companyId "
           + "AND (:name IS NULL OR :name = '' OR LOWER(m.name) LIKE LOWER(CONCAT('%', :name, '%'))) "
           + "AND (:code IS NULL OR :code = '' OR LOWER(m.modelCode) LIKE LOWER(CONCAT('%', :code, '%')))"
-          + "AND (m.status <> 'DRAFT') "
+          + "AND (m.status <> 'DRAFTED') "
           + "ORDER BY m.createdDate DESC")
   Page<Model> findByCompanyId(
       Pageable pageable,
