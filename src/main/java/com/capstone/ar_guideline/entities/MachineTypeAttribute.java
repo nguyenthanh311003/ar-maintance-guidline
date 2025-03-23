@@ -28,6 +28,7 @@ public class MachineTypeAttribute implements Serializable {
   private List<MachineTypeValue> machineTypeValues;
 
   String attributeName;
+  String valueOfAttribute;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

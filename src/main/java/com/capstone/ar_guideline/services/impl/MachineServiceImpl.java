@@ -75,6 +75,18 @@ public class MachineServiceImpl implements IMachineService {
   }
 
   @Override
+  public Machine findByCode(String machineCode) {
+    try {
+      return machineRepository.getMachineByMachineCode(machineCode);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+    }
+  }
+
+  @Override
   public Page<Machine> getMachineByCompanyId(Pageable pageable, String companyId) {
     try {
       return machineRepository.getMachineCompanyId(pageable, companyId);
@@ -102,6 +114,21 @@ public class MachineServiceImpl implements IMachineService {
   public List<Machine> getMachineByMachineType(String machineTypeId) {
     try {
       return machineRepository.getMachineByMachineTypeId(machineTypeId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public Boolean isMachineCodeExisted(String companyId, String machineCode) {
+    try {
+      List<Machine> machinesByCompanyIdAndMachineCode =
+          machineRepository.getMachineByMachineCodeAndCompanyId(machineCode, companyId);
+
+      return !machinesByCompanyIdAndMachineCode.isEmpty();
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

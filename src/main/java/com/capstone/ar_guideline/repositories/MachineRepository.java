@@ -22,4 +22,13 @@ public interface MachineRepository extends JpaRepository<Machine, String> {
       value =
           "SELECT m FROM Machine m WHERE m.modelType.id = :machineTypeId ORDER BY m.createdDate DESC")
   List<Machine> getMachineByMachineTypeId(@Param("machineTypeId") String machineTypeId);
+
+  @Query(value = "SELECT m FROM Machine m WHERE m.machineCode = :machineCode")
+  Machine getMachineByMachineCode(@Param("machineCode") String machineCode);
+
+  @Query(
+      value =
+          "SELECT m FROM Machine m WHERE m.machineCode = :machineCode AND m.company.id = :companyId")
+  List<Machine> getMachineByMachineCodeAndCompanyId(
+      @Param("machineCode") String machineCode, @Param("companyId") String companyId);
 }

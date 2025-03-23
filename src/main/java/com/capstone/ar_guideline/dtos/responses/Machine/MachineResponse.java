@@ -17,6 +17,7 @@ public class MachineResponse {
   String machineType;
   String machineCode;
   String apiUrl;
+  List<HeaderResponse> headerResponses;
   String token;
   String qrCode;
   List<MachineTypeValueResponse> machineTypeValueResponses;

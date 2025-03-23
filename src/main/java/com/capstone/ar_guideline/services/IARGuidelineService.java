@@ -52,6 +52,8 @@ public interface IARGuidelineService {
 
   MachineResponse getMachineById(String machineId);
 
+  MachineResponse getMachineByCode(String machineCode);
+
   MachineResponse updateMachineById(String machineId, MachineModifyRequest request);
 
   MachineTypeResponse createMachineType(MachineTypeCreationRequest request);

@@ -14,5 +14,6 @@ public class MachineModifyRequest {
   String machineName;
   String apiUrl;
   String token;
+  List<HeaderRequest> headerRequests;
   List<MachineTypeValueModifyRequest> machineTypeValueModifyRequests;
 }

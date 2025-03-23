@@ -11,6 +11,7 @@ import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
+import com.capstone.ar_guideline.dtos.responses.Machine.HeaderResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineType.MachineTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeAttribute.MachineTypeAttributeResponse;
@@ -24,6 +25,8 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.*;
 import com.capstone.ar_guideline.services.*;
 import com.capstone.ar_guideline.util.UtilService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
@@ -400,7 +403,15 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       Machine newMachine = MachineMapper.fromMachineCreationRequestToEntity(request);
       newMachine.setModelType(modelTypeById);
       newMachine.setCompany(companyById);
-      newMachine.setMachineCode(generateMachineCode());
+
+      Boolean isMachineCodeExisted =
+          machineService.isMachineCodeExisted(companyById.getId(), request.getMachineCode());
+
+      if (isMachineCodeExisted) {
+        throw new AppException(ErrorCode.MACHINE_CODE_EXISTED);
+      }
+
+      newMachine.setMachineCode(request.getMachineCode());
 
       try {
         String headerJson = objectMapper.writeValueAsString(request.getHeaderRequests());
@@ -488,19 +499,11 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                 machineTypeValueResponse.setMachineTypeAttributeName(mvr.getAttributeName());
                 machineTypeValueResponse.setMachineTypeAttributeId(mvr.getId());
 
-                MachineTypeValue machineTypeValueByMachineTypeAttributeId =
-                    machineTypeValueService.findByMachineTypeAttributeIdAndMachineId(
-                        mvr.getId(), machineId);
-
-                if (Objects.isNull(machineTypeValueByMachineTypeAttributeId)) {
-                  machineTypeValueResponse.setId("N/A");
+                if (mvr.getValueOfAttribute() == null || mvr.getValueOfAttribute().isEmpty()) {
                   machineTypeValueResponse.setValueAttribute("N/A");
                 } else {
-                  machineTypeValueResponse.setId(machineTypeValueByMachineTypeAttributeId.getId());
-                  machineTypeValueResponse.setValueAttribute(
-                      machineTypeValueByMachineTypeAttributeId.getValueAttribute());
+                  machineTypeValueResponse.setValueAttribute(mvr.getValueOfAttribute());
                 }
-
                 return machineTypeValueResponse;
               })
           .toList();
@@ -531,6 +534,55 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
 
       machineResponse.setMachineQrsResponses(machineQrResponses);
 
+      List<HeaderResponse> headerResponses = new ArrayList<>();
+      ObjectMapper objectMapper = new ObjectMapper();
+      try {
+        if (machineById.getHeader() != null && !machineById.getHeader().isEmpty()) {
+          headerResponses =
+              objectMapper.readValue(
+                  machineById.getHeader(), new TypeReference<List<HeaderResponse>>() {});
+        }
+      } catch (JsonProcessingException e) {
+        throw new AppException(ErrorCode.JSON_PROCESSING_ERROR);
+      }
+
+      machineResponse.setHeaderResponses(headerResponses);
+
+      return machineResponse;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_TYPE_ATTRIBUTE_CREATE_FAILED);
+    }
+  }
+
+  @Override
+  public MachineResponse getMachineByCode(String machineCode) {
+    try {
+      Machine machineByMachineCode = machineService.findByCode(machineCode);
+      List<MachineTypeValueResponse> machineTypeValueResponses =
+          getMachineTypeAttributeByMachineTypeId(
+              machineByMachineCode.getModelType().getId(), machineByMachineCode.getId());
+
+      MachineResponse machineResponse =
+          MachineMapper.fromEntityToMachineResponseForCreate(
+              machineByMachineCode, machineTypeValueResponses);
+
+      List<HeaderResponse> headerResponses = new ArrayList<>();
+      ObjectMapper objectMapper = new ObjectMapper();
+      try {
+        if (machineByMachineCode.getHeader() != null
+            && !machineByMachineCode.getHeader().isEmpty()) {
+          headerResponses =
+              objectMapper.readValue(
+                  machineByMachineCode.getHeader(), new TypeReference<List<HeaderResponse>>() {});
+        }
+      } catch (JsonProcessingException e) {
+        throw new AppException(ErrorCode.JSON_PROCESSING_ERROR);
+      }
+
+      machineResponse.setHeaderResponses(headerResponses);
       return machineResponse;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
@@ -549,51 +601,16 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       machineById.setApiUrl(request.getApiUrl());
       machineById.setRequestToken(request.getToken());
 
-      Machine finalMachineById = machineById;
-      List<MachineTypeValueResponse> machineTypeValueResponses =
-          request.getMachineTypeValueModifyRequests().stream()
-              .map(
-                  mtr -> {
-                    MachineTypeValueResponse machineTypeValueResponse =
-                        new MachineTypeValueResponse();
-                    MachineTypeAttribute machineTypeAttributeById =
-                        machineTypeAttributeService.findById(mtr.getMachineTypeAttributeId());
-                    if (mtr.getMachineTypeValueId().equals("N/A")) {
-                      MachineTypeValue newMachineTypeValue =
-                          MachineTypeValueMapper.fromMachineTypeValueModifyRequestToEntity(mtr);
-                      newMachineTypeValue.setMachineTypeAttribute(machineTypeAttributeById);
-                      newMachineTypeValue = machineTypeValueService.create(newMachineTypeValue);
-                      machineTypeValueResponse.setId(newMachineTypeValue.getId());
-                      machineTypeValueResponse.setMachineTypeAttributeId(
-                          machineTypeAttributeById.getId());
-                      machineTypeValueResponse.setMachineTypeAttributeName(
-                          machineTypeAttributeById.getAttributeName());
-                      machineTypeValueResponse.setValueAttribute(
-                          newMachineTypeValue.getValueAttribute());
-                    } else {
-                      MachineTypeValue machineTypeValueById =
-                          machineTypeValueService.findById(mtr.getMachineTypeValueId());
-                      machineTypeValueById.setValueAttribute(mtr.getValueAttribute());
-                      machineTypeValueById =
-                          machineTypeValueService.update(
-                              machineTypeValueById.getId(), machineTypeValueById);
-                      machineTypeValueResponse.setId(machineTypeValueById.getId());
-                      machineTypeValueResponse.setMachineTypeAttributeId(
-                          machineTypeAttributeById.getId());
-                      machineTypeValueResponse.setMachineTypeAttributeName(
-                          machineTypeAttributeById.getAttributeName());
-                      machineTypeValueResponse.setValueAttribute(
-                          machineTypeValueById.getValueAttribute());
-                    }
-
-                    return machineTypeValueResponse;
-                  })
-              .toList();
+      try {
+        String headerJson = objectMapper.writeValueAsString(request.getHeaderRequests());
+        machineById.setHeader(headerJson);
+      } catch (Exception e) {
+        throw new AppException(ErrorCode.JSON_PROCESSING_ERROR);
+      }
 
       machineById = machineService.update(machineById.getId(), machineById);
 
-      return MachineMapper.fromEntityToMachineResponseForCreate(
-          machineById, machineTypeValueResponses);
+      return MachineMapper.fromEntityToMachineResponseForCreate(machineById);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -624,18 +641,8 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                     newMachineTypeAttribute.setModelType(finalNewMachineType);
                     newMachineTypeAttribute =
                         machineTypeAttributeService.create(newMachineTypeAttribute);
-                    MachineTypeValue newMachineTypeValue = new MachineTypeValue();
-                    newMachineTypeValue.setValueAttribute(mtr.getAttributeValue());
-                    newMachineTypeValue.setMachineTypeAttribute(newMachineTypeAttribute);
-                    newMachineTypeValue = machineTypeValueService.create(newMachineTypeValue);
-                    MachineTypeAttributeResponse machineTypeAttributeResponse =
-                        MachineTypeAttributeMapper.fromEntityToMachineTypeAttributeResponse(
-                            newMachineTypeAttribute);
-
-                    machineTypeAttributeResponse.setValueAttribute(
-                        newMachineTypeValue.getValueAttribute());
-
-                    return machineTypeAttributeResponse;
+                    return MachineTypeAttributeMapper.fromEntityToMachineTypeAttributeResponse(
+                        newMachineTypeAttribute);
                   })
               .toList();
 
@@ -702,20 +709,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
 
       List<MachineTypeAttributeResponse> machineTypeAttributeResponses =
           machineTypeAttributesByMachineTypeId.stream()
-              .map(
-                  mta -> {
-                    MachineTypeAttributeResponse machineTypeAttributeResponse =
-                        MachineTypeAttributeMapper.fromEntityToMachineTypeAttributeResponse(mta);
-                    MachineTypeValue machineTypeValueByMachineTypeAttributeId =
-                        machineTypeValueService.findByMachineTypeAttributeId(mta.getId());
-
-                    if (!Objects.isNull(machineTypeValueByMachineTypeAttributeId)) {
-                      machineTypeAttributeResponse.setValueAttribute(
-                          machineTypeValueByMachineTypeAttributeId.getValueAttribute());
-                    }
-
-                    return machineTypeAttributeResponse;
-                  })
+              .map(MachineTypeAttributeMapper::fromEntityToMachineTypeAttributeResponse)
               .toList();
 
       return MachineTypeMapper.fromEntityToMachineTypeResponse(
@@ -748,46 +742,20 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                       MachineTypeAttribute newMachineTypeAttribute = new MachineTypeAttribute();
                       newMachineTypeAttribute.setAttributeName(mtr.getAttributeName());
                       newMachineTypeAttribute.setModelType(modelTypeById);
+                      newMachineTypeAttribute.setValueOfAttribute(mtr.getAttributeValue());
                       newMachineTypeAttribute =
                           machineTypeAttributeService.create(newMachineTypeAttribute);
-
-                      MachineTypeValue newMachineTypeValue = new MachineTypeValue();
-                      newMachineTypeValue.setMachineTypeAttribute(newMachineTypeAttribute);
-                      newMachineTypeValue.setValueAttribute(mtr.getAttributeValue());
-
-                      newMachineTypeValue = machineTypeValueService.create(newMachineTypeValue);
                       return MachineTypeAttributeMapper.fromEntityToMachineTypeAttributeResponse(
-                          newMachineTypeAttribute, newMachineTypeValue);
+                          newMachineTypeAttribute);
                     } else {
                       machineTypeAttributeById.setAttributeName(mtr.getAttributeName());
+                      machineTypeAttributeById.setValueOfAttribute(mtr.getAttributeValue());
                       machineTypeAttributeById =
                           machineTypeAttributeService.update(
                               machineTypeAttributeById.getId(), machineTypeAttributeById);
 
-                      MachineTypeValue machineTypeValueByMachineTypeAttributeId =
-                          machineTypeValueService.findByMachineTypeAttributeId(
-                              mtr.getMachineTypeAttributeId());
-
-                      if (Objects.isNull(machineTypeValueByMachineTypeAttributeId)) {
-                        MachineTypeValue newMachineTypeValue = new MachineTypeValue();
-                        newMachineTypeValue.setMachineTypeAttribute(machineTypeAttributeById);
-                        newMachineTypeValue.setValueAttribute(mtr.getAttributeValue());
-
-                        newMachineTypeValue = machineTypeValueService.create(newMachineTypeValue);
-                        return MachineTypeAttributeMapper.fromEntityToMachineTypeAttributeResponse(
-                            machineTypeAttributeById, newMachineTypeValue);
-                      }
-
-                      machineTypeValueByMachineTypeAttributeId.setValueAttribute(
-                          mtr.getAttributeValue());
-
-                      machineTypeValueByMachineTypeAttributeId =
-                          machineTypeValueService.update(
-                              machineTypeValueByMachineTypeAttributeId.getId(),
-                              machineTypeValueByMachineTypeAttributeId);
-
                       return MachineTypeAttributeMapper.fromEntityToMachineTypeAttributeResponse(
-                          machineTypeAttributeById, machineTypeValueByMachineTypeAttributeId);
+                          machineTypeAttributeById);
                     }
                   })
               .toList();
