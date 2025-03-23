@@ -3,11 +3,14 @@ package com.capstone.ar_guideline.services.impl;
 import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.dtos.requests.Company.CompanyCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponse;
+import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponseManagement;
 import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CompanyMapper;
 import com.capstone.ar_guideline.repositories.CompanyRepository;
+import com.capstone.ar_guideline.repositories.CourseRepository;
+import com.capstone.ar_guideline.repositories.UserRepository;
 import com.capstone.ar_guideline.services.ICompanyService;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +27,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CompanyServiceImpl implements ICompanyService {
   CompanyRepository companyRepository;
+  UserRepository userRepository;
+  CourseRepository courseRepository;
   RedisTemplate<String, Object> redisTemplate;
 
   @Override
@@ -31,6 +36,30 @@ public class CompanyServiceImpl implements ICompanyService {
     try {
       List<Company> companies = companyRepository.findAll();
       return companies.stream().map(CompanyMapper::fromEntityToCompanyResponse).toList();
+    } catch (Exception exception) {
+      log.error("Company find all failed: {}", exception.getMessage());
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_FIND_ALL_FAILED);
+    }
+  }
+
+  @Override
+  public List<CompanyResponseManagement> findAllForManagement() {
+    try {
+      List<Company> companies = companyRepository.findAll();
+      List<CompanyResponseManagement> companiesManagement;
+      companiesManagement =
+          companies.stream().map(CompanyMapper::fromEntityToCompanyResponseManagement).toList();
+      companiesManagement.stream()
+          .forEach(
+              c -> {
+                c.setNumberOfAccount(userRepository.countByCompany_Id(c.getId()));
+                c.setNumberOfGuideline(courseRepository.countByCompany_Id(c.getId()));
+              });
+
+      return companiesManagement;
     } catch (Exception exception) {
       log.error("Company find all failed: {}", exception.getMessage());
       if (exception instanceof AppException) {

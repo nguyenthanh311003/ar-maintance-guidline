@@ -47,4 +47,6 @@ public interface CourseRepository extends JpaRepository<Course, String> {
           "SELECT c FROM Course c WHERE (c.company.id = :companyId OR :companyId IS NULL) ORDER BY c.numberOfScan DESC",
       nativeQuery = false)
   List<Course> findTop3CoursesByScanTimes(Pageable pageable, @Param("companyId") String companyId);
+
+  Long countByCompany_Id(String companyId);
 }
