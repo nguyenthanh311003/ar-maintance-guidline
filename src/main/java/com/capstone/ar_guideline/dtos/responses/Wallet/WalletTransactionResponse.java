@@ -21,6 +21,10 @@ public class WalletTransactionResponse {
 
   private String optionName;
 
+  private String senderName;
+
+  private String receiverName;
+
   private Long amount;
 
   private Long balance;

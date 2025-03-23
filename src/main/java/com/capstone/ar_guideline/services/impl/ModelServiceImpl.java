@@ -45,7 +45,10 @@ public class ModelServiceImpl implements IModelService {
 
       Model newModel = ModelMapper.fromModelCreationRequestToEntity(request);
       ModelType modelType = modelTypeService.findById(request.getModelTypeId());
-      newModel.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
+      newModel.setImageUrl(
+          request.getImageUrl() != null
+              ? FileStorageService.storeFile(request.getImageUrl())
+              : null);
       newModel.setFile(FileStorageService.storeFile(request.getFile()));
       newModel.setIsUsed(false);
       newModel.setStatus(ConstStatus.INACTIVE_STATUS);

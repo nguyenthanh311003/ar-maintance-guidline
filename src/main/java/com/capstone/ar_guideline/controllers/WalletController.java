@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,4 +40,14 @@ public class WalletController {
         .message("Wallet transactions retrieved successfully")
         .build();
   }
+
+  @PostMapping(value = ConstAPI.WalletAPI.WALLET + "/allocation/{companyId}/{limitPoint}")
+  public ApiResponse<Void> updatePointForAllEmployeeByCompanyId(
+          @PathVariable String companyId, @PathVariable Long limitPoint) {
+    walletService.updatePointForAllEmployeeByCompanyId(companyId, limitPoint);
+    return ApiResponse.<Void>builder()
+            .message("Points updated successfully for all employees")
+            .build();
+  }
+
 }

@@ -5,5 +5,5 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WalletTransactionRepository extends JpaRepository<WalletTransaction, String> {
-  List<WalletTransaction> findAllByWalletUserId(String userId);
+  List<WalletTransaction> findAllByWalletUserIdOrderByCreatedDateDesc(String userId);
 }

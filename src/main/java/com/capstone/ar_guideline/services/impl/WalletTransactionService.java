@@ -15,7 +15,7 @@ public class WalletTransactionService {
 
   public List<WalletTransactionResponse> getAllByUserId(String userId) {
     List<WalletTransaction> transactions =
-        walletTransactionRepository.findAllByWalletUserId(userId);
+        walletTransactionRepository.findAllByWalletUserIdOrderByCreatedDateDesc(userId);
     return transactions.stream()
         .map(
             transaction ->
@@ -30,7 +30,9 @@ public class WalletTransactionService {
                         transaction.getCourse() != null ? transaction.getCourse().getTitle() : null)
                     .amount(transaction.getAmount())
                     .balance(transaction.getBalance())
-                    .optionName(
+                        .senderName(transaction.getSender()!=null? transaction.getSender().getUsername():null)
+                        .receiverName(transaction.getReceiver()!=null? transaction.getReceiver().getUsername():null)
+                        .optionName(
                         transaction.getPointOptions() != null
                             ? transaction.getPointOptions().getName()
                             : null)

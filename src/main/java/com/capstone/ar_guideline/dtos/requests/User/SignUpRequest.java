@@ -12,6 +12,7 @@ public class SignUpRequest {
   private String avatar;
   private String company;
   private String status;
+  private Long points;
   private String expirationDate;
   private Boolean isPayAdmin;
   private String roleName;
