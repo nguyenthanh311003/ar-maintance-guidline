@@ -10,9 +10,10 @@ public interface PointOptionsRepository extends JpaRepository<PointOptions, Stri
   @EntityGraph(attributePaths = "orderTransactions")
   List<PointOptions> findAllByOrderByPointAsc();
 
-@Query("SELECT po.name, COALESCE(SUM(ot.amount), 0) FROM PointOptions po " +
-        "left JOIN po.orderTransactions ot " +
-        "ON ot.status = 'PAID' " +
-        "GROUP BY po.name")
-List<Object[]> findAllOptionNamesWithTotalAmount();
+  @Query(
+      "SELECT po.name, COALESCE(SUM(ot.amount), 0) FROM PointOptions po "
+          + "left JOIN po.orderTransactions ot "
+          + "ON ot.status = 'PAID' "
+          + "GROUP BY po.name")
+  List<Object[]> findAllOptionNamesWithTotalAmount();
 }

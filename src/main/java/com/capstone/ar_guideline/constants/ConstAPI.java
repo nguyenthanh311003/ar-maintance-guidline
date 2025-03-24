@@ -197,11 +197,14 @@ public class ConstAPI {
   }
 
   public static class MachineTypeAPI {
-    ;
     public static final String CREATE_MACHINE_TYPE = "api/v1/machine-type";
     public static final String UPDATE_MACHINE_TYPE = "api/v1/machine-type/";
     public static final String GET_MACHINE_TYPES_BY_COMPANY_ID = "api/v1/machine-type/company/";
     public static final String GET_MACHINE_TYPES_BY_ID = "api/v1/machine-type/";
     public static final String DELETE_MACHINE_TYPES = "api/v1/machine-type/";
+  }
+
+  public static class PointRequestAPI {
+    public static final String POINT_REQUEST_ENDPOINT = "api/v1/point-request";
   }
 }

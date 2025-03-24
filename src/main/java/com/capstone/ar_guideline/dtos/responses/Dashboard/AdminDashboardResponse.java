@@ -1,6 +1,5 @@
 package com.capstone.ar_guideline.dtos.responses.Dashboard;
 
-import java.math.BigDecimal;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +26,6 @@ public class AdminDashboardResponse {
   private List<PointOptionRevenue> pointOptionRevenueList;
   private List<CompanyDashboardResponse.Top3Guidelines> top3Guidelines;
 
-
   @Data
   @Builder
   @NoArgsConstructor
@@ -45,8 +43,6 @@ public class AdminDashboardResponse {
     private String name;
     private Long revenue;
   }
-
-
 
   @Data
   @Builder

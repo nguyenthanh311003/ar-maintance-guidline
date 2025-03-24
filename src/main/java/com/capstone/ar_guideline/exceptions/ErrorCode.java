@@ -152,6 +152,7 @@ public enum ErrorCode {
   MACHINE_QR_NOT_EXISTED(1119, "Machine QR not existed", HttpStatus.NOT_FOUND),
   JSON_PROCESSING_ERROR(1120, "JSON PROCESSING fail", HttpStatus.BAD_REQUEST),
   MACHINE_CODE_EXISTED(1121, "Machine Code existed !", HttpStatus.BAD_REQUEST),
+  POINT_REQUEST_ERROR(2002, "Point Request Error", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;
