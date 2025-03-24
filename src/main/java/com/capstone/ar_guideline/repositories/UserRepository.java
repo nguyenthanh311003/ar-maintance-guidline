@@ -87,4 +87,9 @@ public interface UserRepository extends JpaRepository<User, String> {
   Integer countAllBy(String companyId, String status);
 
   Long countByCompany_Id(String companyId);
+
+  @Query(
+      value =
+          "SELECT u FROM User u WHERE u.company.id = :companyId AND u.role.roleName = 'COMPANY' AND u.status = 'ACTIVE' ")
+  List<User> findCompanyAdminByCompanyId(String companyId);
 }

@@ -38,4 +38,6 @@ public interface IUserService {
   User findUserByCompanyId(String id);
 
   Boolean deleteUser(String id);
+
+  User findCompanyAdminByCompanyId(String companyId);
 }

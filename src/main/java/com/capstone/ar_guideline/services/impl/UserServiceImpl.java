@@ -387,4 +387,16 @@ public class UserServiceImpl implements IUserService {
       throw new AppException(ErrorCode.USER_DELETE_FAILED);
     }
   }
+
+  @Override
+  public User findCompanyAdminByCompanyId(String companyId) {
+    try {
+      return userRepository.findCompanyAdminByCompanyId(companyId).getFirst();
+    } catch (Exception e) {
+      if (e instanceof AppException) {
+        throw e;
+      }
+      throw new AppException(ErrorCode.USER_NOT_EXISTED);
+    }
+  }
 }
