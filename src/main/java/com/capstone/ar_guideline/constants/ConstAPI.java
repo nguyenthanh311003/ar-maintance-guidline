@@ -19,6 +19,8 @@ public class ConstAPI {
     public static final String UPDATE_COURSE_PICTURE = "api/v1/course/picture";
     public static final String UPDATE_COURSE_SCAN_TIMES = "api/v1/course/scan";
     public static final String PUBLIC_GUIDELINE_FIRST_TIME = "api/v1/course/publication";
+    public static final String COUNT_INSTRUCTION_DETAILS_DRAFTED =
+        "api/v1/course/instruction-detail-drafted/number";
   }
 
   public static class ModelAPI {

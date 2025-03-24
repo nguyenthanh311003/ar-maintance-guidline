@@ -30,9 +30,15 @@ public class WalletTransactionService {
                         transaction.getCourse() != null ? transaction.getCourse().getTitle() : null)
                     .amount(transaction.getAmount())
                     .balance(transaction.getBalance())
-                        .senderName(transaction.getSender()!=null? transaction.getSender().getUsername():null)
-                        .receiverName(transaction.getReceiver()!=null? transaction.getReceiver().getUsername():null)
-                        .optionName(
+                    .senderName(
+                        transaction.getSender() != null
+                            ? transaction.getSender().getUsername()
+                            : null)
+                    .receiverName(
+                        transaction.getReceiver() != null
+                            ? transaction.getReceiver().getUsername()
+                            : null)
+                    .optionName(
                         transaction.getPointOptions() != null
                             ? transaction.getPointOptions().getName()
                             : null)

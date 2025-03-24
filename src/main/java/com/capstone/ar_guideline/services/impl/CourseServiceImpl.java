@@ -224,10 +224,10 @@ public class CourseServiceImpl implements ICourseService {
             .orElseThrow(() -> new RuntimeException("Course not found"));
 
     // Count the number of InstructionDetail
-    int instructionDetailCount =
+    List<InstructionDetail> instructionDetailCount =
         instructionDetailRepository.countInstructionDetailByCourseId(courseId);
 
-    if (instructionDetailCount < 0) {
+    if (instructionDetailCount.size() < 0) {
       throw new RuntimeException("Must have at lease 1 instruction detail");
     }
 
@@ -238,9 +238,13 @@ public class CourseServiceImpl implements ICourseService {
     }
 
     // Calculate the total price
-    long totalPrice = instructionDetailCount * servicePrice.getPrice();
+    long totalPrice = instructionDetailCount.size() * servicePrice.getPrice();
     course.setStatus(ConstStatus.ACTIVE_STATUS);
     courseRepository.save(course);
+    for (InstructionDetail instructionDetail : instructionDetailCount) {
+      instructionDetail.setStatus(ConstStatus.ACTIVE_STATUS);
+    }
+    instructionDetailRepository.saveAll(instructionDetailCount);
     // Update the balance of the user's wallet
     WalletResponse wallet =
         walletService.findWalletByUserId(userId); // Assuming the first user in the company

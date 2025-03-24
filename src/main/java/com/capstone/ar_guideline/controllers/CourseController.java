@@ -7,6 +7,7 @@ import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IARGuidelineService;
 import com.capstone.ar_guideline.services.ICourseService;
+import com.capstone.ar_guideline.services.IInstructionDetailService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AccessLevel;
@@ -24,6 +25,7 @@ public class CourseController {
 
   ICourseService courseService;
   IARGuidelineService arGuidelineService;
+  IInstructionDetailService instructionService;
 
   @GetMapping(value = ConstAPI.CourseAPI.COURSE)
   public ApiResponse<PagingModel<CourseResponse>> getAllCourses(
@@ -130,6 +132,13 @@ public class CourseController {
     courseService.publishGuidelineFirstTime(courseId, userId);
     return ApiResponse.<String>builder()
         .result("Course has been published and wallet balance updated successfully")
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.CourseAPI.COUNT_INSTRUCTION_DETAILS_DRAFTED + "/{courseId}")
+  public ApiResponse<Long> publicGuidelineFirstTime(@PathVariable String courseId) {
+    return ApiResponse.<Long>builder()
+        .result(instructionService.countInstructionDetailByCourseId(courseId))
         .build();
   }
 }

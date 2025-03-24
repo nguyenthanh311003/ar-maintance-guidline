@@ -23,6 +23,7 @@ import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.*;
+import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.services.*;
 import com.capstone.ar_guideline.util.UtilService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -58,6 +59,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   IMachineTypeValueService machineTypeValueService;
   IMachineTypeService machineTypeService;
   IMachine_QRService machineQrService;
+  CourseRepository courseRepository;
   ObjectMapper objectMapper = new ObjectMapper();
 
   @Override
@@ -73,6 +75,8 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       } else {
         newInstruction.setOrderNumber(highestOrderNumber + 1);
       }
+      course.setStatus(ConstStatus.DRAFTED);
+      courseService.save(course);
       newInstruction = instructionService.create(newInstruction);
 
       if (newInstruction.getId() == null) {
@@ -334,7 +338,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
 
       if (courseById.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
         ModelResponse modelByCourseId = modelService.getByCourseId(courseId);
-        Integer numberOfInstructionDetail =
+        Long numberOfInstructionDetail =
             instructionDetailService.countInstructionDetailByCourseId(courseById.getId());
         if (Objects.isNull(modelByCourseId)) {
           throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
@@ -346,7 +350,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
 
         if (modelByCourseId.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
           throw new AppException(ErrorCode.UPDATE_GUIDELINE_FAIL_MODEL_INACTIVE_STATUS);
-        } else if (numberOfInstructionDetail <= 0) {
+        } else if (numberOfInstructionDetail > 0) {
           throw new AppException(ErrorCode.UPDATE_GUIDELINE_FAIL_INSTRUCTION_COUNT);
         } else {
           courseById.setStatus(ConstStatus.ACTIVE_STATUS);

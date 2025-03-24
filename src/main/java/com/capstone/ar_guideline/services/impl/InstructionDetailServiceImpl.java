@@ -1,14 +1,19 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.constants.ConstHashKey;
+import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.InstructionDetail.InstructionDetailCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
+import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Instruction;
 import com.capstone.ar_guideline.entities.InstructionDetail;
+import com.capstone.ar_guideline.entities.ServicePrice;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.InstructionDetailMapper;
+import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.repositories.InstructionDetailRepository;
+import com.capstone.ar_guideline.repositories.ServicePricerRepository;
 import com.capstone.ar_guideline.services.IInstructionDetailService;
 import com.capstone.ar_guideline.services.IInstructionService;
 import java.util.List;
@@ -28,6 +33,8 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
   InstructionDetailRepository instructionDetailRepository;
   RedisTemplate<String, Object> redisTemplate;
   IInstructionService instructionService;
+  CourseRepository courseRepository;
+  ServicePricerRepository servicePricerRepository;
 
   private final String[] keysToRemove = {ConstHashKey.HASH_KEY_INSTRUCTION_DETAIL};
 
@@ -35,7 +42,7 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
   public InstructionDetailResponse create(InstructionDetailCreationRequest request) {
     try {
       Instruction instructionById = instructionService.findById(request.getInstructionId());
-
+      Course course = instructionById.getCourse();
       InstructionDetail newInstructionDetail =
           InstructionDetailMapper.fromInstructionDetailCreationRequestToEntity(request);
       Integer highestOrderNumber = getHighestOrderNumber(instructionById.getId());
@@ -45,6 +52,9 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
       } else {
         newInstructionDetail.setOrderNumber(highestOrderNumber + 1);
       }
+      course.setStatus(ConstStatus.DRAFTED);
+      courseRepository.save(course);
+      newInstructionDetail.setStatus(ConstStatus.DRAFTED);
 
       newInstructionDetail = instructionDetailRepository.save(newInstructionDetail);
 
@@ -208,9 +218,11 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
   }
 
   @Override
-  public Integer countInstructionDetailByCourseId(String courseId) {
+  public Long countInstructionDetailByCourseId(String courseId) {
     try {
-      return instructionDetailRepository.countInstructionDetailByCourseId(courseId);
+      ServicePrice servicePrice = servicePricerRepository.findByName("Create Guideline");
+      return instructionDetailRepository.countInstructionDetailByCourseId(courseId).size()
+          * servicePrice.getPrice();
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

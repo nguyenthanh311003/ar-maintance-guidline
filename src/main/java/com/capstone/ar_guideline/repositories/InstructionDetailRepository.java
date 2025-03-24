@@ -21,11 +21,11 @@ public interface InstructionDetailRepository extends JpaRepository<InstructionDe
 
   @Query(
       """
-        SELECT COUNT(id)
+        SELECT id
         FROM InstructionDetail id
         WHERE id.instruction.id IN (
             SELECT i.id FROM Instruction i WHERE i.course.id = :courseId
-        )
+        ) and id.status = 'DRAFTED'
         """)
-  Integer countInstructionDetailByCourseId(@Param("courseId") String courseId);
+  List<InstructionDetail> countInstructionDetailByCourseId(@Param("courseId") String courseId);
 }
