@@ -174,12 +174,12 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                             .isUsed(m.getIsUsed())
                             .file(m.getFile())
                             .build();
-
-                    Course courseByModelId = courseService.findByModelId(m.getId());
-                    if (Objects.isNull(courseByModelId)) {
-                      modelResponse.setCourseName("No Course");
-                    } else {
+                    Course courseByModelId = new Course();
+                    try {
+                      courseByModelId = courseService.findByModelId(m.getId());
                       modelResponse.setCourseName(courseByModelId.getTitle());
+                    } catch (Exception exception) {
+                      modelResponse.setCourseName("No Course");
                     }
 
                     return modelResponse;
