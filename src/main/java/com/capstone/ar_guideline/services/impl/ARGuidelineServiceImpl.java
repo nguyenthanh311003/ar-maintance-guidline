@@ -205,7 +205,15 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
     try {
       Model modelById = modelService.findById(id);
       ModelResponse modelResponse = ModelMapper.fromEntityToModelResponse(modelById);
-      Course courseByModelId = courseService.findByModelId(modelById.getId());
+
+      Course courseByModelId = new Course();
+      try {
+        courseByModelId = courseService.findByModelId(modelById.getId());
+        modelResponse.setCourseName(courseByModelId.getTitle());
+      } catch (Exception exception) {
+        modelResponse.setCourseName("No Course");
+      }
+
       if (Objects.isNull(courseByModelId)) {
         modelResponse.setCourseName("No Course");
       } else {
