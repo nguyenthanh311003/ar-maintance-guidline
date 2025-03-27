@@ -16,4 +16,5 @@ public class MachineTypeResponse {
   String description;
   List<MachineTypeAttributeResponse> machineTypeAttributeResponses;
   int numOfAttribute;
+  int numOfMachine;
 }

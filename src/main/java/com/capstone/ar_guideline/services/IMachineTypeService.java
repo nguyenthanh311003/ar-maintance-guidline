@@ -13,5 +13,5 @@ public interface IMachineTypeService {
 
   ModelType findById(String id);
 
-  Page<ModelType> getMachineTypeByCompanyId(Pageable pageable, String companyId);
+  Page<ModelType> getMachineTypeByCompanyId(Pageable pageable, String companyId, String name);
 }

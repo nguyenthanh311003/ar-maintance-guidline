@@ -25,14 +25,15 @@ public class MachineTypeController {
   public ApiResponse<PagingModel<MachineTypeResponse>> getMachineTypeByCompanyId(
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "5") int size,
+      @RequestParam(required = false) String name,
       @PathVariable String companyId) {
     return ApiResponse.<PagingModel<MachineTypeResponse>>builder()
-        .result(arGuidelineService.getMachineTypesByCompanyId(page, size, companyId))
+        .result(arGuidelineService.getMachineTypesByCompanyId(page, size, companyId, name))
         .build();
   }
 
   @GetMapping(value = ConstAPI.MachineTypeAPI.GET_MACHINE_TYPES_BY_ID + "{machineTypeId}")
-  public ApiResponse<MachineTypeResponse> getMachineTypeByCompanyId(
+  public ApiResponse<MachineTypeResponse> getMachineTypeById(
       @PathVariable String machineTypeId) {
     return ApiResponse.<MachineTypeResponse>builder()
         .result(arGuidelineService.getMachineTypesById(machineTypeId))
