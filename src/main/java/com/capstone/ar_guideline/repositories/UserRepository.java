@@ -14,6 +14,9 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, String> {
   Optional<User> findByEmail(String email);
 
+  @Query(value = "SELECT u FROM User u WHERE u.email = :email AND u.status = :status AND u.role.roleName = 'COMPANY'")
+  User findByEmailAndStatus(String email, String status);
+
   //  @Query(
   //      "SELECT u FROM User u "
   //          + "WHERE u.company.id = :companyId "

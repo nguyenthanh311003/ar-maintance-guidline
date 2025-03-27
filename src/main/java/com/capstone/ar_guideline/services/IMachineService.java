@@ -16,11 +16,13 @@ public interface IMachineService {
 
   Machine findByCode(String machineCode);
 
-  Page<Machine> getMachineByCompanyId(Pageable pageable, String companyId);
+  Page<Machine> getMachineByCompanyId(Pageable pageable, String companyId, String keyword, String machineTypeName);
 
   Machine getMachineByName(String name);
 
   List<Machine> getMachineByMachineType(String machineTypeId);
 
   Boolean isMachineCodeExisted(String companyId, String machineCode);
+
+  Integer countMachineByMachineType(String machineTypeId);
 }

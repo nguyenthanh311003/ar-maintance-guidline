@@ -137,6 +137,13 @@ public class UserServiceImpl implements IUserService {
       if (Objects.isNull(role)) {
         throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
       }
+
+      User userByEmail = userRepository.findByEmailAndStatus(signUpRequest.getEmail(), ConstStatus.ACTIVE_STATUS);
+
+      if (Objects.nonNull(userByEmail)) {
+        throw new AppException(ErrorCode.USER_EXISTED);
+      }
+
       String passwordToSend = signUpRequest.getPassword();
       CompanyCreationRequest companyCreationRequest =
           CompanyCreationRequest.builder().companyName(signUpRequest.getCompany()).build();

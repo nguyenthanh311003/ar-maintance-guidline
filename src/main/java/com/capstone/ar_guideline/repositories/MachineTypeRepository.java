@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MachineTypeRepository extends JpaRepository<ModelType, String> {
   @Query(
-      "SELECT mt FROM ModelType mt WHERE mt.company.id = :companyId ORDER BY mt.createdDate DESC")
+      "SELECT mt FROM ModelType mt WHERE mt.company.id = :companyId "
+          + "AND (:name = '' OR :name IS NULL OR LOWER(mt.name) LIKE LOWER(CONCAT('%', :name, '%')))"
+          + "ORDER BY mt.createdDate DESC")
   Page<ModelType> getMachineTypeByCompanyId(
-      Pageable pageable, @Param("companyId") String companyId);
+      Pageable pageable, @Param("companyId") String companyId, @Param("name") String name);
 }
