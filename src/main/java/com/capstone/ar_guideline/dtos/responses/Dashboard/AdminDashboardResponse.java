@@ -20,10 +20,11 @@ public class AdminDashboardResponse {
   private Integer numberOfModels;
   private Integer numberOfActiveModels;
   private Integer numberOfInactiveModels;
-  private Double totalRevenue;
+  private Long totalRevenue;
   private List<CompanyRevenue> companyRevenueList;
-  private List<SubscriptionRevenue> subscriptionRevenueList;
   private List<MonthRevenue> monthRevenueList;
+  private List<PointOptionRevenue> pointOptionRevenueList;
+  private List<CompanyDashboardResponse.Top3Guidelines> top3Guidelines;
 
   @Data
   @Builder
@@ -31,16 +32,16 @@ public class AdminDashboardResponse {
   @AllArgsConstructor
   public static class CompanyRevenue {
     private String name;
-    private Double revenue;
+    private Long revenue;
   }
 
   @Data
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class SubscriptionRevenue {
+  public static class PointOptionRevenue {
     private String name;
-    private Double revenue;
+    private Long revenue;
   }
 
   @Data
@@ -49,6 +50,6 @@ public class AdminDashboardResponse {
   @AllArgsConstructor
   public static class MonthRevenue {
     private Long month;
-    private Double revenue;
+    private Long revenue;
   }
 }

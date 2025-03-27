@@ -43,11 +43,10 @@ public class WalletController {
 
   @PostMapping(value = ConstAPI.WalletAPI.WALLET + "/allocation/{companyId}/{limitPoint}")
   public ApiResponse<Void> updatePointForAllEmployeeByCompanyId(
-          @PathVariable String companyId, @PathVariable Long limitPoint) {
+      @PathVariable String companyId, @PathVariable Long limitPoint) {
     walletService.updatePointForAllEmployeeByCompanyId(companyId, limitPoint);
     return ApiResponse.<Void>builder()
-            .message("Points updated successfully for all employees")
-            .build();
+        .message("Points updated successfully for all employees")
+        .build();
   }
-
 }

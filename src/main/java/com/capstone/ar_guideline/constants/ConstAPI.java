@@ -19,6 +19,8 @@ public class ConstAPI {
     public static final String UPDATE_COURSE_PICTURE = "api/v1/course/picture";
     public static final String UPDATE_COURSE_SCAN_TIMES = "api/v1/course/scan";
     public static final String PUBLIC_GUIDELINE_FIRST_TIME = "api/v1/course/publication";
+    public static final String COUNT_INSTRUCTION_DETAILS_DRAFTED =
+        "api/v1/course/instruction-detail-drafted/number";
   }
 
   public static class ModelAPI {
@@ -197,11 +199,14 @@ public class ConstAPI {
   }
 
   public static class MachineTypeAPI {
-    ;
     public static final String CREATE_MACHINE_TYPE = "api/v1/machine-type";
     public static final String UPDATE_MACHINE_TYPE = "api/v1/machine-type/";
     public static final String GET_MACHINE_TYPES_BY_COMPANY_ID = "api/v1/machine-type/company/";
     public static final String GET_MACHINE_TYPES_BY_ID = "api/v1/machine-type/";
     public static final String DELETE_MACHINE_TYPES = "api/v1/machine-type/";
+  }
+
+  public static class PointRequestAPI {
+    public static final String POINT_REQUEST_ENDPOINT = "api/v1/point-request";
   }
 }

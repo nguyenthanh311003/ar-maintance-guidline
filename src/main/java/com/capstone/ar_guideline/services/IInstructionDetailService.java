@@ -24,5 +24,5 @@ public interface IInstructionDetailService {
 
   Boolean deleteByInstructionId(String instructionId);
 
-  Integer countInstructionDetailByCourseId(String courseId);
+  Long countInstructionDetailByCourseId(String courseId);
 }

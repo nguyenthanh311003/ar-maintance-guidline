@@ -23,6 +23,7 @@ import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.*;
+import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.services.*;
 import com.capstone.ar_guideline.util.UtilService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,17 +50,19 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class ARGuidelineServiceImpl implements IARGuidelineService {
-    IInstructionService instructionService;
-    IInstructionDetailService instructionDetailService;
-    IModelService modelService;
-    ICourseService courseService;
-    IModelTypeService modelTypeService;
-    IMachineService machineService;
-    ICompanyService companyService;
-    IMachineTypeAttributeService machineTypeAttributeService;
-    IMachineTypeService machineTypeService;
-    IMachine_QRService machineQrService;
-    ObjectMapper objectMapper = new ObjectMapper();
+  IInstructionService instructionService;
+  IInstructionDetailService instructionDetailService;
+  IModelService modelService;
+  ICourseService courseService;
+  IModelTypeService modelTypeService;
+  IMachineService machineService;
+  ICompanyService companyService;
+  IMachineTypeAttributeService machineTypeAttributeService;
+  IMachineTypeValueService machineTypeValueService;
+  IMachineTypeService machineTypeService;
+  IMachine_QRService machineQrService;
+  CourseRepository courseRepository;
+  ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public InstructionResponse createInstruction(InstructionCreationRequest request) {
@@ -69,12 +72,14 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                     InstructionMapper.fromInstructionCreationRequestToEntity(request);
             Integer highestOrderNumber = instructionService.getHighestOrderNumber(course.getId());
 
-            if (Objects.isNull(highestOrderNumber)) {
-                newInstruction.setOrderNumber(1);
-            } else {
-                newInstruction.setOrderNumber(highestOrderNumber + 1);
-            }
-            newInstruction = instructionService.create(newInstruction);
+      if (Objects.isNull(highestOrderNumber)) {
+        newInstruction.setOrderNumber(1);
+      } else {
+        newInstruction.setOrderNumber(highestOrderNumber + 1);
+      }
+      course.setStatus(ConstStatus.DRAFTED);
+      courseService.save(course);
+      newInstruction = instructionService.create(newInstruction);
 
             if (newInstruction.getId() == null) {
                 throw new AppException(ErrorCode.INSTRUCTION_CREATE_FAILED);
@@ -147,37 +152,37 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         }
     }
 
-    @Override
-    public PagingModel<ModelResponse> findModelByCompanyId(
-            int page, int size, String companyId, String type, String name, String code) {
-        try {
-            PagingModel<ModelResponse> pagingModel = new PagingModel<>();
-            Pageable pageable = PageRequest.of(page - 1, size);
-            Page<Model> models = modelService.findByCompanyId(pageable, companyId, type, name, code);
-            List<ModelResponse> modelResponses =
-                    models.stream()
-                            .map(
-                                    m -> {
-                                        ModelResponse modelResponse =
-                                                ModelResponse.builder()
-                                                        .id(m.getId())
-                                                        .modelCode(m.getModelCode())
-                                                        .status(m.getStatus())
-                                                        .name(m.getName())
-                                                        .description(m.getDescription())
-                                                        .imageUrl(m.getImageUrl())
-                                                        .version(m.getVersion())
-                                                        .scale(m.getScale())
-                                                        .isUsed(m.getIsUsed())
-                                                        .file(m.getFile())
-                                                        .build();
-
-                                        Course courseByModelId = courseService.findByModelId(m.getId());
-                                        if (Objects.isNull(courseByModelId)) {
-                                            modelResponse.setCourseName("No Course");
-                                        } else {
-                                            modelResponse.setCourseName(courseByModelId.getTitle());
-                                        }
+  @Override
+  public PagingModel<ModelResponse> findModelByCompanyId(
+      int page, int size, String companyId, String type, String name, String code) {
+    try {
+      PagingModel<ModelResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+      Page<Model> models = modelService.findByCompanyId(pageable, companyId, type, name, code);
+      List<ModelResponse> modelResponses =
+          models.stream()
+              .map(
+                  m -> {
+                    ModelResponse modelResponse =
+                        ModelResponse.builder()
+                            .id(m.getId())
+                            .modelCode(m.getModelCode())
+                            .status(m.getStatus())
+                            .name(m.getName())
+                            .description(m.getDescription())
+                            .imageUrl(m.getImageUrl())
+                            .version(m.getVersion())
+                            .scale(m.getScale())
+                            .isUsed(m.getIsUsed())
+                            .file(m.getFile())
+                            .build();
+                    Course courseByModelId = new Course();
+                    try {
+                      courseByModelId = courseService.findByModelId(m.getId());
+                      modelResponse.setCourseName(courseByModelId.getTitle());
+                    } catch (Exception exception) {
+                      modelResponse.setCourseName("No Course");
+                    }
 
                                         return modelResponse;
                                     })
@@ -197,17 +202,25 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         }
     }
 
-    @Override
-    public ModelResponse findModelById(String id) {
-        try {
-            Model modelById = modelService.findById(id);
-            ModelResponse modelResponse = ModelMapper.fromEntityToModelResponse(modelById);
-            Course courseByModelId = courseService.findByModelId(modelById.getId());
-            if (Objects.isNull(courseByModelId)) {
-                modelResponse.setCourseName("No Course");
-            } else {
-                modelResponse.setCourseName(courseByModelId.getTitle());
-            }
+  @Override
+  public ModelResponse findModelById(String id) {
+    try {
+      Model modelById = modelService.findById(id);
+      ModelResponse modelResponse = ModelMapper.fromEntityToModelResponse(modelById);
+
+      Course courseByModelId = new Course();
+      try {
+        courseByModelId = courseService.findByModelId(modelById.getId());
+        modelResponse.setCourseName(courseByModelId.getTitle());
+      } catch (Exception exception) {
+        modelResponse.setCourseName("No Course");
+      }
+
+      if (Objects.isNull(courseByModelId)) {
+        modelResponse.setCourseName("No Course");
+      } else {
+        modelResponse.setCourseName(courseByModelId.getTitle());
+      }
 
             return modelResponse;
         } catch (Exception exception) {
@@ -333,25 +346,25 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         try {
             Course courseById = courseService.findById(courseId);
 
-            if (courseById.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
-                ModelResponse modelByCourseId = modelService.getByCourseId(courseId);
-                Integer numberOfInstructionDetail =
-                        instructionDetailService.countInstructionDetailByCourseId(courseById.getId());
-                if (Objects.isNull(modelByCourseId)) {
-                    throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
-                }
+      if (courseById.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
+        ModelResponse modelByCourseId = modelService.getByCourseId(courseId);
+        Long numberOfInstructionDetail =
+            instructionDetailService.countInstructionDetailByCourseId(courseById.getId());
+        if (Objects.isNull(modelByCourseId)) {
+          throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+        }
 
                 if (Objects.isNull(numberOfInstructionDetail)) {
                     throw new AppException(ErrorCode.INSTRUCTION_DETAIL_COUNT_FAILED);
                 }
 
-                if (modelByCourseId.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
-                    throw new AppException(ErrorCode.UPDATE_GUIDELINE_FAIL_MODEL_INACTIVE_STATUS);
-                } else if (numberOfInstructionDetail <= 0) {
-                    throw new AppException(ErrorCode.UPDATE_GUIDELINE_FAIL_INSTRUCTION_COUNT);
-                } else {
-                    courseById.setStatus(ConstStatus.ACTIVE_STATUS);
-                }
+        if (modelByCourseId.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
+          throw new AppException(ErrorCode.UPDATE_GUIDELINE_FAIL_MODEL_INACTIVE_STATUS);
+        } else if (numberOfInstructionDetail > 0) {
+          throw new AppException(ErrorCode.UPDATE_GUIDELINE_FAIL_INSTRUCTION_COUNT);
+        } else {
+          courseById.setStatus(ConstStatus.ACTIVE_STATUS);
+        }
 
             } else {
                 courseById.setStatus(ConstStatus.INACTIVE_STATUS);
