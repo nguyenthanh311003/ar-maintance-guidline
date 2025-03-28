@@ -24,6 +24,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -326,20 +327,25 @@ public class CourseServiceImpl implements ICourseService {
   }
 
   @Override
-  public List<CourseResponse> findByCompanyId(String companyId) {
+  public PagingModel<CourseResponse> findByCompanyId(
+      int page, int size, String companyId, String title, String status) {
     try {
+      PagingModel<CourseResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
       companyService.findByIdReturnEntity(companyId);
 
-      List<Course> coursesByCompanyId = courseRepository.findByCompanyId(companyId);
+      Page<Course> coursesByCompanyId =
+          courseRepository.findByCompanyId(pageable, companyId, title, status);
 
-      return coursesByCompanyId.stream()
-          .map(
-              course -> {
-                CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(course);
+      List<CourseResponse> courseResponses =
+          coursesByCompanyId.stream().map(CourseMapper::fromEntityToCourseResponse).toList();
 
-                return courseResponse;
-              })
-          .toList();
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) coursesByCompanyId.getTotalElements());
+      pagingModel.setTotalPages(coursesByCompanyId.getTotalPages());
+      pagingModel.setObjectList(courseResponses);
+      return pagingModel;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

@@ -2,8 +2,11 @@ package com.capstone.ar_guideline.controllers;
 
 import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.CompanyRequestCreation.CompanyRequestCreation;
+import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
+import com.capstone.ar_guideline.services.IARGuidelineService;
 import com.capstone.ar_guideline.services.ICompanyRequestService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class CompanyRequestController {
   ICompanyRequestService companyRequestService;
+  IARGuidelineService arGuidelineService;
 
   @GetMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST)
   ApiResponse<List<CompanyRequestResponse>> getAllCompanyRequests() {
@@ -29,11 +33,14 @@ public class CompanyRequestController {
   }
 
   @GetMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST + "/{companyId}")
-  ApiResponse<List<CompanyRequestResponse>> getAllCompanyRequestsByCompanyId(
-      @PathVariable String companyId) {
-    return ApiResponse.<List<CompanyRequestResponse>>builder()
+  ApiResponse<PagingModel<CompanyRequestResponse>> getAllCompanyRequestsByCompanyId(
+      @PathVariable String companyId,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "5") int size,
+      @RequestParam(required = false) String status) {
+    return ApiResponse.<PagingModel<CompanyRequestResponse>>builder()
         .message("Get all company requests by Company Id")
-        .result(companyRequestService.findByCompanyId(companyId))
+        .result(companyRequestService.findByCompanyId(page, size, companyId, status))
         .build();
   }
 
@@ -52,6 +59,15 @@ public class CompanyRequestController {
     return ApiResponse.<CompanyRequestResponse>builder()
         .message("Update Company Request")
         .result(companyRequestService.update(requestId, request))
+        .build();
+  }
+
+  @PutMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST_UPLOAD_AGAIN + "{requestId}")
+  ApiResponse<CompanyRequestResponse> uploadAgain(
+      @PathVariable String requestId, @ModelAttribute @Valid ModelCreationRequest request) {
+    return ApiResponse.<CompanyRequestResponse>builder()
+        .message("Update Company Request")
+        .result(arGuidelineService.uploadAgain(requestId, request))
         .build();
   }
 }

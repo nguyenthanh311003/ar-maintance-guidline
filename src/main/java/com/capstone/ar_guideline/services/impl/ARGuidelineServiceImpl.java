@@ -8,6 +8,7 @@ import com.capstone.ar_guideline.dtos.requests.Machine.MachineModifyRequest;
 import com.capstone.ar_guideline.dtos.requests.MachineType.MachineTypeCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.MachineTypeAttribute.MachineTypeAttributeCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
+import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
@@ -23,6 +24,7 @@ import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.*;
+import com.capstone.ar_guideline.repositories.CompanyRequestRepository;
 import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.services.*;
 import com.capstone.ar_guideline.util.UtilService;
@@ -56,10 +58,10 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   IMachineService machineService;
   ICompanyService companyService;
   IMachineTypeAttributeService machineTypeAttributeService;
-  IMachineTypeValueService machineTypeValueService;
   IMachineTypeService machineTypeService;
   IMachine_QRService machineQrService;
   CourseRepository courseRepository;
+  CompanyRequestRepository companyRequestRepository;
   ObjectMapper objectMapper = new ObjectMapper();
 
   @Override
@@ -866,6 +868,50 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         throw exception;
       }
       throw new AppException(ErrorCode.COURSE_CREATE_FAILED);
+    }
+  }
+
+  @Override
+  public CompanyRequestResponse uploadAgain(
+      String requestId, ModelCreationRequest modelCreationRequest) {
+    try {
+      CompanyRequest companyRequest = companyRequestRepository.findByRequestId(requestId);
+
+      if (Objects.isNull(companyRequest)) {
+        throw new AppException(ErrorCode.COMPANY_REQUEST_NOT_EXISTED);
+      }
+
+      Model modelById = modelService.findById(companyRequest.getAssetModel().getId());
+      modelService.delete(modelById.getId());
+
+      Model newModel =
+          Model.builder()
+              .modelType(companyRequest.getAssetModel().getModelType())
+              .company(companyRequest.getCompany())
+              .file(FileStorageService.storeFile(modelCreationRequest.getFile()))
+              .isUsed(false)
+              .status(ConstStatus.DRAFTED)
+              .position("0,0,0")
+              .rotation("0,0,0")
+              .scale("1")
+              .size((double) modelCreationRequest.getFile().getSize())
+              .build();
+
+      newModel = modelService.create(newModel);
+
+      companyRequest.setAssetModel(newModel);
+      companyRequest = companyRequestRepository.save(companyRequest);
+
+      return CompanyRequestMapper.fromEntityToResponse(companyRequest);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        try {
+          throw exception;
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+      }
+      throw new AppException(ErrorCode.COMPANY_REQUEST_UPDATE_FAILED);
     }
   }
 }

@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.repositories;
 import com.capstone.ar_guideline.entities.Course;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,8 +24,16 @@ public interface CourseRepository extends JpaRepository<Course, String> {
   Optional<Course> findByTitle(String title);
 
   @Query(
-      value = "SELECT c FROM Course c WHERE c.company.id = :companyId ORDER BY c.createdDate DESC")
-  List<Course> findByCompanyId(@Param("companyId") String companyId);
+      value =
+          "SELECT c FROM Course c WHERE c.company.id = :companyId "
+              + "AND (:title = '' OR :title IS NULL OR LOWER(c.title) LIKE LOWER(CONCAT('%', :title, '%'))) "
+              + "AND (:status = '' OR :status IS NULL OR c.status = :status) "
+              + "ORDER BY c.createdDate DESC")
+  Page<Course> findByCompanyId(
+      Pageable pageable,
+      @Param("companyId") String companyId,
+      @Param("title") String title,
+      @Param("status") String status);
 
   @Query(
       value =

@@ -4,6 +4,7 @@ import static com.capstone.ar_guideline.constants.ConstStatus.*;
 
 import com.capstone.ar_guideline.dtos.requests.CompanyRequestCreation.CompanyRequestCreation;
 import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
@@ -17,6 +18,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,11 +49,24 @@ public class CompanyRequestService implements ICompanyRequestService {
   }
 
   @Override
-  public List<CompanyRequestResponse> findByCompanyId(String companyId) {
+  public PagingModel<CompanyRequestResponse> findByCompanyId(
+      int page, int size, String companyId, String status) {
     try {
-      return companyRequestRepository.findByCompany_IdOrderByCreatedAtDesc(companyId).stream()
-          .map(CompanyRequestMapper::fromEntityToResponse)
-          .collect(Collectors.toList());
+      PagingModel<CompanyRequestResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+
+      Page<CompanyRequest> companyRequests =
+          companyRequestRepository.findByCompanyId(pageable, companyId, status);
+
+      List<CompanyRequestResponse> companyRequestResponses =
+          companyRequests.stream().map(CompanyRequestMapper::fromEntityToResponse).toList();
+
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) companyRequests.getTotalElements());
+      pagingModel.setTotalPages(companyRequests.getTotalPages());
+      pagingModel.setObjectList(companyRequestResponses);
+      return pagingModel;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -120,7 +137,11 @@ public class CompanyRequestService implements ICompanyRequestService {
       if (request.getDesignerId() != null)
         companyRequest.setDesigner(userService.findById(request.getDesignerId()));
 
+      String modelNeedToDelete = null;
       if (request.getAssetModelId() != null) {
+        if (companyRequest.getAssetModel() != null) {
+          modelNeedToDelete = companyRequest.getAssetModel().getId();
+        }
         companyRequest.setAssetModel(assetModelService.findById(request.getAssetModelId()));
       }
 
@@ -154,8 +175,6 @@ public class CompanyRequestService implements ICompanyRequestService {
         companyRequest.setStatus(PENDING);
       }
 
-      String modelNeedToDelete = null;
-
       if (request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED)) {
         emailService.sendRequesterCancelledEmail(
             companyRequest.getDesigner().getEmail(), companyRequest);
@@ -168,7 +187,9 @@ public class CompanyRequestService implements ICompanyRequestService {
 
       companyRequest = companyRequestRepository.save(companyRequest);
 
-      if (request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED) && modelNeedToDelete != null) {
+      if ((request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED)
+              || request.getStatus().equalsIgnoreCase(DRAFTED))
+          && modelNeedToDelete != null) {
         assetModelService.delete(modelNeedToDelete);
       }
 

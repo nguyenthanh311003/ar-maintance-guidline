@@ -153,6 +153,10 @@ public enum ErrorCode {
   JSON_PROCESSING_ERROR(1120, "JSON PROCESSING fail", HttpStatus.BAD_REQUEST),
   MACHINE_CODE_EXISTED(1121, "Machine Code existed !", HttpStatus.BAD_REQUEST),
   POINT_REQUEST_ERROR(2002, "Point Request Error", HttpStatus.BAD_REQUEST),
+  COMPANY_REQUEST_CREATE_FAILED(1122, "Company request create fail", HttpStatus.BAD_REQUEST),
+  COMPANY_REQUEST_UPDATE_FAILED(1123, "Company request update fail", HttpStatus.BAD_REQUEST),
+  COMPANY_REQUEST_DELETE_FAILED(1124, "Company request delete fail", HttpStatus.BAD_REQUEST),
+  COMPANY_REQUEST_NOT_EXISTED(1125, "Company request not existed", HttpStatus.NOT_FOUND),
   ;
 
   private final int code;

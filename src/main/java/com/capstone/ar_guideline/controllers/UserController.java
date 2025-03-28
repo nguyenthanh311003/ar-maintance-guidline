@@ -53,12 +53,12 @@ public class UserController {
   public ApiResponse<PagingModel<UserResponse>> getStaffByCompanyId(
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int size,
-      @RequestParam(defaultValue = "") String username,
+      @RequestParam(defaultValue = "") String phoneNumber,
       @RequestParam(defaultValue = "") String email,
       @RequestParam(defaultValue = "") String status,
       @PathVariable String companyId) {
     return ApiResponse.<PagingModel<UserResponse>>builder()
-        .result(userService.getStaffByCompanyId(page, size, companyId, username, email, status))
+        .result(userService.getStaffByCompanyId(page, size, companyId, phoneNumber, email, status))
         .build();
   }
 

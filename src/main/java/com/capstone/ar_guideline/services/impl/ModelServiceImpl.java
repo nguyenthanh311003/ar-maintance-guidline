@@ -72,6 +72,18 @@ public class ModelServiceImpl implements IModelService {
   }
 
   @Override
+  public Model create(Model model) throws InterruptedException {
+    try {
+      return modelRepository.save(model);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_CREATE_FAILED);
+    }
+  }
+
+  @Override
   public Model update(Model model) {
     try {
       return modelRepository.save(model);
