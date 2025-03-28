@@ -7,6 +7,7 @@ import com.capstone.ar_guideline.dtos.requests.Machine.MachineModifyRequest;
 import com.capstone.ar_guideline.dtos.requests.MachineType.MachineTypeCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.MachineTypeAttribute.MachineTypeAttributeCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
+import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
@@ -16,6 +17,8 @@ import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValu
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Machine;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 public interface IARGuidelineService {
@@ -67,4 +70,6 @@ public interface IARGuidelineService {
   void updateQrCodeForMachine(String guidelineCode, Machine machineToUpdate);
 
   CourseResponse createGuideline(CourseCreationRequest request);
+
+  CompanyRequestResponse uploadAgain(String requestId, ModelCreationRequest request);
 }

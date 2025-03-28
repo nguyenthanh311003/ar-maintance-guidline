@@ -31,7 +31,7 @@ public interface ICourseService {
 
   CourseResponse findByTitleResponse(String title);
 
-  List<CourseResponse> findByCompanyId(String companyId);
+  PagingModel<CourseResponse> findByCompanyId(int page, int size, String companyId, String title, String status);
 
   PagingModel<CourseResponse> findCourseNoMandatory(int page, int size, String companyId);
 

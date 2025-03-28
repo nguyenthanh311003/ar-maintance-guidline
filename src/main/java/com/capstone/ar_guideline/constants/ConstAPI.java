@@ -181,6 +181,7 @@ public class ConstAPI {
 
   public static class CompanyRequestAPI {
     public static final String COMPANY_REQUEST = "api/v1/company-request";
+    public static final String COMPANY_REQUEST_UPLOAD_AGAIN = "api/v1/company-request/upload-again/";
   }
 
   public static class MachineAPI {

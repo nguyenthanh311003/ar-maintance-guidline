@@ -350,12 +350,12 @@ public class UserServiceImpl implements IUserService {
 
   @Override
   public PagingModel<UserResponse> getStaffByCompanyId(
-      int page, int size, String companyId, String username, String email, String status) {
+      int page, int size, String companyId, String phoneNumber, String email, String status) {
     try {
       PagingModel<UserResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
       Page<User> users =
-          userRepository.getStaffByCompanyId(pageable, companyId, username, email, status);
+          userRepository.getStaffByCompanyId(pageable, companyId, phoneNumber, email, status);
 
       List<UserResponse> userResponses =
           users.getContent().stream().map(UserMapper::fromEntityToUserResponse).toList();

@@ -74,9 +74,11 @@ public class OrderTransactionController {
   ApiResponse<PagingModel<OrderTransactionResponse>> getOrderTransactionByCompanyId(
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "5") int size,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) Long orderCode,
       @PathVariable String companyId) {
     return ApiResponse.<PagingModel<OrderTransactionResponse>>builder()
-        .result(orderTransactionService.getAllTransactionByCompanyId(page, size, companyId))
+        .result(orderTransactionService.getAllTransactionByCompanyId(page, size, companyId, status, orderCode))
         .build();
   }
 
