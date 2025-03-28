@@ -17,6 +17,7 @@ public class OrderTransactionResponse {
   Long amount;
   Long point;
   String optionName;
+  String email;
   LocalDateTime createdDate;
   LocalDateTime updatedDate;
 }

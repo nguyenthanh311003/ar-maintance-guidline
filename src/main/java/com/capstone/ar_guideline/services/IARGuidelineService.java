@@ -40,7 +40,8 @@ public interface IARGuidelineService {
 
   void changeStatusCourse(String courseId);
 
-  PagingModel<MachineResponse> getMachinesByCompanyId(int page, int size, String companyId, String keyword, String machineTypeName);
+  PagingModel<MachineResponse> getMachinesByCompanyId(
+      int page, int size, String companyId, String keyword, String machineTypeName);
 
   MachineResponse createMachine(MachineCreationRequest request);
 
@@ -58,7 +59,8 @@ public interface IARGuidelineService {
 
   MachineTypeResponse createMachineType(MachineTypeCreationRequest request);
 
-  PagingModel<MachineTypeResponse> getMachineTypesByCompanyId(int page, int size, String companyId, String name);
+  PagingModel<MachineTypeResponse> getMachineTypesByCompanyId(
+      int page, int size, String companyId, String name);
 
   MachineTypeResponse getMachineTypesById(String machineTypeId);
 

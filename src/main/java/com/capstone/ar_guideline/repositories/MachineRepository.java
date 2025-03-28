@@ -12,16 +12,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MachineRepository extends JpaRepository<Machine, String> {
   @Query(
-      value = "SELECT m FROM Machine m WHERE m.company.id = :companyId "
-          + "AND (:keyword IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :keyword, '%')) "
-          + "OR (:keyword IS NULL OR LOWER(m.machineCode) LIKE LOWER(CONCAT('%', :keyword, '%')))) "
-          + "AND (m.modelType.name = :machineTypeName OR :machineTypeName IS NULL) "
-          + "ORDER BY m.createdDate DESC")
+      value =
+          "SELECT m FROM Machine m WHERE m.company.id = :companyId "
+              + "AND (:keyword IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :keyword, '%')) "
+              + "OR (:keyword IS NULL OR LOWER(m.machineCode) LIKE LOWER(CONCAT('%', :keyword, '%')))) "
+              + "AND (m.modelType.name = :machineTypeName OR :machineTypeName IS NULL) "
+              + "ORDER BY m.createdDate DESC")
   Page<Machine> getMachineCompanyId(
-          Pageable pageable,
-          @Param("companyId") String companyId,
-          @Param("keyword") String keyword,
-          @Param("machineTypeName") String machineTypeName);
+      Pageable pageable,
+      @Param("companyId") String companyId,
+      @Param("keyword") String keyword,
+      @Param("machineTypeName") String machineTypeName);
 
   @Query(value = "SELECT m FROM Machine m WHERE m.name = :name")
   Machine getMachineByName(@Param("name") String name);
@@ -40,6 +41,8 @@ public interface MachineRepository extends JpaRepository<Machine, String> {
   List<Machine> getMachineByMachineCodeAndCompanyId(
       @Param("machineCode") String machineCode, @Param("companyId") String companyId);
 
-  @Query(value = "SELECT COUNT(m) FROM Machine m WHERE m.modelType.id = :machineTypeId GROUP BY m.modelType.id")
+  @Query(
+      value =
+          "SELECT COUNT(m) FROM Machine m WHERE m.modelType.id = :machineTypeId GROUP BY m.modelType.id")
   Integer countByModelType_Id(@Param("machineTypeId") String machineTypeId);
 }

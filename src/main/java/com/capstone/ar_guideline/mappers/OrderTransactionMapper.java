@@ -25,6 +25,7 @@ public class OrderTransactionMapper {
         .orderCode(orderTransaction.getOrderCode())
         .status(orderTransaction.getStatus())
         .amount(orderTransaction.getAmount())
+        .email(orderTransaction.getUser().getEmail())
         .optionName(orderTransaction.getPointOptions().getName())
         .point(orderTransaction.getPointOptions().getPoint())
         .createdDate(orderTransaction.getCreatedDate())

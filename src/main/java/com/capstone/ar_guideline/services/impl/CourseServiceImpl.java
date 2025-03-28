@@ -212,6 +212,7 @@ public class CourseServiceImpl implements ICourseService {
   public void updateNumberOfScan(String id) {
     Course course = findById(id);
     course.setNumberOfScan(course.getNumberOfScan() + 1);
+    course.setStatus(ConstStatus.ARCHIVED);
     courseRepository.save(course);
   }
 

@@ -138,7 +138,8 @@ public class UserServiceImpl implements IUserService {
         throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
       }
 
-      User userByEmail = userRepository.findByEmailAndStatus(signUpRequest.getEmail(), ConstStatus.ACTIVE_STATUS);
+      User userByEmail =
+          userRepository.findByEmailAndStatus(signUpRequest.getEmail(), ConstStatus.ACTIVE_STATUS);
 
       if (Objects.nonNull(userByEmail)) {
         throw new AppException(ErrorCode.USER_EXISTED);

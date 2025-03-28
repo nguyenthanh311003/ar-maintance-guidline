@@ -33,8 +33,7 @@ public class MachineTypeController {
   }
 
   @GetMapping(value = ConstAPI.MachineTypeAPI.GET_MACHINE_TYPES_BY_ID + "{machineTypeId}")
-  public ApiResponse<MachineTypeResponse> getMachineTypeById(
-      @PathVariable String machineTypeId) {
+  public ApiResponse<MachineTypeResponse> getMachineTypeById(@PathVariable String machineTypeId) {
     return ApiResponse.<MachineTypeResponse>builder()
         .result(arGuidelineService.getMachineTypesById(machineTypeId))
         .build();
