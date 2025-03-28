@@ -9,7 +9,6 @@ import com.capstone.ar_guideline.services.IARGuidelineService;
 import com.capstone.ar_guideline.services.ICourseService;
 import com.capstone.ar_guideline.services.IInstructionDetailService;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -59,9 +58,14 @@ public class CourseController {
   }
 
   @GetMapping(value = ConstAPI.CourseAPI.COURSE_FIND_BY_COMPANY_ID + "{companyId}")
-  public ApiResponse<List<CourseResponse>> getCourseByCompanyId(@PathVariable String companyId) {
-    return ApiResponse.<List<CourseResponse>>builder()
-        .result(courseService.findByCompanyId(companyId))
+  public ApiResponse<PagingModel<CourseResponse>> getCourseByCompanyId(
+      @PathVariable String companyId,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "8") int size,
+      @RequestParam(required = false) String title,
+      @RequestParam(required = false) String status) {
+    return ApiResponse.<PagingModel<CourseResponse>>builder()
+        .result(courseService.findByCompanyId(page, size, companyId, title, status))
         .build();
   }
 

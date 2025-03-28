@@ -15,9 +15,14 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
       value =
           "SELECT o FROM OrderTransaction o WHERE o.user.company.id = :companyId "
               + "AND o.user.role.roleName = 'COMPANY' "
+              + "AND ((:status IS NULL OR LOWER(o.status) LIKE LOWER(CONCAT('%', :status, '%')))) "
+              + "AND (:orderCode IS NULL OR o.orderCode = :orderCode) "
               + "ORDER BY o.createdDate DESC")
   Page<OrderTransaction> getOrderTransactionByCompanyId(
-      Pageable pageable, @Param("companyId") String companyId);
+      Pageable pageable,
+      @Param("companyId") String companyId,
+      @Param("status") String status,
+      @Param("orderCode") Long orderCode);
 
   OrderTransaction findByOrderCode(Long orderCode);
 

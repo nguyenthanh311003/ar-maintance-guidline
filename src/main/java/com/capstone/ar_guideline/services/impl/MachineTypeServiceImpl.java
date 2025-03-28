@@ -74,7 +74,8 @@ public class MachineTypeServiceImpl implements IMachineTypeService {
   }
 
   @Override
-  public Page<ModelType> getMachineTypeByCompanyId(Pageable pageable, String companyId, String name) {
+  public Page<ModelType> getMachineTypeByCompanyId(
+      Pageable pageable, String companyId, String name) {
     try {
       return machineTypeRepository.getMachineTypeByCompanyId(pageable, companyId, name);
     } catch (Exception exception) {

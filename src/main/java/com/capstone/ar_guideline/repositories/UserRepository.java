@@ -14,7 +14,9 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, String> {
   Optional<User> findByEmail(String email);
 
-  @Query(value = "SELECT u FROM User u WHERE u.email = :email AND u.status = :status AND u.role.roleName = 'COMPANY'")
+  @Query(
+      value =
+          "SELECT u FROM User u WHERE u.email = :email AND u.status = :status AND u.role.roleName = 'COMPANY'")
   User findByEmailAndStatus(String email, String status);
 
   //  @Query(
@@ -65,13 +67,13 @@ public interface UserRepository extends JpaRepository<User, String> {
               + "    OR (:status = 'ACTIVE' AND u.status = 'ACTIVE') "
               + "    OR (:status = 'INACTIVE' AND u.status = 'INACTIVE') "
               + ") "
-              + "AND (:username IS NULL OR :username = '' OR LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%'))) "
+              + "AND (:phoneNumber IS NULL OR :phoneNumber = '' OR LOWER(u.phone) LIKE LOWER(CONCAT('%', :phoneNumber, '%'))) "
               + "AND (:email IS NULL OR :email = '' OR LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%'))) "
               + "ORDER BY u.createdDate DESC")
   Page<User> getStaffByCompanyId(
       Pageable pageable,
       @Param("companyId") String companyId,
-      @Param("username") String username,
+      @Param("phoneNumber") String phoneNumber,
       @Param("email") String email,
       @Param("status") String status);
 

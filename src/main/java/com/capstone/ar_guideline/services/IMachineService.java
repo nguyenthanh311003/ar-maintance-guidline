@@ -16,7 +16,8 @@ public interface IMachineService {
 
   Machine findByCode(String machineCode);
 
-  Page<Machine> getMachineByCompanyId(Pageable pageable, String companyId, String keyword, String machineTypeName);
+  Page<Machine> getMachineByCompanyId(
+      Pageable pageable, String companyId, String keyword, String machineTypeName);
 
   Machine getMachineByName(String name);
 

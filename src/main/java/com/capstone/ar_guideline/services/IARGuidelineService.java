@@ -7,6 +7,7 @@ import com.capstone.ar_guideline.dtos.requests.Machine.MachineModifyRequest;
 import com.capstone.ar_guideline.dtos.requests.MachineType.MachineTypeCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.MachineTypeAttribute.MachineTypeAttributeCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
+import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
@@ -40,7 +41,8 @@ public interface IARGuidelineService {
 
   void changeStatusCourse(String courseId);
 
-  PagingModel<MachineResponse> getMachinesByCompanyId(int page, int size, String companyId, String keyword, String machineTypeName);
+  PagingModel<MachineResponse> getMachinesByCompanyId(
+      int page, int size, String companyId, String keyword, String machineTypeName);
 
   MachineResponse createMachine(MachineCreationRequest request);
 
@@ -58,7 +60,8 @@ public interface IARGuidelineService {
 
   MachineTypeResponse createMachineType(MachineTypeCreationRequest request);
 
-  PagingModel<MachineTypeResponse> getMachineTypesByCompanyId(int page, int size, String companyId, String name);
+  PagingModel<MachineTypeResponse> getMachineTypesByCompanyId(
+      int page, int size, String companyId, String name);
 
   MachineTypeResponse getMachineTypesById(String machineTypeId);
 
@@ -67,4 +70,6 @@ public interface IARGuidelineService {
   void updateQrCodeForMachine(String guidelineCode, Machine machineToUpdate);
 
   CourseResponse createGuideline(CourseCreationRequest request);
+
+  CompanyRequestResponse uploadAgain(String requestId, ModelCreationRequest request);
 }
