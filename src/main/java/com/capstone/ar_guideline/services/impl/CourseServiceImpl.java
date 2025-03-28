@@ -4,7 +4,6 @@ import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
-import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.Wallet.WalletResponse;
 import com.capstone.ar_guideline.entities.*;
@@ -327,19 +326,18 @@ public class CourseServiceImpl implements ICourseService {
   }
 
   @Override
-  public PagingModel<CourseResponse> findByCompanyId(int page, int size, String companyId, String title, String status) {
+  public PagingModel<CourseResponse> findByCompanyId(
+      int page, int size, String companyId, String title, String status) {
     try {
       PagingModel<CourseResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
       companyService.findByIdReturnEntity(companyId);
 
-      Page<Course> coursesByCompanyId = courseRepository.findByCompanyId(pageable, companyId, title, status);
+      Page<Course> coursesByCompanyId =
+          courseRepository.findByCompanyId(pageable, companyId, title, status);
 
-       List<CourseResponse> courseResponses =
-               coursesByCompanyId.stream()
-              .map(
-                      CourseMapper::fromEntityToCourseResponse)
-          .toList();
+      List<CourseResponse> courseResponses =
+          coursesByCompanyId.stream().map(CourseMapper::fromEntityToCourseResponse).toList();
 
       pagingModel.setPage(page);
       pagingModel.setSize(size);

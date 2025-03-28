@@ -64,10 +64,10 @@ public class CompanyRequestController {
 
   @PutMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST_UPLOAD_AGAIN + "{requestId}")
   ApiResponse<CompanyRequestResponse> uploadAgain(
-          @PathVariable String requestId, @ModelAttribute @Valid ModelCreationRequest request) {
+      @PathVariable String requestId, @ModelAttribute @Valid ModelCreationRequest request) {
     return ApiResponse.<CompanyRequestResponse>builder()
-            .message("Update Company Request")
-            .result(arGuidelineService.uploadAgain(requestId, request))
-            .build();
+        .message("Update Company Request")
+        .result(arGuidelineService.uploadAgain(requestId, request))
+        .build();
   }
 }

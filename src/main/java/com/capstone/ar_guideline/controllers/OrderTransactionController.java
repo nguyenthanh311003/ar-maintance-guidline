@@ -78,7 +78,9 @@ public class OrderTransactionController {
       @RequestParam(required = false) Long orderCode,
       @PathVariable String companyId) {
     return ApiResponse.<PagingModel<OrderTransactionResponse>>builder()
-        .result(orderTransactionService.getAllTransactionByCompanyId(page, size, companyId, status, orderCode))
+        .result(
+            orderTransactionService.getAllTransactionByCompanyId(
+                page, size, companyId, status, orderCode))
         .build();
   }
 

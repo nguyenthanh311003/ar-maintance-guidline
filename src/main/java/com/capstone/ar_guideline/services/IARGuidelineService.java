@@ -17,8 +17,6 @@ import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValu
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Machine;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 
 public interface IARGuidelineService {
@@ -43,7 +41,8 @@ public interface IARGuidelineService {
 
   void changeStatusCourse(String courseId);
 
-  PagingModel<MachineResponse> getMachinesByCompanyId(int page, int size, String companyId, String keyword, String machineTypeName);
+  PagingModel<MachineResponse> getMachinesByCompanyId(
+      int page, int size, String companyId, String keyword, String machineTypeName);
 
   MachineResponse createMachine(MachineCreationRequest request);
 
@@ -61,7 +60,8 @@ public interface IARGuidelineService {
 
   MachineTypeResponse createMachineType(MachineTypeCreationRequest request);
 
-  PagingModel<MachineTypeResponse> getMachineTypesByCompanyId(int page, int size, String companyId, String name);
+  PagingModel<MachineTypeResponse> getMachineTypesByCompanyId(
+      int page, int size, String companyId, String name);
 
   MachineTypeResponse getMachineTypesById(String machineTypeId);
 
