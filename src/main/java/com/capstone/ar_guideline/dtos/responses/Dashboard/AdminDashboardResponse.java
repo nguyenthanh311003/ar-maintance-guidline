@@ -21,10 +21,11 @@ public class AdminDashboardResponse {
   private Integer numberOfActiveModels;
   private Integer numberOfInactiveModels;
   private Long totalRevenue;
-  private List<CompanyRevenue> companyRevenueList;
+  private List<CompanyRevenue> top3Company;
   private List<MonthRevenue> monthRevenueList;
   private List<PointOptionRevenue> pointOptionRevenueList;
   private List<CompanyDashboardResponse.Top3Guidelines> top3Guidelines;
+
 
   @Data
   @Builder

@@ -37,7 +37,7 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
           + "WHERE ot.status = 'PAID' "
           + "GROUP BY c "
           + "ORDER BY totalAmount DESC")
-  List<Object[]> getCompaniesWithTotalPaidOrders();
+  List<Object[]> getCompaniesWithTotalPaidOrders(Pageable pageable);
 
   @Query(
       value =

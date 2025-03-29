@@ -25,6 +25,8 @@ public class DashboardService {
   @Autowired private OrderTransactionRepository orderTransactionRepository;
 
   @Autowired private PointOptionsRepository pointOptionRepository;
+    @Autowired
+    private WalletTransactionRepository walletTransactionRepository;
 
   public AdminDashboardResponse getAdminDashboard() {
     // Get active and inactive guidelines (courses)
@@ -48,8 +50,10 @@ public class DashboardService {
     Long totalRevenue = 0l;
 
     // Get company revenue data
+    Pageable topThree = PageRequest.of(0, 3);
+
     List<Object[]> companiesWithRevenue =
-        orderTransactionRepository.getCompaniesWithTotalPaidOrders();
+        orderTransactionRepository.getCompaniesWithTotalPaidOrders(topThree);
     List<AdminDashboardResponse.CompanyRevenue> companyRevenueList = new ArrayList<>();
 
     for (Object[] result : companiesWithRevenue) {
@@ -96,7 +100,6 @@ public class DashboardService {
     }
     pointOptionRevenueList.sort((a, b) -> b.getRevenue().compareTo(a.getRevenue()));
 
-    Pageable topThree = PageRequest.of(0, 3);
     List<Course> top3Courses = courseRepository.findTop3CoursesByScanTimes(topThree, null);
     List<CompanyDashboardResponse.Top3Guidelines> top3GuidelinesList = new ArrayList<>();
 
@@ -122,7 +125,7 @@ public class DashboardService {
         .numberOfActiveModels(numberOfActiveModels)
         .monthRevenueList(monthRevenueList)
         .totalRevenue(totalRevenue)
-        .companyRevenueList(companyRevenueList)
+        .top3Company(companyRevenueList)
         .build();
   }
 
@@ -147,6 +150,39 @@ public class DashboardService {
     List<Course> top3Courses = courseRepository.findTop3CoursesByScanTimes(topThree, companyId);
     List<CompanyDashboardResponse.Top3Guidelines> top3GuidelinesList = new ArrayList<>();
 
+    List<Object[]> monthlyVenue = walletTransactionRepository.findPointRequestTransactionsOverLast12Months();
+    List<AdminDashboardResponse.MonthRevenue> monthRevenueList = new ArrayList<>();
+
+    List<Object[]> top3Employee = walletTransactionRepository.findTop3UsersWithPointRequestTransactions(topThree);
+    List<CompanyDashboardResponse.Top3Guidelines> top3EmployeesList = new ArrayList<>();
+
+    for (Object[] result : top3Employee) {
+      String username = result[0] != null ? (String) result[0] : "Unknown";
+      Long transactionCount = result[1] != null ? (Long) result[1] : 0L;
+
+      CompanyDashboardResponse.Top3Guidelines employee = new CompanyDashboardResponse.Top3Guidelines();
+      employee.setName(username);
+      employee.setScanTimes(transactionCount.intValue());
+      top3EmployeesList.add(employee);
+    }
+
+    for (int i = 1; i <= 12; i++) {
+      Long month = (long) i;
+      Long transactionCount = 0L;
+
+      for (Object[] result : monthlyVenue) {
+        if (result[0] != null && ((Long) result[0]).intValue() == i) {
+          transactionCount = result[1] != null ? (Long) result[1] : 0L;
+          break;
+        }
+      }
+
+      AdminDashboardResponse.MonthRevenue monthRevenue = new AdminDashboardResponse.MonthRevenue();
+      monthRevenue.setMonth(month);
+      monthRevenue.setRevenue(transactionCount);
+      monthRevenueList.add(monthRevenue);
+    }
+
     for (Course course : top3Courses) {
       CompanyDashboardResponse.Top3Guidelines guideline =
           new CompanyDashboardResponse.Top3Guidelines();
@@ -164,6 +200,8 @@ public class DashboardService {
         .numberOfActiveAccount(numberOfActiveAccount)
         .numberOfInactiveAccount(numberOfInactiveAccount)
         .numberOfModels(numberOfModels)
+            .monthScanList(monthRevenueList)
+            .top3Employees(top3EmployeesList)
         .numberOfActiveModels(numberOfActiveModels)
         .numberOfInactiveModels(numberOfInactiveModels)
         .top3Guidelines(top3GuidelinesList)

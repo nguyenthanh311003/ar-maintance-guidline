@@ -21,7 +21,8 @@ public class CompanyDashboardResponse {
   private Integer numberOfActiveModels;
   private Integer numberOfInactiveModels;
   private List<Top3Guidelines> top3Guidelines;
-
+  private List<Top3Guidelines> top3Employees;
+  private List<AdminDashboardResponse.MonthRevenue> monthScanList;
   @Data
   @Builder
   @NoArgsConstructor

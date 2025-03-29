@@ -11,6 +11,7 @@ import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CompanyMapper;
 import com.capstone.ar_guideline.mappers.PointRequestMapper;
 import com.capstone.ar_guideline.repositories.PointRequestRepository;
+import com.capstone.ar_guideline.repositories.ServicePricerRepository;
 import com.capstone.ar_guideline.services.ICompanyService;
 import com.capstone.ar_guideline.services.IPointRequestService;
 import com.capstone.ar_guideline.services.IUserService;
@@ -27,6 +28,7 @@ public class PointRequestServiceImpl implements IPointRequestService {
   private final WalletServiceImpl walletService;
   private final IUserService userService;
   private final ICompanyService companyService;
+  private final ServicePricerRepository servicePricerRepository;
 
   @Override
   public List<PointRequestResponse> findAll() {
@@ -121,7 +123,7 @@ public class PointRequestServiceImpl implements IPointRequestService {
             pointRequestEntity.getEmployee().getId(),
             userService
                 .findCompanyAdminByCompanyId(pointRequestEntity.getCompany().getId())
-                .getId());
+                .getId(),servicePricerRepository.findByName("Point Request"));
       }
 
       pointRequestEntity = pointRequestRepository.save(pointRequestEntity);

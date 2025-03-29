@@ -77,7 +77,7 @@ public class WalletServiceImpl {
     }
   }
 
-  public Wallet updateBalanceBySend(Long amount, String receiverId, String senderId) {
+  public Wallet updateBalanceBySend(Long amount, String receiverId, String senderId, ServicePrice servicePrice) {
     Optional<Wallet> walletReceiverOptional = walletRepository.findByUserId(receiverId);
     Optional<Wallet> walletSenderOptional = walletRepository.findByUserId(senderId);
 
@@ -85,12 +85,13 @@ public class WalletServiceImpl {
       Wallet senderWallet = walletSenderOptional.get();
       Wallet receiverWallet = walletReceiverOptional.get();
 
-      if (senderWallet.getBalance() == 0 || senderWallet.getBalance() - amount < 0) {
+      if (senderWallet.getBalance() == 0 || servicePrice !=null ? senderWallet.getBalance() - amount -servicePrice.getPrice()  < 0 : senderWallet.getBalance() - amount  < 0) {
         throw new RuntimeException("Sender wallet does not have enough balance");
       }
 
       // Subtract the amount from the sender's wallet
-      Long newSenderBalance = senderWallet.getBalance() - amount;
+
+      Long newSenderBalance = servicePrice !=null ? senderWallet.getBalance() - amount -servicePrice.getPrice() : senderWallet.getBalance() - amount;
       senderWallet.setBalance(newSenderBalance);
 
       // Add the amount to the receiver's wallet
@@ -105,6 +106,7 @@ public class WalletServiceImpl {
               .balance(newSenderBalance)
               .type("DEBIT")
               .user(User.builder().id(senderId).build())
+                  .servicePrice(servicePrice)
               .receiver(User.builder().id(receiverId).build())
               .build();
       walletTransactionRepository.save(senderTransaction);
@@ -117,7 +119,8 @@ public class WalletServiceImpl {
               .balance(newReceiverBalance)
               .type("CREDIT")
               .user(User.builder().id(receiverId).build())
-              .sender(User.builder().id(senderId).build())
+                  .servicePrice(servicePrice)
+                  .sender(User.builder().id(senderId).build())
               .build();
       walletTransactionRepository.save(receiverTransaction);
 
@@ -160,7 +163,7 @@ public class WalletServiceImpl {
         Long gap = limitPoint - user.getWallet().getBalance();
 
         // Update the wallet balance
-        updateBalanceBySend(gap, user.getId(), company.getId());
+        updateBalanceBySend(gap, user.getId(), company.getId(),null);
       }
     }
   }
