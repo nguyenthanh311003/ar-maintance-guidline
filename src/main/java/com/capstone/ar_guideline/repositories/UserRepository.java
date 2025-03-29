@@ -97,4 +97,7 @@ public interface UserRepository extends JpaRepository<User, String> {
       value =
           "SELECT u FROM User u WHERE u.company.id = :companyId AND u.role.roleName = 'COMPANY' AND u.status = 'ACTIVE' ")
   List<User> findCompanyAdminByCompanyId(String companyId);
+
+  User findUserById(String id);
+
 }

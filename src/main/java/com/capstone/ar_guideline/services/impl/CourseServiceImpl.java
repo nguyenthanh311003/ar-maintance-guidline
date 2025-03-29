@@ -10,9 +10,7 @@ import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CourseMapper;
-import com.capstone.ar_guideline.repositories.CourseRepository;
-import com.capstone.ar_guideline.repositories.InstructionDetailRepository;
-import com.capstone.ar_guideline.repositories.ServicePricerRepository;
+import com.capstone.ar_guideline.repositories.*;
 import com.capstone.ar_guideline.services.*;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.ArrayList;
@@ -38,7 +36,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class CourseServiceImpl implements ICourseService {
 
+  WalletTransactionRepository walletTransactionRepository;
   CourseRepository courseRepository;
+  UserRepository userRepository;
   RedisTemplate<String, Object> redisTemplate;
   ICompanyService companyService;
   IModelService modelService;
@@ -210,11 +210,13 @@ public class CourseServiceImpl implements ICourseService {
   }
 
   @Override
-  public void updateNumberOfScan(String id) {
+  public void updateNumberOfScan(String id, String userId) {
     Course course = findById(id);
+    ServicePrice servicePrice = servicePricerRepository.findByName("Scan AR");
     course.setNumberOfScan(course.getNumberOfScan() + 1);
-    course.setStatus(ConstStatus.ARCHIVED);
     courseRepository.save(course);
+    User user = userRepository.findUserById(userId);
+    walletService.updateBalance(user.getWallet().getId(),servicePrice.getPrice(),false,servicePrice.getId(),userId,id,null);
   }
 
   @Override
@@ -252,6 +254,11 @@ public class CourseServiceImpl implements ICourseService {
         walletService.findWalletByUserId(userId); // Assuming the first user in the company
     walletService.updateBalance(
         wallet.getId(), totalPrice, false, servicePrice.getId(), userId, courseId, null);
+  }
+
+  @Override
+  public Boolean isPaid(String id) {
+return walletTransactionRepository.isGuidelinePay(id);
   }
 
   @Override

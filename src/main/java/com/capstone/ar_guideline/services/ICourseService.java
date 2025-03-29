@@ -45,7 +45,9 @@ public interface ICourseService {
 
   void changeStatusByCourseId(String courseId);
 
-  void updateNumberOfScan(String id);
+  void updateNumberOfScan(String id, String userId);
 
   void publishGuidelineFirstTime(String courseId, String userId);
+
+  Boolean isPaid(String id);
 }
