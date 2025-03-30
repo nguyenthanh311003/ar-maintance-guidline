@@ -19,7 +19,8 @@ public interface IOrderTransactionService {
   PagingModel<OrderTransactionResponse> getAllTransactionByCompanyId(
       int page, int size, String companyId, String status, Long orderCode);
 
-  PagingModel<OrderTransactionResponse> getAllTransaction(int page, int size);
+  PagingModel<OrderTransactionResponse> getAllTransaction(
+      int page, int size, String status, Long orderCode);
 
   OrderTransaction findByOrderCode(Long orderCode);
 

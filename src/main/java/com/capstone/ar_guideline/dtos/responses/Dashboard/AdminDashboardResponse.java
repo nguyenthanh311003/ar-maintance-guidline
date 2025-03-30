@@ -26,7 +26,6 @@ public class AdminDashboardResponse {
   private List<PointOptionRevenue> pointOptionRevenueList;
   private List<CompanyDashboardResponse.Top3Guidelines> top3Guidelines;
 
-
   @Data
   @Builder
   @NoArgsConstructor

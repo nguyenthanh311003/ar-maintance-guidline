@@ -6,7 +6,8 @@ import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import java.util.List;
 
 public interface ICompanyRequestService {
-  List<CompanyRequestResponse> findAll();
+  PagingModel<CompanyRequestResponse> findAllForDesigner(
+      int page, int size, String status, String companyName);
 
   PagingModel<CompanyRequestResponse> findByCompanyId(
       int page, int size, String companyId, String status);

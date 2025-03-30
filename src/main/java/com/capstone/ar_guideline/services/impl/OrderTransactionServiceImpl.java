@@ -136,12 +136,13 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
   }
 
   @Override
-  public PagingModel<OrderTransactionResponse> getAllTransaction(int page, int size) {
+  public PagingModel<OrderTransactionResponse> getAllTransaction(
+      int page, int size, String status, Long orderCode) {
     try {
       PagingModel<OrderTransactionResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
       Page<OrderTransaction> orderTransactions =
-          orderTransactionRepository.getOrderTransaction(pageable);
+          orderTransactionRepository.getOrderTransaction(pageable, status, orderCode);
 
       List<OrderTransactionResponse> orderTransactionResponses =
           orderTransactions.getContent().stream()

@@ -4,6 +4,7 @@ import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.dtos.requests.Company.CompanyCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponse;
 import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponseManagement;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
@@ -18,6 +19,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -46,20 +50,32 @@ public class CompanyServiceImpl implements ICompanyService {
   }
 
   @Override
-  public List<CompanyResponseManagement> findAllForManagement() {
+  public PagingModel<CompanyResponseManagement> findAllForManagement(
+      int page, int size, String companyName) {
     try {
-      List<Company> companies = companyRepository.findAll();
-      List<CompanyResponseManagement> companiesManagement;
-      companiesManagement =
-          companies.stream().map(CompanyMapper::fromEntityToCompanyResponseManagement).toList();
-      companiesManagement.stream()
-          .forEach(
-              c -> {
-                c.setNumberOfAccount(userRepository.countByCompany_Id(c.getId()));
-                c.setNumberOfGuideline(courseRepository.countByCompany_Id(c.getId()));
-              });
+      PagingModel<CompanyResponseManagement> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
 
-      return companiesManagement;
+      Page<Company> companies = companyRepository.getCompanies(pageable, companyName);
+      List<CompanyResponseManagement> companyResponseManagements =
+          companies.getContent().stream()
+              .map(
+                  c -> {
+                    CompanyResponseManagement companyResponseManagement =
+                        CompanyMapper.fromEntityToCompanyResponseManagement(c);
+                    companyResponseManagement.setNumberOfAccount(
+                        userRepository.countByCompany_Id(c.getId()));
+                    companyResponseManagement.setNumberOfGuideline(
+                        courseRepository.countByCompany_Id(c.getId()));
+                    return companyResponseManagement;
+                  })
+              .toList();
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) companies.getTotalElements());
+      pagingModel.setTotalPages(companies.getTotalPages());
+      pagingModel.setObjectList(companyResponseManagements);
+      return pagingModel;
     } catch (Exception exception) {
       log.error("Company find all failed: {}", exception.getMessage());
       if (exception instanceof AppException) {

@@ -25,8 +25,7 @@ public class DashboardService {
   @Autowired private OrderTransactionRepository orderTransactionRepository;
 
   @Autowired private PointOptionsRepository pointOptionRepository;
-    @Autowired
-    private WalletTransactionRepository walletTransactionRepository;
+  @Autowired private WalletTransactionRepository walletTransactionRepository;
 
   public AdminDashboardResponse getAdminDashboard() {
     // Get active and inactive guidelines (courses)
@@ -150,17 +149,20 @@ public class DashboardService {
     List<Course> top3Courses = courseRepository.findTop3CoursesByScanTimes(topThree, companyId);
     List<CompanyDashboardResponse.Top3Guidelines> top3GuidelinesList = new ArrayList<>();
 
-    List<Object[]> monthlyVenue = walletTransactionRepository.findPointRequestTransactionsOverLast12Months();
+    List<Object[]> monthlyVenue =
+        walletTransactionRepository.findPointRequestTransactionsOverLast12Months();
     List<AdminDashboardResponse.MonthRevenue> monthRevenueList = new ArrayList<>();
 
-    List<Object[]> top3Employee = walletTransactionRepository.findTop3UsersWithPointRequestTransactions(topThree);
+    List<Object[]> top3Employee =
+        walletTransactionRepository.findTop3UsersWithPointRequestTransactions(topThree);
     List<CompanyDashboardResponse.Top3Guidelines> top3EmployeesList = new ArrayList<>();
 
     for (Object[] result : top3Employee) {
       String username = result[0] != null ? (String) result[0] : "Unknown";
       Long transactionCount = result[1] != null ? (Long) result[1] : 0L;
 
-      CompanyDashboardResponse.Top3Guidelines employee = new CompanyDashboardResponse.Top3Guidelines();
+      CompanyDashboardResponse.Top3Guidelines employee =
+          new CompanyDashboardResponse.Top3Guidelines();
       employee.setName(username);
       employee.setScanTimes(transactionCount.intValue());
       top3EmployeesList.add(employee);
@@ -200,8 +202,8 @@ public class DashboardService {
         .numberOfActiveAccount(numberOfActiveAccount)
         .numberOfInactiveAccount(numberOfInactiveAccount)
         .numberOfModels(numberOfModels)
-            .monthScanList(monthRevenueList)
-            .top3Employees(top3EmployeesList)
+        .monthScanList(monthRevenueList)
+        .top3Employees(top3EmployeesList)
         .numberOfActiveModels(numberOfActiveModels)
         .numberOfInactiveModels(numberOfInactiveModels)
         .top3Guidelines(top3GuidelinesList)

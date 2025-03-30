@@ -125,8 +125,9 @@ public class CourseController {
   }
 
   @PutMapping(value = ConstAPI.CourseAPI.UPDATE_COURSE_SCAN_TIMES + "/{courseId}/{userId}")
-  public ApiResponse<String> updateScanTimes(@PathVariable String courseId, @PathVariable String userId ) {
-    courseService.updateNumberOfScan(courseId,userId);
+  public ApiResponse<String> updateScanTimes(
+      @PathVariable String courseId, @PathVariable String userId) {
+    courseService.updateNumberOfScan(courseId, userId);
     return ApiResponse.<String>builder().result("Course has been updated successfully").build();
   }
 
@@ -145,10 +146,9 @@ public class CourseController {
         .result(instructionService.countInstructionDetailByCourseId(courseId))
         .build();
   }
+
   @GetMapping(value = ConstAPI.CourseAPI.COURSE + "/is-paid/{courseId}")
   public ApiResponse<Boolean> isPaid(@PathVariable String courseId) {
-    return ApiResponse.<Boolean>builder()
-            .result(courseService.isPaid(courseId))
-            .build();
+    return ApiResponse.<Boolean>builder().result(courseService.isPaid(courseId)).build();
   }
 }
