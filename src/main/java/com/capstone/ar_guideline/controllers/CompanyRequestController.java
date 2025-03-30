@@ -9,7 +9,6 @@ import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IARGuidelineService;
 import com.capstone.ar_guideline.services.ICompanyRequestService;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -25,10 +24,14 @@ public class CompanyRequestController {
   IARGuidelineService arGuidelineService;
 
   @GetMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST)
-  ApiResponse<List<CompanyRequestResponse>> getAllCompanyRequests() {
-    return ApiResponse.<List<CompanyRequestResponse>>builder()
+  ApiResponse<PagingModel<CompanyRequestResponse>> getAllCompanyRequestsForDesigner(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "5") int size,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) String companyName) {
+    return ApiResponse.<PagingModel<CompanyRequestResponse>>builder()
         .message("Get all company requests")
-        .result(companyRequestService.findAll())
+        .result(companyRequestService.findAllForDesigner(page, size, status, companyName))
         .build();
   }
 

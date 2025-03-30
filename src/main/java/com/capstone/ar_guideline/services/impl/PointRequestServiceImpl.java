@@ -123,7 +123,8 @@ public class PointRequestServiceImpl implements IPointRequestService {
             pointRequestEntity.getEmployee().getId(),
             userService
                 .findCompanyAdminByCompanyId(pointRequestEntity.getCompany().getId())
-                .getId(),servicePricerRepository.findByName("Point Request"));
+                .getId(),
+            servicePricerRepository.findByName("Point Request"));
       }
 
       pointRequestEntity = pointRequestRepository.save(pointRequestEntity);

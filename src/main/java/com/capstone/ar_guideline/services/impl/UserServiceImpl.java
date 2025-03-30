@@ -110,7 +110,7 @@ public class UserServiceImpl implements IUserService {
         walletService.createWallet(user, 0L, "VND");
         if (signUpWitRoleRequest.getPoints() > 0) {
           walletService.updateBalanceBySend(
-              signUpWitRoleRequest.getPoints(), user.getId(), companyUser.getId(),null);
+              signUpWitRoleRequest.getPoints(), user.getId(), companyUser.getId(), null);
         }
       }
       var jwt = jwtService.generateToken(user);

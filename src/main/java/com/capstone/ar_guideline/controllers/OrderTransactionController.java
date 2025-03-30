@@ -86,9 +86,12 @@ public class OrderTransactionController {
 
   @GetMapping(value = ConstAPI.OrderTransactionAPI.GET_ALL_ORDER_TRANSACTION)
   ApiResponse<PagingModel<OrderTransactionResponse>> getOrderTransaction(
-      @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size) {
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "5") int size,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) Long orderCode) {
     return ApiResponse.<PagingModel<OrderTransactionResponse>>builder()
-        .result(orderTransactionService.getAllTransaction(page, size))
+        .result(orderTransactionService.getAllTransaction(page, size, status, orderCode))
         .build();
   }
 

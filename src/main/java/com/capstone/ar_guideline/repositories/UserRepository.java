@@ -99,5 +99,4 @@ public interface UserRepository extends JpaRepository<User, String> {
   List<User> findCompanyAdminByCompanyId(String companyId);
 
   User findUserById(String id);
-
 }

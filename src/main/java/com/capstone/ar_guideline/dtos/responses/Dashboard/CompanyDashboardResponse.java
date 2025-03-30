@@ -23,6 +23,7 @@ public class CompanyDashboardResponse {
   private List<Top3Guidelines> top3Guidelines;
   private List<Top3Guidelines> top3Employees;
   private List<AdminDashboardResponse.MonthRevenue> monthScanList;
+
   @Data
   @Builder
   @NoArgsConstructor
