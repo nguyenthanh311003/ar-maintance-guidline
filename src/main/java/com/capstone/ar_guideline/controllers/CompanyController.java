@@ -4,6 +4,7 @@ import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponse;
 import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponseManagement;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.ICompanyService;
 import java.util.List;
 import lombok.AccessLevel;
@@ -28,9 +29,12 @@ public class CompanyController {
   }
 
   @GetMapping(value = ConstAPI.CompanyAPI.GET_COMPANY_MANAGEMENT)
-  ApiResponse<List<CompanyResponseManagement>> getCompaniesForManagement() {
-    return ApiResponse.<List<CompanyResponseManagement>>builder()
-        .result(companyService.findAllForManagement())
+  ApiResponse<PagingModel<CompanyResponseManagement>> getCompaniesForManagement(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "5") int size,
+      @RequestParam(required = false) String companyName) {
+    return ApiResponse.<PagingModel<CompanyResponseManagement>>builder()
+        .result(companyService.findAllForManagement(page, size, companyName))
         .message("Get all company for management")
         .build();
   }

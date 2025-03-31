@@ -35,11 +35,26 @@ public class CompanyRequestService implements ICompanyRequestService {
   private final EmailService emailService;
 
   @Override
-  public List<CompanyRequestResponse> findAll() {
+  public PagingModel<CompanyRequestResponse> findAllForDesigner(
+      int page, int size, String status, String companyName) {
     try {
-      return companyRequestRepository.findAll().stream()
-          .map(CompanyRequestMapper::fromEntityToResponse)
-          .collect(Collectors.toList());
+      PagingModel<CompanyRequestResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+
+      Page<CompanyRequest> companyRequests =
+          companyRequestRepository.findAllForDesigner(pageable, status, companyName);
+
+      List<CompanyRequestResponse> companyRequestResponses =
+          companyRequests.getContent().stream()
+              .map(CompanyRequestMapper::fromEntityToResponse)
+              .toList();
+
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) companyRequests.getTotalElements());
+      pagingModel.setTotalPages(companyRequests.getTotalPages());
+      pagingModel.setObjectList(companyRequestResponses);
+      return pagingModel;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

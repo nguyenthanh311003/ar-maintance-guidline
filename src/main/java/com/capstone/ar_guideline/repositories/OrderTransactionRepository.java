@@ -26,8 +26,13 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
 
   OrderTransaction findByOrderCode(Long orderCode);
 
-  @Query(value = "SELECT o FROM OrderTransaction o " + "ORDER BY o.createdDate DESC")
-  Page<OrderTransaction> getOrderTransaction(Pageable pageable);
+  @Query(
+      value =
+          "SELECT o FROM OrderTransaction o "
+              + "WHERE ((:status IS NULL OR LOWER(o.status) LIKE LOWER(CONCAT('%', :status, '%')))) "
+              + "AND (:orderCode IS NULL OR o.orderCode = :orderCode) "
+              + "ORDER BY o.createdDate DESC")
+  Page<OrderTransaction> getOrderTransaction(Pageable pageable, String status, Long orderCode);
 
   @Query(
       "SELECT c, COALESCE(SUM(ot.amount), 0) AS totalAmount "

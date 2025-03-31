@@ -23,8 +23,13 @@ public interface CompanyRequestRepository extends JpaRepository<CompanyRequest, 
 
   CompanyRequest findByRequestId(String requestId);
 
-  @Query(" select c from CompanyRequest c order by c.createdAt desc ")
-  List<CompanyRequest> findAll();
+  @Query(
+      " SELECT c FROM CompanyRequest c "
+          + "WHERE (:status IS NULL OR LOWER(c.status) LIKE LOWER(CONCAT('%', :status, '%')))"
+          + "AND (:companyName IS NULL OR LOWER(c.company.companyName) LIKE LOWER(CONCAT('%', :companyName, '%')))"
+          + "ORDER BY c.createdAt DESC")
+  Page<CompanyRequest> findAllForDesigner(
+      Pageable pageable, @Param("status") String status, @Param("companyName") String companyName);
 
   @Query("SELECT c.requestNumber FROM CompanyRequest c")
   List<String> findAllRequestNumbers();
