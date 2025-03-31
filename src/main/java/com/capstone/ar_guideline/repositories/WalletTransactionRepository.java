@@ -24,23 +24,24 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
                   "LEFT JOIN wallet_transaction wt ON m.month = MONTH(wt.created_date) " +
                   "AND wt.created_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH) " +
                   "LEFT JOIN service_price sp ON wt.service_price_id = sp.id " +
-                  "WHERE sp.name = 'Point Request' " +
+                  "LEFT JOIN user u ON wt.user_id = u.id " +
+                  "WHERE sp.name = 'Point Request' AND u.company_id = :companyId " +
                   "GROUP BY m.month " +
                   "ORDER BY m.month",
           nativeQuery = true
   )
-  List<Object[]> findPointRequestTransactionsOverLast12Months();
+  List<Object[]> findPointRequestTransactionsOverLast12Months(@Param("companyId") String companyId);
 
   @Query(
           "SELECT u.username, COUNT(wt.id) AS transactionCount " +
                   "FROM WalletTransaction wt " +
                   "JOIN wt.user u " +
                   "JOIN wt.servicePrice sp " +
-                  "WHERE sp.name = 'Point Request' AND u.role.roleName ='STAFF' "  +
+                  "WHERE sp.name = 'Point Request' AND u.role.roleName = 'STAFF' AND u.company.id = :companyId " +
                   "GROUP BY u.username " +
                   "ORDER BY transactionCount DESC"
   )
-  List<Object[]> findTop3UsersWithPointRequestTransactions(Pageable pageable);
+  List<Object[]> findTop3UsersWithPointRequestTransactions(Pageable pageable, @Param("companyId") String companyId);
 }
 
 

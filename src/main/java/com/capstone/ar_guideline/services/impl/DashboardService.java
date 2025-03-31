@@ -150,10 +150,10 @@ public class DashboardService {
     List<Course> top3Courses = courseRepository.findTop3CoursesByScanTimes(topThree, companyId);
     List<CompanyDashboardResponse.Top3Guidelines> top3GuidelinesList = new ArrayList<>();
 
-    List<Object[]> monthlyVenue = walletTransactionRepository.findPointRequestTransactionsOverLast12Months();
+    List<Object[]> monthlyVenue = walletTransactionRepository.findPointRequestTransactionsOverLast12Months(companyId);
     List<AdminDashboardResponse.MonthRevenue> monthRevenueList = new ArrayList<>();
 
-    List<Object[]> top3Employee = walletTransactionRepository.findTop3UsersWithPointRequestTransactions(topThree);
+    List<Object[]> top3Employee = walletTransactionRepository.findTop3UsersWithPointRequestTransactions(topThree, companyId);
     List<CompanyDashboardResponse.Top3Guidelines> top3EmployeesList = new ArrayList<>();
 
     for (Object[] result : top3Employee) {
