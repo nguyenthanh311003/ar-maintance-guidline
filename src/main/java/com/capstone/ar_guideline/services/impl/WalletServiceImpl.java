@@ -141,7 +141,8 @@ public class WalletServiceImpl {
   }
 
   public WalletResponse findWalletByUserId(String userId) {
-    return WalletMapper.toResponse(walletRepository.findByUserId(userId).get());
+    Optional<Wallet> walletOptional = walletRepository.findByUserId(userId);
+    return walletOptional.map(WalletMapper::toResponse).orElse(null);
   }
 
   public void updatePointForAllEmployeeByCompanyId(String companyId, Long limitPoint) {
