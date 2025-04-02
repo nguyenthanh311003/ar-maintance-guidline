@@ -248,4 +248,15 @@ public class ModelServiceImpl implements IModelService {
       throw new AppException(ErrorCode.MODEL_UPDATE_FAILED);
     }
   }
+
+  @Override
+  public void changeStatus(String modelId) {
+    Model modelById = modelRepository.findById(modelId).get();
+    if (ConstStatus.ACTIVE_STATUS.equals(modelById.getStatus())) {
+      modelById.setStatus(ConstStatus.INACTIVE_STATUS);
+    } else {
+      modelById.setStatus(ConstStatus.ACTIVE_STATUS);
+    }
+    modelRepository.save(modelById);
+  }
 }

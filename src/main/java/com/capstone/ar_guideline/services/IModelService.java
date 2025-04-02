@@ -34,4 +34,6 @@ public interface IModelService {
   List<Model> findAllByCompanyId(String companyId);
 
   void updateIsUsedByCourseId(String modelId);
+
+  void changeStatus(String modelId);
 }
