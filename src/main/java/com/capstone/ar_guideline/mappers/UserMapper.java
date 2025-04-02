@@ -16,7 +16,7 @@ public class UserMapper {
     return User.builder()
         .email(request.getEmail())
         .password(request.getPassword())
-        .username(request.getEmail())
+        .username(request.getUserName())
         .phone(request.getPhone())
         .avatar(request.getAvatar())
         .status(request.getStatus())
