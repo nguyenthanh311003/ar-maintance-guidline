@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.services.impl;
 
+import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.entities.PointOptions;
 import com.capstone.ar_guideline.repositories.PointOptionsRepository;
 import java.util.List;
@@ -30,7 +31,11 @@ public class PointOptionsService {
     }
   }
 
-  public List<PointOptions> getAll() {
+  public List<PointOptions> getAllForCompany() {
+    return pointOptionsRepository.findAllByStatusOrderByPointAsc(ConstStatus.ACTIVE_STATUS);
+  }
+
+  public List<PointOptions> getAllForAdmin() {
     return pointOptionsRepository.findAllByOrderByPointAsc();
   }
 
@@ -50,5 +55,17 @@ public class PointOptionsService {
 
   public PointOptions findById(String id) {
     return pointOptionsRepository.findById(id).get();
+  }
+
+  public void changeStatus(String id)
+  {
+    PointOptions pointOptions = pointOptionsRepository.findById(id).get();
+   String status = ConstStatus.ACTIVE_STATUS;
+    if(pointOptions.getStatus().equals(ConstStatus.ACTIVE_STATUS))
+    {
+      status = ConstStatus.INACTIVE_STATUS;
+    }
+    pointOptions.setStatus(status);
+    pointOptionsRepository.save(pointOptions);
   }
 }

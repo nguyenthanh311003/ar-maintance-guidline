@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface PointOptionsRepository extends JpaRepository<PointOptions, String> {
   @EntityGraph(attributePaths = "orderTransactions")
+  List<PointOptions> findAllByStatusOrderByPointAsc(String status);
+
+  @EntityGraph(attributePaths = "orderTransactions")
   List<PointOptions> findAllByOrderByPointAsc();
 
   @Query(
