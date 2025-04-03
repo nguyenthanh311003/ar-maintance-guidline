@@ -61,9 +61,9 @@ public class MachineServiceImpl implements IMachineService {
           courseRepository.findByMachineTypeId(machineById.getModelType().getId());
 
       List<CompanyRequest> companyRequestsByMachineTypeId =
-              companyRequestRepository.findByMachineTypeId(machineById.getModelType().getId());
+          companyRequestRepository.findByMachineTypeId(machineById.getModelType().getId());
 
-      if(!coursesByMachineTypeId.isEmpty() || !companyRequestsByMachineTypeId.isEmpty()) {
+      if (!coursesByMachineTypeId.isEmpty() || !companyRequestsByMachineTypeId.isEmpty()) {
         throw new AppException(ErrorCode.MACHINE_IS_CURRENT_USED);
       }
 

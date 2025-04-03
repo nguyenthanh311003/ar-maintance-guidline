@@ -7,7 +7,6 @@ import com.capstone.ar_guideline.dtos.responses.Wallet.WalletResponse;
 import com.capstone.ar_guideline.dtos.responses.Wallet.WalletTransactionResponse;
 import com.capstone.ar_guideline.services.impl.WalletServiceImpl;
 import com.capstone.ar_guideline.services.impl.WalletTransactionService;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -32,15 +31,15 @@ public class WalletController {
 
   @GetMapping(value = ConstAPI.WalletAPI.WALLET_HISTORY + "/{userId}")
   public ApiResponse<PagingModel<WalletTransactionResponse>> getAllByUserId(
-          @PathVariable String userId,
-          @RequestParam(defaultValue = "1") int page,
-          @RequestParam(defaultValue = "5") int size,
-          @RequestParam(required = false) String type,
-          @RequestParam(required = false) String serviceName,
-          @RequestParam(required = false) String receiverName) {
-    PagingModel<WalletTransactionResponse> transactions = walletTransactionService.getAllByUserId(
-        page, size, userId, type, serviceName, receiverName
-    );
+      @PathVariable String userId,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "5") int size,
+      @RequestParam(required = false) String type,
+      @RequestParam(required = false) String serviceName,
+      @RequestParam(required = false) String receiverName) {
+    PagingModel<WalletTransactionResponse> transactions =
+        walletTransactionService.getAllByUserId(
+            page, size, userId, type, serviceName, receiverName);
     return ApiResponse.<PagingModel<WalletTransactionResponse>>builder()
         .result(transactions)
         .message("Wallet transactions retrieved successfully")

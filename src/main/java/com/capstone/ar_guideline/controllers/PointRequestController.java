@@ -33,7 +33,9 @@ public class PointRequestController {
       @RequestParam(required = false) String employeeEmail) {
     return ApiResponse.<PagingModel<PointRequestResponse>>builder()
         .message("Get all point requests by Company Id")
-        .result(pointRequestService.findAllByCompanyId(page, size, companyId, requestNumber, status, employeeEmail))
+        .result(
+            pointRequestService.findAllByCompanyId(
+                page, size, companyId, requestNumber, status, employeeEmail))
         .build();
   }
 

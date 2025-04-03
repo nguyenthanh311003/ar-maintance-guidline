@@ -9,6 +9,7 @@ import com.capstone.ar_guideline.repositories.CompanyRequestRepository;
 import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.repositories.MachineTypeRepository;
 import com.capstone.ar_guideline.services.IMachineTypeService;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -16,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -59,12 +58,12 @@ public class MachineTypeServiceImpl implements IMachineTypeService {
       ModelType modelTypeById = findById(id);
 
       List<Course> coursesByMachineTypeId =
-              courseRepository.findByMachineTypeId(modelTypeById.getId());
+          courseRepository.findByMachineTypeId(modelTypeById.getId());
 
       List<CompanyRequest> companyRequestsByMachineTypeId =
-              companyRequestRepository.findByMachineTypeId(modelTypeById.getId());
+          companyRequestRepository.findByMachineTypeId(modelTypeById.getId());
 
-      if(!coursesByMachineTypeId.isEmpty() || !companyRequestsByMachineTypeId.isEmpty()) {
+      if (!coursesByMachineTypeId.isEmpty() || !companyRequestsByMachineTypeId.isEmpty()) {
         throw new AppException(ErrorCode.MACHINE_TYPE_IS_CURRENT_USED);
       }
 

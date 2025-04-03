@@ -269,8 +269,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
     }
   }
 
-
-
   @Override
   public void deleteCourseById(String courseId) {
     try {

@@ -32,7 +32,9 @@ public class CompanyRequestController {
       @RequestParam(required = false) String designerEmail) {
     return ApiResponse.<PagingModel<CompanyRequestResponse>>builder()
         .message("Get all company requests")
-        .result(companyRequestService.findAllForDesigner(page, size, status, companyName, designerEmail))
+        .result(
+            companyRequestService.findAllForDesigner(
+                page, size, status, companyName, designerEmail))
         .build();
   }
 
