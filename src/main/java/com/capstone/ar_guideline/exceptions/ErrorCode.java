@@ -157,6 +157,8 @@ public enum ErrorCode {
   COMPANY_REQUEST_UPDATE_FAILED(1123, "Company request update fail", HttpStatus.BAD_REQUEST),
   COMPANY_REQUEST_DELETE_FAILED(1124, "Company request delete fail", HttpStatus.BAD_REQUEST),
   COMPANY_REQUEST_NOT_EXISTED(1125, "Company request not existed", HttpStatus.NOT_FOUND),
+  MACHINE_IS_CURRENT_USED(1126, "Machine being used now !", HttpStatus.BAD_REQUEST),
+  MACHINE_TYPE_IS_CURRENT_USED(1126, "Machine type being used now !", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;

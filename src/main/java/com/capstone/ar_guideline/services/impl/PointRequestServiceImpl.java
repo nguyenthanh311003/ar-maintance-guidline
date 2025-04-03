@@ -2,6 +2,7 @@ package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.PointRequestResponse.PointRequestCreation;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.PointRequestResponse.PointRequestResponse;
 import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.entities.PointRequest;
@@ -19,6 +20,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,11 +49,31 @@ public class PointRequestServiceImpl implements IPointRequestService {
   }
 
   @Override
-  public List<PointRequestResponse> findAllByCompanyId(String companyId) {
+  public PagingModel<PointRequestResponse> findAllByCompanyId(
+      int page,
+      int size,
+      String companyId,
+      String requestNumber,
+      String status,
+      String employeeEmail) {
     try {
-      return pointRequestRepository.findByCompanyIdOrderByCreatedAtDesc(companyId).stream()
-          .map(PointRequestMapper::fromEntityToPointRequestResponse)
-          .collect(Collectors.toList());
+      PagingModel<PointRequestResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+      Page<PointRequest> pointRequests =
+          pointRequestRepository.findByCompanyId(
+              pageable, companyId, requestNumber, status, employeeEmail);
+
+      List<PointRequestResponse> pointRequestResponses =
+          pointRequests.getContent().stream()
+              .map(PointRequestMapper::fromEntityToPointRequestResponse)
+              .toList();
+
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) pointRequests.getTotalElements());
+      pagingModel.setTotalPages(pointRequests.getTotalPages());
+      pagingModel.setObjectList(pointRequestResponses);
+      return pagingModel;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ICompanyRequestService {
   PagingModel<CompanyRequestResponse> findAllForDesigner(
-      int page, int size, String status, String companyName);
+      int page, int size, String status, String companyName, String designerEmail);
 
   PagingModel<CompanyRequestResponse> findByCompanyId(
       int page, int size, String companyId, String status);

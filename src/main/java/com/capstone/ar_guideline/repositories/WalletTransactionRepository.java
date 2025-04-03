@@ -2,13 +2,29 @@ package com.capstone.ar_guideline.repositories;
 
 import com.capstone.ar_guideline.entities.WalletTransaction;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface WalletTransactionRepository extends JpaRepository<WalletTransaction, String> {
-  List<WalletTransaction> findAllByWalletUserIdOrderByCreatedDateDesc(String userId);
+  @Query(
+      value =
+          "SELECT wt FROM WalletTransaction wt "
+              + "LEFT JOIN wt.servicePrice sp "
+              + "LEFT JOIN wt.receiver r "
+              + "WHERE wt.user.id = :userId "
+              + "AND (:type IS NULL OR wt.type = :type) "
+              + "AND (:serviceName IS NULL OR sp.name = :serviceName) "
+              + "AND (:receiverName IS NULL OR LOWER(r.username) LIKE LOWER(CONCAT('%', :receiverName, '%'))) "
+              + "ORDER BY wt.createdDate DESC")
+  Page<WalletTransaction> findByUserId(
+      Pageable pageable,
+      @Param("userId") String userId,
+      @Param("type") String type,
+      @Param("serviceName") String serviceName,
+      @Param("receiverName") String receiverName);
 
   @Query(
       "SELECT CASE WHEN COUNT(wt) > 0 THEN TRUE ELSE FALSE END FROM WalletTransaction wt WHERE wt.course.id = :guidelineId")

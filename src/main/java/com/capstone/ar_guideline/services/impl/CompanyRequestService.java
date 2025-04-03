@@ -36,13 +36,13 @@ public class CompanyRequestService implements ICompanyRequestService {
 
   @Override
   public PagingModel<CompanyRequestResponse> findAllForDesigner(
-      int page, int size, String status, String companyName) {
+      int page, int size, String status, String companyName, String designerEmail) {
     try {
       PagingModel<CompanyRequestResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
 
       Page<CompanyRequest> companyRequests =
-          companyRequestRepository.findAllForDesigner(pageable, status, companyName);
+          companyRequestRepository.findAllForDesigner(pageable, status, companyName, designerEmail);
 
       List<CompanyRequestResponse> companyRequestResponses =
           companyRequests.getContent().stream()

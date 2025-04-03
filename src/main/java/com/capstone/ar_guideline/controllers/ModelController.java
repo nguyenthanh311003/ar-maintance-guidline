@@ -71,11 +71,11 @@ public class ModelController {
         .build();
   }
 
-//  @DeleteMapping(value = ConstAPI.ModelAPI.DELETE_MODEL + "{modelId}")
-//  ApiResponse<String> deleteModel(@PathVariable String modelId) {
-//    arGuidelineService.deleteModelById(modelId);
-//    return ApiResponse.<String>builder().result("Model has been deleted").build();
-//  }
+  //  @DeleteMapping(value = ConstAPI.ModelAPI.DELETE_MODEL + "{modelId}")
+  //  ApiResponse<String> deleteModel(@PathVariable String modelId) {
+  //    arGuidelineService.deleteModelById(modelId);
+  //    return ApiResponse.<String>builder().result("Model has been deleted").build();
+  //  }
 
   @DeleteMapping(value = ConstAPI.ModelAPI.UPDATE_MODEL + "{modelId}")
   ApiResponse<String> changeStatusModel(@PathVariable String modelId) {

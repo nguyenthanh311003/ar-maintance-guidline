@@ -19,6 +19,9 @@ public interface CompanyRequestRepository extends JpaRepository<CompanyRequest, 
   Page<CompanyRequest> findByCompanyId(
       Pageable pageable, @Param("companyId") String companyId, @Param("status") String status);
 
+  @Query(value = "SELECT c FROM CompanyRequest c WHERE c.machineType.id = :machineTypeId")
+  List<CompanyRequest> findByMachineTypeId(@Param("machineTypeId") String machineTypeId);
+
   List<CompanyRequest> findByDesigner_IdOrderByCreatedAtDesc(String designerId);
 
   CompanyRequest findByRequestId(String requestId);
@@ -26,10 +29,14 @@ public interface CompanyRequestRepository extends JpaRepository<CompanyRequest, 
   @Query(
       " SELECT c FROM CompanyRequest c "
           + "WHERE (:status IS NULL OR LOWER(c.status) LIKE LOWER(CONCAT('%', :status, '%')))"
-          + "AND (:companyName IS NULL OR LOWER(c.company.companyName) LIKE LOWER(CONCAT('%', :companyName, '%')))"
+          + "AND (:companyName IS NULL OR LOWER(c.company.companyName) LIKE LOWER(CONCAT('%', :companyName, '%'))) "
+          + "AND (:designerEmail IS NULL OR LOWER(c.designer.email) LIKE LOWER(CONCAT('%', :designerEmail, '%'))) "
           + "ORDER BY c.createdAt DESC")
   Page<CompanyRequest> findAllForDesigner(
-      Pageable pageable, @Param("status") String status, @Param("companyName") String companyName);
+      Pageable pageable,
+      @Param("status") String status,
+      @Param("companyName") String companyName,
+      @Param("designerEmail") String designerEmail);
 
   @Query("SELECT c.requestNumber FROM CompanyRequest c")
   List<String> findAllRequestNumbers();

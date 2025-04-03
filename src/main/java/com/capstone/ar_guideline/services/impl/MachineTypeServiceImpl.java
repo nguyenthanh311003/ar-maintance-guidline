@@ -1,10 +1,15 @@
 package com.capstone.ar_guideline.services.impl;
 
+import com.capstone.ar_guideline.entities.CompanyRequest;
+import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.ModelType;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
+import com.capstone.ar_guideline.repositories.CompanyRequestRepository;
+import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.repositories.MachineTypeRepository;
 import com.capstone.ar_guideline.services.IMachineTypeService;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,6 +24,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class MachineTypeServiceImpl implements IMachineTypeService {
   MachineTypeRepository machineTypeRepository;
+  CourseRepository courseRepository;
+  CompanyRequestRepository companyRequestRepository;
 
   @Override
   public ModelType create(ModelType machineType) {
@@ -49,6 +56,16 @@ public class MachineTypeServiceImpl implements IMachineTypeService {
   public void delete(String id) {
     try {
       ModelType modelTypeById = findById(id);
+
+      List<Course> coursesByMachineTypeId =
+          courseRepository.findByMachineTypeId(modelTypeById.getId());
+
+      List<CompanyRequest> companyRequestsByMachineTypeId =
+          companyRequestRepository.findByMachineTypeId(modelTypeById.getId());
+
+      if (!coursesByMachineTypeId.isEmpty() || !companyRequestsByMachineTypeId.isEmpty()) {
+        throw new AppException(ErrorCode.MACHINE_TYPE_IS_CURRENT_USED);
+      }
 
       machineTypeRepository.deleteById(modelTypeById.getId());
     } catch (Exception exception) {
