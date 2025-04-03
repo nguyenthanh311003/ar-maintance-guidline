@@ -23,6 +23,9 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
   Optional<Course> findByTitle(String title);
 
+  @Query(value = "SELECT c FROM Course c WHERE c.modelType.id = :machineTypeId")
+  List<Course> findByMachineTypeId(@Param("machineTypeId") String machineTypeId);
+
   @Query(
       value =
           "SELECT c FROM Course c WHERE c.company.id = :companyId "

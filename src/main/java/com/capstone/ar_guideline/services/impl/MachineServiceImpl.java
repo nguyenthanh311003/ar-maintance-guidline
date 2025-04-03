@@ -1,8 +1,12 @@
 package com.capstone.ar_guideline.services.impl;
 
+import com.capstone.ar_guideline.entities.CompanyRequest;
+import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Machine;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
+import com.capstone.ar_guideline.repositories.CompanyRequestRepository;
+import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.repositories.MachineRepository;
 import com.capstone.ar_guideline.services.IMachineService;
 import java.util.List;
@@ -20,6 +24,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class MachineServiceImpl implements IMachineService {
   MachineRepository machineRepository;
+  CourseRepository courseRepository;
+  CompanyRequestRepository companyRequestRepository;
 
   @Override
   public Machine create(Machine machine) {
@@ -50,6 +56,16 @@ public class MachineServiceImpl implements IMachineService {
   public void delete(String id) {
     try {
       Machine machineById = findById(id);
+
+      List<Course> coursesByMachineTypeId =
+          courseRepository.findByMachineTypeId(machineById.getModelType().getId());
+
+      List<CompanyRequest> companyRequestsByMachineTypeId =
+              companyRequestRepository.findByMachineTypeId(machineById.getModelType().getId());
+
+      if(!coursesByMachineTypeId.isEmpty() || !companyRequestsByMachineTypeId.isEmpty()) {
+        throw new AppException(ErrorCode.MACHINE_IS_CURRENT_USED);
+      }
 
       machineRepository.deleteById(machineById.getId());
     } catch (Exception exception) {

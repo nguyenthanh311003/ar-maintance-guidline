@@ -188,6 +188,7 @@ public class ConstAPI {
   public static class MachineAPI {
     public static final String GET_MACHINES_BY_COMPANY = "api/v1/machine/company/";
     public static final String GET_MACHINES_BY_ID = "api/v1/machine/";
+    public static final String DELETE_MACHINE_BY_ID = "api/v1/machine/";
     public static final String GET_MACHINES_BY_CODE = "api/v1/machine/code/";
     public static final String CREATE_MACHINE = "api/v1/machine";
     public static final String UPDATE_MACHINE = "api/v1/machine/";

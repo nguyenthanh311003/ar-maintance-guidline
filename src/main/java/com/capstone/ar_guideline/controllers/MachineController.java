@@ -7,6 +7,7 @@ import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IARGuidelineService;
+import com.capstone.ar_guideline.services.IMachineService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class MachineController {
   IARGuidelineService arGuidelineService;
+  IMachineService machineService;
 
   @GetMapping(value = ConstAPI.MachineAPI.GET_MACHINES_BY_COMPANY + "{companyId}")
   public ApiResponse<PagingModel<MachineResponse>> getMachineByCompanyId(
@@ -32,6 +34,12 @@ public class MachineController {
             arGuidelineService.getMachinesByCompanyId(
                 page, size, companyId, keyword, machineTypeName))
         .build();
+  }
+
+  @DeleteMapping(value = ConstAPI.MachineAPI.DELETE_MACHINE_BY_ID + "{machineId}")
+  public ApiResponse<String> deleteMachine(@PathVariable String machineId) {
+    machineService.delete(machineId);
+    return ApiResponse.<String>builder().result("Machine has been deleted successfully").build();
   }
 
   @GetMapping(value = ConstAPI.MachineAPI.GET_MACHINES_BY_ID + "{machineId}")

@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.controllers;
 import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.PointRequestResponse.PointRequestCreation;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.PointRequestResponse.PointRequestResponse;
 import com.capstone.ar_guideline.services.IPointRequestService;
 import java.util.List;
@@ -23,11 +24,16 @@ public class PointRequestController {
   }
 
   @GetMapping(value = ConstAPI.PointRequestAPI.POINT_REQUEST_ENDPOINT + "/company/{companyId}")
-  ApiResponse<List<PointRequestResponse>> getAllPointRequestsByCompany(
-      @PathVariable String companyId) {
-    return ApiResponse.<List<PointRequestResponse>>builder()
+  ApiResponse<PagingModel<PointRequestResponse>> getAllPointRequestsByCompany(
+      @PathVariable String companyId,
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "5") int size,
+      @RequestParam(required = false) String requestNumber,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) String employeeEmail) {
+    return ApiResponse.<PagingModel<PointRequestResponse>>builder()
         .message("Get all point requests by Company Id")
-        .result(pointRequestService.findAllByCompanyId(companyId))
+        .result(pointRequestService.findAllByCompanyId(page, size, companyId, requestNumber, status, employeeEmail))
         .build();
   }
 

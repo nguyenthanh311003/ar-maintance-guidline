@@ -28,10 +28,11 @@ public class CompanyRequestController {
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "5") int size,
       @RequestParam(required = false) String status,
-      @RequestParam(required = false) String companyName) {
+      @RequestParam(required = false) String companyName,
+      @RequestParam(required = false) String designerEmail) {
     return ApiResponse.<PagingModel<CompanyRequestResponse>>builder()
         .message("Get all company requests")
-        .result(companyRequestService.findAllForDesigner(page, size, status, companyName))
+        .result(companyRequestService.findAllForDesigner(page, size, status, companyName, designerEmail))
         .build();
   }
 
