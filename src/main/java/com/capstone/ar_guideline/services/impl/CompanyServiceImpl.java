@@ -3,11 +3,15 @@ package com.capstone.ar_guideline.services.impl;
 import com.capstone.ar_guideline.constants.ConstHashKey;
 import com.capstone.ar_guideline.dtos.requests.Company.CompanyCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponse;
+import com.capstone.ar_guideline.dtos.responses.Company.CompanyResponseManagement;
+import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Company;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CompanyMapper;
 import com.capstone.ar_guideline.repositories.CompanyRepository;
+import com.capstone.ar_guideline.repositories.CourseRepository;
+import com.capstone.ar_guideline.repositories.UserRepository;
 import com.capstone.ar_guideline.services.ICompanyService;
 import java.util.List;
 import java.util.Objects;
@@ -15,6 +19,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +31,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CompanyServiceImpl implements ICompanyService {
   CompanyRepository companyRepository;
+  UserRepository userRepository;
+  CourseRepository courseRepository;
   RedisTemplate<String, Object> redisTemplate;
 
   @Override
@@ -31,6 +40,42 @@ public class CompanyServiceImpl implements ICompanyService {
     try {
       List<Company> companies = companyRepository.findAll();
       return companies.stream().map(CompanyMapper::fromEntityToCompanyResponse).toList();
+    } catch (Exception exception) {
+      log.error("Company find all failed: {}", exception.getMessage());
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_FIND_ALL_FAILED);
+    }
+  }
+
+  @Override
+  public PagingModel<CompanyResponseManagement> findAllForManagement(
+      int page, int size, String companyName) {
+    try {
+      PagingModel<CompanyResponseManagement> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+
+      Page<Company> companies = companyRepository.getCompanies(pageable, companyName);
+      List<CompanyResponseManagement> companyResponseManagements =
+          companies.getContent().stream()
+              .map(
+                  c -> {
+                    CompanyResponseManagement companyResponseManagement =
+                        CompanyMapper.fromEntityToCompanyResponseManagement(c);
+                    companyResponseManagement.setNumberOfAccount(
+                        userRepository.countByCompany_Id(c.getId()));
+                    companyResponseManagement.setNumberOfGuideline(
+                        courseRepository.countByCompany_Id(c.getId()));
+                    return companyResponseManagement;
+                  })
+              .toList();
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) companies.getTotalElements());
+      pagingModel.setTotalPages(companies.getTotalPages());
+      pagingModel.setObjectList(companyResponseManagements);
+      return pagingModel;
     } catch (Exception exception) {
       log.error("Company find all failed: {}", exception.getMessage());
       if (exception instanceof AppException) {
@@ -82,12 +127,12 @@ public class CompanyServiceImpl implements ICompanyService {
 
   @Override
   public CompanyResponse findById(String id) {
-    Company companyByIdWithRedis =
-        (Company) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_COMPANY, id);
-
-    if (!Objects.isNull(companyByIdWithRedis)) {
-      return CompanyMapper.fromEntityToCompanyResponse(companyByIdWithRedis);
-    }
+    //    Company companyByIdWithRedis =
+    //        (Company) redisTemplate.opsForHash().get(ConstHashKey.HASH_KEY_COMPANY, id);
+    //
+    //    if (!Objects.isNull(companyByIdWithRedis)) {
+    //      return CompanyMapper.fromEntityToCompanyResponse(companyByIdWithRedis);
+    //    }
 
     Company companyById =
         companyRepository
@@ -133,5 +178,14 @@ public class CompanyServiceImpl implements ICompanyService {
       }
       throw new AppException(ErrorCode.COMPANY_NOT_EXISTED);
     }
+  }
+
+  @Override
+  public CompanyResponse findByUserId(String userId) {
+    Company companyByName =
+        companyRepository
+            .findByUserId(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_EXISTED));
+    return CompanyMapper.fromEntityToCompanyResponse(companyByName);
   }
 }

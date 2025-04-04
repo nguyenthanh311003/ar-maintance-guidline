@@ -12,10 +12,12 @@ import lombok.experimental.FieldDefaults;
 public class OrderTransactionResponse {
   String id;
   String userId;
-  String itemCode;
   Long orderCode;
   String status;
-  Double amount;
+  Long amount;
+  Long point;
+  String optionName;
+  String email;
   LocalDateTime createdDate;
   LocalDateTime updatedDate;
 }

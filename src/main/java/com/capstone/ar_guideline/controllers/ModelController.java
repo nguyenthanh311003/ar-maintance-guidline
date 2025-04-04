@@ -3,7 +3,6 @@ package com.capstone.ar_guideline.controllers;
 import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
-import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IARGuidelineService;
@@ -27,7 +26,7 @@ public class ModelController {
   @GetMapping(value = ConstAPI.ModelAPI.GET_MODEL_BY_ID + "{modelId}")
   ApiResponse<ModelResponse> getModelById(@PathVariable String modelId) {
     return ApiResponse.<ModelResponse>builder()
-        .result(modelService.findByIdResponse(modelId))
+        .result(arGuidelineService.findModelById(modelId))
         .build();
   }
 
@@ -35,6 +34,13 @@ public class ModelController {
   ApiResponse<List<ModelResponse>> getUnusedModelByCompanyId(@PathVariable String companyId) {
     return ApiResponse.<List<ModelResponse>>builder()
         .result(modelService.getModelUnused(companyId))
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.ModelAPI.GET_MODEL_BY_COURSE + "{courseId}")
+  ApiResponse<ModelResponse> getByCourseId(@PathVariable String courseId) {
+    return ApiResponse.<ModelResponse>builder()
+        .result(modelService.getByCourseId(courseId))
         .build();
   }
 
@@ -47,27 +53,33 @@ public class ModelController {
       @RequestParam(defaultValue = "") String name,
       @RequestParam(defaultValue = "") String code) {
     return ApiResponse.<PagingModel<ModelResponse>>builder()
-        .result(modelService.findByCompanyId(page, size, companyId, type, name, code))
+        .result(arGuidelineService.findModelByCompanyId(page, size, companyId, type, name, code))
         .build();
   }
 
   @PostMapping(value = ConstAPI.ModelAPI.CREATE_MODEL)
-  ApiResponse<ModelResponse> createModel(@ModelAttribute @Valid ModelCreationRequest request)
+  ApiResponse<ModelResponse> createModel(@ModelAttribute ModelCreationRequest request)
       throws InterruptedException {
     return ApiResponse.<ModelResponse>builder().result(modelService.create(request)).build();
   }
 
   @PutMapping(value = ConstAPI.ModelAPI.UPDATE_MODEL + "{modelId}")
   ApiResponse<ModelResponse> updateModel(
-      @PathVariable String modelId, @RequestBody ModelCreationRequest request) {
+      @PathVariable String modelId, @ModelAttribute @Valid ModelCreationRequest request) {
     return ApiResponse.<ModelResponse>builder()
-        .result(modelService.update(modelId, request))
+        .result(arGuidelineService.updateModel(modelId, request))
         .build();
   }
 
-  @DeleteMapping(value = ConstAPI.ModelAPI.DELETE_MODEL + "{modelId}")
-  ApiResponse<String> deleteModel(@PathVariable String modelId) {
-    modelService.delete(modelId);
-    return ApiResponse.<String>builder().result("Model has been deleted").build();
+  //  @DeleteMapping(value = ConstAPI.ModelAPI.DELETE_MODEL + "{modelId}")
+  //  ApiResponse<String> deleteModel(@PathVariable String modelId) {
+  //    arGuidelineService.deleteModelById(modelId);
+  //    return ApiResponse.<String>builder().result("Model has been deleted").build();
+  //  }
+
+  @DeleteMapping(value = ConstAPI.ModelAPI.UPDATE_MODEL + "{modelId}")
+  ApiResponse<String> changeStatusModel(@PathVariable String modelId) {
+    modelService.changeStatus(modelId);
+    return ApiResponse.<String>builder().result("Model status has been changed").build();
   }
 }

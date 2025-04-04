@@ -24,29 +24,14 @@ public class User implements UserDetails, Serializable {
   private String id;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<Enrollment> enrollments;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<Result> results;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<LessonProcess> lessonProcesses;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<Log> logs;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private List<OrderTransaction> orderTransactions;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<RequestRecipient> requestRecipients;
 
   @ManyToOne
   @JoinColumn(name = "role_id", nullable = false)
   private Role role;
 
   @ManyToOne
-  @JoinColumn(name = "company_id", nullable = false)
+  @JoinColumn(name = "company_id")
   private Company company;
 
   @Column(unique = true, nullable = false)
@@ -60,6 +45,9 @@ public class User implements UserDetails, Serializable {
   private String expirationDate;
   private String deviceId;
   private Boolean isPayAdmin;
+
+  @OneToOne(mappedBy = "user")
+  private Wallet wallet;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

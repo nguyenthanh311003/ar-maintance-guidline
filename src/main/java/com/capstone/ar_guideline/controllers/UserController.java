@@ -7,8 +7,6 @@ import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.User.AuthenticationResponse;
 import com.capstone.ar_guideline.dtos.responses.User.UserResponse;
-import com.capstone.ar_guideline.dtos.responses.User.UserToAssignResponse;
-import com.capstone.ar_guideline.services.IUserAssignmentService;
 import com.capstone.ar_guideline.services.IUserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,22 +21,22 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class UserController {
   IUserService userService;
-  IUserAssignmentService userAssignmentService;
 
-  @GetMapping(value = ConstAPI.UserAPI.PREFIX_USER + "company/{companyId}/" + "course/{courseId}")
-  public ApiResponse<PagingModel<UserToAssignResponse>> getUserToAssign(
-      @RequestParam(defaultValue = "1") int page,
-      @RequestParam(defaultValue = "10") int size,
-      @RequestParam String keyword,
-      @RequestParam(defaultValue = "") String isAssign,
-      @PathVariable String companyId,
-      @PathVariable String courseId) {
-    return ApiResponse.<PagingModel<UserToAssignResponse>>builder()
-        .result(
-            userAssignmentService.getUsersToAssign(
-                page, size, companyId, courseId, keyword, isAssign))
-        .build();
-  }
+  //  @GetMapping(value = ConstAPI.UserAPI.PREFIX_USER + "company/{companyId}/" +
+  // "course/{courseId}")
+  //  public ApiResponse<PagingModel<UserToAssignResponse>> getUserToAssign(
+  //      @RequestParam(defaultValue = "1") int page,
+  //      @RequestParam(defaultValue = "10") int size,
+  //      @RequestParam String keyword,
+  //      @RequestParam(defaultValue = "") String isAssign,
+  //      @PathVariable String companyId,
+  //      @PathVariable String courseId) {
+  //    return ApiResponse.<PagingModel<UserToAssignResponse>>builder()
+  //        .result(
+  //            userAssignmentService.getUsersToAssign(
+  //                page, size, companyId, courseId, keyword, isAssign))
+  //        .build();
+  //  }
 
   @GetMapping(value = ConstAPI.UserAPI.GET_USERS)
   public ApiResponse<PagingModel<UserResponse>> getUsers(
@@ -55,12 +53,12 @@ public class UserController {
   public ApiResponse<PagingModel<UserResponse>> getStaffByCompanyId(
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "10") int size,
-      @RequestParam(defaultValue = "") String username,
+      @RequestParam(defaultValue = "") String phoneNumber,
       @RequestParam(defaultValue = "") String email,
       @RequestParam(defaultValue = "") String status,
       @PathVariable String companyId) {
     return ApiResponse.<PagingModel<UserResponse>>builder()
-        .result(userService.getStaffByCompanyId(page, size, companyId, username, email, status))
+        .result(userService.getStaffByCompanyId(page, size, companyId, phoneNumber, email, status))
         .build();
   }
 
@@ -118,5 +116,25 @@ public class UserController {
     return ApiResponse.<Boolean>builder()
         .result(userService.changeStatus(status, userId, isPending))
         .build();
+  }
+
+  @PutMapping(value = ConstAPI.UserAPI.PREFIX_USER + "change-status/{userId}")
+  ApiResponse<Boolean> changeStatusAccountStaff(@PathVariable String userId) {
+    return ApiResponse.<Boolean>builder()
+        .result(userService.changeStatusAccountStaff(userId))
+        .build();
+  }
+
+  @PutMapping(value = ConstAPI.UserAPI.PREFIX_USER + "reset/{userId}")
+  ApiResponse<Boolean> resetPasswordStaff(
+      @PathVariable String userId, @RequestBody String newPassword) {
+    return ApiResponse.<Boolean>builder()
+        .result(userService.resetPasswordStaff(userId, newPassword))
+        .build();
+  }
+
+  @DeleteMapping(value = ConstAPI.UserAPI.PREFIX_USER + "{userId}")
+  ApiResponse<Boolean> deleteUser(@PathVariable String userId) {
+    return ApiResponse.<Boolean>builder().result(userService.deleteUser(userId)).build();
   }
 }

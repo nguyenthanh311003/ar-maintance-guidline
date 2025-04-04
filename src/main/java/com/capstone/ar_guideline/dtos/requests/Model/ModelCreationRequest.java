@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.dtos.requests.Model;
 
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,5 +21,7 @@ public class ModelCreationRequest {
   MultipartFile imageUrl;
   String version;
   String scale;
+  List<Float> position;
+  List<Float> rotation;
   MultipartFile file;
 }

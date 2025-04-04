@@ -18,8 +18,11 @@ public class CorsFilter implements Filter {
     HttpServletResponse response = (HttpServletResponse) res;
     HttpServletRequest request = (HttpServletRequest) req;
 
-    response.setHeader(
-        "Access-Control-Allow-Origin", "http://localhost:3000"); // Allow frontend origin
+    String origin = request.getHeader("Origin");
+    if ("http://localhost:3000".equals(origin)
+        || "https://ar-maintance-guideline-ui.vercel.app".equals(origin)) {
+      response.setHeader("Access-Control-Allow-Origin", origin);
+    }
     response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
     response.setHeader("Access-Control-Expose-Headers", "Authorization");

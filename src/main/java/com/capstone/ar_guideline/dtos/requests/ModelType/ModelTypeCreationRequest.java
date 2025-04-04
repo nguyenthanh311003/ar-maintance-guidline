@@ -12,4 +12,5 @@ public class ModelTypeCreationRequest {
   String name;
   String image;
   String description;
+  String companyId;
 }

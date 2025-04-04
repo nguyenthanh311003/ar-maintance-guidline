@@ -73,10 +73,25 @@ public class OrderTransactionController {
       value = ConstAPI.OrderTransactionAPI.GET_ORDER_TRANSACTION_BY_COMPANY_ID + "{companyId}")
   ApiResponse<PagingModel<OrderTransactionResponse>> getOrderTransactionByCompanyId(
       @RequestParam(defaultValue = "1") int page,
-      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(defaultValue = "5") int size,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) Long orderCode,
       @PathVariable String companyId) {
     return ApiResponse.<PagingModel<OrderTransactionResponse>>builder()
-        .result(orderTransactionService.getAllTransactionByCompanyId(page, size, companyId))
+        .result(
+            orderTransactionService.getAllTransactionByCompanyId(
+                page, size, companyId, status, orderCode))
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.OrderTransactionAPI.GET_ALL_ORDER_TRANSACTION)
+  ApiResponse<PagingModel<OrderTransactionResponse>> getOrderTransaction(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "5") int size,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) Long orderCode) {
+    return ApiResponse.<PagingModel<OrderTransactionResponse>>builder()
+        .result(orderTransactionService.getAllTransaction(page, size, status, orderCode))
         .build();
   }
 

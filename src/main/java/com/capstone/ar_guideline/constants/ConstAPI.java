@@ -2,6 +2,8 @@ package com.capstone.ar_guideline.constants;
 
 public class ConstAPI {
   public static class ModelTypeAPI {
+    public static final String GET_ALL_MODEL_TYPE = "api/v1/model-types";
+    public static final String GET_MODEL_TYPE_BY_COMPANY = "api/v1/model-types/company/";
     public static final String CREATE_MODEL_TYPE = "api/v1/model-types";
     public static final String UPDATE_MODEL_TYPE = "api/v1/model-types/";
     public static final String DELETE_MODEL_TYPE = "api/v1/model-types/";
@@ -9,10 +11,16 @@ public class ConstAPI {
 
   public static class CourseAPI {
     public static final String COURSE = "api/v1/course";
+    public static final String CHANGE_STATUS_GUIDELINE = "api/v1/course/status/";
     public static final String COURSE_FIND_BY_TITLE = "api/v1/course/title";
     public static final String COURSE_FIND_BY_COMPANY_ID = "api/v1/course/company/";
+    public static final String FIND_COURSE_BY_CODE = "api/v1/course/code/";
     public static final String NO_MANDATORY_COURSE = "api/v1/course/no-mandatory/company/";
     public static final String UPDATE_COURSE_PICTURE = "api/v1/course/picture";
+    public static final String UPDATE_COURSE_SCAN_TIMES = "api/v1/course/scan";
+    public static final String PUBLIC_GUIDELINE_FIRST_TIME = "api/v1/course/publication";
+    public static final String COUNT_INSTRUCTION_DETAILS_DRAFTED =
+        "api/v1/course/instruction-detail-drafted/number";
   }
 
   public static class ModelAPI {
@@ -20,6 +28,7 @@ public class ConstAPI {
     public static final String UPDATE_MODEL = "api/v1/model/";
     public static final String DELETE_MODEL = "api/v1/model/";
     public static final String GET_MODEL_BY_ID = "api/v1/model/";
+    public static final String GET_MODEL_BY_COURSE = "api/v1/model/course/";
     public static final String GET_UNUSED_MODEL_BY_ID = "api/v1/model/unused/company/";
     public static final String GET_MODEL_BY_COMPANY_ID = "api/v1/model/company/";
   }
@@ -43,13 +52,20 @@ public class ConstAPI {
   }
 
   public static class InstructionAPI {
+    public static final String GET_INSTRUCTIONS_BY_COURSE_ID = "api/v1/instruction/course/";
+    public static final String GET_INSTRUCTIONS_BY_COURSE_ID_FOR_SWAP_ORDER =
+        "api/v1/instruction/no-paging/course/";
     public static final String CREATE_INSTRUCTION = "api/v1/instruction";
     public static final String UPDATE_INSTRUCTION = "api/v1/instruction/";
     public static final String DELETE_INSTRUCTION = "api/v1/instruction/";
+    public static final String GET_INSTRUCTION_BY_ID = "api/v1/instruction/";
     public static final String SWAP_ORDER_INSTRUCTION = "api/v1/instruction/swap-order";
   }
 
   public static class InstructionDetailAPI {
+    public static final String GET_INSTRUCTION_DETAIL_BY_ID = "api/v1/instruction-detail/";
+    public static final String GET_INSTRUCTION_DETAIL_BY_INSTRUCTION =
+        "api/v1/instruction-detail/instruction/";
     public static final String CREATE_INSTRUCTION_DETAIL = "api/v1/instruction-detail";
     public static final String UPDATE_INSTRUCTION_DETAIL = "api/v1/instruction-detail/";
     public static final String DELETE_INSTRUCTION_DETAIL = "api/v1/instruction-detail/";
@@ -59,10 +75,12 @@ public class ConstAPI {
 
   public static class CompanyAPI {
     public static final String GET_COMPANIES = "api/v1/companies";
+    public static final String GET_COMPANY_MANAGEMENT = "api/v1/company/all";
     public static final String GET_COMPANY_BY_ID = "api/v1/company/id";
     public static final String GET_COMPANY_BY_NAME = "api/v1/company/name";
     public static final String CREATE_COMPANY = "api/v1/company";
     public static final String DELETE_COMPANY = "api/v1/company/";
+    public static final String GET_COMPANY_BY_USER_ID = "api/v1/company/userId";
   }
 
   public static class LessonAPI {
@@ -91,12 +109,14 @@ public class ConstAPI {
     public static final String CREATE_SUBSCRIPTION = "api/v1/subscription";
     public static final String UPDATE_SUBSCRIPTION = "api/v1/subscription/";
     public static final String DELETE_SUBSCRIPTION = "api/v1/subscription/";
+    public static final String GET_CURRENT_PLAN = "api/v1/subscription/company/";
   }
 
   public static class CompanySubscriptionAPI {
     public static final String CREATE_COMPANY_SUBSCRIPTION = "api/v1/company-subscription";
     public static final String UPDATE_COMPANY_SUBSCRIPTION = "api/v1/company-subscription/";
     public static final String DELETE_COMPANY_SUBSCRIPTION = "api/v1/company-subscription/";
+    public static final String FIND_BY_COMPANY_ID = "api/v1/company-subscription/company/";
   }
 
   public static class OrderTransactionAPI {
@@ -106,6 +126,7 @@ public class ConstAPI {
     public static final String UPDATE_ORDER_TRANSACTION = "api/v1/order-transaction/";
     public static final String DELETE_ORDER_TRANSACTION = "api/v1/order-transaction/";
     public static final String HANDLE_ORDER_STATUS = "api/v1/order-transaction/order-status/";
+    public static final String GET_ALL_ORDER_TRANSACTION = "api/v1/order-transaction/all";
   }
 
   public static class QuizAPI {
@@ -142,5 +163,53 @@ public class ConstAPI {
 
   public static class FileAPI {
     public static final String FILE = "api/v1/files";
+  }
+
+  public static class DashboardAPI {
+    public static final String ADMIN_DASHBOARD = "api/v1/dashboard/admin";
+    public static final String COMPANY_DASHBOARD = "api/v1/dashboard/company";
+  }
+
+  public static class WalletAPI {
+    public static final String WALLET = "api/v1/wallets/user";
+    public static final String WALLET_HISTORY = "api/v1/wallets/history/user";
+  }
+
+  public static class AssignGuidelineAPI {
+    public static final String ASSIGN_GUIDELINES = "api/v1/assign-guideline";
+  }
+
+  public static class CompanyRequestAPI {
+    public static final String COMPANY_REQUEST = "api/v1/company-request";
+    public static final String COMPANY_REQUEST_UPLOAD_AGAIN =
+        "api/v1/company-request/upload-again/";
+  }
+
+  public static class MachineAPI {
+    public static final String GET_MACHINES_BY_COMPANY = "api/v1/machine/company/";
+    public static final String GET_MACHINES_BY_ID = "api/v1/machine/";
+    public static final String DELETE_MACHINE_BY_ID = "api/v1/machine/";
+    public static final String GET_MACHINES_BY_CODE = "api/v1/machine/code/";
+    public static final String CREATE_MACHINE = "api/v1/machine";
+    public static final String UPDATE_MACHINE = "api/v1/machine/";
+  }
+
+  public static class MachineTypeAttributeAPI {
+    public static final String GET_MACHINES_TYPE_ATTRIBUTE_BY_MACHINE_TYPE =
+        "api/v1/machine-type-attribute/machine-type/";
+    public static final String CREATE_MACHINE_TYPE_ATTRIBUTE = "api/v1/machine-type-attribute";
+    public static final String DELETE_MACHINE_TYPE_ATTRIBUTE = "api/v1/machine-type-attribute/";
+  }
+
+  public static class MachineTypeAPI {
+    public static final String CREATE_MACHINE_TYPE = "api/v1/machine-type";
+    public static final String UPDATE_MACHINE_TYPE = "api/v1/machine-type/";
+    public static final String GET_MACHINE_TYPES_BY_COMPANY_ID = "api/v1/machine-type/company/";
+    public static final String GET_MACHINE_TYPES_BY_ID = "api/v1/machine-type/";
+    public static final String DELETE_MACHINE_TYPES = "api/v1/machine-type/";
+  }
+
+  public static class PointRequestAPI {
+    public static final String POINT_REQUEST_ENDPOINT = "api/v1/point-request";
   }
 }

@@ -21,10 +21,14 @@ public class OrderTransaction {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  private String itemCode;
+  @ManyToOne
+  @JoinColumn(name = "point_options_id", nullable = false)
+  private PointOptions pointOptions;
+
   private Long orderCode;
   private String status;
-  private Double amount;
+  private Long amount;
+  private Long point;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

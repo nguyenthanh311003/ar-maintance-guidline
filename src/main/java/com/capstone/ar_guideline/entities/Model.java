@@ -3,7 +3,6 @@ package com.capstone.ar_guideline.entities;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -14,24 +13,19 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "asset_model")
 public class Model implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
   @ManyToOne
-  @JoinColumn(name = "modelType_id", nullable = false)
-  private ModelType modelType;
-
-  @ManyToOne
   @JoinColumn(name = "company_id")
   private Company company;
 
-  @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
-  private List<Course> courses;
-
-  @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
-  private List<ModelRequest> modelRequests;
+  @ManyToOne
+  @JoinColumn(name = "model_type_id")
+  private ModelType modelType;
 
   private String modelCode;
   private Boolean isUsed;
@@ -41,7 +35,11 @@ public class Model implements Serializable {
   private String imageUrl;
   private String version;
   private String scale;
+  private String rotation;
+  private String position;
+
   private String file;
+  private Double size;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

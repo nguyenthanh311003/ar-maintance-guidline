@@ -7,6 +7,7 @@ import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDet
 import com.capstone.ar_guideline.entities.Instruction;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
+import com.capstone.ar_guideline.mappers.InstructionDetailMapper;
 import com.capstone.ar_guideline.mappers.InstructionMapper;
 import com.capstone.ar_guideline.repositories.InstructionDetailRepository;
 import com.capstone.ar_guideline.repositories.InstructionRepository;
@@ -15,11 +16,12 @@ import com.capstone.ar_guideline.services.IModelService;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -53,17 +55,8 @@ public class InstructionServiceImpl implements IInstructionService {
     try {
       Instruction instructionById = findById(id);
 
-      List<Float> translations = request.getGuideViewPosition().getTranslation();
-      List<Float> rotations = request.getGuideViewPosition().getRotation();
-
       instructionById.setName(request.getName());
       instructionById.setDescription(request.getDescription());
-
-      String position =
-          translations.stream().map(String::valueOf).collect(Collectors.joining(", "));
-      String rotation = rotations.stream().map(String::valueOf).collect(Collectors.joining(", "));
-      instructionById.setPosition(position);
-      instructionById.setRotation(rotation);
 
       instructionById = instructionRepository.save(instructionById);
 
@@ -85,7 +78,7 @@ public class InstructionServiceImpl implements IInstructionService {
   }
 
   @Override
-  public void delete(String id) {
+  public Boolean delete(String id) {
     try {
       Instruction instructionById = findById(id);
       instructionRepository.deleteById(instructionById.getId());
@@ -93,7 +86,7 @@ public class InstructionServiceImpl implements IInstructionService {
       Arrays.stream(keysToRemove)
           .map(k -> k + ConstHashKey.HASH_KEY_ALL)
           .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
+      return true;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -110,38 +103,47 @@ public class InstructionServiceImpl implements IInstructionService {
   }
 
   @Override
-  public List<InstructionResponse> findByCourseId(String modelId) {
+  public List<InstructionResponse> findByCourseId(String courseId) {
     try {
-      return instructionRepository.getByCourseId(modelId).stream()
+      return instructionRepository.getByCourseId(courseId).stream()
           .map(
-              i -> {
-                InstructionResponse instructionResponse = new InstructionResponse();
+              instruction -> {
+                InstructionResponse instructionResponse =
+                    InstructionMapper.fromEntityToInstructionResponse(instruction);
+
                 List<InstructionDetailResponse> instructionDetailResponses =
-                    instructionDetailRepository.getByInstructionId(i.getId()).stream()
-                        .map(
-                            ide ->
-                                InstructionDetailResponse.builder()
-                                    .id(ide.getId())
-                                    .instructionId(ide.getInstruction().getId())
-                                    .orderNumber(ide.getOrderNumber())
-                                    .description(ide.getDescription())
-                                    .imgString(ide.getImgUrl())
-                                    .name(ide.getName())
-                                    .fileString(ide.getFile())
-                                    .build())
+                    instructionDetailRepository.getByInstructionId(instruction.getId()).stream()
+                        .map(InstructionDetailMapper::fromEntityToInstructionDetailResponse)
                         .toList();
-                instructionResponse.setId(i.getId());
-                instructionResponse.setOrderNumber(i.getOrderNumber());
-                instructionResponse.setCourseId(i.getCourse().getId());
-                instructionResponse.setName(i.getName());
-                instructionResponse.setDescription(i.getDescription());
-                instructionResponse.setPosition(i.getPosition());
-                instructionResponse.setRotation(i.getRotation());
                 instructionResponse.setInstructionDetailResponse(instructionDetailResponses);
 
                 return instructionResponse;
               })
           .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<Instruction> findByCourseIdReturnEntity(String courseId) {
+    try {
+      return instructionRepository.getByCourseId(courseId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public Page<Instruction> findByCourseIdPaging(Pageable pageable, String courseId) {
+    try {
+      return instructionRepository.getByCourseIdPaging(pageable, courseId);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -199,6 +201,40 @@ public class InstructionServiceImpl implements IInstructionService {
         throw exception;
       }
       throw new AppException(ErrorCode.SWAP_ORDER_NUMBER_FAILED);
+    }
+  }
+
+  @Override
+  public InstructionResponse findByIdReturnResponse(String instructionId) {
+    try {
+      Instruction instructionById = findById(instructionId);
+
+      return InstructionMapper.fromEntityToInstructionResponse(instructionById);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public Boolean deleteByCourseId(String courseId) {
+    try {
+      List<Instruction> instructionsByCourseId = instructionRepository.getByCourseId(courseId);
+
+      if (instructionsByCourseId.isEmpty()) {
+        return false;
+      }
+
+      instructionRepository.deleteAll(instructionsByCourseId);
+
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.INSTRUCTION_DELETE_FAILED);
     }
   }
 }

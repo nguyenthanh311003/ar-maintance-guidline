@@ -3,15 +3,12 @@ package com.capstone.ar_guideline.services.impl;
 import static com.capstone.ar_guideline.constants.ConstAPI.OrderTransactionAPI.HANDLE_ORDER_STATUS;
 
 import com.capstone.ar_guideline.constants.ConstStatus;
-import com.capstone.ar_guideline.dtos.requests.CompanySubscription.ComSubscriptionCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.OrderTransaction.OrderTransactionCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.OrderTransaction.OrderTransactionResponse;
 import com.capstone.ar_guideline.entities.OrderTransaction;
-import com.capstone.ar_guideline.entities.Subscription;
+import com.capstone.ar_guideline.entities.PointOptions;
 import com.capstone.ar_guideline.payos.CreatePaymentLinkRequestBody;
-import com.capstone.ar_guideline.services.ICompanySubscriptionService;
 import com.capstone.ar_guideline.services.IOrderTransactionService;
-import com.capstone.ar_guideline.services.ISubscriptionService;
 import com.capstone.ar_guideline.services.IUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -38,11 +35,11 @@ public class PayOsService {
   @Value("${frontend.url}")
   private String frontEndHost;
 
-  @Autowired private ISubscriptionService subscriptionService;
-
   @Autowired private IOrderTransactionService paymentService;
 
-  @Autowired private ICompanySubscriptionService companySubscriptionService;
+  @Autowired WalletServiceImpl walletService;
+
+  @Autowired private PointOptionsService pointOptionsService;
 
   @Autowired IUserService userService;
 
@@ -50,17 +47,16 @@ public class PayOsService {
     ObjectMapper objectMapper = new ObjectMapper();
     ObjectNode response = objectMapper.createObjectNode();
     try {
-      Subscription subscription = subscriptionService.findByCode(requestBody.getProductName());
 
-      final String description = subscription.getSubscriptionCode() + ".";
       String returnUrl = backEndHost + "/" + HANDLE_ORDER_STATUS;
       String cancelUrl = "";
-      final int price = Integer.parseInt(subscription.getMonthlyFee().toString().replace(".0", ""));
-
+      PointOptions pointOptions = pointOptionsService.findById(requestBody.getPointOptionsId());
       // create order
       OrderTransactionCreationRequest paymentRequest = new OrderTransactionCreationRequest();
       paymentRequest.setUserId(requestBody.getUserId());
-      paymentRequest.setItemCode(subscription.getSubscriptionCode());
+      paymentRequest.setAmount(pointOptions.getAmount());
+      paymentRequest.setPoint(pointOptions.getPoint());
+      paymentRequest.setPointOptionsId(pointOptions.getId());
       OrderTransactionResponse payment = paymentService.create(paymentRequest);
 
       // Gen order code
@@ -72,16 +68,16 @@ public class PayOsService {
       cancelUrl = returnUrl;
       ItemData item =
           ItemData.builder()
-              .name(subscription.getSubscriptionCode())
-              .price(price)
+              .name("point")
+              .price(Math.toIntExact(pointOptions.getAmount()))
               .quantity(1)
               .build();
 
       PaymentData paymentData =
           PaymentData.builder()
               .orderCode(orderCode)
-              .description(description)
-              .amount(price)
+              .description(pointOptions.getName())
+              .amount(Math.toIntExact(pointOptions.getAmount()))
               .item(item)
               .returnUrl(returnUrl)
               .cancelUrl(cancelUrl)
@@ -162,23 +158,22 @@ public class PayOsService {
 
   public RedirectView handleOrderStatus(long orderId) {
     try {
-      PaymentLinkData order = null;
-      order = payOS.getPaymentLinkInformation(orderId);
+      PaymentLinkData order = payOS.getPaymentLinkInformation(orderId);
       OrderTransaction payment = paymentService.findByOrderCode(orderId);
-      if (order.getStatus().equals(ConstStatus.PAID)
-          && payment.getStatus().equals(ConstStatus.PAID)) {
-        return new RedirectView(frontEndHost + "/payment/success");
-      }
       if (order.getStatus().equals(ConstStatus.PAID)
           && !payment.getStatus().equals(ConstStatus.PAID)) {
         paymentService.changeStatus(payment.getId(), ConstStatus.PAID);
-        ComSubscriptionCreationRequest request = new ComSubscriptionCreationRequest();
-        Subscription subscription = subscriptionService.findByCode(payment.getItemCode());
-        request.setCompanyId(payment.getUser().getCompany().getId());
-        request.setSubscriptionId(subscription.getId());
-        companySubscriptionService.create(request);
-      } else {
-        paymentService.changeStatus(ConstStatus.CANCEL, payment.getId());
+        // Update wallet balance
+        walletService.updateBalance(
+            payment.getUser().getWallet().getId(),
+            (long) (payment.getAmount() / 1000),
+            true,
+            null,
+            payment.getUser().getId(),
+            null,
+            payment.getPointOptions().getId());
+      } else if (!order.getStatus().equals(ConstStatus.PAID)) {
+        paymentService.changeStatus(payment.getId(), ConstStatus.CANCEL);
         return new RedirectView(frontEndHost + "/payment/failed");
       }
       return new RedirectView(frontEndHost + "/payment/success");

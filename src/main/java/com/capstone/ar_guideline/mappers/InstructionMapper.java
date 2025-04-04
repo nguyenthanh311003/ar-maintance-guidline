@@ -22,8 +22,6 @@ public class InstructionMapper {
         .courseId(instruction.getCourse().getId())
         .name(instruction.getName())
         .description(instruction.getDescription())
-        .rotation(instruction.getRotation())
-        .position(instruction.getPosition())
         .build();
   }
 }

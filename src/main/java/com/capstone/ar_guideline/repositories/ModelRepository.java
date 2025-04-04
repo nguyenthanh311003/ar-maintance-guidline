@@ -13,10 +13,10 @@ import org.springframework.stereotype.Repository;
 public interface ModelRepository extends JpaRepository<Model, String> {
   @Query(
       "SELECT m FROM Model m WHERE m.company.id = :companyId "
-          + "AND (:type IS NULL OR :type = '' OR LOWER(m.modelType.name) LIKE LOWER(CONCAT('%', :type, '%'))) "
           + "AND (:name IS NULL OR :name = '' OR LOWER(m.name) LIKE LOWER(CONCAT('%', :name, '%'))) "
           + "AND (:code IS NULL OR :code = '' OR LOWER(m.modelCode) LIKE LOWER(CONCAT('%', :code, '%')))"
-          + "ORDER BY m.createdDate ASC")
+          + "AND (m.status <> 'DRAFTED') "
+          + "ORDER BY m.createdDate DESC")
   Page<Model> findByCompanyId(
       Pageable pageable,
       @Param("companyId") String companyId,
@@ -26,6 +26,21 @@ public interface ModelRepository extends JpaRepository<Model, String> {
 
   @Query(
       value =
-          "SELECT m FROM Model m WHERE m.isUsed = false AND m.company.id = :companyId ORDER BY m.createdDate ASC")
+          "SELECT m FROM Model m WHERE m.company.id = :companyId AND m.status != 'INACTIVE' ORDER BY m.createdDate DESC ")
   List<Model> getModelUnused(@Param("companyId") String companyId);
+
+  @Query(value = "SELECT m FROM Model m JOIN Course c ON m.id = c.model.id WHERE c.id = :courseId ")
+  Model getByCourseId(@Param("courseId") String courseId);
+
+  @Query(
+      value = "SELECT m FROM Model m WHERE m.company.id = :companyId ORDER BY m.createdDate DESC")
+  List<Model> findAllByCompanyId(@Param("companyId") String companyId);
+
+  @Query(value = "SELECT m FROM Model m WHERE m.name = :modelName")
+  Model findByName(@Param("modelName") String modelName);
+
+  @Query(
+      value =
+          "SELECT COUNT(m) FROM Model m WHERE (m.company.id = :companyId OR :companyId IS NULL) AND (m.status = :status OR m.status IS NULL )")
+  Integer countAllBy(String companyId, String status);
 }

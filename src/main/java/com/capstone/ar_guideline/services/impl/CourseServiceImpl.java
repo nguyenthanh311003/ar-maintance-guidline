@@ -5,11 +5,12 @@ import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
-import com.capstone.ar_guideline.entities.Course;
+import com.capstone.ar_guideline.dtos.responses.Wallet.WalletResponse;
+import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.CourseMapper;
-import com.capstone.ar_guideline.repositories.CourseRepository;
+import com.capstone.ar_guideline.repositories.*;
 import com.capstone.ar_guideline.services.*;
 import com.capstone.ar_guideline.util.UtilService;
 import java.util.ArrayList;
@@ -21,12 +22,12 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -35,14 +36,17 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class CourseServiceImpl implements ICourseService {
 
+  WalletTransactionRepository walletTransactionRepository;
   CourseRepository courseRepository;
+  UserRepository userRepository;
   RedisTemplate<String, Object> redisTemplate;
   ICompanyService companyService;
   IModelService modelService;
   IInstructionService instructionService;
-
-  @Autowired @Lazy MiddleEnrollmentServiceImpl middleService;
-  @Autowired @Lazy ILessonService lessonService;
+  IMachineTypeService machineTypeService;
+  InstructionDetailRepository instructionDetailRepository;
+  ServicePricerRepository servicePricerRepository;
+  WalletServiceImpl walletService;
 
   private final String[] keysToRemove = {
     ConstHashKey.HASH_KEY_COURSE,
@@ -79,23 +83,11 @@ public class CourseServiceImpl implements ICourseService {
                 .collect(Collectors.toList());
       } else {
         // get data from database
-        if (isEnrolled) {
-          courses =
-              courseRepository.findAllCourseEnrolledBy(
-                  pageable, isMandatory, userId, searchTemp, status);
-        } else {
-          courses = courseRepository.findAllBy(pageable, searchTemp, status, companyId);
-        }
         courseResponses =
             courses.stream()
                 .map(
                     course -> {
                       CourseResponse response = CourseMapper.fromEntityToCourseResponse(course);
-                      response.setNumberOfParticipants(
-                          middleService.countByCourseId(course.getId()));
-                      response.setNumberOfLessons(lessonService.countByCourseId(course.getId()));
-                      response.setDuration(
-                          middleService.getDurationOfCourseByCourseId(course.getId()));
                       return response;
                     })
                 .collect(Collectors.toList());
@@ -122,17 +114,16 @@ public class CourseServiceImpl implements ICourseService {
   public CourseResponse create(CourseCreationRequest request) {
     try {
       Course newCourse = CourseMapper.fromCourseCreationRequestToEntity(request);
-      modelService.findById(request.getModelId());
+      Model model = modelService.findById(request.getModelId());
       companyService.findById(request.getCompanyId());
+      newCourse.setModelType(model.getModelType());
       newCourse.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
-      newCourse.setStatus(ConstStatus.INACTIVE_STATUS);
+      newCourse.setStatus("DRAFTED");
       newCourse.setCourseCode(UUID.randomUUID().toString());
       newCourse.setDuration(0);
+      newCourse.setNumberOfScan(0);
       newCourse.setQrCode(UtilService.generateAndStoreQRCode(newCourse.getCourseCode()));
       newCourse = courseRepository.save(newCourse);
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
 
       return CourseMapper.fromEntityToCourseResponse(newCourse);
     } catch (Exception exception) {
@@ -183,11 +174,104 @@ public class CourseServiceImpl implements ICourseService {
   }
 
   @Override
+  public Course findByModelId(String modelId) {
+    try {
+      return courseRepository.findByModelId(modelId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public void changeStatusByCourseId(String courseId) {
+    try {
+      Course courseById = findById(courseId);
+
+      if (courseById.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
+        courseById.setStatus(ConstStatus.ACTIVE_STATUS);
+      } else {
+        courseById.setStatus(ConstStatus.INACTIVE_STATUS);
+      }
+
+      courseRepository.save(courseById);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public void updateNumberOfScan(String id, String userId) {
+    Course course = findById(id);
+    ServicePrice servicePrice = servicePricerRepository.findByName("Scan AR");
+    course.setNumberOfScan(course.getNumberOfScan() + 1);
+    courseRepository.save(course);
+    User user = userRepository.findUserById(userId);
+    walletService.updateBalance(
+        user.getWallet().getId(),
+        servicePrice.getPrice(),
+        false,
+        servicePrice.getId(),
+        userId,
+        id,
+        null);
+  }
+
+  @Override
+  @Transactional
+  public void publishGuidelineFirstTime(String courseId, String userId) {
+    Course course =
+        courseRepository
+            .findById(courseId)
+            .orElseThrow(() -> new RuntimeException("Course not found"));
+
+    // Count the number of InstructionDetail
+    List<InstructionDetail> instructionDetailCount =
+        instructionDetailRepository.countInstructionDetailByCourseId(courseId);
+
+    if (instructionDetailCount.size() < 0) {
+      throw new RuntimeException("Must have at lease 1 instruction detail");
+    }
+
+    // Find the ServicePrice with the name "Instruction Detail"
+    ServicePrice servicePrice = servicePricerRepository.findByName("Create Guideline");
+    if (servicePrice == null) {
+      throw new RuntimeException("ServicePrice 'Instruction Detail' not found");
+    }
+
+    // Calculate the total price
+    long totalPrice = instructionDetailCount.size() * servicePrice.getPrice();
+    course.setStatus(ConstStatus.ACTIVE_STATUS);
+    courseRepository.save(course);
+    for (InstructionDetail instructionDetail : instructionDetailCount) {
+      instructionDetail.setStatus(ConstStatus.ACTIVE_STATUS);
+    }
+    instructionDetailRepository.saveAll(instructionDetailCount);
+    // Update the balance of the user's wallet
+    WalletResponse wallet =
+        walletService.findWalletByUserId(userId); // Assuming the first user in the company
+    walletService.updateBalance(
+        wallet.getId(), totalPrice, false, servicePrice.getId(), userId, courseId, null);
+  }
+
+  @Override
+  public Boolean isPaid(String id) {
+    return walletTransactionRepository.isGuidelinePay(id);
+  }
+
+  @Override
   public void delete(String id) {
     try {
       Course courseById = findById(id);
       courseRepository.deleteById(courseById.getId());
-      // delete all cache of course
+      if (checkCourseInUse(courseById)) {
+        throw new RuntimeException("Course is in use, cannot delete");
+      }
       Arrays.stream(keysToRemove)
           .map(k -> k + ConstHashKey.HASH_KEY_ALL)
           .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
@@ -197,6 +281,13 @@ public class CourseServiceImpl implements ICourseService {
       }
       throw new AppException(ErrorCode.COURSE_DELETE_FAILED);
     }
+  }
+
+  private Boolean checkCourseInUse(Course course) {
+    if (course.getNumberOfScan() > 0) {
+      return true;
+    }
+    return false;
   }
 
   @Override
@@ -219,8 +310,6 @@ public class CourseServiceImpl implements ICourseService {
     try {
       Course courseById = findById(id);
       CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(courseById);
-      courseResponse.setNumberOfParticipants(middleService.countByCourseId(courseById.getId()));
-      courseResponse.setNumberOfLessons(lessonService.countByCourseId(courseById.getId()));
       courseResponse.setInstructions(instructionService.findByCourseId(courseById.getId()));
       return courseResponse;
     } catch (Exception exception) {
@@ -248,24 +337,25 @@ public class CourseServiceImpl implements ICourseService {
   }
 
   @Override
-  public List<CourseResponse> findByCompanyId(String companyId) {
+  public PagingModel<CourseResponse> findByCompanyId(
+      int page, int size, String companyId, String title, String status) {
     try {
+      PagingModel<CourseResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
       companyService.findByIdReturnEntity(companyId);
 
-      List<Course> coursesByCompanyId = courseRepository.findByCompanyId(companyId);
+      Page<Course> coursesByCompanyId =
+          courseRepository.findByCompanyId(pageable, companyId, title, status);
 
-      return coursesByCompanyId.stream()
-          .map(
-              course -> {
-                CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(course);
-                courseResponse.setNumberOfParticipants(
-                    middleService.countByCourseId(course.getId()));
-                courseResponse.setNumberOfLessons(lessonService.countByCourseId(course.getId()));
-                courseResponse.setDuration(
-                    middleService.getDurationOfCourseByCourseId(course.getId()));
-                return courseResponse;
-              })
-          .toList();
+      List<CourseResponse> courseResponses =
+          coursesByCompanyId.stream().map(CourseMapper::fromEntityToCourseResponse).toList();
+
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) coursesByCompanyId.getTotalElements());
+      pagingModel.setTotalPages(coursesByCompanyId.getTotalPages());
+      pagingModel.setObjectList(courseResponses);
+      return pagingModel;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -286,11 +376,6 @@ public class CourseServiceImpl implements ICourseService {
               .map(
                   c -> {
                     CourseResponse courseResponse = CourseMapper.fromEntityToCourseResponse(c);
-                    courseResponse.setNumberOfParticipants(
-                        middleService.countByCourseId(c.getId()));
-                    courseResponse.setNumberOfLessons(lessonService.countByCourseId(c.getId()));
-                    courseResponse.setDuration(
-                        middleService.getDurationOfCourseByCourseId(c.getId()));
                     return courseResponse;
                   })
               .toList();
@@ -306,6 +391,20 @@ public class CourseServiceImpl implements ICourseService {
         throw exception;
       }
       throw new AppException(ErrorCode.FIND_COURSE_NO_MANDATORY_FAILED);
+    }
+  }
+
+  @Override
+  public CourseResponse findByCode(String courseCode) {
+    try {
+      Course courseByCode = courseRepository.findByCode(courseCode);
+
+      return CourseMapper.fromEntityToCourseResponse(courseByCode);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
     }
   }
 

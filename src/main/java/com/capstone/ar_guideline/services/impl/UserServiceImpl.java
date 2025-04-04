@@ -1,5 +1,7 @@
 package com.capstone.ar_guideline.services.impl;
 
+import static com.capstone.ar_guideline.constants.ConstStatus.INACTIVE_STATUS;
+
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.Company.CompanyCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.User.LoginRequest;
@@ -43,6 +45,7 @@ public class UserServiceImpl implements IUserService {
   IRoleService roleService;
   ICompanyService companyService;
   EmailService emailService;
+  WalletServiceImpl walletService;
 
   @Override
   public AuthenticationResponse login(LoginRequest loginRequest) {
@@ -52,10 +55,9 @@ public class UserServiceImpl implements IUserService {
         log.warn("User not found by email: {}", loginRequest.getEmail());
         throw new AppException(ErrorCode.USER_NOT_EXISTED);
       }
-      if (userResponseByEmail.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
+      if (userResponseByEmail.getStatus().equals(INACTIVE_STATUS)) {
         throw new AppException(ErrorCode.USER_DISABLED);
       }
-
       // Authenticate the user
       Authentication authentication =
           authenticationManager.authenticate(
@@ -72,37 +74,58 @@ public class UserServiceImpl implements IUserService {
           .token(jwt)
           .user(userResponse)
           .build();
-    } catch (Exception e) {
-      log.error("Login failed: {}", e.getMessage());
-      return AuthenticationResponse.builder().message("Login failed").build();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
     }
   }
+
+  private void updateDeviceId() {}
 
   @Override
   public <T> AuthenticationResponse create(SignUpRequest signUpWitRoleRequest) {
     try {
+
       // Validate the role name
       var role = roleService.findRoleEntityByName(signUpWitRoleRequest.getRoleName());
-      var company = companyService.findCompanyEntityByName(signUpWitRoleRequest.getCompany());
-      if (Objects.isNull(role)) {
-        throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
-      }
       User user = UserMapper.fromSignUpRequestToEntity(signUpWitRoleRequest);
+      User companyUser = null;
+      if (!signUpWitRoleRequest.getRoleName().equals("DESIGNER")) {
+        var company = companyService.findCompanyEntityByName(signUpWitRoleRequest.getCompany());
+        user.setCompany(company);
+        companyUser = userRepository.findUserByCompanyIdAndAdminRole(company.getId());
+      }
+      var userByEmail = userRepository.findByEmail(signUpWitRoleRequest.getEmail());
+      if (userByEmail.isPresent()) {
+        throw new AppException(ErrorCode.USER_EXISTED);
+      }
+      String passwordToSend = signUpWitRoleRequest.getPassword();
       user.setRole(role);
-      user.setCompany(company);
+      user.setStatus(ConstStatus.ACTIVE_STATUS);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
+      if (!signUpWitRoleRequest.getRoleName().equals("DESIGNER")) {
+        walletService.createWallet(user, 0L, "VND");
+        if (signUpWitRoleRequest.getPoints() > 0) {
+          walletService.updateBalanceBySend(
+              signUpWitRoleRequest.getPoints(), user.getId(), companyUser.getId(), null);
+        }
+      }
       var jwt = jwtService.generateToken(user);
       UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
-
+      emailService.sendActiveAccountToCompany(user.getEmail(), user.getUsername(), passwordToSend);
       return AuthenticationResponse.builder()
           .message("User created successfully")
           .token(jwt)
           .user(userResponse)
           .build();
-    } catch (Exception e) {
-      log.error("Error when create user: {}", e.getMessage());
-      return AuthenticationResponse.builder().message("Create user failed").build();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION);
     }
   }
 
@@ -115,18 +138,32 @@ public class UserServiceImpl implements IUserService {
         throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
       }
 
+      User userByEmail =
+          userRepository.findByEmailAndStatus(signUpRequest.getEmail(), ConstStatus.ACTIVE_STATUS);
+
+      if (Objects.nonNull(userByEmail)) {
+        throw new AppException(ErrorCode.USER_EXISTED);
+      }
+
+      String passwordToSend = signUpRequest.getPassword();
       CompanyCreationRequest companyCreationRequest =
           CompanyCreationRequest.builder().companyName(signUpRequest.getCompany()).build();
       Company newCompany = companyService.create(companyCreationRequest);
       User user = UserMapper.fromSignUpRequestToEntity(signUpRequest);
-      user.setStatus(ConstStatus.PENDING);
+      user.setStatus(ConstStatus.ACTIVE_STATUS);
       user.setRole(role);
       user.setCompany(newCompany);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
+      // Create wallet for user if the role is company
+      if (role.getRoleName().equalsIgnoreCase("COMPANY")
+          || role.getRoleName().equalsIgnoreCase("STAFF")) {
+        walletService.createWallet(user, 0L, "VND");
+      }
 
       var jwt = jwtService.generateToken(user);
       UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
+      emailService.sendActiveAccountToCompany(user.getEmail(), user.getUsername(), passwordToSend);
 
       return AuthenticationResponse.builder()
           .message("User created successfully")
@@ -160,7 +197,9 @@ public class UserServiceImpl implements IUserService {
       int page, int size, String companyId, String keyword, String isAssign, String courseId) {
     try {
       Pageable pageable = PageRequest.of(page - 1, size);
-      return userRepository.getUserByCompanyId(pageable, companyId, keyword, isAssign, courseId);
+      //      return userRepository.getUserByCompanyId(pageable, companyId, keyword, isAssign,
+      // courseId);
+      return null;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -187,7 +226,8 @@ public class UserServiceImpl implements IUserService {
   @Override
   public int countUsersByCompanyId(
       String companyId, String keyword, String isAssign, String courseId) {
-    return userRepository.countUsersByCompanyId(companyId, keyword, isAssign, courseId);
+    // return userRepository.countUsersByCompanyId(companyId, keyword, isAssign, courseId);
+    return 0;
   }
 
   @Override
@@ -262,13 +302,61 @@ public class UserServiceImpl implements IUserService {
   }
 
   @Override
+  public Boolean changeStatusAccountStaff(String userId) {
+    try {
+      User userById =
+          userRepository
+              .findById(userId)
+              .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+      if (userById.getStatus().equals(ConstStatus.ACTIVE_STATUS)) {
+        userById.setStatus(ConstStatus.INACTIVE_STATUS);
+      } else {
+        userById.setStatus(ConstStatus.ACTIVE_STATUS);
+      }
+      userRepository.save(userById);
+
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public Boolean resetPasswordStaff(String userId, String newPassword) {
+    try {
+      User userById =
+          userRepository
+              .findById(userId)
+              .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+      userById.setPassword(passwordEncoder.encode(newPassword));
+      userRepository.save(userById);
+
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public User findUserByCompanyId(String id) {
+    return userRepository.findUserByCompanyId(id);
+  }
+
+  @Override
   public PagingModel<UserResponse> getStaffByCompanyId(
-      int page, int size, String companyId, String username, String email, String status) {
+      int page, int size, String companyId, String phoneNumber, String email, String status) {
     try {
       PagingModel<UserResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
       Page<User> users =
-          userRepository.getStaffByCompanyId(pageable, companyId, username, email, status);
+          userRepository.getStaffByCompanyId(pageable, companyId, phoneNumber, email, status);
 
       List<UserResponse> userResponses =
           users.getContent().stream().map(UserMapper::fromEntityToUserResponse).toList();
@@ -282,6 +370,39 @@ public class UserServiceImpl implements IUserService {
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
+      }
+      throw new AppException(ErrorCode.USER_NOT_EXISTED);
+    }
+  }
+
+  private List<User> findAllByCompanyId(String companyId) {
+    return userRepository.findByCompanyId(companyId);
+  }
+
+  @Override
+  public Boolean deleteUser(String id) {
+    try {
+      User userById =
+          userRepository
+              .findById(id)
+              .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+      userRepository.delete(userById);
+      return true;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_DELETE_FAILED);
+    }
+  }
+
+  @Override
+  public User findCompanyAdminByCompanyId(String companyId) {
+    try {
+      return userRepository.findCompanyAdminByCompanyId(companyId).getFirst();
+    } catch (Exception e) {
+      if (e instanceof AppException) {
+        throw e;
       }
       throw new AppException(ErrorCode.USER_NOT_EXISTED);
     }

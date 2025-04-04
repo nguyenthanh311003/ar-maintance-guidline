@@ -14,6 +14,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "guideline")
 public class Course implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -24,17 +25,18 @@ public class Course implements Serializable {
   private Company company;
 
   @ManyToOne
-  @JoinColumn(name = "model_id", unique = true)
+  @JoinColumn(name = "machineType_id", nullable = false)
+  private ModelType modelType;
+
+  @ManyToOne
+  @JoinColumn(name = "model_id")
   private Model model;
 
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
   private List<Instruction> instructions;
 
-  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-  private List<Lesson> lessons;
-
-  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-  private List<Enrollment> enrollments;
+  @OneToMany(mappedBy = "guideline", cascade = CascadeType.ALL)
+  private List<Machine_QR> machineQrs;
 
   private String title;
   private String description;
@@ -47,6 +49,7 @@ public class Course implements Serializable {
   private String imageUrl;
   private String qrCode;
   private String courseCode;
+  private Integer numberOfScan;
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

@@ -18,10 +18,13 @@ public class UserResponse implements Serializable {
   private String roleName;
   private CompanyResponse company;
   private String email;
+  private String currentPlan;
   private String avatar;
   private String username;
+  private String deviceId;
   private String phone;
   private String status;
+  private Long points;
   private String expirationDate;
   private Boolean isPayAdmin;
   private LocalDateTime createdDate;

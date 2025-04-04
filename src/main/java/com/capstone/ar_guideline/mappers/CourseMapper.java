@@ -35,11 +35,14 @@ public class CourseMapper {
         .shortDescription(course.getShortDescription())
         .targetAudience(course.getTargetAudience())
         .duration(course.getDuration())
+        .numberOfScan(course.getNumberOfScan())
+        .courseCode(course.getCourseCode())
         .imageUrl(course.getImageUrl())
         .isMandatory(course.getIsMandatory())
         .qrCode(course.getQrCode())
         .status(course.getStatus())
         .type(course.getType())
+        .machineTypeId(course.getModelType().getId())
         .build();
   }
 

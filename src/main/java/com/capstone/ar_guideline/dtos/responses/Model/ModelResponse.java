@@ -1,6 +1,5 @@
 package com.capstone.ar_guideline.dtos.responses.Model;
 
-import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import java.io.Serializable;
 import java.util.List;
 import lombok.*;
@@ -24,5 +23,8 @@ public class ModelResponse implements Serializable {
   Boolean isUsed;
   String version;
   String scale;
+  List<Float> position;
+  List<Float> rotation;
   String file;
+  String courseName;
 }
