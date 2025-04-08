@@ -1,6 +1,7 @@
-﻿package com.capstone.ar_guideline.services;
+package com.capstone.ar_guideline.services;
 
-import com.capstone.ar_guideline.dtos.requests.DeviceRegistrationRequest;
+
+import com.capstone.ar_guideline.dtos.requests.Devices.DeviceRegistrationRequest;
 
 public interface IFirebaseNotificationService {
     Boolean registerDeviceToken(DeviceRegistrationRequest request);

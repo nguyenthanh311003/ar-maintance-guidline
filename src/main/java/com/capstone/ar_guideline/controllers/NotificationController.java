@@ -1,7 +1,7 @@
-﻿package com.capstone.ar_guideline.controllers;
+package com.capstone.ar_guideline.controllers;
 
 import com.capstone.ar_guideline.constants.ConstAPI;
-import com.capstone.ar_guideline.dtos.requests.DeviceRegistrationRequest;
+import com.capstone.ar_guideline.dtos.requests.Devices.DeviceRegistrationRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.services.IFirebaseNotificationService;
 import lombok.AccessLevel;
@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class NotificationController {
     IFirebaseNotificationService firebaseNotificationService;
 
     @PostMapping(value = ConstAPI.NotificationAPI.REGISTER_DEVICE)
-    ApiResponse<Boolean> registerDevice(@RequestBody @Valid DeviceRegistrationRequest request) {
+    ApiResponse<Boolean> registerDevice(@RequestBody DeviceRegistrationRequest request) {
         return ApiResponse.<Boolean>builder()
                 .result(firebaseNotificationService.registerDeviceToken(request))
                 .message("Device registered successfully")

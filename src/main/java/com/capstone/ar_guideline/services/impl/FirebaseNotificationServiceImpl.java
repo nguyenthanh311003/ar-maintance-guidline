@@ -1,6 +1,6 @@
-﻿package com.capstone.ar_guideline.services.impl;
+package com.capstone.ar_guideline.services.impl;
 
-import com.capstone.ar_guideline.dtos.requests.DeviceRegistrationRequest;
+import com.capstone.ar_guideline.dtos.requests.Devices.DeviceRegistrationRequest;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.services.IFirebaseNotificationService;
