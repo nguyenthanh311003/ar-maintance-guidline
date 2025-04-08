@@ -18,6 +18,8 @@ public class CourseResponse implements Serializable {
   List<InstructionResponse> instructions;
   String title;
   String description;
+  String machineType;
+  String modelName;
   String shortDescription;
   String targetAudience;
   Integer duration;

@@ -57,12 +57,10 @@ public class PointOptionsService {
     return pointOptionsRepository.findById(id).get();
   }
 
-  public void changeStatus(String id)
-  {
+  public void changeStatus(String id) {
     PointOptions pointOptions = pointOptionsRepository.findById(id).get();
-   String status = ConstStatus.ACTIVE_STATUS;
-    if(pointOptions.getStatus().equals(ConstStatus.ACTIVE_STATUS))
-    {
+    String status = ConstStatus.ACTIVE_STATUS;
+    if (pointOptions.getStatus().equals(ConstStatus.ACTIVE_STATUS)) {
       status = ConstStatus.INACTIVE_STATUS;
     }
     pointOptions.setStatus(status);

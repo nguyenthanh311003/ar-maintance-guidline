@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.services;
 import com.capstone.ar_guideline.dtos.requests.PointRequestResponse.PointRequestCreation;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.PointRequestResponse.PointRequestResponse;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IPointRequestService {
@@ -14,7 +15,8 @@ public interface IPointRequestService {
       String companyId,
       String requestNumber,
       String status,
-      String employeeEmail);
+      String employeeEmail,
+      LocalDate createDate);
 
   List<PointRequestResponse> findAllByEmployeeId(String employeeId);
 

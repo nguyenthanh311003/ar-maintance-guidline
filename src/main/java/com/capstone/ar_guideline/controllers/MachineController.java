@@ -8,6 +8,7 @@ import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IARGuidelineService;
 import com.capstone.ar_guideline.services.IMachineService;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -53,6 +54,14 @@ public class MachineController {
   public ApiResponse<MachineResponse> getMachineByCode(@PathVariable String machineCode) {
     return ApiResponse.<MachineResponse>builder()
         .result(arGuidelineService.getMachineByCode(machineCode))
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.MachineAPI.GET_MACHINES_BY_GUIDELINE_ID + "{guidelineId}")
+  public ApiResponse<List<MachineResponse>> getMachineByGuidelineId(
+      @PathVariable String guidelineId) {
+    return ApiResponse.<List<MachineResponse>>builder()
+        .result(arGuidelineService.getMachineByGuidelineId(guidelineId))
         .build();
   }
 

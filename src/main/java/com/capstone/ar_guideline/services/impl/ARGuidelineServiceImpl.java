@@ -25,7 +25,6 @@ import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.*;
 import com.capstone.ar_guideline.repositories.CompanyRequestRepository;
-import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.services.*;
 import com.capstone.ar_guideline.util.UtilService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -60,7 +59,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   IMachineTypeAttributeService machineTypeAttributeService;
   IMachineTypeService machineTypeService;
   IMachine_QRService machineQrService;
-  CourseRepository courseRepository;
   CompanyRequestRepository companyRequestRepository;
   ObjectMapper objectMapper = new ObjectMapper();
 
@@ -154,11 +152,18 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
 
   @Override
   public PagingModel<ModelResponse> findModelByCompanyId(
-      int page, int size, String companyId, String type, String name, String code) {
+      int page,
+      int size,
+      String companyId,
+      String type,
+      String name,
+      String code,
+      String machineTypeId) {
     try {
       PagingModel<ModelResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
-      Page<Model> models = modelService.findByCompanyId(pageable, companyId, type, name, code);
+      Page<Model> models =
+          modelService.findByCompanyId(pageable, companyId, type, name, code, machineTypeId);
       List<ModelResponse> modelResponses =
           models.stream()
               .map(
@@ -167,6 +172,8 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                         ModelResponse.builder()
                             .id(m.getId())
                             .modelCode(m.getModelCode())
+                            .modelTypeId(m.getModelType().getId())
+                            .modelTypeName(m.getModelType().getName())
                             .status(m.getStatus())
                             .name(m.getName())
                             .description(m.getDescription())
@@ -176,10 +183,18 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                             .isUsed(m.getIsUsed())
                             .file(m.getFile())
                             .build();
-                    Course courseByModelId = new Course();
+                    List<Course> courseByModelId = new ArrayList<>();
                     try {
-                      courseByModelId = courseService.findByModelId(m.getId());
-                      modelResponse.setCourseName(courseByModelId.getTitle());
+                      courseByModelId = courseService.findByModelId(m.getId(), companyId);
+                      if (courseByModelId.isEmpty()) {
+                        modelResponse.setCourseName("No Course");
+                      } else {
+                        String courseNames =
+                            courseByModelId.stream()
+                                .map(Course::getTitle)
+                                .collect(Collectors.joining(", "));
+                        modelResponse.setCourseName(courseNames);
+                      }
                     } catch (Exception exception) {
                       modelResponse.setCourseName("No Course");
                     }
@@ -208,18 +223,18 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       Model modelById = modelService.findById(id);
       ModelResponse modelResponse = ModelMapper.fromEntityToModelResponse(modelById);
 
-      Course courseByModelId = new Course();
+      List<Course> courseByModelId;
       try {
-        courseByModelId = courseService.findByModelId(modelById.getId());
-        modelResponse.setCourseName(courseByModelId.getTitle());
+        courseByModelId = courseService.findByModelIdReturnList(modelById.getId());
+        if (courseByModelId.isEmpty()) {
+          modelResponse.setCourseName("No Course");
+        } else {
+          String courseNames =
+              courseByModelId.stream().map(Course::getTitle).collect(Collectors.joining(", "));
+          modelResponse.setCourseName(courseNames);
+        }
       } catch (Exception exception) {
         modelResponse.setCourseName("No Course");
-      }
-
-      if (Objects.isNull(courseByModelId)) {
-        modelResponse.setCourseName("No Course");
-      } else {
-        modelResponse.setCourseName(courseByModelId.getTitle());
       }
 
       return modelResponse;
@@ -429,6 +444,9 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
 
       newMachine.setMachineCode(request.getMachineCode());
 
+      List<Course> courseByMachineTypeIdAndCompanyId =
+          courseService.findByMachineTypeIdAndCompanyId(modelTypeById.getId(), companyById.getId());
+
       try {
         String headerJson = objectMapper.writeValueAsString(request.getHeaderRequests());
         newMachine.setHeader(headerJson);
@@ -437,6 +455,20 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       }
 
       newMachine = machineService.create(newMachine);
+
+      if (!courseByMachineTypeIdAndCompanyId.isEmpty()) {
+        Machine finalNewMachine = newMachine;
+        courseByMachineTypeIdAndCompanyId.forEach(
+            course -> {
+              Machine_QR newMachineQr =
+                  Machine_QR.builder().machine(finalNewMachine).guideline(course).build();
+
+              String qrCode = finalNewMachine.getMachineCode() + " @ " + course.getCourseCode();
+              newMachineQr.setQrUrl(UtilService.generateAndStoreQRCode(qrCode));
+
+              machineQrService.create(newMachineQr);
+            });
+      }
 
       List<MachineTypeValueResponse> machineTypeValueResponses = new ArrayList<>();
 
@@ -912,6 +944,78 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         }
       }
       throw new AppException(ErrorCode.COMPANY_REQUEST_UPDATE_FAILED);
+    }
+  }
+
+  @Override
+  public List<ModelResponse> getModelByMachineTypeId(String machineTypeId, String companyId) {
+    try {
+      List<Model> modelsByMachineTypeId =
+          modelService.getModelsByMachineTypeIdAndCompanyId(machineTypeId, companyId);
+
+      return modelsByMachineTypeId.stream().map(ModelMapper::fromEntityToModelResponse).toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<MachineResponse> getMachineByGuidelineId(String guidelineId) {
+    try {
+      Course courseById = courseService.findById(guidelineId);
+
+      if (Objects.isNull(courseById)) {
+        throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+      }
+
+      List<Machine> machines = machineService.getMachineByGuidelineId(courseById.getId());
+
+      return machines.stream()
+          .map(
+              machine -> {
+                MachineResponse machineResponse =
+                    MachineMapper.fromEntityToMachineResponse(machine);
+                List<Machine_QRResponse> machineQrResponses =
+                    machineQrService.getByMachineId(machine.getId()).stream()
+                        .map(Machine_QRMapper::fromEntityToMachine_QRResponse)
+                        .toList();
+                machineResponse.setMachineQrsResponses(machineQrResponses);
+
+                return machineResponse;
+              })
+          .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public MachineTypeResponse getMachineTypeByGuidelineCode(String guidelineCode) {
+    try {
+      ModelType modelTypeByGuidelineCode =
+          machineTypeService.getMachineTypeByGuidelineCode(guidelineCode);
+
+      List<MachineTypeAttribute> machineTypeAttributesByMachineTypeId =
+          machineTypeAttributeService.getByMachineTypeId(modelTypeByGuidelineCode.getId());
+
+      List<MachineTypeAttributeResponse> machineTypeAttributeResponses =
+          machineTypeAttributesByMachineTypeId.stream()
+              .map(MachineTypeAttributeMapper::fromEntityToMachineTypeAttributeResponse)
+              .toList();
+
+      return MachineTypeMapper.fromEntityToMachineTypeResponse(
+          modelTypeByGuidelineCode, machineTypeAttributeResponses);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED);
     }
   }
 }

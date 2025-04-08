@@ -14,4 +14,6 @@ public interface IMachineTypeService {
   ModelType findById(String id);
 
   Page<ModelType> getMachineTypeByCompanyId(Pageable pageable, String companyId, String name);
+
+  ModelType getMachineTypeByGuidelineCode(String guidelineCode);
 }
