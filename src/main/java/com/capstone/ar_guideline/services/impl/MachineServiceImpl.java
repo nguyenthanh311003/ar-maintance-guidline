@@ -165,4 +165,16 @@ public class MachineServiceImpl implements IMachineService {
       throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
     }
   }
+
+  @Override
+  public List<Machine> getMachineByGuidelineId(String guidelineId) {
+    try {
+      return machineRepository.getMachineByGuidelineId(guidelineId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+    }
+  }
 }

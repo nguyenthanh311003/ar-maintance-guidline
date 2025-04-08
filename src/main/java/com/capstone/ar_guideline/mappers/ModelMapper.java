@@ -54,6 +54,8 @@ public class ModelMapper {
         .status(model.getStatus())
         .isUsed(model.getIsUsed())
         .name(model.getName())
+        .modelTypeId(model.getModelType() != null ? model.getModelType().getId() : null)
+        .modelTypeName(model.getModelType() != null ? model.getModelType().getName() : null)
         .description(model.getDescription())
         .companyId(model.getCompany().getId())
         .imageUrl(model.getImageUrl())

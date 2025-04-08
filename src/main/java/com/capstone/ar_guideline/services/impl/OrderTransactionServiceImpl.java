@@ -108,7 +108,7 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
 
   @Override
   public PagingModel<OrderTransactionResponse> getAllTransactionByCompanyId(
-      int page, int size, String companyId, String status, Long orderCode) {
+      int page, int size, String companyId, String status, String orderCode) {
     try {
       PagingModel<OrderTransactionResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
@@ -137,7 +137,7 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
 
   @Override
   public PagingModel<OrderTransactionResponse> getAllTransaction(
-      int page, int size, String status, Long orderCode) {
+      int page, int size, String status, String orderCode) {
     try {
       PagingModel<OrderTransactionResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);

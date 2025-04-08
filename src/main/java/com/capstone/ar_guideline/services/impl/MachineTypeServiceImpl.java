@@ -102,4 +102,16 @@ public class MachineTypeServiceImpl implements IMachineTypeService {
       throw new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED);
     }
   }
+
+  @Override
+  public ModelType getMachineTypeByGuidelineCode(String guidelineCode) {
+    try {
+      return machineTypeRepository.getMachineTypeByGuidelineCode(guidelineCode);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED);
+    }
+  }
 }

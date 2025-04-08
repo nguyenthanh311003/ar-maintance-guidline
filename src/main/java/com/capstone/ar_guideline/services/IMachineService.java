@@ -26,4 +26,6 @@ public interface IMachineService {
   Boolean isMachineCodeExisted(String companyId, String machineCode);
 
   Integer countMachineByMachineType(String machineTypeId);
+
+  List<Machine> getMachineByGuidelineId(String guidelineId);
 }

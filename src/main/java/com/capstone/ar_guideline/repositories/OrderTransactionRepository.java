@@ -16,13 +16,13 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
           "SELECT o FROM OrderTransaction o WHERE o.user.company.id = :companyId "
               + "AND o.user.role.roleName = 'COMPANY' "
               + "AND ((:status IS NULL OR LOWER(o.status) LIKE LOWER(CONCAT('%', :status, '%')))) "
-              + "AND (:orderCode IS NULL OR o.orderCode = :orderCode) "
+              + "AND (:orderCode IS NULL OR STR(o.orderCode) LIKE CONCAT('%', :orderCode, '%')) "
               + "ORDER BY o.createdDate DESC")
   Page<OrderTransaction> getOrderTransactionByCompanyId(
       Pageable pageable,
       @Param("companyId") String companyId,
       @Param("status") String status,
-      @Param("orderCode") Long orderCode);
+      @Param("orderCode") String orderCode);
 
   OrderTransaction findByOrderCode(Long orderCode);
 
@@ -30,9 +30,9 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
       value =
           "SELECT o FROM OrderTransaction o "
               + "WHERE ((:status IS NULL OR LOWER(o.status) LIKE LOWER(CONCAT('%', :status, '%')))) "
-              + "AND (:orderCode IS NULL OR o.orderCode = :orderCode) "
+              + "AND (:orderCode IS NULL OR STR(o.orderCode) LIKE CONCAT('%', :orderCode, '%')) "
               + "ORDER BY o.createdDate DESC")
-  Page<OrderTransaction> getOrderTransaction(Pageable pageable, String status, Long orderCode);
+  Page<OrderTransaction> getOrderTransaction(Pageable pageable, String status, String orderCode);
 
   @Query(
       "SELECT c, COALESCE(SUM(ot.amount), 0) AS totalAmount "
