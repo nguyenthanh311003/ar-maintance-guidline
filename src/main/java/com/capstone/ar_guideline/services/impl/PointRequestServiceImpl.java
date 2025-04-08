@@ -16,6 +16,7 @@ import com.capstone.ar_guideline.repositories.ServicePricerRepository;
 import com.capstone.ar_guideline.services.ICompanyService;
 import com.capstone.ar_guideline.services.IPointRequestService;
 import com.capstone.ar_guideline.services.IUserService;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,13 +56,14 @@ public class PointRequestServiceImpl implements IPointRequestService {
       String companyId,
       String requestNumber,
       String status,
-      String employeeEmail) {
+      String employeeEmail,
+      LocalDate createDate) {
     try {
       PagingModel<PointRequestResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
       Page<PointRequest> pointRequests =
           pointRequestRepository.findByCompanyId(
-              pageable, companyId, requestNumber, status, employeeEmail);
+              pageable, companyId, requestNumber, status, employeeEmail, createDate);
 
       List<PointRequestResponse> pointRequestResponses =
           pointRequests.getContent().stream()

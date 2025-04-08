@@ -186,6 +186,30 @@ public class CourseServiceImpl implements ICourseService {
   }
 
   @Override
+  public List<Course> findByModelIdReturnList(String modelId) {
+    try {
+      return courseRepository.findByModelIdReturnList(modelId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<Course> findByModelId(String modelId, String companyId) {
+    try {
+      return courseRepository.findByModelIdAndCompanyId(modelId, companyId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+    }
+  }
+
+  @Override
   public void changeStatusByCourseId(String courseId) {
     try {
       Course courseById = findById(courseId);
@@ -253,8 +277,7 @@ public class CourseServiceImpl implements ICourseService {
     }
     instructionDetailRepository.saveAll(instructionDetailCount);
     // Update the balance of the user's wallet
-    WalletResponse wallet =
-        walletService.findWalletByUserId(userId); // Assuming the first user in the company
+    WalletResponse wallet = walletService.findWalletByUserId(userId);
     walletService.updateBalance(
         wallet.getId(), totalPrice, false, servicePrice.getId(), userId, courseId, null);
   }
@@ -262,6 +285,18 @@ public class CourseServiceImpl implements ICourseService {
   @Override
   public Boolean isPaid(String id) {
     return walletTransactionRepository.isGuidelinePay(id);
+  }
+
+  @Override
+  public List<Course> findByMachineTypeIdAndCompanyId(String machineTypeId, String companyId) {
+    try {
+      return courseRepository.findByMachineTypeIdAndCompanyId(machineTypeId, companyId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+    }
   }
 
   @Override
@@ -338,14 +373,14 @@ public class CourseServiceImpl implements ICourseService {
 
   @Override
   public PagingModel<CourseResponse> findByCompanyId(
-      int page, int size, String companyId, String title, String status) {
+      int page, int size, String companyId, String title, String status, String machineTypeId) {
     try {
       PagingModel<CourseResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
       companyService.findByIdReturnEntity(companyId);
 
       Page<Course> coursesByCompanyId =
-          courseRepository.findByCompanyId(pageable, companyId, title, status);
+          courseRepository.findByCompanyId(pageable, companyId, title, status, machineTypeId);
 
       List<CourseResponse> courseResponses =
           coursesByCompanyId.stream().map(CourseMapper::fromEntityToCourseResponse).toList();

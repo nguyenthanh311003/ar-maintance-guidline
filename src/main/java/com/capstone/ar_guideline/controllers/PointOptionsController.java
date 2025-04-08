@@ -1,9 +1,6 @@
 package com.capstone.ar_guideline.controllers;
 
-import com.capstone.ar_guideline.constants.ConstAPI;
-import com.capstone.ar_guideline.dtos.requests.PointRequestResponse.PointRequestCreation;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
-import com.capstone.ar_guideline.dtos.responses.PointRequestResponse.PointRequestResponse;
 import com.capstone.ar_guideline.entities.PointOptions;
 import com.capstone.ar_guideline.services.impl.PointOptionsService;
 import java.util.List;
@@ -52,9 +49,9 @@ public class PointOptionsController {
   public ApiResponse<List<PointOptions>> getAllPointOptionsAdmin() {
     List<PointOptions> pointOptionsList = pointOptionsService.getAllForAdmin();
     return ApiResponse.<List<PointOptions>>builder()
-            .result(pointOptionsList)
-            .message("All PointOptions retrieved successfully")
-            .build();
+        .result(pointOptionsList)
+        .message("All PointOptions retrieved successfully")
+        .build();
   }
 
   @DeleteMapping("/{id}")
@@ -64,11 +61,8 @@ public class PointOptionsController {
   }
 
   @PutMapping(value = "/status/{requestId}")
-  ApiResponse<Void> changeStatus(
-          @PathVariable String requestId) {
+  ApiResponse<Void> changeStatus(@PathVariable String requestId) {
     pointOptionsService.changeStatus(requestId);
-    return ApiResponse.<Void>builder()
-            .message("Update Point Request")
-            .build();
+    return ApiResponse.<Void>builder().message("Update Point Request").build();
   }
 }

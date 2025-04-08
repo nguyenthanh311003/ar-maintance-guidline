@@ -27,7 +27,13 @@ public interface IARGuidelineService {
   CourseResponse findCourseById(String modelId);
 
   PagingModel<ModelResponse> findModelByCompanyId(
-      int page, int size, String companyId, String type, String name, String code);
+      int page,
+      int size,
+      String companyId,
+      String type,
+      String name,
+      String code,
+      String machineTypeId);
 
   ModelResponse findModelById(String id);
 
@@ -72,4 +78,10 @@ public interface IARGuidelineService {
   CourseResponse createGuideline(CourseCreationRequest request);
 
   CompanyRequestResponse uploadAgain(String requestId, ModelCreationRequest request);
+
+  List<ModelResponse> getModelByMachineTypeId(String machineTypeId, String companyId);
+
+  List<MachineResponse> getMachineByGuidelineId(String guidelineId);
+
+  MachineTypeResponse getMachineTypeByGuidelineCode(String guidelineCode);
 }

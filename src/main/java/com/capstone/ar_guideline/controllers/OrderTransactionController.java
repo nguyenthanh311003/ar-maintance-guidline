@@ -75,7 +75,7 @@ public class OrderTransactionController {
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "5") int size,
       @RequestParam(required = false) String status,
-      @RequestParam(required = false) Long orderCode,
+      @RequestParam(required = false) String orderCode,
       @PathVariable String companyId) {
     return ApiResponse.<PagingModel<OrderTransactionResponse>>builder()
         .result(
@@ -89,7 +89,7 @@ public class OrderTransactionController {
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "5") int size,
       @RequestParam(required = false) String status,
-      @RequestParam(required = false) Long orderCode) {
+      @RequestParam(required = false) String orderCode) {
     return ApiResponse.<PagingModel<OrderTransactionResponse>>builder()
         .result(orderTransactionService.getAllTransaction(page, size, status, orderCode))
         .build();

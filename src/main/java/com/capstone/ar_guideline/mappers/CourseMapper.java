@@ -42,6 +42,8 @@ public class CourseMapper {
         .qrCode(course.getQrCode())
         .status(course.getStatus())
         .type(course.getType())
+        .machineType(course.getModelType().getName())
+        .modelName(course.getModel().getName())
         .machineTypeId(course.getModelType().getId())
         .build();
   }

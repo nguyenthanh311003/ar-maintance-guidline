@@ -16,13 +16,15 @@ public interface ModelRepository extends JpaRepository<Model, String> {
           + "AND (:name IS NULL OR :name = '' OR LOWER(m.name) LIKE LOWER(CONCAT('%', :name, '%'))) "
           + "AND (:code IS NULL OR :code = '' OR LOWER(m.modelCode) LIKE LOWER(CONCAT('%', :code, '%')))"
           + "AND (m.status <> 'DRAFTED') "
+          + "AND (:machineTypeId IS NULL OR :machineTypeId = '' OR m.modelType.id = :machineTypeId) "
           + "ORDER BY m.createdDate DESC")
   Page<Model> findByCompanyId(
       Pageable pageable,
       @Param("companyId") String companyId,
       @Param("type") String type,
       @Param("name") String name,
-      @Param("code") String code);
+      @Param("code") String code,
+      @Param("machineTypeId") String machineTypeId);
 
   @Query(
       value =
@@ -43,4 +45,11 @@ public interface ModelRepository extends JpaRepository<Model, String> {
       value =
           "SELECT COUNT(m) FROM Model m WHERE (m.company.id = :companyId OR :companyId IS NULL) AND (m.status = :status OR m.status IS NULL )")
   Integer countAllBy(String companyId, String status);
+
+  @Query(
+      value =
+          "SELECT m FROM Model m WHERE m.modelType.id = :machineTypeId AND m.company.id = :companyId "
+              + "ORDER BY m.createdDate DESC")
+  List<Model> findAllByMachineTypeIdAndCompanyId(
+      @Param("machineTypeId") String machineTypeId, @Param("companyId") String companyId);
 }

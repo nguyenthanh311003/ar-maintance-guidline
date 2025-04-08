@@ -33,7 +33,7 @@ public class PointOptions {
   @Column(name = "currency", length = 10, columnDefinition = "varchar(10) default 'VND'")
   private String currency = "VND";
 
-  private String status ="ACTIVE";
+  private String status = "ACTIVE";
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

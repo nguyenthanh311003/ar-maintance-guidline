@@ -39,6 +39,15 @@ public class MachineTypeController {
         .build();
   }
 
+  @GetMapping(
+      value = ConstAPI.MachineTypeAPI.GET_MACHINE_TYPE_BY_GUIDELINE_CODE + "{guidelineCode}")
+  public ApiResponse<MachineTypeResponse> getMachineTypeByGuidelineCode(
+      @PathVariable String guidelineCode) {
+    return ApiResponse.<MachineTypeResponse>builder()
+        .result(arGuidelineService.getMachineTypeByGuidelineCode(guidelineCode))
+        .build();
+  }
+
   @PostMapping(value = ConstAPI.MachineTypeAPI.CREATE_MACHINE_TYPE)
   public ApiResponse<MachineTypeResponse> createMachineType(
       @RequestBody MachineTypeCreationRequest request) {
