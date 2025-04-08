@@ -60,6 +60,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   IMachineTypeService machineTypeService;
   IMachine_QRService machineQrService;
   CompanyRequestRepository companyRequestRepository;
+  FirebaseNotificationServiceImpl firebaseNotificationService;
   ObjectMapper objectMapper = new ObjectMapper();
 
   @Override
@@ -496,6 +497,8 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       //                                .toList();
       //            }
 
+
+
       return MachineMapper.fromEntityToMachineResponseForCreate(
           newMachine, machineTypeValueResponses);
     } catch (Exception exception) {
@@ -893,6 +896,21 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       //      Arrays.stream(keysToRemove)
       //          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
       //          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
+
+      // Send notification about new course
+      String topic = "company_" + request.getCompanyId();
+      String title = "New Course Available";
+      String body = "A new course '" + newCourse.getTitle() + "' is now available";
+      String data = "type:new_course,courseId:" + newCourse.getId() +
+              ",courseName:" + newCourse.getTitle();
+
+      try {
+        firebaseNotificationService.sendNotificationToTopic(topic, title, body, data);
+      } catch (Exception e) {
+        // Log but don't fail the course creation if notification fails
+        log.error("Failed to send course creation notification", e);
+      }
+
 
       return CourseMapper.fromEntityToCourseResponse(newCourse);
     } catch (Exception exception) {
