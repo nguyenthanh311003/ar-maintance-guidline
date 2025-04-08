@@ -217,4 +217,14 @@ public class ConstAPI {
   public static class PointRequestAPI {
     public static final String POINT_REQUEST_ENDPOINT = "api/v1/point-request";
   }
+
+  public static class NotificationAPI {
+    public static final String REGISTER_DEVICE = "api/v1/notifications/register";
+    public static final String SUBSCRIBE_TO_TOPIC = "api/v1/notifications/subscribe";
+    public static final String UNSUBSCRIBE_FROM_TOPIC = "api/v1/notifications/unsubscribe";
+    public static final String SEND_TO_TOPIC = "api/v1/notifications/send/topic";
+    public static final String SEND_TO_TOKEN = "api/v1/notifications/send/token";
+  }
+
+
 }
