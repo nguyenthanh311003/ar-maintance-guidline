@@ -50,4 +50,18 @@ public class FileUploadController {
 
     return fileStorageService.storeFile(file);
   }
+
+
+  @GetMapping(ConstAPI.FileAPI.FILE + "/{filename}/size")
+  public ResponseEntity<Long> getFileSize(@PathVariable String filename) {
+    try {
+      Resource resource = fileStorageService.getFile(filename);
+      Path filePath = resource.getFile().toPath();
+      long fileSize = Files.size(filePath);
+
+      return ResponseEntity.ok(fileSize);
+    } catch (Exception e) {
+      return ResponseEntity.notFound().build();
+    }
+  }
 }
