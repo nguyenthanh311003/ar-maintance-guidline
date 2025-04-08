@@ -47,6 +47,7 @@ public class CourseServiceImpl implements ICourseService {
   InstructionDetailRepository instructionDetailRepository;
   ServicePricerRepository servicePricerRepository;
   WalletServiceImpl walletService;
+  FirebaseNotificationServiceImpl firebaseNotificationService;
 
   private final String[] keysToRemove = {
     ConstHashKey.HASH_KEY_COURSE,
@@ -124,6 +125,21 @@ public class CourseServiceImpl implements ICourseService {
       newCourse.setNumberOfScan(0);
       newCourse.setQrCode(UtilService.generateAndStoreQRCode(newCourse.getCourseCode()));
       newCourse = courseRepository.save(newCourse);
+
+      // Send notification about new course
+      String topic = "company_" + request.getCompanyId();
+      String title = "New Course Available";
+      String body = "A new course '" + newCourse.getTitle() + "' is now available";
+      String data = "type:new_course,courseId:" + newCourse.getId() +
+              ",courseName:" + newCourse.getTitle();
+
+      try {
+        firebaseNotificationService.sendNotificationToTopic(topic, title, body, data);
+      } catch (Exception e) {
+        // Log but don't fail the course creation if notification fails
+        log.error("Failed to send course creation notification", e);
+      }
+
 
       return CourseMapper.fromEntityToCourseResponse(newCourse);
     } catch (Exception exception) {
