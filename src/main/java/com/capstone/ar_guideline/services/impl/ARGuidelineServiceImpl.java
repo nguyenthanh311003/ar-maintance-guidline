@@ -380,6 +380,26 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
           throw new AppException(ErrorCode.UPDATE_GUIDELINE_FAIL_INSTRUCTION_COUNT);
         } else {
           courseById.setStatus(ConstStatus.ACTIVE_STATUS);
+          // Get company ID from the course
+          String companyId = courseById.getCompany().getId();
+
+          // Send notification about new course
+          String topic = "company_" + companyId;
+          String title = "New Course Available";
+          String body = "A new course '" + courseById.getTitle() + "' is now available";
+
+          // Format data payload for the notification
+          String data = "type:new_course,courseId:" + courseById.getId() +
+                  ",courseName:" + courseById.getTitle();
+
+          try {
+            // Send notification to company topic
+            firebaseNotificationService.sendNotificationToTopic(topic, title, body, data);
+            log.info("Successfully sent notification for new course: {}", courseById.getTitle());
+          } catch (Exception e) {
+            // Log but don't fail the course activation if notification fails
+            log.error("Failed to send course activation notification", e);
+          }
         }
 
       } else {
