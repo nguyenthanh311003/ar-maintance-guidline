@@ -34,7 +34,8 @@ public class PointRequestServiceImpl implements IPointRequestService {
   private final IUserService userService;
   private final ICompanyService companyService;
   private final ServicePricerRepository servicePricerRepository;
-
+private final DeviceManagementServiceImpl deviceManagementService;
+private final FirebaseNotificationServiceImpl firebaseNotificationService;
   @Override
   public List<PointRequestResponse> findAll() {
     try {
@@ -151,7 +152,23 @@ public class PointRequestServiceImpl implements IPointRequestService {
                 .findCompanyAdminByCompanyId(pointRequestEntity.getCompany().getId())
                 .getId(),
             servicePricerRepository.findByName("Point Request"));
+
+        // Send notification to user's devices
+        sendPointRequestNotification(
+                pointRequestEntity.getEmployee().getId(),
+                pointRequestEntity.getCompany().getId(),
+                ConstStatus.APPROVED,
+                pointRequestEntity.getAmount());
+      } else if (request.getStatus() != null
+              && request.getStatus().equalsIgnoreCase(ConstStatus.REJECT)) {
+        // Send rejection notification
+        sendPointRequestNotification(
+                pointRequestEntity.getEmployee().getId(),
+                pointRequestEntity.getCompany().getId(),
+                ConstStatus.REJECT,
+                pointRequestEntity.getAmount());
       }
+
 
       pointRequestEntity = pointRequestRepository.save(pointRequestEntity);
 
@@ -162,5 +179,42 @@ public class PointRequestServiceImpl implements IPointRequestService {
       }
       throw new AppException(ErrorCode.POINT_REQUEST_ERROR);
     }
+  }
+
+  private void sendPointRequestNotification(String userId, String companyId, String status, Long amount) {
+    try {
+      // Get all devices registered for the user
+      List<String> deviceIds = deviceManagementService.getUserDevices(userId);
+
+      String title = status.equals(ConstStatus.APPROVED) ?
+              "Point Request Approved" : "Point Request Rejected";
+
+      String message = status.equals(ConstStatus.APPROVED) ?
+              "Your point request for " + amount + " has been approved." :
+              "Your point request for " + amount + " has been rejected.";
+
+      // Additional data for the notification
+      String data = "requestType:point,status:" + status + ",amount:" + amount;
+
+      if (deviceIds == null || deviceIds.isEmpty()) {
+        // Send to company topic as a fallback
+        firebaseNotificationService.sendNotificationToTopic(
+                "company_" + companyId,
+                title,
+                message,
+                data);
+      } else {
+        // Send to each device token
+        for (String deviceId : deviceIds) {
+          firebaseNotificationService.sendNotificationToToken(
+                  deviceId,
+                  title,
+                  message,
+                  data);
+        }
+      }
+    } catch (Exception e) {
+
+        }
   }
 }
