@@ -177,4 +177,16 @@ public class MachineServiceImpl implements IMachineService {
       throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
     }
   }
+
+  @Override
+  public Integer countMachineByCompanyId(String companyId) {
+    try {
+      return machineRepository.countMachineByCompanyId(companyId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+    }
+  }
 }

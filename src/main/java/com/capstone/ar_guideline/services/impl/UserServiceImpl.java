@@ -407,4 +407,16 @@ public class UserServiceImpl implements IUserService {
       throw new AppException(ErrorCode.USER_NOT_EXISTED);
     }
   }
+
+  @Override
+  public Integer countStaffByCompanyId(String companyId) {
+    try {
+      return userRepository.countByCompany_IdAndStatus(companyId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_NOT_EXISTED);
+    }
+  }
 }

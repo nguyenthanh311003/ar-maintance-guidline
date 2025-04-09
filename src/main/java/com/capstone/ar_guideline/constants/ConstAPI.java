@@ -50,6 +50,7 @@ public class ConstAPI {
     public static final String REGISTER = "api/v1/register";
     public static final String REGISTER_FOR_COMPANY = "api/v1/register/company";
     public static final String PREFIX_USER = "api/v1/user/";
+    public static final String COUNT_STAFF_BY_COMPANY_ID = "api/v1/employee/company/";
     public static final String GET_USER_TO_ASSIGN = "course/";
   }
 
@@ -195,6 +196,7 @@ public class ConstAPI {
     public static final String GET_MACHINES_BY_GUIDELINE_ID = "api/v1/machine/guideline/";
     public static final String CREATE_MACHINE = "api/v1/machine";
     public static final String UPDATE_MACHINE = "api/v1/machine/";
+    public static final String GET_MACHINE_QR_BY_MACHINE_ID = "api/v1/machine-qr/machine/";
   }
 
   public static class MachineTypeAttributeAPI {
@@ -225,6 +227,4 @@ public class ConstAPI {
     public static final String SEND_TO_TOPIC = "api/v1/notifications/send/topic";
     public static final String SEND_TO_TOKEN = "api/v1/notifications/send/token";
   }
-
-
 }

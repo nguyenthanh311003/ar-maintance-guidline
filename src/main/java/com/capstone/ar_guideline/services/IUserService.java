@@ -40,4 +40,6 @@ public interface IUserService {
   Boolean deleteUser(String id);
 
   User findCompanyAdminByCompanyId(String companyId);
+
+  Integer countStaffByCompanyId(String companyId);
 }

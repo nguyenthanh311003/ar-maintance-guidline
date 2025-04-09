@@ -45,9 +45,7 @@ public class CompanyRequestService implements ICompanyRequestService {
           companyRequestRepository.findAllForDesigner(pageable, status, companyName, designerEmail);
 
       List<CompanyRequestResponse> companyRequestResponses =
-          companyRequests.getContent().stream()
-              .map(CompanyRequestMapper::fromEntityToResponse)
-              .toList();
+          companyRequests.stream().map(CompanyRequestMapper::fromEntityToResponse).toList();
 
       pagingModel.setPage(page);
       pagingModel.setSize(size);

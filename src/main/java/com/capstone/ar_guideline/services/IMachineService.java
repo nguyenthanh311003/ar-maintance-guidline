@@ -28,4 +28,6 @@ public interface IMachineService {
   Integer countMachineByMachineType(String machineTypeId);
 
   List<Machine> getMachineByGuidelineId(String guidelineId);
+
+  Integer countMachineByCompanyId(String companyId);
 }
