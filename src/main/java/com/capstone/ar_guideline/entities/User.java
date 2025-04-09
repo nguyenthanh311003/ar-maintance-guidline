@@ -57,8 +57,10 @@ public class User implements UserDetails, Serializable {
   @UpdateTimestamp
   private LocalDateTime updatedDate;
 
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(new SimpleGrantedAuthority(role.getRoleName()));
+
   }
 }
