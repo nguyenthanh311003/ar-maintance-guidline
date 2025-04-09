@@ -22,4 +22,5 @@ public class MachineResponse {
   String qrCode;
   List<MachineTypeValueResponse> machineTypeValueResponses;
   List<Machine_QRResponse> machineQrsResponses;
+  int qrCodesCount;
 }

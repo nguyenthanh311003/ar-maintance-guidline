@@ -425,7 +425,19 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
           machineService.getMachineByCompanyId(pageable, companyId, keyword, machineTypeName);
 
       List<MachineResponse> machineResponses =
-          machines.stream().map(MachineMapper::fromEntityToMachineResponse).toList();
+          machines.stream().map(machine -> {
+            MachineResponse machineResponse = MachineMapper.fromEntityToMachineResponse(machine);
+            Integer numOfQrCode =
+                machineQrService.countMachineQrByMachineId(machine.getId());
+
+            if (Objects.isNull(numOfQrCode)) {
+              machineResponse.setQrCodesCount(0);
+            } else {
+              machineResponse.setQrCodesCount(numOfQrCode);
+            }
+
+            return machineResponse;
+          }).toList();
 
       pagingModel.setPage(page);
       pagingModel.setSize(size);
@@ -1054,6 +1066,22 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         throw exception;
       }
       throw new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<Machine_QRResponse> getMachineQrByMachineId(String machineId) {
+    try {
+        List<Machine_QR> machineQrByMachineId = machineQrService.getByMachineId(machineId);
+
+        return machineQrByMachineId.stream()
+            .map(Machine_QRMapper::fromEntityToMachine_QRResponse)
+            .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_QR_NOT_EXISTED);
     }
   }
 }
