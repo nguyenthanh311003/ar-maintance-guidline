@@ -53,4 +53,28 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
               + "ORDER BY m.month",
       nativeQuery = true)
   List<Object[]> getMonthlyPaidOrderAmounts(@Param("year") int year);
+
+  @Query(
+      value =
+          "SELECT COUNT(o) FROM OrderTransaction o WHERE o.user.company.id = :companyId AND o.status = 'PAID' GROUP BY o.user.company.id")
+  Integer countOrderTransactionPaidByCompanyId(String companyId);
+
+  @Query(
+      value =
+          "SELECT COUNT(o) FROM OrderTransaction o WHERE o.user.company.id = :companyId AND o.status = 'PENDING' GROUP BY o.user.company.id")
+  Integer countOrderTransactionPendingByCompanyId(String companyId);
+
+  @Query(
+      value =
+          "SELECT COUNT(o) FROM OrderTransaction o WHERE o.user.company.id = :companyId AND o.status = 'FAILED' GROUP BY o.user.company.id")
+  Integer countOrderTransactionFailedByCompanyId(String companyId);
+
+  @Query(value = "SELECT COUNT(o) FROM OrderTransaction o WHERE o.status = 'PAID'")
+  Integer countOrderTransactionPaid();
+
+  @Query(value = "SELECT COUNT(o) FROM OrderTransaction o WHERE o.status = 'PENDING'")
+  Integer countOrderTransactionPending();
+
+  @Query(value = "SELECT COUNT(o) FROM OrderTransaction o WHERE o.status = 'FAILED'")
+  Integer countOrderTransactionFailed();
 }

@@ -389,8 +389,11 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
           String body = "A new course '" + courseById.getTitle() + "' is now available";
 
           // Format data payload for the notification
-          String data = "type:new_course,courseId:" + courseById.getId() +
-                  ",courseName:" + courseById.getTitle();
+          String data =
+              "type:new_course,courseId:"
+                  + courseById.getId()
+                  + ",courseName:"
+                  + courseById.getTitle();
 
           try {
             // Send notification to company topic
@@ -425,19 +428,23 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
           machineService.getMachineByCompanyId(pageable, companyId, keyword, machineTypeName);
 
       List<MachineResponse> machineResponses =
-          machines.stream().map(machine -> {
-            MachineResponse machineResponse = MachineMapper.fromEntityToMachineResponse(machine);
-            Integer numOfQrCode =
-                machineQrService.countMachineQrByMachineId(machine.getId());
+          machines.stream()
+              .map(
+                  machine -> {
+                    MachineResponse machineResponse =
+                        MachineMapper.fromEntityToMachineResponse(machine);
+                    Integer numOfQrCode =
+                        machineQrService.countMachineQrByMachineId(machine.getId());
 
-            if (Objects.isNull(numOfQrCode)) {
-              machineResponse.setQrCodesCount(0);
-            } else {
-              machineResponse.setQrCodesCount(numOfQrCode);
-            }
+                    if (Objects.isNull(numOfQrCode)) {
+                      machineResponse.setQrCodesCount(0);
+                    } else {
+                      machineResponse.setQrCodesCount(numOfQrCode);
+                    }
 
-            return machineResponse;
-          }).toList();
+                    return machineResponse;
+                  })
+              .toList();
 
       pagingModel.setPage(page);
       pagingModel.setSize(size);
@@ -528,8 +535,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       //                                        })
       //                                .toList();
       //            }
-
-
 
       return MachineMapper.fromEntityToMachineResponseForCreate(
           newMachine, machineTypeValueResponses);
@@ -762,6 +767,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                     Integer numOfMachine = machineService.countMachineByMachineType(mt.getId());
                     Integer numOfAttribute =
                         machineTypeAttributeService.countNumOfAttributeByMachineTypeId(mt.getId());
+                    Integer numOfMachineUsing = machineService.countMachineByCompanyId(companyId);
 
                     if (!Objects.isNull(numOfAttribute)) {
                       machineTypeResponse.setNumOfAttribute(numOfAttribute);
@@ -769,6 +775,10 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
 
                     if (!Objects.isNull(numOfMachine)) {
                       machineTypeResponse.setNumOfMachine(numOfMachine);
+                    }
+
+                    if (!Objects.isNull(numOfMachineUsing)) {
+                      machineTypeResponse.setNumOfMachineUsing(numOfMachineUsing);
                     }
 
                     return machineTypeResponse;
@@ -933,8 +943,8 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       String topic = "company_" + request.getCompanyId();
       String title = "New Course Available";
       String body = "A new course '" + newCourse.getTitle() + "' is now available";
-      String data = "type:new_course,courseId:" + newCourse.getId() +
-              ",courseName:" + newCourse.getTitle();
+      String data =
+          "type:new_course,courseId:" + newCourse.getId() + ",courseName:" + newCourse.getTitle();
 
       try {
         firebaseNotificationService.sendNotificationToTopic(topic, title, body, data);
@@ -942,7 +952,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         // Log but don't fail the course creation if notification fails
         log.error("Failed to send course creation notification", e);
       }
-
 
       return CourseMapper.fromEntityToCourseResponse(newCourse);
     } catch (Exception exception) {
@@ -1072,11 +1081,11 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   @Override
   public List<Machine_QRResponse> getMachineQrByMachineId(String machineId) {
     try {
-        List<Machine_QR> machineQrByMachineId = machineQrService.getByMachineId(machineId);
+      List<Machine_QR> machineQrByMachineId = machineQrService.getByMachineId(machineId);
 
-        return machineQrByMachineId.stream()
-            .map(Machine_QRMapper::fromEntityToMachine_QRResponse)
-            .toList();
+      return machineQrByMachineId.stream()
+          .map(Machine_QRMapper::fromEntityToMachine_QRResponse)
+          .toList();
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

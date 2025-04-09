@@ -79,12 +79,12 @@ public class Machine_QRServiceImpl implements IMachine_QRService {
   @Override
   public Integer countMachineQrByMachineId(String machineId) {
     try {
-        return machineQrRepository.countMachineQrByMachineId(machineId);
+      return machineQrRepository.countMachineQrByMachineId(machineId);
     } catch (Exception exception) {
-        if (exception instanceof AppException) {
-            throw exception;
-        }
-        throw new AppException(ErrorCode.MACHINE_QR_NOT_EXISTED);
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_QR_NOT_EXISTED);
     }
   }
 }

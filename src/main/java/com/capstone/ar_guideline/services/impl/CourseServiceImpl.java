@@ -130,8 +130,8 @@ public class CourseServiceImpl implements ICourseService {
       String topic = "company_" + request.getCompanyId();
       String title = "New Course Available";
       String body = "A new course '" + newCourse.getTitle() + "' is now available";
-      String data = "type:new_course,courseId:" + newCourse.getId() +
-              ",courseName:" + newCourse.getTitle();
+      String data =
+          "type:new_course,courseId:" + newCourse.getId() + ",courseName:" + newCourse.getTitle();
 
       try {
         firebaseNotificationService.sendNotificationToTopic(topic, title, body, data);
@@ -139,7 +139,6 @@ public class CourseServiceImpl implements ICourseService {
         // Log but don't fail the course creation if notification fails
         log.error("Failed to send course creation notification", e);
       }
-
 
       return CourseMapper.fromEntityToCourseResponse(newCourse);
     } catch (Exception exception) {

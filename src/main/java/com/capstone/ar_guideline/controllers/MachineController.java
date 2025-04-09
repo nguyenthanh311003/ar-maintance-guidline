@@ -40,11 +40,10 @@ public class MachineController {
 
   @GetMapping(value = ConstAPI.MachineAPI.GET_MACHINE_QR_BY_MACHINE_ID + "{machineId}")
   public ApiResponse<List<Machine_QRResponse>> getMachineQRByMachineId(
-          @PathVariable String machineId) {
+      @PathVariable String machineId) {
     return ApiResponse.<List<Machine_QRResponse>>builder()
-            .result(
-                    arGuidelineService.getMachineQrByMachineId(machineId))
-            .build();
+        .result(arGuidelineService.getMachineQrByMachineId(machineId))
+        .build();
   }
 
   @DeleteMapping(value = ConstAPI.MachineAPI.DELETE_MACHINE_BY_ID + "{machineId}")

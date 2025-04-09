@@ -17,4 +17,5 @@ public class MachineTypeResponse {
   List<MachineTypeAttributeResponse> machineTypeAttributeResponses;
   int numOfAttribute;
   int numOfMachine;
+  int numOfMachineUsing;
 }
