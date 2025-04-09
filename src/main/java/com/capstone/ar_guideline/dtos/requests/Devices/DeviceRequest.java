@@ -1,4 +1,4 @@
-﻿package com.capstone.ar_guideline.dtos.requests.Devices;
+package com.capstone.ar_guideline.dtos.requests.Devices;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-﻿package com.capstone.ar_guideline.controllers;
+package com.capstone.ar_guideline.controllers;
 
 import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.Devices.DeviceRequest;
