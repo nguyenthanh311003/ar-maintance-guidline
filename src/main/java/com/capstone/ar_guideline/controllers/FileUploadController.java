@@ -51,7 +51,6 @@ public class FileUploadController {
     return fileStorageService.storeFile(file);
   }
 
-
   @GetMapping(ConstAPI.FileAPI.FILE + "/{filename}/size")
   public ResponseEntity<Long> getFileSize(@PathVariable String filename) {
     try {

@@ -20,4 +20,7 @@ public class OrderTransactionResponse {
   String email;
   LocalDateTime createdDate;
   LocalDateTime updatedDate;
+  int numsOfPaidTransaction;
+  int numsOfFailedTransaction;
+  int numsOfPendingTransaction;
 }

@@ -14,6 +14,7 @@ import com.capstone.ar_guideline.services.IOrderTransactionService;
 import com.capstone.ar_guideline.services.IUserService;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -118,7 +119,32 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
 
       List<OrderTransactionResponse> orderTransactionResponses =
           orderTransactions.getContent().stream()
-              .map(OrderTransactionMapper::fromEntityToOrderTransactionResponse)
+              .map(
+                  ot -> {
+                    OrderTransactionResponse orderTransactionResponse =
+                        OrderTransactionMapper.fromEntityToOrderTransactionResponse(ot);
+                    Integer numsOfPaidTransaction =
+                        orderTransactionRepository.countOrderTransactionPaidByCompanyId(companyId);
+
+                    orderTransactionResponse.setNumsOfPaidTransaction(
+                        Objects.requireNonNullElse(numsOfPaidTransaction, 0));
+
+                    Integer numsOfPendingTransaction =
+                        orderTransactionRepository.countOrderTransactionPendingByCompanyId(
+                            companyId);
+
+                    orderTransactionResponse.setNumsOfPendingTransaction(
+                        Objects.requireNonNullElse(numsOfPendingTransaction, 0));
+
+                    Integer numsOfFailedTransaction =
+                        orderTransactionRepository.countOrderTransactionFailedByCompanyId(
+                            companyId);
+
+                    orderTransactionResponse.setNumsOfFailedTransaction(
+                        Objects.requireNonNullElse(numsOfFailedTransaction, 0));
+
+                    return orderTransactionResponse;
+                  })
               .toList();
 
       pagingModel.setPage(page);
@@ -146,7 +172,30 @@ public class OrderTransactionServiceImpl implements IOrderTransactionService {
 
       List<OrderTransactionResponse> orderTransactionResponses =
           orderTransactions.getContent().stream()
-              .map(OrderTransactionMapper::fromEntityToOrderTransactionResponse)
+              .map(
+                  ot -> {
+                    OrderTransactionResponse orderTransactionResponse =
+                        OrderTransactionMapper.fromEntityToOrderTransactionResponse(ot);
+                    Integer numsOfPaidTransaction =
+                        orderTransactionRepository.countOrderTransactionPaid();
+
+                    orderTransactionResponse.setNumsOfPaidTransaction(
+                        Objects.requireNonNullElse(numsOfPaidTransaction, 0));
+
+                    Integer numsOfPendingTransaction =
+                        orderTransactionRepository.countOrderTransactionPending();
+
+                    orderTransactionResponse.setNumsOfPendingTransaction(
+                        Objects.requireNonNullElse(numsOfPendingTransaction, 0));
+
+                    Integer numsOfFailedTransaction =
+                        orderTransactionRepository.countOrderTransactionFailed();
+
+                    orderTransactionResponse.setNumsOfFailedTransaction(
+                        Objects.requireNonNullElse(numsOfFailedTransaction, 0));
+
+                    return orderTransactionResponse;
+                  })
               .toList();
 
       pagingModel.setPage(page);

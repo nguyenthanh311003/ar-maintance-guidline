@@ -5,6 +5,7 @@ import com.capstone.ar_guideline.dtos.requests.Machine.MachineCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Machine.MachineModifyRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
+import com.capstone.ar_guideline.dtos.responses.Machine_QR.Machine_QRResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IARGuidelineService;
 import com.capstone.ar_guideline.services.IMachineService;
@@ -34,6 +35,14 @@ public class MachineController {
         .result(
             arGuidelineService.getMachinesByCompanyId(
                 page, size, companyId, keyword, machineTypeName))
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.MachineAPI.GET_MACHINE_QR_BY_MACHINE_ID + "{machineId}")
+  public ApiResponse<List<Machine_QRResponse>> getMachineQRByMachineId(
+      @PathVariable String machineId) {
+    return ApiResponse.<List<Machine_QRResponse>>builder()
+        .result(arGuidelineService.getMachineQrByMachineId(machineId))
         .build();
   }
 

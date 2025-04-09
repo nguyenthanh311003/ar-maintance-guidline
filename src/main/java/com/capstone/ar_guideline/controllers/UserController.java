@@ -69,6 +69,13 @@ public class UserController {
         .build();
   }
 
+  @GetMapping(value = ConstAPI.UserAPI.COUNT_STAFF_BY_COMPANY_ID + "{companyId}")
+  public ApiResponse<Integer> countStaffByCompanyId(@PathVariable String companyId) {
+    return ApiResponse.<Integer>builder()
+        .result(userService.countStaffByCompanyId(companyId))
+        .build();
+  }
+
   @PostMapping(value = ConstAPI.UserAPI.LOGIN)
   ApiResponse<AuthenticationResponse> login(@RequestBody LoginRequest loginRequest) {
     try {
