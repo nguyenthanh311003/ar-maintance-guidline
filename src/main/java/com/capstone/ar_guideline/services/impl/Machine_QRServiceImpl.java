@@ -87,4 +87,16 @@ public class Machine_QRServiceImpl implements IMachine_QRService {
       throw new AppException(ErrorCode.MACHINE_QR_NOT_EXISTED);
     }
   }
+
+  @Override
+  public Machine_QR getByMachineIdAndGuidelineId(String machineId, String guidelineId) {
+    try {
+      return machineQrRepository.getByMachineIdAndGuidelineId(machineId, guidelineId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_QR_NOT_EXISTED);
+    }
+  }
 }

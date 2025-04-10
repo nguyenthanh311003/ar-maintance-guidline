@@ -13,6 +13,7 @@ import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
 import com.capstone.ar_guideline.dtos.responses.InstructionDetail.InstructionDetailResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.HeaderResponse;
+import com.capstone.ar_guideline.dtos.responses.Machine.MachineGuidelineResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineType.MachineTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeAttribute.MachineTypeAttributeResponse;
@@ -1044,6 +1045,41 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
                 machineResponse.setMachineQrsResponses(machineQrResponses);
 
                 return machineResponse;
+              })
+          .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<MachineGuidelineResponse> getMachineForMachineTabByGuidelineId(String guidelineId) {
+    try {
+      Course courseById = courseService.findById(guidelineId);
+
+      if (Objects.isNull(courseById)) {
+        throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+      }
+
+      List<Machine> machines = machineService.getMachineByGuidelineId(courseById.getId());
+
+      return machines.stream()
+          .map(
+              m -> {
+                MachineGuidelineResponse machineGuidelineResponse =
+                    MachineMapper.fromEntityToMachineGuidelineResponse(m);
+
+                Machine_QR machineQrByMachineIdAndGuidelineId =
+                    machineQrService.getByMachineIdAndGuidelineId(m.getId(), courseById.getId());
+                Machine_QRResponse machineQrResponses =
+                    Machine_QRMapper.fromEntityToMachine_QRResponse(
+                        machineQrByMachineIdAndGuidelineId);
+
+                machineGuidelineResponse.setMachineQrsResponse(machineQrResponses);
+                return machineGuidelineResponse;
               })
           .toList();
     } catch (Exception exception) {
