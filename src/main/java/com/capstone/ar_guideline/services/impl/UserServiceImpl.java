@@ -109,6 +109,7 @@ public class UserServiceImpl implements IUserService {
         throw new AppException(ErrorCode.USER_PHONE_EXISTED);
       }
 
+      user.setUsername(signUpWitRoleRequest.getEmail());
       user.setPhone(signUpWitRoleRequest.getPhone());
       String passwordToSend = signUpWitRoleRequest.getPassword();
       user.setRole(role);
@@ -165,6 +166,7 @@ public class UserServiceImpl implements IUserService {
           CompanyCreationRequest.builder().companyName(signUpRequest.getCompany()).build();
       Company newCompany = companyService.create(companyCreationRequest);
       User user = UserMapper.fromSignUpRequestToEntity(signUpRequest);
+      user.setUsername(signUpRequest.getEmail());
       user.setStatus(ConstStatus.ACTIVE_STATUS);
       user.setRole(role);
       user.setCompany(newCompany);
