@@ -62,7 +62,7 @@ public interface IARGuidelineService {
 
   MachineResponse getMachineById(String machineId);
 
-  MachineResponse getMachineByCode(String machineCode);
+  MachineResponse getMachineByCode(String machineCode, String companyId);
 
   MachineResponse updateMachineById(String machineId, MachineModifyRequest request);
 

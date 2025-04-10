@@ -154,7 +154,6 @@ public class UserServiceImpl implements IUserService {
         throw new AppException(ErrorCode.USER_EXISTED);
       }
 
-
       var userByPhone = userRepository.findByPhone(signUpRequest.getPhone());
 
       if (!userByPhone.isEmpty()) {

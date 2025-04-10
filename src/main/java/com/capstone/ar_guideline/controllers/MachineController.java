@@ -60,10 +60,12 @@ public class MachineController {
         .build();
   }
 
-  @GetMapping(value = ConstAPI.MachineAPI.GET_MACHINES_BY_CODE + "{machineCode}")
-  public ApiResponse<MachineResponse> getMachineByCode(@PathVariable String machineCode) {
+  @GetMapping(
+      value = ConstAPI.MachineAPI.GET_MACHINES_BY_CODE + "{machineCode}" + "/company/{companyId}")
+  public ApiResponse<MachineResponse> getMachineByCode(
+      @PathVariable String machineCode, @PathVariable String companyId) {
     return ApiResponse.<MachineResponse>builder()
-        .result(arGuidelineService.getMachineByCode(machineCode))
+        .result(arGuidelineService.getMachineByCode(machineCode, companyId))
         .build();
   }
 

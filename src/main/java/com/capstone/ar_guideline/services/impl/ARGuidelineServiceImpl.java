@@ -647,9 +647,9 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   }
 
   @Override
-  public MachineResponse getMachineByCode(String machineCode) {
+  public MachineResponse getMachineByCode(String machineCode, String companyId) {
     try {
-      Machine machineByMachineCode = machineService.findByCode(machineCode);
+      Machine machineByMachineCode = machineService.findByCodeAndCompanyId(machineCode, companyId);
       List<MachineTypeValueResponse> machineTypeValueResponses =
           getMachineTypeAttributeByMachineTypeId(
               machineByMachineCode.getModelType().getId(), machineByMachineCode.getId());

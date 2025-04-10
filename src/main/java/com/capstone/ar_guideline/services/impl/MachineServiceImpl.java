@@ -91,9 +91,10 @@ public class MachineServiceImpl implements IMachineService {
   }
 
   @Override
-  public Machine findByCode(String machineCode) {
+  public Machine findByCodeAndCompanyId(String machineCode, String companyId) {
     try {
-      return machineRepository.getMachineByMachineCode(machineCode);
+      return machineRepository.getMachineByMachineCodeAndCompanyIdReturnObject(
+          machineCode, companyId);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
