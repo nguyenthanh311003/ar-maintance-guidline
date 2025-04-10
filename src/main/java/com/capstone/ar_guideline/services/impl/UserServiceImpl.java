@@ -10,6 +10,7 @@ import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.User.AuthenticationResponse;
 import com.capstone.ar_guideline.dtos.responses.User.UserResponse;
 import com.capstone.ar_guideline.entities.Company;
+import com.capstone.ar_guideline.entities.ServicePrice;
 import com.capstone.ar_guideline.entities.User;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
@@ -116,16 +117,18 @@ public class UserServiceImpl implements IUserService {
       user.setStatus(ConstStatus.ACTIVE_STATUS);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
+
+      var jwt = jwtService.generateToken(user);
+      UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
+      emailService.sendActiveAccountToCompany(user.getEmail(), user.getUsername(), passwordToSend);
+
       if (!signUpWitRoleRequest.getRoleName().equals("DESIGNER")) {
         walletService.createWallet(user, 0L, "VND");
         if (signUpWitRoleRequest.getPoints() > 0) {
           walletService.updateBalanceBySend(
-              signUpWitRoleRequest.getPoints(), user.getId(), companyUser.getId(), null);
+                  signUpWitRoleRequest.getPoints(), user.getId(), companyUser.getId(), null);
         }
       }
-      var jwt = jwtService.generateToken(user);
-      UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
-      emailService.sendActiveAccountToCompany(user.getEmail(), user.getUsername(), passwordToSend);
       return AuthenticationResponse.builder()
           .message("User created successfully")
           .token(jwt)
