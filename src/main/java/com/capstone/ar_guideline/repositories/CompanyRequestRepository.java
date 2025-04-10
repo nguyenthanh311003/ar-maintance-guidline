@@ -2,13 +2,15 @@ package com.capstone.ar_guideline.repositories;
 
 import com.capstone.ar_guideline.entities.CompanyRequest;
 import java.util.List;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface CompanyRequestRepository extends JpaRepository<CompanyRequest, Long> {
+public interface CompanyRequestRepository extends JpaRepository<CompanyRequest, UUID> {
   List<CompanyRequest> findByCompany_IdOrderByCreatedAtDesc(String companyId);
 
   @Query(
@@ -28,9 +30,8 @@ public interface CompanyRequestRepository extends JpaRepository<CompanyRequest, 
 
   @Query(
       " SELECT c FROM CompanyRequest c "
-          + "WHERE (:status IS NULL OR LOWER(c.status) LIKE LOWER(CONCAT('%', :status, '%')))"
+          + "WHERE (:status IS NULL  OR LOWER(c.status) LIKE LOWER(CONCAT('%', :status, '%')))"
           + "AND (:companyName IS NULL OR LOWER(c.company.companyName) LIKE LOWER(CONCAT('%', :companyName, '%'))) "
-          + "AND (:designerEmail IS NULL OR LOWER(c.designer.email) LIKE LOWER(CONCAT('%', :designerEmail, '%'))) "
           + "ORDER BY c.createdAt DESC")
   Page<CompanyRequest> findAllForDesigner(
       Pageable pageable,

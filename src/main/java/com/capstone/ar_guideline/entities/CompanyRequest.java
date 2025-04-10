@@ -4,6 +4,9 @@ import com.capstone.ar_guideline.configurations.CompanyRequestListener;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -29,6 +32,9 @@ public class CompanyRequest implements Serializable {
   @ManyToOne(optional = false)
   @JoinColumn(name = "company_id", nullable = false)
   private Company company;
+
+  @OneToMany(mappedBy = "companyRequest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ChatBox> chatBoxes = new ArrayList<>();
 
   @ManyToOne
   @JoinColumn(name = "designer_id")

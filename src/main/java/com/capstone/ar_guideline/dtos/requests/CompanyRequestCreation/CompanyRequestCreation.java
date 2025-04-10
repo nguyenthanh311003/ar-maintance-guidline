@@ -1,26 +1,28 @@
 package com.capstone.ar_guideline.dtos.requests.CompanyRequestCreation;
 
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionRequest;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CompanyRequestCreation {
-  private String requestId;
-  private String requestSubject;
-  private String requestDescription;
-  private String companyId;
-  private String machineTypeId;
-  private String designerId;
-  private String requesterId;
-  private String assetModelId;
-  private String status;
-  private LocalDateTime createdAt;
-  private LocalDateTime completedAt;
-  private LocalDateTime cancelledAt;
+   String requestId;
+   String requestSubject;
+   String requestDescription;
+   String companyId;
+   String machineTypeId;
+   String designerId;
+   String requesterId;
+   String assetModelId;
+   String status;
+   RequestRevisionRequest requestRevision;
+   LocalDateTime createdAt;
+   LocalDateTime completedAt;
+   LocalDateTime cancelledAt;
 }
