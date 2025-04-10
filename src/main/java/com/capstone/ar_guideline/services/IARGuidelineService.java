@@ -10,6 +10,7 @@ import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
+import com.capstone.ar_guideline.dtos.responses.Machine.MachineGuidelineResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineType.MachineTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeAttribute.MachineTypeAttributeResponse;
@@ -83,6 +84,8 @@ public interface IARGuidelineService {
   List<ModelResponse> getModelByMachineTypeId(String machineTypeId, String companyId);
 
   List<MachineResponse> getMachineByGuidelineId(String guidelineId);
+
+  List<MachineGuidelineResponse> getMachineForMachineTabByGuidelineId(String guidelineId);
 
   MachineTypeResponse getMachineTypeByGuidelineCode(String guidelineCode);
 

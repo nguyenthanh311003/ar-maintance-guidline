@@ -18,4 +18,10 @@ public interface Machine_QRRepository extends JpaRepository<Machine_QR, String> 
       value =
           "SELECT COUNT(mqr) FROM Machine_QR mqr WHERE mqr.machine.id = :machineId GROUP BY mqr.machine.id")
   Integer countMachineQrByMachineId(@Param("machineId") String machineId);
+
+  @Query(
+      value =
+          "SELECT mqr FROM Machine_QR mqr WHERE mqr.machine.id = :machineId AND mqr.guideline.id = :guidelineId")
+  Machine_QR getByMachineIdAndGuidelineId(
+      @Param("machineId") String machineId, @Param("guidelineId") String guidelineId);
 }
