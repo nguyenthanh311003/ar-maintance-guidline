@@ -154,6 +154,13 @@ public class UserServiceImpl implements IUserService {
         throw new AppException(ErrorCode.USER_EXISTED);
       }
 
+
+      var userByPhone = userRepository.findByPhone(signUpRequest.getPhone());
+
+      if (!userByPhone.isEmpty()) {
+        throw new AppException(ErrorCode.USER_PHONE_EXISTED);
+      }
+
       String passwordToSend = signUpRequest.getPassword();
       CompanyCreationRequest companyCreationRequest =
           CompanyCreationRequest.builder().companyName(signUpRequest.getCompany()).build();
