@@ -90,7 +90,7 @@ public class EmailService {
               + "Password: "
               + password
               + ".\n\n"
-              + "Please login to the platform and first subscribe the best plan for you.\n\n"
+              + "Please login to the platform and first by point for use our services.\n\n"
               + "URL: "
               + frontEndHost
               + ".\n\n"
