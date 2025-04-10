@@ -166,6 +166,7 @@ public enum ErrorCode {
   TOPIC_UNSUBSCRIPTION_FAILED(
       1127, "Failed to unsubscribe from notification topic", HttpStatus.BAD_REQUEST),
   NOTIFICATION_SEND_FAILED(1127, "Failed to send notification", HttpStatus.BAD_REQUEST),
+  USER_PHONE_EXISTED(1128, "User Phone existed !", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;
