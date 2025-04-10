@@ -77,6 +77,8 @@ public class WalletServiceImpl {
     }
   }
 
+
+
   public Wallet updateBalanceBySend(
       Long amount, String receiverId, String senderId, ServicePrice servicePrice) {
     Optional<Wallet> walletReceiverOptional = walletRepository.findByUserId(receiverId);

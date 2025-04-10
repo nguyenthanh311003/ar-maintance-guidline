@@ -20,6 +20,8 @@ public class RequestRevisionRequest {
   private Integer priceProposal; // Price proposed by the designer
   private String rejectionReason; // Reason for rejection (if applicable)
   private String userRejectId; // ID of the user who rejected the request
+  private String modelName;
+  private String description;
   private MultipartFile modelFile;
   private List<MultipartFile> revisionFiles; // List of files associated with the revision request
 }

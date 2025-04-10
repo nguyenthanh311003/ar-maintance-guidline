@@ -1,15 +1,11 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.constants.ConstStatus;
+import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionRequest;
 import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionResponse;
-import com.capstone.ar_guideline.entities.CompanyRequest;
-import com.capstone.ar_guideline.entities.RequestRevision;
-import com.capstone.ar_guideline.entities.RevisionFile;
-import com.capstone.ar_guideline.entities.User;
-import com.capstone.ar_guideline.repositories.CompanyRequestRepository;
-import com.capstone.ar_guideline.repositories.RequestRevisionRepository;
-import com.capstone.ar_guideline.repositories.UserRepository;
+import com.capstone.ar_guideline.entities.*;
+import com.capstone.ar_guideline.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +23,11 @@ public class RequestRevisionService {
     private final RequestRevisionRepository requestRevisionRepository;
     private final CompanyRequestRepository companyRequestRepository;
     private final UserRepository userRepository;
+    private final ModelServiceImpl modelService;
+    private final ModelRepository modelRepository;
+    private final WalletServiceImpl walletService;
+    private final ServicePricerRepository servicePricerRepository;
+
     @Transactional
     public RequestRevisionResponse create(RequestRevisionRequest request) {
 
@@ -51,7 +52,7 @@ public class RequestRevisionService {
                    .collect(Collectors.toList());
 
 
-           requestRevision.setRevisionFiles(revisionFiles);
+              requestRevision.setRevisionFiles(revisionFiles);
               requestRevision = requestRevisionRepository.save(requestRevision);
 
            return mapToResponse(requestRevision);
@@ -93,8 +94,30 @@ public class RequestRevisionService {
 
             case ConstStatus.APPROVED:
                 requestRevision.setStatus(request.getStatus());
+                Model model =  new Model();
+                model.setFile(requestRevision.getModelFile());
+                model.setStatus(ConstStatus.ACTIVE_STATUS);
+                model.setModelType(ModelType.builder().id(requestRevision.getCompanyRequest().getMachineType().getId()).build());
+                model.setName(request.getModelName());
+                model.setDescription(request.getDescription());
+                model.setCompany(requestRevision.getCompanyRequest().getCompany());
+                       model.setPosition("0,0,0");
+                model.setRotation("0,0,0");
+                model.setScale("1");
+
+                modelRepository.save(model);
                 break;
             case ConstStatus.PROCESSING:
+                User company = userRepository.findUserByCompanyIdAndAdminRole(
+                        requestRevision.getCompanyRequest().getCompany().getId());
+              ServicePrice servicePrice =  servicePricerRepository.findByName("Model Request");
+
+                walletService.updateBalance(
+                        company.getWallet().getId(),
+                        Long.parseLong(requestRevision.getPriceProposal().toString()),
+                        false,
+                        servicePrice.getId(), company.getId(),
+                        null,null);
                 requestRevision.setStatus(request.getStatus());
                 break;
         }
