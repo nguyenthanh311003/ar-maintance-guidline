@@ -21,7 +21,12 @@ public interface IModelService {
   Model findById(String id);
 
   Page<Model> findByCompanyId(
-      Pageable pageable, String companyId, String type, String name, String code);
+      Pageable pageable,
+      String companyId,
+      String type,
+      String name,
+      String code,
+      String machineTypeId);
 
   List<ModelResponse> getModelUnused(String companyId);
 
@@ -36,4 +41,6 @@ public interface IModelService {
   void updateIsUsedByCourseId(String modelId);
 
   void changeStatus(String modelId);
+
+  List<Model> getModelsByMachineTypeIdAndCompanyId(String machineTypeId, String companyId);
 }

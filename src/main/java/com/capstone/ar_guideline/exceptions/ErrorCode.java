@@ -158,7 +158,15 @@ public enum ErrorCode {
   COMPANY_REQUEST_DELETE_FAILED(1124, "Company request delete fail", HttpStatus.BAD_REQUEST),
   COMPANY_REQUEST_NOT_EXISTED(1125, "Company request not existed", HttpStatus.NOT_FOUND),
   MACHINE_IS_CURRENT_USED(1126, "Machine being used now !", HttpStatus.BAD_REQUEST),
-  MACHINE_TYPE_IS_CURRENT_USED(1126, "Machine type being used now !", HttpStatus.BAD_REQUEST),
+  MACHINE_TYPE_IS_CURRENT_USED(1127, "Machine type being used now !", HttpStatus.BAD_REQUEST),
+  NOTIFICATION_REGISTRATION_FAILED(
+      1127, "Failed to register notification device", HttpStatus.BAD_REQUEST),
+  TOPIC_SUBSCRIPTION_FAILED(
+      1127, "Failed to subscribe to notification topic", HttpStatus.BAD_REQUEST),
+  TOPIC_UNSUBSCRIPTION_FAILED(
+      1127, "Failed to unsubscribe from notification topic", HttpStatus.BAD_REQUEST),
+  NOTIFICATION_SEND_FAILED(1127, "Failed to send notification", HttpStatus.BAD_REQUEST),
+  USER_PHONE_EXISTED(1128, "User Phone existed !", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;

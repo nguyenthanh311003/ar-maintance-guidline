@@ -17,9 +17,9 @@ public class UserMapper {
         .email(request.getEmail())
         .password(request.getPassword())
         .username(request.getUserName())
-        .phone(request.getPhone())
         .avatar(request.getAvatar())
         .status(request.getStatus())
+        .phone(request.getPhone())
         .expirationDate(request.getExpirationDate())
         .isPayAdmin(request.getIsPayAdmin())
         .build();

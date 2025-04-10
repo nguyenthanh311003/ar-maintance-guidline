@@ -13,4 +13,8 @@ public interface IMachine_QRService {
   Machine_QR findById(String id);
 
   List<Machine_QR> getByMachineId(String machineId);
+
+  Integer countMachineQrByMachineId(String machineId);
+
+  Machine_QR getByMachineIdAndGuidelineId(String machineId, String guidelineId);
 }

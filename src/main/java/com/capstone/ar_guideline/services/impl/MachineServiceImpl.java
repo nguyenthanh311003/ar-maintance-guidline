@@ -91,9 +91,10 @@ public class MachineServiceImpl implements IMachineService {
   }
 
   @Override
-  public Machine findByCode(String machineCode) {
+  public Machine findByCodeAndCompanyId(String machineCode, String companyId) {
     try {
-      return machineRepository.getMachineByMachineCode(machineCode);
+      return machineRepository.getMachineByMachineCodeAndCompanyIdReturnObject(
+          machineCode, companyId);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -158,6 +159,30 @@ public class MachineServiceImpl implements IMachineService {
   public Integer countMachineByMachineType(String machineTypeId) {
     try {
       return machineRepository.countByModelType_Id(machineTypeId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<Machine> getMachineByGuidelineId(String guidelineId) {
+    try {
+      return machineRepository.getMachineByGuidelineId(guidelineId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public Integer countMachineByCompanyId(String companyId) {
+    try {
+      return machineRepository.countMachineByCompanyId(companyId);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

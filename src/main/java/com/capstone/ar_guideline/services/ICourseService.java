@@ -4,6 +4,7 @@ import com.capstone.ar_guideline.dtos.requests.Course.CourseCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Course;
+import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ICourseService {
@@ -31,7 +32,7 @@ public interface ICourseService {
   CourseResponse findByTitleResponse(String title);
 
   PagingModel<CourseResponse> findByCompanyId(
-      int page, int size, String companyId, String title, String status);
+      int page, int size, String companyId, String title, String status, String machineTypeId);
 
   PagingModel<CourseResponse> findCourseNoMandatory(int page, int size, String companyId);
 
@@ -43,6 +44,10 @@ public interface ICourseService {
 
   Course findByModelId(String modelId);
 
+  List<Course> findByModelIdReturnList(String modelId);
+
+  List<Course> findByModelId(String modelId, String companyId);
+
   void changeStatusByCourseId(String courseId);
 
   void updateNumberOfScan(String id, String userId);
@@ -50,4 +55,6 @@ public interface ICourseService {
   void publishGuidelineFirstTime(String courseId, String userId);
 
   Boolean isPaid(String id);
+
+  List<Course> findByMachineTypeIdAndCompanyId(String machineTypeId, String companyId);
 }

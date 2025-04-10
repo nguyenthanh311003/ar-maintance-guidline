@@ -63,9 +63,10 @@ public class CourseController {
       @RequestParam(defaultValue = "1") int page,
       @RequestParam(defaultValue = "8") int size,
       @RequestParam(required = false) String title,
-      @RequestParam(required = false) String status) {
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) String machineTypeId) {
     return ApiResponse.<PagingModel<CourseResponse>>builder()
-        .result(courseService.findByCompanyId(page, size, companyId, title, status))
+        .result(courseService.findByCompanyId(page, size, companyId, title, status, machineTypeId))
         .build();
   }
 

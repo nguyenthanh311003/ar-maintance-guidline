@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -34,7 +33,7 @@ public class CompanyRequest implements Serializable {
   private Company company;
 
   @OneToMany(mappedBy = "companyRequest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ChatBox> chatBoxes = new ArrayList<>();
+  private List<ChatBox> chatBoxes = new ArrayList<>();
 
   @ManyToOne
   @JoinColumn(name = "designer_id")

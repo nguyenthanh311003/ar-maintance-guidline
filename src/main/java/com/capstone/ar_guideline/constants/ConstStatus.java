@@ -20,5 +20,5 @@ public class ConstStatus {
   public static final String COMPANY_CANCELLED = "COMPANY_CANCELLED";
   public static final String DESIGNER_CANCELLED = "DESIGNER_CANCELLED";
   public static final String ARCHIVED = "ARCHIVED";
-    public static final String PRICE_PROPOSED = "PRICE PROPOSED";
+  public static final String PRICE_PROPOSED = "PRICE PROPOSED";
 }

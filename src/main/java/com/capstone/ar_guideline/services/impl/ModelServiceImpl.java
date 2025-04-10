@@ -154,9 +154,14 @@ public class ModelServiceImpl implements IModelService {
 
   @Override
   public Page<Model> findByCompanyId(
-      Pageable pageable, String companyId, String type, String name, String code) {
+      Pageable pageable,
+      String companyId,
+      String type,
+      String name,
+      String code,
+      String machineTypeId) {
     try {
-      return modelRepository.findByCompanyId(pageable, companyId, type, name, code);
+      return modelRepository.findByCompanyId(pageable, companyId, type, name, code, machineTypeId);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -258,5 +263,17 @@ public class ModelServiceImpl implements IModelService {
       modelById.setStatus(ConstStatus.ACTIVE_STATUS);
     }
     modelRepository.save(modelById);
+  }
+
+  @Override
+  public List<Model> getModelsByMachineTypeIdAndCompanyId(String machineTypeId, String companyId) {
+    try {
+      return modelRepository.findAllByMachineTypeIdAndCompanyId(machineTypeId, companyId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
+    }
   }
 }

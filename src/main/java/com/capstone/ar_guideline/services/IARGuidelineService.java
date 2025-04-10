@@ -10,10 +10,12 @@ import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
+import com.capstone.ar_guideline.dtos.responses.Machine.MachineGuidelineResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineType.MachineTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeAttribute.MachineTypeAttributeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValueResponse;
+import com.capstone.ar_guideline.dtos.responses.Machine_QR.Machine_QRResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Machine;
@@ -27,7 +29,13 @@ public interface IARGuidelineService {
   CourseResponse findCourseById(String modelId);
 
   PagingModel<ModelResponse> findModelByCompanyId(
-      int page, int size, String companyId, String type, String name, String code);
+      int page,
+      int size,
+      String companyId,
+      String type,
+      String name,
+      String code,
+      String machineTypeId);
 
   ModelResponse findModelById(String id);
 
@@ -54,7 +62,7 @@ public interface IARGuidelineService {
 
   MachineResponse getMachineById(String machineId);
 
-  MachineResponse getMachineByCode(String machineCode);
+  MachineResponse getMachineByCode(String machineCode, String companyId);
 
   MachineResponse updateMachineById(String machineId, MachineModifyRequest request);
 
@@ -72,4 +80,14 @@ public interface IARGuidelineService {
   CourseResponse createGuideline(CourseCreationRequest request);
 
   CompanyRequestResponse uploadAgain(String requestId, ModelCreationRequest request);
+
+  List<ModelResponse> getModelByMachineTypeId(String machineTypeId, String companyId);
+
+  List<MachineResponse> getMachineByGuidelineId(String guidelineId);
+
+  List<MachineGuidelineResponse> getMachineForMachineTabByGuidelineId(String guidelineId);
+
+  MachineTypeResponse getMachineTypeByGuidelineCode(String guidelineCode);
+
+  List<Machine_QRResponse> getMachineQrByMachineId(String machineId);
 }

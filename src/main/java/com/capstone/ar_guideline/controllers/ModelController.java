@@ -30,6 +30,18 @@ public class ModelController {
         .build();
   }
 
+  @GetMapping(
+      value =
+          ConstAPI.ModelAPI.GET_MODELS_BY_MACHINE_TYPE_ID_AND_COMPANY_ID
+              + "{machineTypeId}"
+              + "/company/{companyId}")
+  ApiResponse<List<ModelResponse>> getModelsByMachineTypeIdAndCompanyId(
+      @PathVariable String machineTypeId, @PathVariable String companyId) {
+    return ApiResponse.<List<ModelResponse>>builder()
+        .result(arGuidelineService.getModelByMachineTypeId(machineTypeId, companyId))
+        .build();
+  }
+
   @GetMapping(value = ConstAPI.ModelAPI.GET_UNUSED_MODEL_BY_ID + "{companyId}")
   ApiResponse<List<ModelResponse>> getUnusedModelByCompanyId(@PathVariable String companyId) {
     return ApiResponse.<List<ModelResponse>>builder()
@@ -51,9 +63,12 @@ public class ModelController {
       @RequestParam(defaultValue = "10") int size,
       @RequestParam(defaultValue = "") String type,
       @RequestParam(defaultValue = "") String name,
-      @RequestParam(defaultValue = "") String code) {
+      @RequestParam(defaultValue = "") String code,
+      @RequestParam(defaultValue = "") String machineTypeId) {
     return ApiResponse.<PagingModel<ModelResponse>>builder()
-        .result(arGuidelineService.findModelByCompanyId(page, size, companyId, type, name, code))
+        .result(
+            arGuidelineService.findModelByCompanyId(
+                page, size, companyId, type, name, code, machineTypeId))
         .build();
   }
 

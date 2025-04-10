@@ -43,6 +43,21 @@ public interface MachineRepository extends JpaRepository<Machine, String> {
 
   @Query(
       value =
+          "SELECT m FROM Machine m WHERE m.machineCode = :machineCode AND m.company.id = :companyId")
+  Machine getMachineByMachineCodeAndCompanyIdReturnObject(
+      @Param("machineCode") String machineCode, @Param("companyId") String companyId);
+
+  @Query(
+      value =
           "SELECT COUNT(m) FROM Machine m WHERE m.modelType.id = :machineTypeId GROUP BY m.modelType.id")
   Integer countByModelType_Id(@Param("machineTypeId") String machineTypeId);
+
+  @Query(
+      "SELECT m FROM Machine m WHERE m.modelType.id = (SELECT g.modelType.id FROM Course g WHERE g.id = :guidelineId)")
+  List<Machine> getMachineByGuidelineId(@Param("guidelineId") String guidelineId);
+
+  @Query(
+      value =
+          "SELECT COUNT(m) FROM Machine m WHERE m.company.id = :companyId GROUP BY m.company.id")
+  Integer countMachineByCompanyId(@Param("companyId") String companyId);
 }

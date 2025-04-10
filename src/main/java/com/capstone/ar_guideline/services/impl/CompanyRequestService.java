@@ -41,88 +41,86 @@ public class CompanyRequestService implements ICompanyRequestService {
     private final RequestRevisionService requestRevisionService;
     private final ChatBoxService chatBoxService;
 
-    @Override
-    public PagingModel<CompanyRequestResponse> findAllForDesigner(
-            int page, int size, String status, String companyName, String designerEmail) {
-        try {
-            PagingModel<CompanyRequestResponse> pagingModel = new PagingModel<>();
-            Pageable pageable = PageRequest.of(page - 1, size);
+  @Override
+  public PagingModel<CompanyRequestResponse> findAllForDesigner(
+      int page, int size, String status, String companyName, String designerEmail) {
+    try {
+      PagingModel<CompanyRequestResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
 
-            Page<CompanyRequest> companyRequests =
-                    companyRequestRepository.findAllForDesigner(pageable, status, companyName, designerEmail);
+      Page<CompanyRequest> companyRequests =
+          companyRequestRepository.findAllForDesigner(pageable, status, companyName, designerEmail);
 
-            List<CompanyRequestResponse> companyRequestResponses =
-                    companyRequests.getContent().stream()
-                            .map(CompanyRequestMapper::fromEntityToResponse)
-                            .toList();
+      List<CompanyRequestResponse> companyRequestResponses =
+          companyRequests.stream().map(CompanyRequestMapper::fromEntityToResponse).toList();
 
-            pagingModel.setPage(page);
-            pagingModel.setSize(size);
-            pagingModel.setTotalItems((int) companyRequests.getTotalElements());
-            pagingModel.setTotalPages(companyRequests.getTotalPages());
-            pagingModel.setObjectList(companyRequestResponses);
-            return pagingModel;
-        } catch (Exception exception) {
-            if (exception instanceof AppException) {
-                throw exception;
-            }
-            throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
-        }
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) companyRequests.getTotalElements());
+      pagingModel.setTotalPages(companyRequests.getTotalPages());
+      pagingModel.setObjectList(companyRequestResponses);
+      return pagingModel;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
     }
+  }
 
-    @Override
-    public PagingModel<CompanyRequestResponse> findByCompanyId(
-            int page, int size, String companyId, String status) {
-        try {
-            PagingModel<CompanyRequestResponse> pagingModel = new PagingModel<>();
-            Pageable pageable = PageRequest.of(page - 1, size);
+  @Override
+  public PagingModel<CompanyRequestResponse> findByCompanyId(
+      int page, int size, String companyId, String status) {
+    try {
+      PagingModel<CompanyRequestResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
 
-            Page<CompanyRequest> companyRequests =
-                    companyRequestRepository.findByCompanyId(pageable, companyId, status);
+      Page<CompanyRequest> companyRequests =
+          companyRequestRepository.findByCompanyId(pageable, companyId, status);
 
-            List<CompanyRequestResponse> companyRequestResponses =
-                    companyRequests.stream().map(CompanyRequestMapper::fromEntityToResponse).toList();
+      List<CompanyRequestResponse> companyRequestResponses =
+          companyRequests.stream().map(CompanyRequestMapper::fromEntityToResponse).toList();
 
-            pagingModel.setPage(page);
-            pagingModel.setSize(size);
-            pagingModel.setTotalItems((int) companyRequests.getTotalElements());
-            pagingModel.setTotalPages(companyRequests.getTotalPages());
-            pagingModel.setObjectList(companyRequestResponses);
-            return pagingModel;
-        } catch (Exception exception) {
-            if (exception instanceof AppException) {
-                throw exception;
-            }
-            throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
-        }
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) companyRequests.getTotalElements());
+      pagingModel.setTotalPages(companyRequests.getTotalPages());
+      pagingModel.setObjectList(companyRequestResponses);
+      return pagingModel;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
     }
+  }
 
-    @Override
-    public List<CompanyRequestResponse> findByDesignerId(String designerId) {
-        try {
-            return companyRequestRepository.findByDesigner_IdOrderByCreatedAtDesc(designerId).stream()
-                    .map(CompanyRequestMapper::fromEntityToResponse)
-                    .collect(Collectors.toList());
-        } catch (Exception exception) {
-            if (exception instanceof AppException) {
-                throw exception;
-            }
-            throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
-        }
+  @Override
+  public List<CompanyRequestResponse> findByDesignerId(String designerId) {
+    try {
+      return companyRequestRepository.findByDesigner_IdOrderByCreatedAtDesc(designerId).stream()
+          .map(CompanyRequestMapper::fromEntityToResponse)
+          .collect(Collectors.toList());
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
     }
+  }
 
-    @Override
-    public CompanyRequestResponse findById(String id) {
-        try {
-            return CompanyRequestMapper.fromEntityToResponse(
-                    companyRequestRepository.findByRequestId(id));
-        } catch (Exception exception) {
-            if (exception instanceof AppException) {
-                throw exception;
-            }
-            throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
-        }
+  @Override
+  public CompanyRequestResponse findById(String id) {
+    try {
+      return CompanyRequestMapper.fromEntityToResponse(
+          companyRequestRepository.findByRequestId(id));
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
     }
+  }
 
     @Override
     @Transactional
@@ -160,83 +158,82 @@ public class CompanyRequestService implements ICompanyRequestService {
         }
     }
 
-    @Override
-    public CompanyRequestResponse update(String requestId, CompanyRequestCreation request) {
-        try {
-            CompanyRequest companyRequest = companyRequestRepository.findByRequestId(requestId);
-            if (request.getStatus() != null
-                    && !request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)
-                    && !request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED))
-                companyRequest.setStatus(request.getStatus());
-            if (request.getDesignerId() != null)
-                companyRequest.setDesigner(userService.findById(request.getDesignerId()));
+  @Override
+  public CompanyRequestResponse update(String requestId, CompanyRequestCreation request) {
+    try {
+      CompanyRequest companyRequest = companyRequestRepository.findByRequestId(requestId);
+      if (request.getStatus() != null
+          && !request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)
+          && !request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED))
+        companyRequest.setStatus(request.getStatus());
+      if (request.getDesignerId() != null)
+        companyRequest.setDesigner(userService.findById(request.getDesignerId()));
 
-            String modelNeedToDelete = null;
-            if (request.getAssetModelId() != null) {
-                if (companyRequest.getAssetModel() != null) {
-                    modelNeedToDelete = companyRequest.getAssetModel().getId();
-                }
-                companyRequest.setAssetModel(assetModelService.findById(request.getAssetModelId()));
-            }
-
-            if (request.getStatus().equalsIgnoreCase(DRAFTED) && companyRequest.getAssetModel() != null) {
-                Model assetModel = companyRequest.getAssetModel();
-                assetModel.setStatus(DRAFTED);
-                assetModelService.update(assetModel);
-            }
-
-            if (request.getStatus().equalsIgnoreCase(PROCESSING)
-                    && Objects.nonNull(request.getRequesterId())
-                    && Objects.nonNull(companyRequest.getRequester())) {
-                emailService.sendCompanyRequestEmail(request.getRequesterId(), companyRequest);
-            }
-
-            if (request.getStatus().equalsIgnoreCase(APPROVED)
-                    && companyRequest.getAssetModel() != null) {
-                Model assetModel = companyRequest.getAssetModel();
-                assetModel.setStatus(ACTIVE_STATUS);
-                assetModelService.update(assetModel);
-            }
-
-            if (request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED)
-                    || request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)) {
-                companyRequest.setCancelledAt(LocalDateTime.now());
-            }
-
-            if (request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)) {
-                emailService.sendDesignerCancelledEmail(
-                        companyRequest.getRequester().getEmail(), companyRequest);
-                companyRequest.setStatus(PENDING);
-            }
-
-            if (request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED)) {
-                emailService.sendRequesterCancelledEmail(
-                        companyRequest.getDesigner().getEmail(), companyRequest);
-                companyRequest.setStatus(CANCEL);
-                if (companyRequest.getAssetModel() != null) {
-                    modelNeedToDelete = companyRequest.getAssetModel().getId();
-                    companyRequest.setAssetModel(null);
-                }
-            }
-
-            companyRequest = companyRequestRepository.save(companyRequest);
-
-            if ((request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED)
-                    || request.getStatus().equalsIgnoreCase(DRAFTED))
-                    && modelNeedToDelete != null) {
-                assetModelService.delete(modelNeedToDelete);
-            }
-
-            return CompanyRequestMapper.fromEntityToResponse(companyRequest);
-        } catch (Exception exception) {
-            if (exception instanceof AppException) {
-                throw exception;
-            }
-            throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
+      String modelNeedToDelete = null;
+      if (request.getAssetModelId() != null) {
+        if (companyRequest.getAssetModel() != null) {
+          modelNeedToDelete = companyRequest.getAssetModel().getId();
         }
-    }
+        companyRequest.setAssetModel(assetModelService.findById(request.getAssetModelId()));
+      }
 
-    @Override
-    public void delete(Long id) {
+      if (request.getStatus().equalsIgnoreCase(DRAFTED) && companyRequest.getAssetModel() != null) {
+        Model assetModel = companyRequest.getAssetModel();
+        assetModel.setStatus(DRAFTED);
+        assetModelService.update(assetModel);
+      }
+
+      if (request.getStatus().equalsIgnoreCase(PROCESSING)
+          && Objects.nonNull(request.getRequesterId())
+          && Objects.nonNull(companyRequest.getRequester())) {
+        emailService.sendCompanyRequestEmail(request.getRequesterId(), companyRequest);
+      }
+
+      if (request.getStatus().equalsIgnoreCase(APPROVED)
+          && companyRequest.getAssetModel() != null) {
+        Model assetModel = companyRequest.getAssetModel();
+        assetModel.setStatus(ACTIVE_STATUS);
+        assetModelService.update(assetModel);
+      }
+
+      if (request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED)
+          || request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)) {
+        companyRequest.setCancelledAt(LocalDateTime.now());
+      }
+
+      if (request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)) {
+        emailService.sendDesignerCancelledEmail(
+            companyRequest.getRequester().getEmail(), companyRequest);
+        companyRequest.setStatus(PENDING);
+      }
+
+      if (request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED)) {
+        emailService.sendRequesterCancelledEmail(
+            companyRequest.getDesigner().getEmail(), companyRequest);
+        companyRequest.setStatus(CANCEL);
+        if (companyRequest.getAssetModel() != null) {
+          modelNeedToDelete = companyRequest.getAssetModel().getId();
+          companyRequest.setAssetModel(null);
+        }
+      }
+
+      companyRequest = companyRequestRepository.save(companyRequest);
+
+      if ((request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED)
+              || request.getStatus().equalsIgnoreCase(DRAFTED))
+          && modelNeedToDelete != null) {
+        assetModelService.delete(modelNeedToDelete);
+      }
+
+      return CompanyRequestMapper.fromEntityToResponse(companyRequest);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
     }
+  }
+
+  @Override
+  public void delete(Long id) {}
 }

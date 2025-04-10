@@ -16,4 +16,7 @@ public interface MachineTypeRepository extends JpaRepository<ModelType, String> 
           + "ORDER BY mt.createdDate DESC")
   Page<ModelType> getMachineTypeByCompanyId(
       Pageable pageable, @Param("companyId") String companyId, @Param("name") String name);
+
+  @Query("SELECT c.modelType FROM Course c WHERE c.courseCode = :guidelineCode")
+  ModelType getMachineTypeByGuidelineCode(@Param("guidelineCode") String guidelineCode);
 }

@@ -4,10 +4,13 @@ import com.capstone.ar_guideline.constants.ConstAPI;
 import com.capstone.ar_guideline.dtos.requests.Machine.MachineCreationRequest;
 import com.capstone.ar_guideline.dtos.requests.Machine.MachineModifyRequest;
 import com.capstone.ar_guideline.dtos.responses.ApiResponse;
+import com.capstone.ar_guideline.dtos.responses.Machine.MachineGuidelineResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
+import com.capstone.ar_guideline.dtos.responses.Machine_QR.Machine_QRResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.services.IARGuidelineService;
 import com.capstone.ar_guideline.services.IMachineService;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -36,6 +39,14 @@ public class MachineController {
         .build();
   }
 
+  @GetMapping(value = ConstAPI.MachineAPI.GET_MACHINE_QR_BY_MACHINE_ID + "{machineId}")
+  public ApiResponse<List<Machine_QRResponse>> getMachineQRByMachineId(
+      @PathVariable String machineId) {
+    return ApiResponse.<List<Machine_QRResponse>>builder()
+        .result(arGuidelineService.getMachineQrByMachineId(machineId))
+        .build();
+  }
+
   @DeleteMapping(value = ConstAPI.MachineAPI.DELETE_MACHINE_BY_ID + "{machineId}")
   public ApiResponse<String> deleteMachine(@PathVariable String machineId) {
     machineService.delete(machineId);
@@ -49,10 +60,29 @@ public class MachineController {
         .build();
   }
 
-  @GetMapping(value = ConstAPI.MachineAPI.GET_MACHINES_BY_CODE + "{machineCode}")
-  public ApiResponse<MachineResponse> getMachineByCode(@PathVariable String machineCode) {
+  @GetMapping(
+      value = ConstAPI.MachineAPI.GET_MACHINES_BY_CODE + "{machineCode}" + "/company/{companyId}")
+  public ApiResponse<MachineResponse> getMachineByCode(
+      @PathVariable String machineCode, @PathVariable String companyId) {
     return ApiResponse.<MachineResponse>builder()
-        .result(arGuidelineService.getMachineByCode(machineCode))
+        .result(arGuidelineService.getMachineByCode(machineCode, companyId))
+        .build();
+  }
+
+  @GetMapping(value = ConstAPI.MachineAPI.GET_MACHINES_BY_GUIDELINE_ID + "{guidelineId}")
+  public ApiResponse<List<MachineResponse>> getMachineByGuidelineId(
+      @PathVariable String guidelineId) {
+    return ApiResponse.<List<MachineResponse>>builder()
+        .result(arGuidelineService.getMachineByGuidelineId(guidelineId))
+        .build();
+  }
+
+  @GetMapping(
+      value = ConstAPI.MachineAPI.GET_MACHINES_BY_GUIDELINE_ID_AND_MACHINE_ID + "{guidelineId}")
+  public ApiResponse<List<MachineGuidelineResponse>> getMachineByGuidelineIdAndMachineId(
+      @PathVariable String guidelineId) {
+    return ApiResponse.<List<MachineGuidelineResponse>>builder()
+        .result(arGuidelineService.getMachineForMachineTabByGuidelineId(guidelineId))
         .build();
   }
 

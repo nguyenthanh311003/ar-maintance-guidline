@@ -14,7 +14,7 @@ public interface IMachineService {
 
   Machine findById(String id);
 
-  Machine findByCode(String machineCode);
+  Machine findByCodeAndCompanyId(String machineCode, String companyId);
 
   Page<Machine> getMachineByCompanyId(
       Pageable pageable, String companyId, String keyword, String machineTypeName);
@@ -26,4 +26,8 @@ public interface IMachineService {
   Boolean isMachineCodeExisted(String companyId, String machineCode);
 
   Integer countMachineByMachineType(String machineTypeId);
+
+  List<Machine> getMachineByGuidelineId(String guidelineId);
+
+  Integer countMachineByCompanyId(String companyId);
 }

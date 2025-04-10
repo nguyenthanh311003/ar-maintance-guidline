@@ -28,6 +28,8 @@ public class ConstAPI {
     public static final String UPDATE_MODEL = "api/v1/model/";
     public static final String DELETE_MODEL = "api/v1/model/";
     public static final String GET_MODEL_BY_ID = "api/v1/model/";
+    public static final String GET_MODELS_BY_MACHINE_TYPE_ID_AND_COMPANY_ID =
+        "api/v1/model/machine-type/";
     public static final String GET_MODEL_BY_COURSE = "api/v1/model/course/";
     public static final String GET_UNUSED_MODEL_BY_ID = "api/v1/model/unused/company/";
     public static final String GET_MODEL_BY_COMPANY_ID = "api/v1/model/company/";
@@ -48,6 +50,7 @@ public class ConstAPI {
     public static final String REGISTER = "api/v1/register";
     public static final String REGISTER_FOR_COMPANY = "api/v1/register/company";
     public static final String PREFIX_USER = "api/v1/user/";
+    public static final String COUNT_STAFF_BY_COMPANY_ID = "api/v1/employee/company/";
     public static final String GET_USER_TO_ASSIGN = "course/";
   }
 
@@ -190,8 +193,12 @@ public class ConstAPI {
     public static final String GET_MACHINES_BY_ID = "api/v1/machine/";
     public static final String DELETE_MACHINE_BY_ID = "api/v1/machine/";
     public static final String GET_MACHINES_BY_CODE = "api/v1/machine/code/";
+    public static final String GET_MACHINES_BY_GUIDELINE_ID = "api/v1/machine/guideline/";
+    public static final String GET_MACHINES_BY_GUIDELINE_ID_AND_MACHINE_ID =
+        "api/v1/machine/guideline/machine/";
     public static final String CREATE_MACHINE = "api/v1/machine";
     public static final String UPDATE_MACHINE = "api/v1/machine/";
+    public static final String GET_MACHINE_QR_BY_MACHINE_ID = "api/v1/machine-qr/machine/";
   }
 
   public static class MachineTypeAttributeAPI {
@@ -206,10 +213,20 @@ public class ConstAPI {
     public static final String UPDATE_MACHINE_TYPE = "api/v1/machine-type/";
     public static final String GET_MACHINE_TYPES_BY_COMPANY_ID = "api/v1/machine-type/company/";
     public static final String GET_MACHINE_TYPES_BY_ID = "api/v1/machine-type/";
+    public static final String GET_MACHINE_TYPE_BY_GUIDELINE_CODE =
+        "api/v1/machine-type/guideline/code/";
     public static final String DELETE_MACHINE_TYPES = "api/v1/machine-type/";
   }
 
   public static class PointRequestAPI {
     public static final String POINT_REQUEST_ENDPOINT = "api/v1/point-request";
+  }
+
+  public static class NotificationAPI {
+    public static final String REGISTER_DEVICE = "api/v1/notifications/register";
+    public static final String SUBSCRIBE_TO_TOPIC = "api/v1/notifications/subscribe";
+    public static final String UNSUBSCRIBE_FROM_TOPIC = "api/v1/notifications/unsubscribe";
+    public static final String SEND_TO_TOPIC = "api/v1/notifications/send/topic";
+    public static final String SEND_TO_TOKEN = "api/v1/notifications/send/token";
   }
 }

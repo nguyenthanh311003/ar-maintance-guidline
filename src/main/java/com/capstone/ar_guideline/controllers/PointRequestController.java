@@ -6,8 +6,10 @@ import com.capstone.ar_guideline.dtos.responses.ApiResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.PointRequestResponse.PointRequestResponse;
 import com.capstone.ar_guideline.services.IPointRequestService;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,12 +32,14 @@ public class PointRequestController {
       @RequestParam(defaultValue = "5") int size,
       @RequestParam(required = false) String requestNumber,
       @RequestParam(required = false) String status,
-      @RequestParam(required = false) String employeeEmail) {
+      @RequestParam(required = false) String employeeEmail,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+          LocalDate createDate) {
     return ApiResponse.<PagingModel<PointRequestResponse>>builder()
         .message("Get all point requests by Company Id")
         .result(
             pointRequestService.findAllByCompanyId(
-                page, size, companyId, requestNumber, status, employeeEmail))
+                page, size, companyId, requestNumber, status, employeeEmail, createDate))
         .build();
   }
 

@@ -1,11 +1,11 @@
 package com.capstone.ar_guideline.entities;
+
 import jakarta.persistence.*;
-import jdk.jfr.Timestamp;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
@@ -13,26 +13,26 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessage {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @Column(nullable = false, length = 1000)
-    private String content;
+  @Column(nullable = false, length = 1000)
+  private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @Column(nullable = false)
-    private LocalDateTime timestamp;
+  @Column(nullable = false)
+  private LocalDateTime timestamp;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_box_id", nullable = false)
-    private ChatBox chatBox;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "chat_box_id", nullable = false)
+  private ChatBox chatBox;
 
-    @PrePersist
-    protected void onCreate() {
-        this.timestamp = LocalDateTime.now();
-    }
+  @PrePersist
+  protected void onCreate() {
+    this.timestamp = LocalDateTime.now();
+  }
 }

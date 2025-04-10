@@ -27,9 +27,7 @@ public class EmailService {
       message.setTo(toEmail);
       message.setSubject("Account Activation");
       message.setText(
-          "Hello "
-              + userName
-              + ",\n\nYour account has been activated successfully. You can now log in and use our services.\n\nThank you!");
+          "Your account has been activated successfully. You can now log in and use our services.\n\nThank you!");
       mailSender.send(message);
       log.info("Account activation email sent to {}", toEmail);
     } catch (Exception e) {
@@ -85,20 +83,17 @@ public class EmailService {
       message.setTo(toEmail);
       message.setSubject("AR Guideline - Account Created");
       message.setText(
-          "Hello "
-              + companyName
-              + ",\n\n"
-              + "Your account has been created by admin platform.\n\n"
+          "Your account has been created.\n\n"
               + "Email: "
               + toEmail
-              + ".\n"
+              + "\n"
               + "Password: "
               + password
-              + ".\n\n"
-              + "Please login to the platform and first subscribe the best plan for you.\n\n"
+              + "\n\n"
+              + "Please login to the platform and try out our services.\n\n"
               + "URL: "
               + frontEndHost
-              + ".\n\n"
+              + "\n\n"
               + "Thank you!");
 
       mailSender.send(message);
