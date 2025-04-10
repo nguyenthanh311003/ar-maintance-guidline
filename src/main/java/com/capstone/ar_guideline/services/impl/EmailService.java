@@ -83,17 +83,17 @@ public class EmailService {
       message.setTo(toEmail);
       message.setSubject("AR Guideline - Account Created");
       message.setText(
-          "Your account has been created by admin platform.\n\n"
+          "Your account has been created.\n\n"
               + "Email: "
               + toEmail
-              + ".\n"
+              + "\n"
               + "Password: "
               + password
-              + ".\n\n"
-              + "Please login to the platform and first by point for use our services.\n\n"
+              + "\n\n"
+              + "Please login to the platform and first purchase point for use our services.\n\n"
               + "URL: "
               + frontEndHost
-              + ".\n\n"
+              + "\n\n"
               + "Thank you!");
 
       mailSender.send(message);
