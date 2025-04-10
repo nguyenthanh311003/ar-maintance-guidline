@@ -65,9 +65,12 @@ public class WalletServiceImpl {
         transaction.setPointOptions(pointOptions);
         transaction.setAmount(pointOptions.getPoint());
         transaction.setBalance(wallet.getBalance() + pointOptions.getPoint());
-      } else {
+      } else if(guidelineId != null) {
         transaction.setServicePrice(ServicePrice.builder().id(servicePriceId).build());
         transaction.setCourse(Course.builder().id(guidelineId).build());
+      }else{
+        transaction.setServicePrice(ServicePrice.builder().id(servicePriceId).build());
+
       }
       walletTransactionRepository.save(transaction);
 
