@@ -26,10 +26,7 @@ public class EmailService {
       SimpleMailMessage message = new SimpleMailMessage();
       message.setTo(toEmail);
       message.setSubject("Account Activation");
-      message.setText(
-          "Hello "
-              + userName
-              + ",\n\nYour account has been activated successfully. You can now log in and use our services.\n\nThank you!");
+      message.setText("Your account has been activated successfully. You can now log in and use our services.\n\nThank you!");
       mailSender.send(message);
       log.info("Account activation email sent to {}", toEmail);
     } catch (Exception e) {
