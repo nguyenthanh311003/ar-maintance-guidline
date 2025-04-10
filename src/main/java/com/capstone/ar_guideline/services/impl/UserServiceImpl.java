@@ -105,7 +105,7 @@ public class UserServiceImpl implements IUserService {
 
       var userByPhone = userRepository.findByPhone(signUpWitRoleRequest.getPhone());
 
-      if (userByPhone.isPresent()) {
+      if (!userByPhone.isEmpty()) {
         throw new AppException(ErrorCode.USER_PHONE_EXISTED);
       }
 
