@@ -98,9 +98,18 @@ public class UserServiceImpl implements IUserService {
         companyUser = userRepository.findUserByCompanyIdAndAdminRole(company.getId());
       }
       var userByEmail = userRepository.findByEmail(signUpWitRoleRequest.getEmail());
+
       if (userByEmail.isPresent()) {
         throw new AppException(ErrorCode.USER_EXISTED);
       }
+
+      var userByPhone = userRepository.findByPhone(signUpWitRoleRequest.getPhone());
+
+      if (userByPhone.isPresent()) {
+        throw new AppException(ErrorCode.USER_PHONE_EXISTED);
+      }
+
+      user.setPhone(signUpWitRoleRequest.getPhone());
       String passwordToSend = signUpWitRoleRequest.getPassword();
       user.setRole(role);
       user.setStatus(ConstStatus.ACTIVE_STATUS);
