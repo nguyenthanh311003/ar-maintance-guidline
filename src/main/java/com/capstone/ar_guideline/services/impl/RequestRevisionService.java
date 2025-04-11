@@ -106,6 +106,9 @@ public class RequestRevisionService {
                 model.setScale("1");
 
                 modelRepository.save(model);
+                CompanyRequest companyRequest =companyRequestRepository.findByRequestId(requestRevision.getCompanyRequest().getRequestId());
+                companyRequest.setStatus(ConstStatus.APPROVED);
+                companyRequestRepository.save(companyRequest);
                 break;
             case ConstStatus.PROCESSING:
                 User company = userRepository.findUserByCompanyIdAndAdminRole(
