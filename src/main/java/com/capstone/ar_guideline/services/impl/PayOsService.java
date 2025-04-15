@@ -158,7 +158,7 @@ public class PayOsService {
 
   public RedirectView handleOrderStatus(long orderId) {
     try {
-        PaymentLinkData order = payOS.getPaymentLinkInformation(orderId);
+      PaymentLinkData order = payOS.getPaymentLinkInformation(orderId);
       OrderTransaction payment = paymentService.findByOrderCode(orderId);
       if (order.getStatus().equals(ConstStatus.PAID)
           && !payment.getStatus().equals(ConstStatus.PAID)) {
