@@ -15,4 +15,5 @@ public class MachineGuidelineResponse {
   String machineType;
   String machineCode;
   Machine_QRResponse machineQrsResponse;
+  String qrCode;
 }

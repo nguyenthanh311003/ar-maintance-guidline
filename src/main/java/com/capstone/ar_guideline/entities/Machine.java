@@ -3,7 +3,6 @@ package com.capstone.ar_guideline.entities;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -26,9 +25,6 @@ public class Machine implements Serializable {
   @ManyToOne
   @JoinColumn(name = "company_id")
   private Company company;
-
-  @OneToMany(mappedBy = "machine", cascade = CascadeType.ALL)
-  private List<Machine_QR> machineQrs;
 
   String name;
 

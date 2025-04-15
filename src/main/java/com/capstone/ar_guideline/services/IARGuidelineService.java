@@ -15,7 +15,6 @@ import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineType.MachineTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeAttribute.MachineTypeAttributeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValueResponse;
-import com.capstone.ar_guideline.dtos.responses.Machine_QR.Machine_QRResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Machine;
@@ -88,6 +87,4 @@ public interface IARGuidelineService {
   List<MachineGuidelineResponse> getMachineForMachineTabByGuidelineId(String guidelineId);
 
   MachineTypeResponse getMachineTypeByGuidelineCode(String guidelineCode);
-
-  List<Machine_QRResponse> getMachineQrByMachineId(String machineId);
 }

@@ -53,7 +53,7 @@ public interface MachineRepository extends JpaRepository<Machine, String> {
   Integer countByModelType_Id(@Param("machineTypeId") String machineTypeId);
 
   @Query(
-      "SELECT m FROM Machine m WHERE m.modelType.id = (SELECT g.modelType.id FROM Course g WHERE g.id = :guidelineId)")
+      "SELECT m FROM Machine m WHERE m.modelType.id = (SELECT g.modelType.id FROM Course g WHERE g.id = :guidelineId) ORDER BY m.createdDate DESC")
   List<Machine> getMachineByGuidelineId(@Param("guidelineId") String guidelineId);
 
   @Query(
