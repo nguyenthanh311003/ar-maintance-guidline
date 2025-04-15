@@ -1015,4 +1015,16 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       throw new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED);
     }
   }
+
+  @Override
+  public Boolean checkMachineIsBelongToGuideline(String machineCode, String guidelineId) {
+    try {
+      return machineService.checkMachineIsBelongToGuideline(machineCode, guidelineId);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+    }
+  }
 }

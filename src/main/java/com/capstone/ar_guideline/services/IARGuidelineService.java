@@ -87,4 +87,6 @@ public interface IARGuidelineService {
   List<MachineGuidelineResponse> getMachineForMachineTabByGuidelineId(String guidelineId);
 
   MachineTypeResponse getMachineTypeByGuidelineCode(String guidelineCode);
+
+  Boolean checkMachineIsBelongToGuideline(String machineCode, String guidelineId);
 }

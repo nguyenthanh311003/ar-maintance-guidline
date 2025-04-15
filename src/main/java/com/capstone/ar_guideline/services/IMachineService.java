@@ -30,4 +30,6 @@ public interface IMachineService {
   List<Machine> getMachineByGuidelineId(String guidelineId);
 
   Integer countMachineByCompanyId(String companyId);
+
+  Boolean checkMachineIsBelongToGuideline(String machineCode, String guidelineId);
 }

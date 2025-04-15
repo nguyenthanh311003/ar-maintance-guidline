@@ -52,6 +52,18 @@ public class MachineController {
   }
 
   @GetMapping(
+      value =
+          ConstAPI.MachineAPI.CHECK_MACHINE_BELONG_TO_GUIDELINE
+              + "{machineCode}"
+              + "/guideline/{guidelineId}")
+  public ApiResponse<Boolean> checkMachineBelongToGuideline(
+      @PathVariable String machineCode, @PathVariable String guidelineId) {
+    return ApiResponse.<Boolean>builder()
+        .result(arGuidelineService.checkMachineIsBelongToGuideline(machineCode, guidelineId))
+        .build();
+  }
+
+  @GetMapping(
       value = ConstAPI.MachineAPI.GET_MACHINES_BY_CODE + "{machineCode}" + "/company/{companyId}")
   public ApiResponse<MachineResponse> getMachineByCode(
       @PathVariable String machineCode, @PathVariable String companyId) {
