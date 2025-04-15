@@ -18,7 +18,6 @@ import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineType.MachineTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeAttribute.MachineTypeAttributeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValueResponse;
-import com.capstone.ar_guideline.dtos.responses.Machine_QR.Machine_QRResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.*;
@@ -59,7 +58,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   ICompanyService companyService;
   IMachineTypeAttributeService machineTypeAttributeService;
   IMachineTypeService machineTypeService;
-  IMachine_QRService machineQrService;
   CompanyRequestRepository companyRequestRepository;
   FirebaseNotificationServiceImpl firebaseNotificationService;
   ObjectMapper objectMapper = new ObjectMapper();
@@ -429,23 +427,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
           machineService.getMachineByCompanyId(pageable, companyId, keyword, machineTypeName);
 
       List<MachineResponse> machineResponses =
-          machines.stream()
-              .map(
-                  machine -> {
-                    MachineResponse machineResponse =
-                        MachineMapper.fromEntityToMachineResponse(machine);
-                    Integer numOfQrCode =
-                        machineQrService.countMachineQrByMachineId(machine.getId());
-
-                    if (Objects.isNull(numOfQrCode)) {
-                      machineResponse.setQrCodesCount(0);
-                    } else {
-                      machineResponse.setQrCodesCount(numOfQrCode);
-                    }
-
-                    return machineResponse;
-                  })
-              .toList();
+          machines.stream().map(MachineMapper::fromEntityToMachineResponse).toList();
 
       pagingModel.setPage(page);
       pagingModel.setSize(size);
@@ -485,9 +467,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
 
       newMachine.setMachineCode(request.getMachineCode());
 
-      List<Course> courseByMachineTypeIdAndCompanyId =
-          courseService.findByMachineTypeIdAndCompanyId(modelTypeById.getId(), companyById.getId());
-
       try {
         String headerJson = objectMapper.writeValueAsString(request.getHeaderRequests());
         newMachine.setHeader(headerJson);
@@ -495,47 +474,12 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         throw new AppException(ErrorCode.JSON_PROCESSING_ERROR);
       }
 
+      String qrCode = newMachine.getMachineCode();
+      newMachine.setQrCode(UtilService.generateAndStoreQRCode(qrCode));
+
       newMachine = machineService.create(newMachine);
 
-      if (!courseByMachineTypeIdAndCompanyId.isEmpty()) {
-        Machine finalNewMachine = newMachine;
-        courseByMachineTypeIdAndCompanyId.forEach(
-            course -> {
-              Machine_QR newMachineQr =
-                  Machine_QR.builder().machine(finalNewMachine).guideline(course).build();
-
-              String qrCode = finalNewMachine.getMachineCode() + " @ " + course.getCourseCode();
-              newMachineQr.setQrUrl(UtilService.generateAndStoreQRCode(qrCode));
-
-              machineQrService.create(newMachineQr);
-            });
-      }
-
       List<MachineTypeValueResponse> machineTypeValueResponses = new ArrayList<>();
-
-      //            if (!request.getMachineTypeValueCreationRequest().isEmpty()) {
-      //                machineTypeValueResponses =
-      //                        request.getMachineTypeValueCreationRequest().stream()
-      //                                .map(
-      //                                        mtr -> {
-      //                                            MachineTypeAttribute machineTypeAttributeById =
-      //
-      // machineTypeAttributeService.findById(mtr.getMachineTypeAttributeId());
-      //
-      //                                            MachineTypeValue newMachineTypeValue =
-      //
-      // MachineTypeValueMapper.fromMachineTypeValueCreationRequestToEntity(mtr);
-      //
-      // newMachineTypeValue.setMachineTypeAttribute(machineTypeAttributeById);
-      //                                            newMachineTypeValue =
-      // machineTypeValueService.create(newMachineTypeValue);
-      //
-      //                                            return
-      // MachineTypeValueMapper.fromEntityToMachineTypeValueResponse(
-      //                                                    newMachineTypeValue);
-      //                                        })
-      //                                .toList();
-      //            }
 
       return MachineMapper.fromEntityToMachineResponseForCreate(
           newMachine, machineTypeValueResponses);
@@ -612,16 +556,9 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
           getMachineTypeAttributeByMachineTypeId(
               machineById.getModelType().getId(), machineById.getId());
 
-      List<Machine_QRResponse> machineQrResponses =
-          machineQrService.getByMachineId(machineById.getId()).stream()
-              .map(Machine_QRMapper::fromEntityToMachine_QRResponse)
-              .toList();
-
       MachineResponse machineResponse =
           MachineMapper.fromEntityToMachineResponseForCreate(
               machineById, machineTypeValueResponses);
-
-      machineResponse.setMachineQrsResponses(machineQrResponses);
 
       List<HeaderResponse> headerResponses = new ArrayList<>();
       ObjectMapper objectMapper = new ObjectMapper();
@@ -914,23 +851,16 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       //        Course finalNewCourse = newCourse;
       //        machinesByMachineTypeId.forEach(
       //            machine -> {
-      //              updateQrCodeForMachine(finalNewCourse.getCourseCode(), machine);
+      //              Machine_QR newMachineQr = new Machine_QR();
+      //              newMachineQr.setGuideline(finalNewCourse);
+      //              newMachineQr.setMachine(machine);
+      //
+      //              String qrCode = machine.getMachineCode() + " @ " +
+      // finalNewCourse.getCourseCode();
+      //              newMachineQr.setQrUrl(UtilService.generateAndStoreQRCode(qrCode));
+      //              machineQrService.create(newMachineQr);
       //            });
       //      }
-
-      if (!machinesByMachineTypeId.isEmpty()) {
-        Course finalNewCourse = newCourse;
-        machinesByMachineTypeId.forEach(
-            machine -> {
-              Machine_QR newMachineQr = new Machine_QR();
-              newMachineQr.setGuideline(finalNewCourse);
-              newMachineQr.setMachine(machine);
-
-              String qrCode = machine.getMachineCode() + " @ " + finalNewCourse.getCourseCode();
-              newMachineQr.setQrUrl(UtilService.generateAndStoreQRCode(qrCode));
-              machineQrService.create(newMachineQr);
-            });
-      }
 
       if (newCourse.getId() != null) {
         Model modelById = modelService.findById(newCourse.getModel().getId());
@@ -1033,20 +963,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
 
       List<Machine> machines = machineService.getMachineByGuidelineId(courseById.getId());
 
-      return machines.stream()
-          .map(
-              machine -> {
-                MachineResponse machineResponse =
-                    MachineMapper.fromEntityToMachineResponse(machine);
-                List<Machine_QRResponse> machineQrResponses =
-                    machineQrService.getByMachineId(machine.getId()).stream()
-                        .map(Machine_QRMapper::fromEntityToMachine_QRResponse)
-                        .toList();
-                machineResponse.setMachineQrsResponses(machineQrResponses);
-
-                return machineResponse;
-              })
-          .toList();
+      return machines.stream().map(MachineMapper::fromEntityToMachineResponse).toList();
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -1066,22 +983,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
 
       List<Machine> machines = machineService.getMachineByGuidelineId(courseById.getId());
 
-      return machines.stream()
-          .map(
-              m -> {
-                MachineGuidelineResponse machineGuidelineResponse =
-                    MachineMapper.fromEntityToMachineGuidelineResponse(m);
-
-                Machine_QR machineQrByMachineIdAndGuidelineId =
-                    machineQrService.getByMachineIdAndGuidelineId(m.getId(), courseById.getId());
-                Machine_QRResponse machineQrResponses =
-                    Machine_QRMapper.fromEntityToMachine_QRResponse(
-                        machineQrByMachineIdAndGuidelineId);
-
-                machineGuidelineResponse.setMachineQrsResponse(machineQrResponses);
-                return machineGuidelineResponse;
-              })
-          .toList();
+      return machines.stream().map(MachineMapper::fromEntityToMachineGuidelineResponse).toList();
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
@@ -1111,22 +1013,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         throw exception;
       }
       throw new AppException(ErrorCode.MODEL_TYPE_NOT_EXISTED);
-    }
-  }
-
-  @Override
-  public List<Machine_QRResponse> getMachineQrByMachineId(String machineId) {
-    try {
-      List<Machine_QR> machineQrByMachineId = machineQrService.getByMachineId(machineId);
-
-      return machineQrByMachineId.stream()
-          .map(Machine_QRMapper::fromEntityToMachine_QRResponse)
-          .toList();
-    } catch (Exception exception) {
-      if (exception instanceof AppException) {
-        throw exception;
-      }
-      throw new AppException(ErrorCode.MACHINE_QR_NOT_EXISTED);
     }
   }
 }

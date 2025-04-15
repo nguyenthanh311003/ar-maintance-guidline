@@ -13,14 +13,12 @@ import com.capstone.ar_guideline.mappers.CompanyMapper;
 import com.capstone.ar_guideline.mappers.CompanyRequestMapper;
 import com.capstone.ar_guideline.repositories.CompanyRequestRepository;
 import com.capstone.ar_guideline.services.*;
-
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,14 +30,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class CompanyRequestService implements ICompanyRequestService {
-    private final CompanyRequestRepository companyRequestRepository;
-    private final ICompanyService companyService;
-    private final IUserService userService;
-    private final IMachineTypeService machineTypeService;
-    private final IModelService assetModelService;
-    private final EmailService emailService;
-    private final RequestRevisionService requestRevisionService;
-    private final ChatBoxService chatBoxService;
+  private final CompanyRequestRepository companyRequestRepository;
+  private final ICompanyService companyService;
+  private final IUserService userService;
+  private final IMachineTypeService machineTypeService;
+  private final IModelService assetModelService;
+  private final EmailService emailService;
+  private final RequestRevisionService requestRevisionService;
+  private final ChatBoxService chatBoxService;
 
   @Override
   public PagingModel<CompanyRequestResponse> findAllForDesigner(
@@ -122,41 +120,41 @@ public class CompanyRequestService implements ICompanyRequestService {
     }
   }
 
-    @Override
-    @Transactional
-    public CompanyRequestResponse create(CompanyRequestCreation request) {
-        try {
-            Company company =
-                    CompanyMapper.fromCompanyResponseToEntity(
-                            companyService.findById(request.getCompanyId()));
-            User requester = userService.findById(request.getRequesterId());
-            ModelType modelType = machineTypeService.findById(request.getMachineTypeId());
-            CompanyRequest companyRequest = CompanyRequestMapper.fromCreationRequestToEntity(request);
+  @Override
+  @Transactional
+  public CompanyRequestResponse create(CompanyRequestCreation request) {
+    try {
+      Company company =
+          CompanyMapper.fromCompanyResponseToEntity(
+              companyService.findById(request.getCompanyId()));
+      User requester = userService.findById(request.getRequesterId());
+      ModelType modelType = machineTypeService.findById(request.getMachineTypeId());
+      CompanyRequest companyRequest = CompanyRequestMapper.fromCreationRequestToEntity(request);
 
-            companyRequest.setCompany(company);
-            companyRequest.setMachineType(modelType);
-            companyRequest.setDesigner(null);
-            companyRequest.setStatus(PENDING);
-            companyRequest.setRequester(requester);
-            companyRequest = companyRequestRepository.save(companyRequest);
+      companyRequest.setCompany(company);
+      companyRequest.setMachineType(modelType);
+      companyRequest.setDesigner(null);
+      companyRequest.setStatus(PENDING);
+      companyRequest.setRequester(requester);
+      companyRequest = companyRequestRepository.save(companyRequest);
 
-            RequestRevisionRequest requestRevisionRequest =
-                    new RequestRevisionRequest();
-            requestRevisionRequest.setCompanyRequestId(companyRequest.getRequestId());
+      RequestRevisionRequest requestRevisionRequest = new RequestRevisionRequest();
+      requestRevisionRequest.setCompanyRequestId(companyRequest.getRequestId());
 
-            requestRevisionRequest.setRevisionFiles(request.getRequestRevision().getRevisionFiles());
-            requestRevisionService.create(requestRevisionRequest);
-            chatBoxService.createChatBox(
-                    List.of(UUID.fromString(request.getRequesterId())), UUID.fromString(companyRequest.getRequestId()));
-            ;
-            return CompanyRequestMapper.fromEntityToResponse(companyRequest);
-        } catch (Exception exception) {
-            if (exception instanceof AppException) {
-                throw exception;
-            }
-            throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
-        }
+      requestRevisionRequest.setRevisionFiles(request.getRequestRevision().getRevisionFiles());
+      requestRevisionService.create(requestRevisionRequest);
+      chatBoxService.createChatBox(
+          List.of(UUID.fromString(request.getRequesterId())),
+          UUID.fromString(companyRequest.getRequestId()));
+      ;
+      return CompanyRequestMapper.fromEntityToResponse(companyRequest);
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
     }
+  }
 
   @Override
   public CompanyRequestResponse update(String requestId, CompanyRequestCreation request) {

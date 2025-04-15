@@ -32,6 +32,7 @@ public class MachineMapper {
         .machineName(machine.getName())
         .machineType(machine.getModelType().getName())
         .machineCode(machine.getMachineCode())
+        .qrCode(machine.getQrCode())
         .build();
   }
 

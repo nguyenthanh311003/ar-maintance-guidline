@@ -10,7 +10,6 @@ import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.dtos.responses.User.AuthenticationResponse;
 import com.capstone.ar_guideline.dtos.responses.User.UserResponse;
 import com.capstone.ar_guideline.entities.Company;
-import com.capstone.ar_guideline.entities.ServicePrice;
 import com.capstone.ar_guideline.entities.User;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
@@ -126,7 +125,7 @@ public class UserServiceImpl implements IUserService {
         walletService.createWallet(user, 0L, "VND");
         if (signUpWitRoleRequest.getPoints() > 0) {
           walletService.updateBalanceBySend(
-                  signUpWitRoleRequest.getPoints(), user.getId(), companyUser.getId(), null);
+              signUpWitRoleRequest.getPoints(), user.getId(), companyUser.getId(), null);
         }
       }
       return AuthenticationResponse.builder()
