@@ -15,6 +15,7 @@ public class MachineResponse {
   String id;
   String machineName;
   String machineType;
+  String machineTypeId;
   String machineCode;
   String apiUrl;
   List<HeaderResponse> headerResponses;
