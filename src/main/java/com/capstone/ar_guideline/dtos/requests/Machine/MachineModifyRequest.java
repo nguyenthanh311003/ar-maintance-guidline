@@ -12,8 +12,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MachineModifyRequest {
   String machineName;
+  String machineCode;
   String apiUrl;
   String token;
   List<HeaderRequest> headerRequests;
   List<MachineTypeValueModifyRequest> machineTypeValueModifyRequests;
+  String machineTypeId;
 }

@@ -42,6 +42,7 @@ public class MachineMapper {
         .id(machine.getId())
         .machineName(machine.getName())
         .machineType(machine.getModelType().getName())
+        .machineTypeId(machine.getModelType().getId())
         .machineCode(machine.getMachineCode())
         .apiUrl(machine.getApiUrl())
         .token(machine.getRequestToken())

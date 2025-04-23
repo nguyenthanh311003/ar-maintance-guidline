@@ -63,7 +63,8 @@ public interface IARGuidelineService {
 
   MachineResponse getMachineByCode(String machineCode, String companyId);
 
-  MachineResponse updateMachineById(String machineId, MachineModifyRequest request);
+  MachineResponse updateMachineById(
+      String machineId, MachineModifyRequest request, String companyId);
 
   MachineTypeResponse createMachineType(MachineTypeCreationRequest request);
 
@@ -89,4 +90,6 @@ public interface IARGuidelineService {
   MachineTypeResponse getMachineTypeByGuidelineCode(String guidelineCode);
 
   Boolean checkMachineIsBelongToGuideline(String machineCode, String guidelineId);
+
+  List<MachineTypeValueResponse> getMachineTypeValueByMachineTypeId(String machineTypeId);
 }

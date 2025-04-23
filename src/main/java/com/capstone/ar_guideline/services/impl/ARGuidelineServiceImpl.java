@@ -619,13 +619,30 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   }
 
   @Override
-  public MachineResponse updateMachineById(String machineId, MachineModifyRequest request) {
+  public MachineResponse updateMachineById(
+      String machineId, MachineModifyRequest request, String companyId) {
     try {
       Machine machineById = machineService.findById(machineId);
+
+      Company companyById = companyService.findByIdReturnEntity(companyId);
 
       machineById.setName(request.getMachineName());
       machineById.setApiUrl(request.getApiUrl());
       machineById.setRequestToken(request.getToken());
+
+      ModelType machineTypeById = machineTypeService.findById(request.getMachineTypeId());
+
+      machineById.setModelType(machineTypeById);
+
+      Boolean isMachineCodeExisted =
+          machineService.isMachineCodeExistedForUpdate(
+              companyById.getId(), request.getMachineCode(), machineById.getMachineCode());
+
+      if (isMachineCodeExisted) {
+        throw new AppException(ErrorCode.MACHINE_CODE_EXISTED);
+      }
+
+      machineById.setMachineCode(request.getMachineCode());
 
       try {
         String headerJson = objectMapper.writeValueAsString(request.getHeaderRequests());
@@ -1025,6 +1042,35 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         throw exception;
       }
       throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public List<MachineTypeValueResponse> getMachineTypeValueByMachineTypeId(String machineTypeId) {
+    try {
+      List<MachineTypeAttribute> machineTypeAttributes =
+          machineTypeAttributeService.getByMachineTypeId(machineTypeId);
+
+      return machineTypeAttributes.stream()
+          .map(
+              mvr -> {
+                MachineTypeValueResponse machineTypeValueResponse = new MachineTypeValueResponse();
+                machineTypeValueResponse.setMachineTypeAttributeName(mvr.getAttributeName());
+                machineTypeValueResponse.setMachineTypeAttributeId(mvr.getId());
+
+                if (mvr.getValueOfAttribute() == null || mvr.getValueOfAttribute().isEmpty()) {
+                  machineTypeValueResponse.setValueAttribute("N/A");
+                } else {
+                  machineTypeValueResponse.setValueAttribute(mvr.getValueOfAttribute());
+                }
+                return machineTypeValueResponse;
+              })
+          .toList();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_TYPE_ATTRIBUTE_NOT_EXISTED);
     }
   }
 }

@@ -96,11 +96,13 @@ public class MachineController {
         .build();
   }
 
-  @PutMapping(value = ConstAPI.MachineAPI.UPDATE_MACHINE + "{machineId}")
+  @PutMapping(value = ConstAPI.MachineAPI.UPDATE_MACHINE + "{machineId}" + "/company/{companyId}")
   public ApiResponse<MachineResponse> updateMachine(
-      @PathVariable String machineId, @RequestBody MachineModifyRequest request) {
+      @PathVariable String machineId,
+      @PathVariable String companyId,
+      @RequestBody MachineModifyRequest request) {
     return ApiResponse.<MachineResponse>builder()
-        .result(arGuidelineService.updateMachineById(machineId, request))
+        .result(arGuidelineService.updateMachineById(machineId, request, companyId))
         .build();
   }
 }
