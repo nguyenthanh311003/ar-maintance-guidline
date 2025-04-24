@@ -14,6 +14,9 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, String> {
   Optional<User> findByEmail(String email);
 
+  @Query(value = "SELECT u FROM User u WHERE u.phone = :phone")
+  List<User> findByPhone(@Param("phone") String phone);
+
   @Query(
       value =
           "SELECT u FROM User u WHERE u.email = :email AND u.status = :status AND u.role.roleName = 'COMPANY'")
@@ -90,6 +93,11 @@ public interface UserRepository extends JpaRepository<User, String> {
       value =
           "SELECT COUNT(u) FROM User u WHERE (u.company.id = :companyId OR :companyId IS NULL) AND (u.status = :status OR u.status IS NULL )")
   Integer countAllBy(String companyId, String status);
+
+  @Query(
+      value =
+          "SELECT COUNT(u) FROM User u WHERE (u.company.id = :companyId OR :companyId IS NULL) AND (u.status = :status OR u.status IS NULL ) AND u.role.roleName = 'STAFF'")
+  Integer countAllForCompanyBy(String companyId, String status);
 
   Long countByCompany_Id(String companyId);
 

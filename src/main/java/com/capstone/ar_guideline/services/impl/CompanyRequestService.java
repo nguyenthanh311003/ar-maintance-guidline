@@ -3,6 +3,7 @@ package com.capstone.ar_guideline.services.impl;
 import static com.capstone.ar_guideline.constants.ConstStatus.*;
 
 import com.capstone.ar_guideline.dtos.requests.CompanyRequestCreation.CompanyRequestCreation;
+import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionRequest;
 import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.*;
@@ -12,9 +13,11 @@ import com.capstone.ar_guideline.mappers.CompanyMapper;
 import com.capstone.ar_guideline.mappers.CompanyRequestMapper;
 import com.capstone.ar_guideline.repositories.CompanyRequestRepository;
 import com.capstone.ar_guideline.services.*;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,8 @@ public class CompanyRequestService implements ICompanyRequestService {
   private final IMachineTypeService machineTypeService;
   private final IModelService assetModelService;
   private final EmailService emailService;
+  private final RequestRevisionService requestRevisionService;
+  private final ChatBoxService chatBoxService;
 
   @Override
   public PagingModel<CompanyRequestResponse> findAllForDesigner(
@@ -116,6 +121,7 @@ public class CompanyRequestService implements ICompanyRequestService {
   }
 
   @Override
+  @Transactional
   public CompanyRequestResponse create(CompanyRequestCreation request) {
     try {
       Company company =
@@ -124,12 +130,23 @@ public class CompanyRequestService implements ICompanyRequestService {
       User requester = userService.findById(request.getRequesterId());
       ModelType modelType = machineTypeService.findById(request.getMachineTypeId());
       CompanyRequest companyRequest = CompanyRequestMapper.fromCreationRequestToEntity(request);
+
       companyRequest.setCompany(company);
       companyRequest.setMachineType(modelType);
       companyRequest.setDesigner(null);
       companyRequest.setStatus(PENDING);
       companyRequest.setRequester(requester);
       companyRequest = companyRequestRepository.save(companyRequest);
+
+      RequestRevisionRequest requestRevisionRequest = new RequestRevisionRequest();
+      requestRevisionRequest.setCompanyRequestId(companyRequest.getRequestId());
+
+      requestRevisionRequest.setRevisionFiles(request.getRequestRevision().getRevisionFiles());
+      requestRevisionService.create(requestRevisionRequest);
+      chatBoxService.createChatBox(
+          List.of(UUID.fromString(request.getRequesterId())),
+          UUID.fromString(companyRequest.getRequestId()));
+      ;
       return CompanyRequestMapper.fromEntityToResponse(companyRequest);
     } catch (Exception exception) {
       if (exception instanceof AppException) {

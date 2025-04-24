@@ -194,6 +194,9 @@ public class ConstAPI {
     public static final String DELETE_MACHINE_BY_ID = "api/v1/machine/";
     public static final String GET_MACHINES_BY_CODE = "api/v1/machine/code/";
     public static final String GET_MACHINES_BY_GUIDELINE_ID = "api/v1/machine/guideline/";
+    public static final String CHECK_MACHINE_BELONG_TO_GUIDELINE = "api/v1/machine/code/";
+    public static final String GET_MACHINES_BY_GUIDELINE_ID_AND_MACHINE_ID =
+        "api/v1/machine/guideline/machine/";
     public static final String CREATE_MACHINE = "api/v1/machine";
     public static final String UPDATE_MACHINE = "api/v1/machine/";
     public static final String GET_MACHINE_QR_BY_MACHINE_ID = "api/v1/machine-qr/machine/";

@@ -57,7 +57,9 @@ public class SecurityConfig implements WebMvcConfigurer {
   public void addCorsMappings(CorsRegistry registry) {
     registry
         .addMapping("/**")
-        .allowedOrigins("http://localhost:3000") // MUST specify exact origin
+        .allowedOrigins(
+            "http://localhost:3000, https://ar-maintance-guideline-ui.vercel.app") // MUST specify
+        // exact origin
         .allowedMethods("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD")
         .allowedHeaders("Authorization", "Content-Type") // Allow authentication headers
         .exposedHeaders("Authorization") // Expose Authorization header

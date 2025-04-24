@@ -19,4 +19,9 @@ public interface MachineTypeRepository extends JpaRepository<ModelType, String> 
 
   @Query("SELECT c.modelType FROM Course c WHERE c.courseCode = :guidelineCode")
   ModelType getMachineTypeByGuidelineCode(@Param("guidelineCode") String guidelineCode);
+
+  @Query(
+      value =
+          "SELECT COUNT(m) FROM ModelType m WHERE m.company.id = :companyId GROUP BY m.company.id")
+  Integer countByCompany_Id(@Param("companyId") String companyId);
 }

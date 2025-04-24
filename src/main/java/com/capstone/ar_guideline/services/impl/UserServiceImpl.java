@@ -119,14 +119,29 @@ public class UserServiceImpl implements IUserService {
         companyUser = userRepository.findUserByCompanyIdAndAdminRole(company.getId());
       }
       var userByEmail = userRepository.findByEmail(signUpWitRoleRequest.getEmail());
+
       if (userByEmail.isPresent()) {
         throw new AppException(ErrorCode.USER_EXISTED);
       }
+
+      var userByPhone = userRepository.findByPhone(signUpWitRoleRequest.getPhone());
+
+      if (!userByPhone.isEmpty()) {
+        throw new AppException(ErrorCode.USER_PHONE_EXISTED);
+      }
+
+      user.setUsername(signUpWitRoleRequest.getEmail());
+      user.setPhone(signUpWitRoleRequest.getPhone());
       String passwordToSend = signUpWitRoleRequest.getPassword();
       user.setRole(role);
       user.setStatus(ConstStatus.ACTIVE_STATUS);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
+
+      var jwt = jwtService.generateToken(user);
+      UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
+      emailService.sendActiveAccountToCompany(user.getEmail(), user.getUsername(), passwordToSend);
+
       if (!signUpWitRoleRequest.getRoleName().equals("DESIGNER")) {
         walletService.createWallet(user, 0L, "VND");
         if (signUpWitRoleRequest.getPoints() > 0) {
@@ -134,9 +149,6 @@ public class UserServiceImpl implements IUserService {
               signUpWitRoleRequest.getPoints(), user.getId(), companyUser.getId(), null);
         }
       }
-      var jwt = jwtService.generateToken(user);
-      UserResponse userResponse = UserMapper.fromEntityToUserResponse(user);
-      emailService.sendActiveAccountToCompany(user.getEmail(), user.getUsername(), passwordToSend);
       return AuthenticationResponse.builder()
           .message("User created successfully")
           .token(jwt)
@@ -166,11 +178,18 @@ public class UserServiceImpl implements IUserService {
         throw new AppException(ErrorCode.USER_EXISTED);
       }
 
+      var userByPhone = userRepository.findByPhone(signUpRequest.getPhone());
+
+      if (!userByPhone.isEmpty()) {
+        throw new AppException(ErrorCode.USER_PHONE_EXISTED);
+      }
+
       String passwordToSend = signUpRequest.getPassword();
       CompanyCreationRequest companyCreationRequest =
           CompanyCreationRequest.builder().companyName(signUpRequest.getCompany()).build();
       Company newCompany = companyService.create(companyCreationRequest);
       User user = UserMapper.fromSignUpRequestToEntity(signUpRequest);
+      user.setUsername(signUpRequest.getEmail());
       user.setStatus(ConstStatus.ACTIVE_STATUS);
       user.setRole(role);
       user.setCompany(newCompany);

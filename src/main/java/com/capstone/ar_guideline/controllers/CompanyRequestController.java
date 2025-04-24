@@ -52,7 +52,7 @@ public class CompanyRequestController {
 
   @PostMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST)
   ApiResponse<CompanyRequestResponse> createCompanyRequest(
-      @RequestBody @Valid CompanyRequestCreation request) {
+      @ModelAttribute @Valid CompanyRequestCreation request) {
     return ApiResponse.<CompanyRequestResponse>builder()
         .message("Create Company Request")
         .result(companyRequestService.create(request))

@@ -49,13 +49,14 @@ public class WalletServiceImpl {
     }
     if (walletOptional.isPresent()) {
       Wallet wallet = walletOptional.get();
-      Long newBalance = isPlus ? wallet.getBalance() + amount : wallet.getBalance() - amount;
-      wallet.setBalance(newBalance);
+      //      Long newBalance = isPlus ? wallet.getBalance() + amount : wallet.getBalance() -
+      // amount;
+      //      wallet.setBalance(newBalance);
       WalletTransaction transaction =
           WalletTransaction.builder()
               .wallet(wallet)
               .amount(amount)
-              .balance(newBalance)
+              //    .balance(newBalance)
               .type(isPlus ? "CREDIT" : "DEBIT")
               .user(User.builder().id(userId).build())
               .build();
@@ -65,9 +66,12 @@ public class WalletServiceImpl {
         transaction.setPointOptions(pointOptions);
         transaction.setAmount(pointOptions.getPoint());
         transaction.setBalance(wallet.getBalance() + pointOptions.getPoint());
-      } else {
+        wallet.setBalance(wallet.getBalance() + pointOptions.getPoint());
+      } else if (guidelineId != null) {
         transaction.setServicePrice(ServicePrice.builder().id(servicePriceId).build());
         transaction.setCourse(Course.builder().id(guidelineId).build());
+      } else {
+        transaction.setServicePrice(ServicePrice.builder().id(servicePriceId).build());
       }
       walletTransactionRepository.save(transaction);
 

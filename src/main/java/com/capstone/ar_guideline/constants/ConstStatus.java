@@ -4,7 +4,11 @@ public class ConstStatus {
   public static final String ACTIVE_STATUS = "ACTIVE";
   public static final String INACTIVE_STATUS = "INACTIVE";
   public static final String PENDING = "PENDING";
+  public static final String REJECTED = "REJECTED";
+  public static final String DELIVERED = "DELIVERED";
+
   public static final String REJECT = "REJECT";
+
   public static final String SUCCESS = "SUCCESS";
   public static final String FAIL = "FAIL";
   public static final String PAID = "PAID";
@@ -16,4 +20,5 @@ public class ConstStatus {
   public static final String COMPANY_CANCELLED = "COMPANY_CANCELLED";
   public static final String DESIGNER_CANCELLED = "DESIGNER_CANCELLED";
   public static final String ARCHIVED = "ARCHIVED";
+  public static final String PRICE_PROPOSED = "PRICE PROPOSED";
 }

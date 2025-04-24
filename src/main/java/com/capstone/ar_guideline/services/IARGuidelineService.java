@@ -10,11 +10,11 @@ import com.capstone.ar_guideline.dtos.requests.Model.ModelCreationRequest;
 import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
 import com.capstone.ar_guideline.dtos.responses.Course.CourseResponse;
 import com.capstone.ar_guideline.dtos.responses.Instruction.InstructionResponse;
+import com.capstone.ar_guideline.dtos.responses.Machine.MachineGuidelineResponse;
 import com.capstone.ar_guideline.dtos.responses.Machine.MachineResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineType.MachineTypeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeAttribute.MachineTypeAttributeResponse;
 import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValueResponse;
-import com.capstone.ar_guideline.dtos.responses.Machine_QR.Machine_QRResponse;
 import com.capstone.ar_guideline.dtos.responses.Model.ModelResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.Machine;
@@ -61,9 +61,10 @@ public interface IARGuidelineService {
 
   MachineResponse getMachineById(String machineId);
 
-  MachineResponse getMachineByCode(String machineCode);
+  MachineResponse getMachineByCode(String machineCode, String companyId);
 
-  MachineResponse updateMachineById(String machineId, MachineModifyRequest request);
+  MachineResponse updateMachineById(
+      String machineId, MachineModifyRequest request, String companyId);
 
   MachineTypeResponse createMachineType(MachineTypeCreationRequest request);
 
@@ -84,7 +85,11 @@ public interface IARGuidelineService {
 
   List<MachineResponse> getMachineByGuidelineId(String guidelineId);
 
+  List<MachineGuidelineResponse> getMachineForMachineTabByGuidelineId(String guidelineId);
+
   MachineTypeResponse getMachineTypeByGuidelineCode(String guidelineCode);
 
-  List<Machine_QRResponse> getMachineQrByMachineId(String machineId);
+  Boolean checkMachineIsBelongToGuideline(String machineCode, String guidelineId);
+
+  List<MachineTypeValueResponse> getMachineTypeValueByMachineTypeId(String machineTypeId);
 }
