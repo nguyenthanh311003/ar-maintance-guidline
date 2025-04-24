@@ -48,7 +48,7 @@ public interface ModelRepository extends JpaRepository<Model, String> {
 
   @Query(
       value =
-          "SELECT m FROM Model m WHERE m.modelType.id = :machineTypeId AND m.company.id = :companyId "
+          "SELECT m FROM Model m WHERE m.modelType.id = :machineTypeId AND m.company.id = :companyId AND m.status != 'INACTIVE' "
               + "ORDER BY m.createdDate DESC")
   List<Model> findAllByMachineTypeIdAndCompanyId(
       @Param("machineTypeId") String machineTypeId, @Param("companyId") String companyId);

@@ -155,8 +155,16 @@ public class DashboardService {
     // Get total number of machines
     Integer numberOfMachines = machineRepository.countMachinesByCompanyId(companyId);
 
+    if (numberOfMachines == null) {
+      numberOfMachines = 0;
+    }
+
     // Get total number of machines type
     Integer numberOfMachinesType = machineTypeRepository.countByCompany_Id(companyId);
+
+    if (numberOfMachinesType == null) {
+      numberOfMachinesType = 0;
+    }
 
     // Get top 3 guidelines by scan times for the company
     Pageable topThree = PageRequest.of(0, 3);
