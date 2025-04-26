@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,6 +28,8 @@ public class WalletServiceImpl {
   @Autowired private PointOptionsRepository pointOptionsRepository;
 
   @Autowired private RequestRevisionRepository requestRevisionRepository;
+
+ @Autowired private  SimpMessagingTemplate simpMessagingTemplate;
 
   public WalletResponse createWallet(User user, Long initialBalance, String currency) {
     Wallet wallet = Wallet.builder().user(user).balance(initialBalance).currency(currency).build();
@@ -79,7 +82,10 @@ public class WalletServiceImpl {
       }
       walletTransactionRepository.save(transaction);
 
-      return walletRepository.save(wallet);
+      walletRepository.save(wallet);
+      simpMessagingTemplate.convertAndSend("/topic/wallet/100","");
+
+      return wallet;
     } else {
       throw new RuntimeException("Wallet not found");
     }
@@ -117,7 +123,11 @@ public class WalletServiceImpl {
 
     walletTransactionRepository.save(transaction);
 
-    return walletRepository.save(wallet);
+    walletRepository.save(wallet);
+
+    simpMessagingTemplate.convertAndSend("/topic/wallet/100","" );
+
+    return wallet;
   }
 
   public Wallet updateBalanceBySend(
@@ -176,6 +186,7 @@ public class WalletServiceImpl {
       // Save the updated wallets
       walletRepository.save(senderWallet);
       walletRepository.save(receiverWallet);
+      simpMessagingTemplate.convertAndSend("/topic/wallet/100","");
 
       return receiverWallet;
     } else {
