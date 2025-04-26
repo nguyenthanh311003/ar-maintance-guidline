@@ -6,9 +6,11 @@ import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.constants.ConstType;
 import com.capstone.ar_guideline.dtos.requests.ChatBox.ChatMessageRequest;
 import com.capstone.ar_guideline.dtos.requests.CompanyRequestCreation.CompanyRequestCreation;
+import com.capstone.ar_guideline.dtos.requests.Notification.NotificationRequest;
 import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionRequest;
 import com.capstone.ar_guideline.dtos.responses.ChatMessage.ChatMessageResponse;
 import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
+import com.capstone.ar_guideline.dtos.responses.Notification.NotificationResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.exceptions.AppException;
@@ -44,6 +46,7 @@ public class CompanyRequestService implements ICompanyRequestService {
   private final RequestRevisionService requestRevisionService;
   private final ChatBoxService chatBoxService;
   private final SimpMessagingTemplate simpMessagingTemplate;
+  private final NotificationService notificationService;
 
   @Override
   public PagingModel<CompanyRequestResponse> findAllForDesigner(
@@ -217,6 +220,18 @@ public class CompanyRequestService implements ICompanyRequestService {
           && Objects.nonNull(request.getRequesterId())
           && Objects.nonNull(companyRequest.getRequester())) {
         emailService.sendCompanyRequestEmail(request.getRequesterId(), companyRequest);
+
+        NotificationResponse notificationResponse = notificationService.create(
+                NotificationRequest.builder()
+                        .title("Request Updated")
+                        .content("Your Reuqest have been Approved")
+                        .type("Message")
+                        .key(requestId)
+                        .status("Unread")
+                        .userId(companyRequest.getRequester().getId())
+                        .build());
+
+        simpMessagingTemplate.convertAndSend("/topic/notification/"+companyRequest.getRequester().getId(),"h");
       }
 
       if (request.getStatus().equalsIgnoreCase(APPROVED)

@@ -1,9 +1,11 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.constants.ConstStatus;
+import com.capstone.ar_guideline.dtos.requests.Notification.NotificationRequest;
 import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionRequest;
 import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionResponse;
 import com.capstone.ar_guideline.dtos.responses.ChatMessage.ChatMessageResponse;
+import com.capstone.ar_guideline.dtos.responses.Notification.NotificationResponse;
 import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.repositories.*;
 import java.util.List;
@@ -28,6 +30,7 @@ public class RequestRevisionService {
   private final ServicePricerRepository servicePricerRepository;
   private final ChatMessageRepository chatMessageRepository;
   private final SimpMessagingTemplate simpMessagingTemplate;
+  private final NotificationService notificationService;
 
   @Transactional
   public RequestRevisionResponse create(RequestRevisionRequest request) {
@@ -98,16 +101,51 @@ public class RequestRevisionService {
       case ConstStatus.PRICE_PROPOSED:
         requestRevision.setStatus(request.getStatus());
         requestRevision.setPriceProposal(request.getPriceProposal());
+
+        NotificationResponse notificationResponse = notificationService.create(
+                NotificationRequest.builder()
+                        .title("Request Updated")
+                        .content("The price have been proposed")
+                        .type("Message")
+                        .key(requestRevision.getCompanyRequest().getRequestId())
+                        .status("Unread")
+                        .userId(requestRevision.getCompanyRequest().getRequester().getId())
+                        .build());
+
+        simpMessagingTemplate.convertAndSend("/topic/notification/"+requestRevision.getCompanyRequest().getRequester().getId(),"h");
         break;
       case ConstStatus.REJECTED:
         User user = userRepository.findUserById(request.getRejectionReason());
         requestRevision.setRejectionReason(request.getRejectionReason());
         requestRevision.setUserReject(user);
         requestRevision.setStatus(request.getStatus());
+           notificationService.create(
+                NotificationRequest.builder()
+                        .title("Request Updated")
+                        .content("Your request has been rejected")
+                        .type("Message")
+                        .key(requestRevision.getCompanyRequest().getRequestId())
+                        .status("Unread")
+                        .userId(user.getRole().getRoleName().equals("DESIGNER") ? requestRevision.getCompanyRequest().getRequester().getId() :requestRevision.getCompanyRequest().getDesigner().getId() )
+                        .build());
+
+        simpMessagingTemplate.convertAndSend("/topic/notification/"+( user.getRole().getRoleName().equals("DESIGNER") ? requestRevision.getCompanyRequest().getRequester().getId() :requestRevision.getCompanyRequest().getDesigner().getId()),"h");
         break;
       case ConstStatus.DELIVERED:
         requestRevision.setStatus(request.getStatus());
         requestRevision.setModelFile(FileStorageService.storeFile(request.getModelFile()));
+
+        notificationService.create(
+                NotificationRequest.builder()
+                        .title("Request Updated")
+                        .content("The model has been delivered")
+                        .type("Message")
+                        .key(requestRevision.getCompanyRequest().getRequestId())
+                        .status("Unread")
+                        .userId(requestRevision.getCompanyRequest().getRequester().getId() )
+                        .build());
+
+        simpMessagingTemplate.convertAndSend("/topic/notification/"+requestRevision.getCompanyRequest().getRequester().getId(),"h");
         break;
 
       case ConstStatus.APPROVED:
@@ -133,6 +171,19 @@ public class RequestRevisionService {
         companyRequest.setStatus(ConstStatus.APPROVED);
         companyRequest.setAssetModel(model);
         companyRequestRepository.save(companyRequest);
+
+
+        notificationService.create(
+                NotificationRequest.builder()
+                        .title("Request Updated")
+                        .content("The model has been approved")
+                        .type("Message")
+                        .key(requestRevision.getCompanyRequest().getRequestId())
+                        .status("Unread")
+                        .userId(requestRevision.getCompanyRequest().getDesigner().getId() )
+                        .build());
+
+        simpMessagingTemplate.convertAndSend("/topic/notification/"+requestRevision.getCompanyRequest().getDesigner().getId(),"h");
         break;
       case ConstStatus.PROCESSING:
 
@@ -146,9 +197,35 @@ public class RequestRevisionService {
           walletService.updateBalanceForRequestRevision(
                   company.getWallet().getId(), requestRevision.getId().toString());
           requestRevision.setStatus(request.getStatus());
+
+
+          notificationService.create(
+                  NotificationRequest.builder()
+                          .title("Request Updated")
+                          .content("Your"+requestRevision.getType() +" request has been approved")
+                          .type("Message")
+                          .key(requestRevision.getCompanyRequest().getRequestId())
+                          .status("Unread")
+                          .userId(requestRevision.getCompanyRequest().getRequester().getId() )
+                          .build());
+
+          simpMessagingTemplate.convertAndSend("/topic/notification/"+requestRevision.getCompanyRequest().getRequester().getId(),"h");
+
           break;
         }else{
           requestRevision.setStatus(request.getStatus());
+
+          notificationService.create(
+                  NotificationRequest.builder()
+                          .title("Request Updated")
+                          .content("Your"+requestRevision.getType() +" request has been approved")
+                          .type("Message")
+                          .key(requestRevision.getCompanyRequest().getRequestId())
+                          .status("Unread")
+                          .userId(requestRevision.getType().equals("Price Proposal") ?requestRevision.getCompanyRequest().getDesigner().getId(): requestRevision.getCompanyRequest().getRequester().getId())
+                          .build());
+
+          simpMessagingTemplate.convertAndSend("/topic/notification/"+requestRevision.getCompanyRequest().getRequester().getId(),"h");
           break;
         }
 

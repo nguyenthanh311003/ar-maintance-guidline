@@ -1,8 +1,10 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.dtos.requests.ChatBox.ChatMessageRequest;
+import com.capstone.ar_guideline.dtos.requests.Notification.NotificationRequest;
 import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionResponse;
 import com.capstone.ar_guideline.dtos.responses.ChatMessage.ChatMessageResponse;
+import com.capstone.ar_guideline.dtos.responses.Notification.NotificationResponse;
 import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.repositories.ChatBoxRepository;
 import com.capstone.ar_guideline.repositories.ChatMessageRepository;
@@ -13,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,8 @@ public class ChatBoxService {
   private final UserRepository userRepository;
   private final CompanyRequestRepository companyRequestRepository;
   private final RequestRevisionService requestRevisionService;
+    private final NotificationService notificationService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
 
   @Transactional
@@ -65,6 +70,23 @@ public class ChatBoxService {
                       .senderEmail(user.getEmail())
                       .timestamp(message.getTimestamp().toString())
                       .build();
+      List<User> participants = chatBox.getParticipants().stream()
+              .map(ChatBoxUser::getUser)
+              .collect(Collectors.toList());
+
+      participants.remove(user);
+
+    NotificationResponse notificationResponse = notificationService.create(
+              NotificationRequest.builder()
+                      .title("New Message")
+                      .content("You have a new message with " + participants.get(0).getEmail())
+                      .type("Message")
+                      .key(chatBox.getCompanyRequest().getRequestId())
+                      .status("Unread")
+                      .userId(participants.get(0).getId())
+                      .build());
+
+      simpMessagingTemplate.convertAndSend("/topic/notification/"+participants.get(0).getId(),"h");
 
       return response;
   }

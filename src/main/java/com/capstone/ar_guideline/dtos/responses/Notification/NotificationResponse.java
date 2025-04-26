@@ -2,6 +2,8 @@ package com.capstone.ar_guideline.dtos.responses.Notification;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,6 +17,6 @@ public class NotificationResponse {
     private String key;
     private String status;
     private String userId;
-    private String createdAt;
-    private String updatedAt;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 }
