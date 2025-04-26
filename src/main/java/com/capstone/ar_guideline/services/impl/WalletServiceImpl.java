@@ -6,6 +6,8 @@ import com.capstone.ar_guideline.mappers.WalletMapper;
 import com.capstone.ar_guideline.repositories.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ public class WalletServiceImpl {
   @Autowired private CompanyRepository companyRepository;
 
   @Autowired private PointOptionsRepository pointOptionsRepository;
+
+  @Autowired private RequestRevisionRepository requestRevisionRepository;
 
   public WalletResponse createWallet(User user, Long initialBalance, String currency) {
     Wallet wallet = Wallet.builder().user(user).balance(initialBalance).currency(currency).build();
@@ -79,6 +83,41 @@ public class WalletServiceImpl {
     } else {
       throw new RuntimeException("Wallet not found");
     }
+  }
+
+  public Wallet updateBalanceForRequestRevision(String walletId, String requestRevisionId) {
+    Optional<Wallet> walletOptional = walletRepository.findById(walletId);
+    Optional<RequestRevision> requestRevision = requestRevisionRepository.findById(UUID.fromString(requestRevisionId));
+
+    if (walletOptional.isEmpty()) {
+      throw new RuntimeException("Wallet not found");
+    }
+
+    if (requestRevision.isEmpty()) {
+      throw new RuntimeException("RequestRevision not found");
+    }
+
+    Wallet wallet = walletOptional.get();
+    Long priceProposal = Long.valueOf(requestRevision.get().getPriceProposal());
+
+    if (wallet.getBalance() == 0 || wallet.getBalance() - priceProposal < 0) {
+      throw new RuntimeException("Wallet does not have enough balance");
+    }
+
+    wallet.setBalance(wallet.getBalance() - priceProposal);
+
+    WalletTransaction transaction = WalletTransaction.builder()
+            .wallet(wallet)
+            .amount(priceProposal)
+            .requestRevision(requestRevision.get())
+            .balance(wallet.getBalance())
+            .type("DEBIT")
+            .user(User.builder().id(wallet.getUser().getId()).build())
+            .build();
+
+    walletTransactionRepository.save(transaction);
+
+    return walletRepository.save(wallet);
   }
 
   public Wallet updateBalanceBySend(

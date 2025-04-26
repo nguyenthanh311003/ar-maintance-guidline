@@ -35,6 +35,8 @@ public class CompanyRequest implements Serializable {
   @OneToMany(mappedBy = "companyRequest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<ChatBox> chatBoxes = new ArrayList<>();
 
+  private String cancelReason;
+
   @ManyToOne
   @JoinColumn(name = "designer_id")
   private User designer;
@@ -42,6 +44,10 @@ public class CompanyRequest implements Serializable {
   @ManyToOne
   @JoinColumn(name = "requester_id")
   private User requester;
+
+  @ManyToOne
+  @JoinColumn(name = "cancelled_by")
+  private User cancelledBy;
 
   @ManyToOne
   @JoinColumn(name = "machine_type_id")

@@ -15,10 +15,13 @@ public class RequestRevisionResponse {
 
   private String id; // ID of the revision
   private String companyRequestId; // ID of the company request
+  private String chatBoxId; // ID of the chat box
   private String reason; // Reason for the revision request
   private String rejectionReason; // Reason for rejection (if applicable)
   private String status; // Status of the revision request (e.g., "PENDING", "COMPLETED")
   private Integer priceProposal; // Price proposed by the designer
+  private String modelFile;
+  private String type;
   private List<String> revisionFiles; // List of files associated with the revision request
   private LocalDateTime createdDate; // Date when the revision request was created
 }

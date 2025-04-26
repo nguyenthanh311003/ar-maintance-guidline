@@ -3,14 +3,14 @@ package com.capstone.ar_guideline.entities;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
+import lombok.*;
+
 @Entity
 @Table(name = "chat_messages")
 @NoArgsConstructor
+@Setter
+@Getter
 @AllArgsConstructor
 public class ChatMessage {
   @Id
@@ -20,9 +20,16 @@ public class ChatMessage {
   @Column(nullable = false, length = 1000)
   private String content;
 
+  private String file;
+
+  private String type;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
+
+   @OneToOne(mappedBy = "chatMessage")
+    private RequestRevision requestRevision;
 
   @Column(nullable = false)
   private LocalDateTime timestamp;

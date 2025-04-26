@@ -13,6 +13,8 @@ public class ConstStatus {
   public static final String FAIL = "FAIL";
   public static final String PAID = "PAID";
   public static final String CANCEL = "CANCEL";
+  public static final String CANCELLED = "CANCELLED";
+
   public static final String PASS = "PASS";
   public static final String PROCESSING = "PROCESSING";
   public static final String DRAFTED = "DRAFTED";

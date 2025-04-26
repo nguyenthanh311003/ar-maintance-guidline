@@ -2,12 +2,12 @@ package com.capstone.ar_guideline.entities;
 
 import jakarta.persistence.*;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
+import lombok.*;
+
+
+@Setter
+@Getter
 @Entity
 @Table(name = "chat_box_users")
 @NoArgsConstructor

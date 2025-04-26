@@ -2,8 +2,12 @@ package com.capstone.ar_guideline.services.impl;
 
 import static com.capstone.ar_guideline.constants.ConstStatus.*;
 
+import com.capstone.ar_guideline.constants.ConstStatus;
+import com.capstone.ar_guideline.constants.ConstType;
+import com.capstone.ar_guideline.dtos.requests.ChatBox.ChatMessageRequest;
 import com.capstone.ar_guideline.dtos.requests.CompanyRequestCreation.CompanyRequestCreation;
 import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionRequest;
+import com.capstone.ar_guideline.dtos.responses.ChatMessage.ChatMessageResponse;
 import com.capstone.ar_guideline.dtos.responses.CompanyRequest.CompanyRequestResponse;
 import com.capstone.ar_guideline.dtos.responses.PagingModel;
 import com.capstone.ar_guideline.entities.*;
@@ -24,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,6 +43,7 @@ public class CompanyRequestService implements ICompanyRequestService {
   private final EmailService emailService;
   private final RequestRevisionService requestRevisionService;
   private final ChatBoxService chatBoxService;
+  private final SimpMessagingTemplate simpMessagingTemplate;
 
   @Override
   public PagingModel<CompanyRequestResponse> findAllForDesigner(
@@ -141,12 +147,26 @@ public class CompanyRequestService implements ICompanyRequestService {
       RequestRevisionRequest requestRevisionRequest = new RequestRevisionRequest();
       requestRevisionRequest.setCompanyRequestId(companyRequest.getRequestId());
 
+
       requestRevisionRequest.setRevisionFiles(request.getRequestRevision().getRevisionFiles());
-      requestRevisionService.create(requestRevisionRequest);
-      chatBoxService.createChatBox(
+
+   ChatBox chatBox =   chatBoxService.createChatBox(
           List.of(UUID.fromString(request.getRequesterId())),
           UUID.fromString(companyRequest.getRequestId()));
       ;
+
+      ChatMessageRequest chatMessageRequest =  new ChatMessageRequest();
+      chatMessageRequest.setChatBoxId(chatBox.getId());
+      chatMessageRequest.setContent("");
+        chatMessageRequest.setCompanyRequestId(companyRequest.getRequestId());
+      chatMessageRequest.setUserId(UUID.fromString(requester.getId()));
+      ChatMessageResponse chatMessage =  chatBoxService.addMessageToChatBox(chatMessageRequest);
+      requestRevisionRequest.setChatMessageId(String.valueOf(chatMessage.getId()  ));
+      requestRevisionRequest.setType(ConstType.PRICE_PROPOSAL);
+      requestRevisionService.create(requestRevisionRequest);
+
+      simpMessagingTemplate.convertAndSend("/topic/request/100","h");
+
       return CompanyRequestMapper.fromEntityToResponse(companyRequest);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
@@ -166,7 +186,12 @@ public class CompanyRequestService implements ICompanyRequestService {
         companyRequest.setStatus(request.getStatus());
       if (request.getDesignerId() != null)
         companyRequest.setDesigner(userService.findById(request.getDesignerId()));
-
+      companyRequest.getChatBoxes().get(0).getParticipants().add(
+              ChatBoxUser.builder()
+                      .chatBox(companyRequest.getChatBoxes().get(0))
+                      .user(companyRequest.getDesigner())
+                      .build()
+      );
       String modelNeedToDelete = null;
       if (request.getAssetModelId() != null) {
         if (companyRequest.getAssetModel() != null) {
@@ -194,21 +219,29 @@ public class CompanyRequestService implements ICompanyRequestService {
         assetModelService.update(assetModel);
       }
 
-      if (request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED)
-          || request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)) {
+      if (request.getStatus().equalsIgnoreCase(CANCELLED)) {
         companyRequest.setCancelledAt(LocalDateTime.now());
+        companyRequest.setStatus(request.getStatus());
+        companyRequest.setCancelReason(request.getCancelReason());
+        companyRequest.setCancelledBy(userService.findById(request.getCancelledBy()));
       }
 
       if (request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)) {
         emailService.sendDesignerCancelledEmail(
             companyRequest.getRequester().getEmail(), companyRequest);
-        companyRequest.setStatus(PENDING);
+        companyRequest.setCancelledAt(LocalDateTime.now());
+        companyRequest.setStatus(CANCEL);
+        companyRequest.setCancelReason(request.getCancelReason());
+        companyRequest.setCancelledBy(userService.findById(request.getCancelledBy()));
       }
 
       if (request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED)) {
         emailService.sendRequesterCancelledEmail(
             companyRequest.getDesigner().getEmail(), companyRequest);
+        companyRequest.setCancelledAt(LocalDateTime.now());
         companyRequest.setStatus(CANCEL);
+        companyRequest.setCancelReason(request.getCancelReason());
+        companyRequest.setCancelledBy(userService.findById(request.getCancelledBy()));
         if (companyRequest.getAssetModel() != null) {
           modelNeedToDelete = companyRequest.getAssetModel().getId();
           companyRequest.setAssetModel(null);
@@ -222,7 +255,7 @@ public class CompanyRequestService implements ICompanyRequestService {
           && modelNeedToDelete != null) {
         assetModelService.delete(modelNeedToDelete);
       }
-
+      simpMessagingTemplate.convertAndSend("/topic/request/100","h");
       return CompanyRequestMapper.fromEntityToResponse(companyRequest);
     } catch (Exception exception) {
       if (exception instanceof AppException) {

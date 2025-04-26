@@ -4,26 +4,31 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 @Table(name = "request_revisions")
 public class RequestRevision {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id; // Primary key
 
   @ManyToOne
   @JoinColumn(name = "company_request_id", nullable = false)
   private CompanyRequest companyRequest; // Foreign key to Requests
+
+
+  @OneToOne
+  @JoinColumn(name = "chat_message_id", nullable = true) // or omit nullable (defaults to true)
+  private ChatMessage chatMessage; // Foreign key to Requests
 
   @OneToMany(mappedBy = "requestRevision", cascade = CascadeType.ALL)
   private List<RevisionFile> revisionFiles;
@@ -36,6 +41,8 @@ public class RequestRevision {
   private String status; // Status of the revision request (e.g., "PENDING", "COMPLETED")
 
   private String modelFile;
+
+  private String type;
 
   @ManyToOne
   @JoinColumn(name = "user_reject_id")

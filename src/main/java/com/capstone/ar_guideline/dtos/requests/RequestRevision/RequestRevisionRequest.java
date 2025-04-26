@@ -22,6 +22,8 @@ public class RequestRevisionRequest {
   private String userRejectId; // ID of the user who rejected the request
   private String modelName;
   private String description;
+  private String chatMessageId;
+  private String type;
   private MultipartFile modelFile;
   private List<MultipartFile> revisionFiles; // List of files associated with the revision request
 }

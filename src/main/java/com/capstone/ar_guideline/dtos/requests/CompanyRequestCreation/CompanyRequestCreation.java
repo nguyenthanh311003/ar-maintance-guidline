@@ -21,6 +21,8 @@ public class CompanyRequestCreation {
   String assetModelId;
   String status;
   RequestRevisionRequest requestRevision;
+  String cancelReason;
+  String cancelledBy;
   LocalDateTime createdAt;
   LocalDateTime completedAt;
   LocalDateTime cancelledAt;

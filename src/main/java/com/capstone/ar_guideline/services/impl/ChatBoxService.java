@@ -1,6 +1,7 @@
 package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.dtos.requests.ChatBox.ChatMessageRequest;
+import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionResponse;
 import com.capstone.ar_guideline.dtos.responses.ChatMessage.ChatMessageResponse;
 import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.repositories.ChatBoxRepository;
@@ -22,6 +23,8 @@ public class ChatBoxService {
   private final ChatMessageRepository chatMessageRepository;
   private final UserRepository userRepository;
   private final CompanyRequestRepository companyRequestRepository;
+  private final RequestRevisionService requestRevisionService;
+
 
   @Transactional
   public ChatBox createChatBox(List<UUID> participants, UUID companyRequestId) {
@@ -42,20 +45,28 @@ public class ChatBoxService {
   }
 
   @Transactional
-  public ChatMessage addMessageToChatBox(ChatMessageRequest request) {
-    CompanyRequest companyRequest =
-        companyRequestRepository.findByRequestId(String.valueOf(request.getChatBoxId()));
-    ChatBox chatBox =
-        chatBoxRepository
-            .findById(companyRequest.getChatBoxes().get(0).getId())
-            .orElseThrow(() -> new RuntimeException("Chat box not found"));
-    User user = userRepository.findUserById(String.valueOf(request.getUserId()));
-    ChatMessage message = new ChatMessage();
-    message.setChatBox(chatBox);
-    message.setContent(request.getContent());
-    message.setUser(user);
-    chatMessageRepository.save(message);
-    return message;
+  public ChatMessageResponse addMessageToChatBox(ChatMessageRequest request) {
+
+      ChatBox chatBox =
+              chatBoxRepository
+                      .findById(request.getChatBoxId())
+                      .orElseThrow(() -> new RuntimeException("Chat box not found"));
+      User user = userRepository.findUserById(String.valueOf(request.getUserId()));
+      ChatMessage message = new ChatMessage();
+      message.setChatBox(chatBox);
+      message.setContent(request.getContent());
+      message.setUser(user);
+      chatMessageRepository.save(message);
+
+      ChatMessageResponse response =
+              ChatMessageResponse.builder()
+                        .id(String.valueOf(message.getId()))
+                      .content(message.getContent())
+                      .senderEmail(user.getEmail())
+                      .timestamp(message.getTimestamp().toString())
+                      .build();
+
+      return response;
   }
 
   @Transactional(readOnly = true)
@@ -69,9 +80,11 @@ public class ChatBoxService {
         .map(
             message ->
                 ChatMessageResponse.builder()
+                    .id(String.valueOf(message.getId()))
                     .content(message.getContent())
                     .senderEmail(message.getUser().getEmail())
                     .timestamp(message.getTimestamp().toString())
+                        .requestRevisionResponse(message.getRequestRevision()!=null ?requestRevisionService.mapToResponse(message.getRequestRevision()):null)
                     .build())
         .collect(Collectors.toList());
   }

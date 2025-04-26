@@ -20,11 +20,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class JWTServiceImpl implements IJWTService {
 
-  @Value("${jwt.access-token-expiration}") // Load from properties
-  private long accessTokenExpiration;
+//  @Value("${jwt.access-token-expiration}") // Load from properties
+  private long accessTokenExpiration = 6004800000L;
 
-  @Value("${jwt.refresh-token-expiration}") // Load from properties
-  private long refreshTokenExpiration;
+//  @Value("${jwt.refresh-token-expiration}") // Load from properties
+  private long refreshTokenExpiration = 6004800000L;
 
   public String generateToken(UserDetails userDetails) {
     return Jwts.builder()

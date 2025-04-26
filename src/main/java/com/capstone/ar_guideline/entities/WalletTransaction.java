@@ -32,6 +32,10 @@ public class WalletTransaction {
   private PointOptions pointOptions;
 
   @ManyToOne
+  @JoinColumn(name = "request_revision_id", referencedColumnName = "id")
+  private RequestRevision requestRevision;
+
+  @ManyToOne
   @JoinColumn(name = "guideline_id", referencedColumnName = "id")
   private Course course;
 

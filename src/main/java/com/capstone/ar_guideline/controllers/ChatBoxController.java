@@ -25,13 +25,26 @@ public class ChatBoxController {
   public ChatMessageResponse sendMessage(
       @DestinationVariable String chatBoxId, @Payload ChatMessageRequest messageRequest) {
     // Process and save the message
-    ChatMessage savedMessage = chatBoxService.addMessageToChatBox(messageRequest);
+    return  chatBoxService.addMessageToChatBox(messageRequest);
+//
+//    return ChatMessageResponse.builder()
+//        .content(savedMessage.getContent())
+//        .senderEmail(savedMessage.getUser().getEmail())
+//        .build();
+//        .timestamp(savedMessage.getTimestamp().toString())
+  }
 
-    return ChatMessageResponse.builder()
-        .content(savedMessage.getContent())
-        .senderEmail(savedMessage.getUser().getEmail())
-        .timestamp(savedMessage.getTimestamp().toString())
-        .build();
+  @PostMapping
+  public ChatMessageResponse sendMessageWithoutPub(
+          @RequestBody ChatMessageRequest messageRequest) {
+    // Process and save the message
+    return  chatBoxService.addMessageToChatBox(messageRequest);
+//
+//    return ChatMessageResponse.builder()
+//        .content(savedMessage.getContent())
+//        .senderEmail(savedMessage.getUser().getEmail())
+//        .timestamp(savedMessage.getTimestamp().toString())
+//        .build();
   }
 
   @GetMapping("/{chatBoxId}/messages")

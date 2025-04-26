@@ -30,6 +30,9 @@ public class CompanyRequestMapper {
             entity.getDesigner() == null
                 ? null
                 : UserMapper.fromEntityToUserResponse(entity.getDesigner()))
+            .cancelledBy(  entity.getCancelledBy() == null
+                    ? null
+                    : UserMapper.fromEntityToUserResponse(entity.getCancelledBy()))
         .machineType(
             entity.getMachineType() == null
                 ? null
@@ -47,6 +50,7 @@ public class CompanyRequestMapper {
                 ? null
                 : UserMapper.fromEntityToUserResponse(entity.getRequester()))
         .requestNumber(entity.getRequestNumber())
+            .cancelReason(entity.getCancelReason())
         .completedAt(entity.getCompletedAt())
         .cancelledAt(entity.getCancelledAt())
         .status(entity.getStatus())

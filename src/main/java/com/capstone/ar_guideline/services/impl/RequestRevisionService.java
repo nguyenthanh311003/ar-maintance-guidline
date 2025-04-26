@@ -3,12 +3,15 @@ package com.capstone.ar_guideline.services.impl;
 import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionRequest;
 import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionResponse;
+import com.capstone.ar_guideline.dtos.responses.ChatMessage.ChatMessageResponse;
 import com.capstone.ar_guideline.entities.*;
 import com.capstone.ar_guideline.repositories.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,8 @@ public class RequestRevisionService {
   private final ModelRepository modelRepository;
   private final WalletServiceImpl walletService;
   private final ServicePricerRepository servicePricerRepository;
+  private final ChatMessageRepository chatMessageRepository;
+  private final SimpMessagingTemplate simpMessagingTemplate;
 
   @Transactional
   public RequestRevisionResponse create(RequestRevisionRequest request) {
@@ -31,10 +36,15 @@ public class RequestRevisionService {
       CompanyRequest companyRequest =
           companyRequestRepository.findByRequestId(request.getCompanyRequestId());
 
+      Optional<ChatMessage> chatMessage = chatMessageRepository.findById(UUID.fromString(request.getChatMessageId()));
+
       RequestRevision requestRevision = new RequestRevision();
       requestRevision.setCompanyRequest(companyRequest);
       requestRevision.setReason(request.getReason());
+      requestRevision.setChatMessage(chatMessage.get());
       requestRevision.setStatus(ConstStatus.PENDING);
+      requestRevision.setType(request.getType());
+
 
       requestRevision = requestRevisionRepository.save(requestRevision);
       final RequestRevision savedRequestRevision = requestRevision;
@@ -51,6 +61,18 @@ public class RequestRevisionService {
 
       requestRevision.setRevisionFiles(revisionFiles);
       requestRevision = requestRevisionRepository.save(requestRevision);
+
+      ChatMessageResponse response =
+              ChatMessageResponse.builder()
+                      .id(String.valueOf(chatMessage.get().getId()))
+                      .content(chatMessage.get().getContent())
+                      .senderEmail(chatMessage.get().getUser().getEmail())
+                      .timestamp(chatMessage.get().getTimestamp().toString())
+                      .requestRevisionResponse(mapToResponse(requestRevision))
+                      .build();
+      String chatId = requestRevision.getCompanyRequest().getRequestId();
+      simpMessagingTemplate.convertAndSend("/topic/chat/" + chatId, response);
+
 
       return mapToResponse(requestRevision);
     } catch (NumberFormatException e) {
@@ -109,27 +131,42 @@ public class RequestRevisionService {
             companyRequestRepository.findByRequestId(
                 requestRevision.getCompanyRequest().getRequestId());
         companyRequest.setStatus(ConstStatus.APPROVED);
+        companyRequest.setAssetModel(model);
         companyRequestRepository.save(companyRequest);
         break;
       case ConstStatus.PROCESSING:
-        User company =
-            userRepository.findUserByCompanyIdAndAdminRole(
-                requestRevision.getCompanyRequest().getCompany().getId());
-        ServicePrice servicePrice = servicePricerRepository.findByName("Model Request");
 
-        walletService.updateBalance(
-            company.getWallet().getId(),
-            Long.parseLong(requestRevision.getPriceProposal().toString()),
-            false,
-            servicePrice.getId(),
-            company.getId(),
-            null,
-            null);
-        requestRevision.setStatus(request.getStatus());
-        break;
+        if(!requestRevision.getType().equals("Bug Fix"))
+        {
+          User company =
+                  userRepository.findUserByCompanyIdAndAdminRole(
+                          requestRevision.getCompanyRequest().getCompany().getId());
+          ServicePrice servicePrice = servicePricerRepository.findByName("Model Request");
+
+          walletService.updateBalanceForRequestRevision(
+                  company.getWallet().getId(), requestRevision.getId().toString());
+          requestRevision.setStatus(request.getStatus());
+          break;
+        }else{
+          requestRevision.setStatus(request.getStatus());
+          break;
+        }
+
     }
 
     requestRevision = requestRevisionRepository.save(requestRevision);
+    String chatId = requestRevision.getCompanyRequest().getRequestId();
+
+    ChatMessageResponse response =
+        ChatMessageResponse.builder()
+            .id(String.valueOf(requestRevision.getChatMessage().getId()))
+            .content(requestRevision.getChatMessage().getContent())
+            .senderEmail(requestRevision.getChatMessage().getUser().getEmail())
+            .timestamp(requestRevision.getChatMessage().getTimestamp().toString())
+            .requestRevisionResponse(mapToResponse(requestRevision))
+            .build();
+
+    simpMessagingTemplate.convertAndSend("/topic/chat/" + chatId, response);
 
     return mapToResponse(requestRevision);
   }
@@ -144,19 +181,22 @@ public class RequestRevisionService {
     requestRevisionRepository.delete(requestRevision);
   }
 
-  private RequestRevisionResponse mapToResponse(RequestRevision requestRevision) {
+  public RequestRevisionResponse mapToResponse(RequestRevision requestRevision) {
     return RequestRevisionResponse.builder()
         .id(requestRevision.getId().toString())
         .companyRequestId(requestRevision.getCompanyRequest().getRequestId())
         .reason(requestRevision.getReason())
         .rejectionReason(requestRevision.getRejectionReason())
         .priceProposal(requestRevision.getPriceProposal())
+            .type(requestRevision.getType())
         .status(requestRevision.getStatus())
+            .modelFile(requestRevision.getModelFile())
         .revisionFiles(
             requestRevision.getRevisionFiles().stream()
                 .map(RevisionFile::getFileName)
                 .collect(Collectors.toList()))
         .createdDate(requestRevision.getCreatedDate())
+            .chatBoxId(requestRevision.getChatMessage().getChatBox().getId().toString())
         .build();
   }
 }

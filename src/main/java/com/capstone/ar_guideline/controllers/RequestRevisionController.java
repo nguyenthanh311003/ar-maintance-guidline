@@ -6,6 +6,9 @@ import com.capstone.ar_guideline.services.impl.RequestRevisionService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,8 +20,9 @@ public class RequestRevisionController {
 
   @PostMapping
   public ResponseEntity<RequestRevisionResponse> createRequestRevision(
-      @RequestBody RequestRevisionRequest request) {
+      @ModelAttribute RequestRevisionRequest request) {
     RequestRevisionResponse response = requestRevisionService.create(request);
+
     return ResponseEntity.ok(response);
   }
 

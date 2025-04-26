@@ -21,6 +21,8 @@ public class CompanyRequestResponse implements Serializable {
   private UserResponse requester;
   private MachineTypeResponse machineType;
   private String requestNumber;
+  private String cancelReason;
+  private UserResponse cancelledBy;
   private String status;
   private ModelResponse assetModel;
   private LocalDateTime createdAt;
