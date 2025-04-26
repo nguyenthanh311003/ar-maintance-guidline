@@ -13,17 +13,16 @@ import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 public class JWTServiceImpl implements IJWTService {
 
-//  @Value("${jwt.access-token-expiration}") // Load from properties
+  //  @Value("${jwt.access-token-expiration}") // Load from properties
   private long accessTokenExpiration = 6004800000L;
 
-//  @Value("${jwt.refresh-token-expiration}") // Load from properties
+  //  @Value("${jwt.refresh-token-expiration}") // Load from properties
   private long refreshTokenExpiration = 6004800000L;
 
   public String generateToken(UserDetails userDetails) {

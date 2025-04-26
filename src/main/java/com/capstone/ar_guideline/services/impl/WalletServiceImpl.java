@@ -7,7 +7,6 @@ import com.capstone.ar_guideline.repositories.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -29,7 +28,7 @@ public class WalletServiceImpl {
 
   @Autowired private RequestRevisionRepository requestRevisionRepository;
 
- @Autowired private  SimpMessagingTemplate simpMessagingTemplate;
+  @Autowired private SimpMessagingTemplate simpMessagingTemplate;
 
   public WalletResponse createWallet(User user, Long initialBalance, String currency) {
     Wallet wallet = Wallet.builder().user(user).balance(initialBalance).currency(currency).build();
@@ -83,7 +82,7 @@ public class WalletServiceImpl {
       walletTransactionRepository.save(transaction);
 
       walletRepository.save(wallet);
-      simpMessagingTemplate.convertAndSend("/topic/wallet/100","");
+      simpMessagingTemplate.convertAndSend("/topic/wallet/100", "");
 
       return wallet;
     } else {
@@ -93,7 +92,8 @@ public class WalletServiceImpl {
 
   public Wallet updateBalanceForRequestRevision(String walletId, String requestRevisionId) {
     Optional<Wallet> walletOptional = walletRepository.findById(walletId);
-    Optional<RequestRevision> requestRevision = requestRevisionRepository.findById(UUID.fromString(requestRevisionId));
+    Optional<RequestRevision> requestRevision =
+        requestRevisionRepository.findById(UUID.fromString(requestRevisionId));
 
     if (walletOptional.isEmpty()) {
       throw new RuntimeException("Wallet not found");
@@ -112,7 +112,8 @@ public class WalletServiceImpl {
 
     wallet.setBalance(wallet.getBalance() - priceProposal);
 
-    WalletTransaction transaction = WalletTransaction.builder()
+    WalletTransaction transaction =
+        WalletTransaction.builder()
             .wallet(wallet)
             .amount(priceProposal)
             .requestRevision(requestRevision.get())
@@ -125,7 +126,7 @@ public class WalletServiceImpl {
 
     walletRepository.save(wallet);
 
-    simpMessagingTemplate.convertAndSend("/topic/wallet/100","" );
+    simpMessagingTemplate.convertAndSend("/topic/wallet/100", "");
 
     return wallet;
   }
@@ -186,7 +187,7 @@ public class WalletServiceImpl {
       // Save the updated wallets
       walletRepository.save(senderWallet);
       walletRepository.save(receiverWallet);
-      simpMessagingTemplate.convertAndSend("/topic/wallet/100","");
+      simpMessagingTemplate.convertAndSend("/topic/wallet/100", "");
 
       return receiverWallet;
     } else {

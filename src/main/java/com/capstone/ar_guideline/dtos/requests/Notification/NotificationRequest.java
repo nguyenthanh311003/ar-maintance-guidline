@@ -9,12 +9,12 @@ import lombok.*;
 @Builder
 public class NotificationRequest {
 
-    private String title;
-    private String content;
-    private String type;
-    private String key;
-    private String status;
-    private String userId;
+  private String title;
+  private String content;
+  private String type;
+  private String key;
+  private String status;
+  private String userId;
 
-    // Constructors, getters, and setters
+  // Constructors, getters, and setters
 }

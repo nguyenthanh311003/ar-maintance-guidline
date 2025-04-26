@@ -2,7 +2,6 @@ package com.capstone.ar_guideline.controllers;
 
 import com.capstone.ar_guideline.dtos.requests.ChatBox.ChatMessageRequest;
 import com.capstone.ar_guideline.dtos.responses.ChatMessage.ChatMessageResponse;
-import com.capstone.ar_guideline.entities.ChatMessage;
 import com.capstone.ar_guideline.services.impl.ChatBoxService;
 import java.util.List;
 import java.util.UUID;
@@ -25,26 +24,25 @@ public class ChatBoxController {
   public ChatMessageResponse sendMessage(
       @DestinationVariable String chatBoxId, @Payload ChatMessageRequest messageRequest) {
     // Process and save the message
-    return  chatBoxService.addMessageToChatBox(messageRequest);
-//
-//    return ChatMessageResponse.builder()
-//        .content(savedMessage.getContent())
-//        .senderEmail(savedMessage.getUser().getEmail())
-//        .build();
-//        .timestamp(savedMessage.getTimestamp().toString())
+    return chatBoxService.addMessageToChatBox(messageRequest);
+    //
+    //    return ChatMessageResponse.builder()
+    //        .content(savedMessage.getContent())
+    //        .senderEmail(savedMessage.getUser().getEmail())
+    //        .build();
+    //        .timestamp(savedMessage.getTimestamp().toString())
   }
 
   @PostMapping
-  public ChatMessageResponse sendMessageWithoutPub(
-          @RequestBody ChatMessageRequest messageRequest) {
+  public ChatMessageResponse sendMessageWithoutPub(@RequestBody ChatMessageRequest messageRequest) {
     // Process and save the message
-    return  chatBoxService.addMessageToChatBox(messageRequest);
-//
-//    return ChatMessageResponse.builder()
-//        .content(savedMessage.getContent())
-//        .senderEmail(savedMessage.getUser().getEmail())
-//        .timestamp(savedMessage.getTimestamp().toString())
-//        .build();
+    return chatBoxService.addMessageToChatBox(messageRequest);
+    //
+    //    return ChatMessageResponse.builder()
+    //        .content(savedMessage.getContent())
+    //        .senderEmail(savedMessage.getUser().getEmail())
+    //        .timestamp(savedMessage.getTimestamp().toString())
+    //        .build();
   }
 
   @GetMapping("/{chatBoxId}/messages")

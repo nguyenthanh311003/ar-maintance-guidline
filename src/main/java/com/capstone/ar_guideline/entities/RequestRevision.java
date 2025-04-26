@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -24,7 +23,6 @@ public class RequestRevision {
   @ManyToOne
   @JoinColumn(name = "company_request_id", nullable = false)
   private CompanyRequest companyRequest; // Foreign key to Requests
-
 
   @OneToOne
   @JoinColumn(name = "chat_message_id", nullable = true) // or omit nullable (defaults to true)

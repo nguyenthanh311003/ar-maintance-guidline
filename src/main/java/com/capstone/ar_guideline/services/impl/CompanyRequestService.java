@@ -2,7 +2,6 @@ package com.capstone.ar_guideline.services.impl;
 
 import static com.capstone.ar_guideline.constants.ConstStatus.*;
 
-import com.capstone.ar_guideline.constants.ConstStatus;
 import com.capstone.ar_guideline.constants.ConstType;
 import com.capstone.ar_guideline.dtos.requests.ChatBox.ChatMessageRequest;
 import com.capstone.ar_guideline.dtos.requests.CompanyRequestCreation.CompanyRequestCreation;
@@ -150,25 +149,25 @@ public class CompanyRequestService implements ICompanyRequestService {
       RequestRevisionRequest requestRevisionRequest = new RequestRevisionRequest();
       requestRevisionRequest.setCompanyRequestId(companyRequest.getRequestId());
 
-
       requestRevisionRequest.setRevisionFiles(request.getRequestRevision().getRevisionFiles());
 
-   ChatBox chatBox =   chatBoxService.createChatBox(
-          List.of(UUID.fromString(request.getRequesterId())),
-          UUID.fromString(companyRequest.getRequestId()));
+      ChatBox chatBox =
+          chatBoxService.createChatBox(
+              List.of(UUID.fromString(request.getRequesterId())),
+              UUID.fromString(companyRequest.getRequestId()));
       ;
 
-      ChatMessageRequest chatMessageRequest =  new ChatMessageRequest();
+      ChatMessageRequest chatMessageRequest = new ChatMessageRequest();
       chatMessageRequest.setChatBoxId(chatBox.getId());
       chatMessageRequest.setContent("");
-        chatMessageRequest.setCompanyRequestId(companyRequest.getRequestId());
+      chatMessageRequest.setCompanyRequestId(companyRequest.getRequestId());
       chatMessageRequest.setUserId(UUID.fromString(requester.getId()));
-      ChatMessageResponse chatMessage =  chatBoxService.addMessageToChatBox(chatMessageRequest);
-      requestRevisionRequest.setChatMessageId(String.valueOf(chatMessage.getId()  ));
+      ChatMessageResponse chatMessage = chatBoxService.addMessageToChatBox(chatMessageRequest);
+      requestRevisionRequest.setChatMessageId(String.valueOf(chatMessage.getId()));
       requestRevisionRequest.setType(ConstType.PRICE_PROPOSAL);
       requestRevisionService.create(requestRevisionRequest);
 
-      simpMessagingTemplate.convertAndSend("/topic/request/100","h");
+      simpMessagingTemplate.convertAndSend("/topic/request/100", "h");
 
       return CompanyRequestMapper.fromEntityToResponse(companyRequest);
     } catch (Exception exception) {
@@ -189,17 +188,22 @@ public class CompanyRequestService implements ICompanyRequestService {
         companyRequest.setStatus(request.getStatus());
       List<CompanyRequest> companyRequests = null;
       if (request.getDesignerId() != null) {
-        companyRequests = companyRequestRepository.findAllByDesignerIdAndStatus(request.getDesignerId(), PROCESSING);
+        companyRequests =
+            companyRequestRepository.findAllByDesignerIdAndStatus(
+                request.getDesignerId(), PROCESSING);
         if (companyRequests.size() > 0) {
           throw new AppException(ErrorCode.CAN_ONLY_JOIN_ONE_COMPANY_REQUEST);
         }
         companyRequest.setDesigner(userService.findById(request.getDesignerId()));
-        companyRequest.getChatBoxes().get(0).getParticipants().add(
+        companyRequest
+            .getChatBoxes()
+            .get(0)
+            .getParticipants()
+            .add(
                 ChatBoxUser.builder()
-                        .chatBox(companyRequest.getChatBoxes().get(0))
-                        .user(companyRequest.getDesigner())
-                        .build()
-        );
+                    .chatBox(companyRequest.getChatBoxes().get(0))
+                    .user(companyRequest.getDesigner())
+                    .build());
       }
       String modelNeedToDelete = null;
 
@@ -221,17 +225,19 @@ public class CompanyRequestService implements ICompanyRequestService {
           && Objects.nonNull(companyRequest.getRequester())) {
         emailService.sendCompanyRequestEmail(request.getRequesterId(), companyRequest);
 
-        NotificationResponse notificationResponse = notificationService.create(
+        NotificationResponse notificationResponse =
+            notificationService.create(
                 NotificationRequest.builder()
-                        .title("Request Updated")
-                        .content("Your Reuqest have been Approved")
-                        .type("Message")
-                        .key(requestId)
-                        .status("Unread")
-                        .userId(companyRequest.getRequester().getId())
-                        .build());
+                    .title("Request Updated")
+                    .content("Your Reuqest have been Approved")
+                    .type("Message")
+                    .key(requestId)
+                    .status("Unread")
+                    .userId(companyRequest.getRequester().getId())
+                    .build());
 
-        simpMessagingTemplate.convertAndSend("/topic/notification/"+companyRequest.getRequester().getId(),"h");
+        simpMessagingTemplate.convertAndSend(
+            "/topic/notification/" + companyRequest.getRequester().getId(), "h");
       }
 
       if (request.getStatus().equalsIgnoreCase(APPROVED)
@@ -277,7 +283,7 @@ public class CompanyRequestService implements ICompanyRequestService {
           && modelNeedToDelete != null) {
         assetModelService.delete(modelNeedToDelete);
       }
-      simpMessagingTemplate.convertAndSend("/topic/request/100","h");
+      simpMessagingTemplate.convertAndSend("/topic/request/100", "h");
       return CompanyRequestMapper.fromEntityToResponse(companyRequest);
     } catch (Exception exception) {
       if (exception instanceof AppException) {

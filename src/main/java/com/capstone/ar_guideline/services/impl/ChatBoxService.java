@@ -2,7 +2,6 @@ package com.capstone.ar_guideline.services.impl;
 
 import com.capstone.ar_guideline.dtos.requests.ChatBox.ChatMessageRequest;
 import com.capstone.ar_guideline.dtos.requests.Notification.NotificationRequest;
-import com.capstone.ar_guideline.dtos.requests.RequestRevision.RequestRevisionResponse;
 import com.capstone.ar_guideline.dtos.responses.ChatMessage.ChatMessageResponse;
 import com.capstone.ar_guideline.dtos.responses.Notification.NotificationResponse;
 import com.capstone.ar_guideline.entities.*;
@@ -27,9 +26,8 @@ public class ChatBoxService {
   private final UserRepository userRepository;
   private final CompanyRequestRepository companyRequestRepository;
   private final RequestRevisionService requestRevisionService;
-    private final NotificationService notificationService;
-    private final SimpMessagingTemplate simpMessagingTemplate;
-
+  private final NotificationService notificationService;
+  private final SimpMessagingTemplate simpMessagingTemplate;
 
   @Transactional
   public ChatBox createChatBox(List<UUID> participants, UUID companyRequestId) {
@@ -52,43 +50,45 @@ public class ChatBoxService {
   @Transactional
   public ChatMessageResponse addMessageToChatBox(ChatMessageRequest request) {
 
-      ChatBox chatBox =
-              chatBoxRepository
-                      .findById(request.getChatBoxId())
-                      .orElseThrow(() -> new RuntimeException("Chat box not found"));
-      User user = userRepository.findUserById(String.valueOf(request.getUserId()));
-      ChatMessage message = new ChatMessage();
-      message.setChatBox(chatBox);
-      message.setContent(request.getContent());
-      message.setUser(user);
-      chatMessageRepository.save(message);
+    ChatBox chatBox =
+        chatBoxRepository
+            .findById(request.getChatBoxId())
+            .orElseThrow(() -> new RuntimeException("Chat box not found"));
+    User user = userRepository.findUserById(String.valueOf(request.getUserId()));
+    ChatMessage message = new ChatMessage();
+    message.setChatBox(chatBox);
+    message.setContent(request.getContent());
+    message.setUser(user);
+    chatMessageRepository.save(message);
 
-      ChatMessageResponse response =
-              ChatMessageResponse.builder()
-                        .id(String.valueOf(message.getId()))
-                      .content(message.getContent())
-                      .senderEmail(user.getEmail())
-                      .timestamp(message.getTimestamp().toString())
-                      .build();
-      List<User> participants = chatBox.getParticipants().stream()
-              .map(ChatBoxUser::getUser)
-              .collect(Collectors.toList());
+    ChatMessageResponse response =
+        ChatMessageResponse.builder()
+            .id(String.valueOf(message.getId()))
+            .content(message.getContent())
+            .senderEmail(user.getEmail())
+            .timestamp(message.getTimestamp().toString())
+            .build();
+    List<User> participants =
+        chatBox.getParticipants().stream().map(ChatBoxUser::getUser).collect(Collectors.toList());
 
-      participants.remove(user);
+    participants.remove(user);
 
-    NotificationResponse notificationResponse = notificationService.create(
+    if (!participants.isEmpty()) {
+      NotificationResponse notificationResponse =
+          notificationService.create(
               NotificationRequest.builder()
-                      .title("New Message")
-                      .content("You have a new message with " + participants.get(0).getEmail())
-                      .type("Message")
-                      .key(chatBox.getCompanyRequest().getRequestId())
-                      .status("Unread")
-                      .userId(participants.get(0).getId())
-                      .build());
+                  .title("New Message")
+                  .content("You have a new message with " + participants.get(0).getEmail())
+                  .type("Message")
+                  .key(chatBox.getCompanyRequest().getRequestId())
+                  .status("Unread")
+                  .userId(participants.get(0).getId())
+                  .build());
+      simpMessagingTemplate.convertAndSend(
+          "/topic/notification/" + participants.get(0).getId(), "h");
+    }
 
-      simpMessagingTemplate.convertAndSend("/topic/notification/"+participants.get(0).getId(),"h");
-
-      return response;
+    return response;
   }
 
   @Transactional(readOnly = true)
@@ -106,7 +106,10 @@ public class ChatBoxService {
                     .content(message.getContent())
                     .senderEmail(message.getUser().getEmail())
                     .timestamp(message.getTimestamp().toString())
-                        .requestRevisionResponse(message.getRequestRevision()!=null ?requestRevisionService.mapToResponse(message.getRequestRevision()):null)
+                    .requestRevisionResponse(
+                        message.getRequestRevision() != null
+                            ? requestRevisionService.mapToResponse(message.getRequestRevision())
+                            : null)
                     .build())
         .collect(Collectors.toList());
   }

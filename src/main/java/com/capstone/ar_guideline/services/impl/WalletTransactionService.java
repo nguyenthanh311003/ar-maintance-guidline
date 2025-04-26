@@ -57,10 +57,14 @@ public class WalletTransactionService {
                               transaction.getPointOptions() != null
                                   ? transaction.getPointOptions().getName()
                                   : null)
-                            .modelRequestId(transaction.getRequestRevision() != null
-                                  ? transaction.getRequestRevision().getCompanyRequest().getRequestId()
+                          .modelRequestId(
+                              transaction.getRequestRevision() != null
+                                  ? transaction
+                                      .getRequestRevision()
+                                      .getCompanyRequest()
+                                      .getRequestId()
                                   : null)
-                            .revisionType(
+                          .revisionType(
                               transaction.getRequestRevision() != null
                                   ? transaction.getRequestRevision().getType()
                                   : null)

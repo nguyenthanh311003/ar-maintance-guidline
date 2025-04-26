@@ -38,8 +38,6 @@ public class CompanyRequestController {
         .build();
   }
 
-
-
   @GetMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST + "/{companyId}")
   ApiResponse<PagingModel<CompanyRequestResponse>> getAllCompanyRequestsByCompanyId(
       @PathVariable String companyId,
@@ -71,12 +69,12 @@ public class CompanyRequestController {
   }
 
   @GetMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST + "/one/{requestId}")
-    ApiResponse<CompanyRequestResponse> getCompanyRequestById(@PathVariable String requestId) {
-        return ApiResponse.<CompanyRequestResponse>builder()
-            .message("Get Company Request by Id")
-            .result(companyRequestService.findById(requestId))
-            .build();
-    }
+  ApiResponse<CompanyRequestResponse> getCompanyRequestById(@PathVariable String requestId) {
+    return ApiResponse.<CompanyRequestResponse>builder()
+        .message("Get Company Request by Id")
+        .result(companyRequestService.findById(requestId))
+        .build();
+  }
 
   @PutMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST_UPLOAD_AGAIN + "{requestId}")
   ApiResponse<CompanyRequestResponse> uploadAgain(

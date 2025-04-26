@@ -3,7 +3,6 @@ package com.capstone.ar_guideline.entities;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
 import lombok.*;
 
 @Entity
@@ -28,8 +27,8 @@ public class ChatMessage {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-   @OneToOne(mappedBy = "chatMessage")
-    private RequestRevision requestRevision;
+  @OneToOne(mappedBy = "chatMessage")
+  private RequestRevision requestRevision;
 
   @Column(nullable = false)
   private LocalDateTime timestamp;
