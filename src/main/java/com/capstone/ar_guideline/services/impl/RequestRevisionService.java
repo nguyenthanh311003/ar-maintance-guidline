@@ -75,7 +75,7 @@ public class RequestRevisionService {
 
 
       return mapToResponse(requestRevision);
-    } catch (NumberFormatException e) {
+    } catch (Exception e) {
       throw new IllegalArgumentException("Invalid price proposal format");
     }
   }

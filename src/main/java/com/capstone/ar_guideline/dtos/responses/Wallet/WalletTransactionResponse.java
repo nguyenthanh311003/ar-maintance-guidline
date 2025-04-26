@@ -25,6 +25,10 @@ public class WalletTransactionResponse {
 
   private String receiverName;
 
+  private String modelRequestId;
+
+  private String revisionType;
+
   private Long amount;
 
   private Long balance;

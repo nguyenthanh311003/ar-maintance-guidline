@@ -57,6 +57,13 @@ public class WalletTransactionService {
                               transaction.getPointOptions() != null
                                   ? transaction.getPointOptions().getName()
                                   : null)
+                            .modelRequestId(transaction.getRequestRevision() != null
+                                  ? transaction.getRequestRevision().getCompanyRequest().getRequestId()
+                                  : null)
+                            .revisionType(
+                              transaction.getRequestRevision() != null
+                                  ? transaction.getRequestRevision().getType()
+                                  : null)
                           .createdDate(transaction.getCreatedDate())
                           .build())
               .toList();
