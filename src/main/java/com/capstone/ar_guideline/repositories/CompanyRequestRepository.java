@@ -45,4 +45,6 @@ public interface CompanyRequestRepository extends JpaRepository<CompanyRequest, 
 
   @Query("SELECT c.requestNumber FROM CompanyRequest c")
   List<String> findAllRequestNumbers();
+
+  List<CompanyRequest> findAllByDesignerIdAndStatus(String designerId,String status);
 }

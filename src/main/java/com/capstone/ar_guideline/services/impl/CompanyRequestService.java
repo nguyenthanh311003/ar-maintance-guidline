@@ -184,15 +184,22 @@ public class CompanyRequestService implements ICompanyRequestService {
           && !request.getStatus().equalsIgnoreCase(DESIGNER_CANCELLED)
           && !request.getStatus().equalsIgnoreCase(COMPANY_CANCELLED))
         companyRequest.setStatus(request.getStatus());
-      if (request.getDesignerId() != null)
+      List<CompanyRequest> companyRequests = null;
+      if (request.getDesignerId() != null) {
+        companyRequests = companyRequestRepository.findAllByDesignerIdAndStatus(request.getDesignerId(), PROCESSING);
+        if (companyRequests.size() > 0) {
+          throw new AppException(ErrorCode.CAN_ONLY_JOIN_ONE_COMPANY_REQUEST);
+        }
         companyRequest.setDesigner(userService.findById(request.getDesignerId()));
-      companyRequest.getChatBoxes().get(0).getParticipants().add(
-              ChatBoxUser.builder()
-                      .chatBox(companyRequest.getChatBoxes().get(0))
-                      .user(companyRequest.getDesigner())
-                      .build()
-      );
+        companyRequest.getChatBoxes().get(0).getParticipants().add(
+                ChatBoxUser.builder()
+                        .chatBox(companyRequest.getChatBoxes().get(0))
+                        .user(companyRequest.getDesigner())
+                        .build()
+        );
+      }
       String modelNeedToDelete = null;
+
       if (request.getAssetModelId() != null) {
         if (companyRequest.getAssetModel() != null) {
           modelNeedToDelete = companyRequest.getAssetModel().getId();
