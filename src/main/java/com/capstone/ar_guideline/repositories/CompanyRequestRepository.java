@@ -29,14 +29,14 @@ public interface CompanyRequestRepository extends JpaRepository<CompanyRequest, 
 
   @Query(
       """
-    SELECT c FROM CompanyRequest c
-    LEFT JOIN c.designer d
-    LEFT JOIN c.company comp
-    WHERE (:status IS NULL OR LOWER(c.status) LIKE LOWER(CONCAT('%', :status, '%')))
-      AND (:companyName IS NULL OR LOWER(comp.companyName) LIKE LOWER(CONCAT('%', :companyName, '%')))
-      AND (d IS NULL OR d.email = :designerEmail)
-    ORDER BY c.createdAt DESC
-""")
+      SELECT c FROM CompanyRequest c
+      LEFT JOIN c.designer d
+      LEFT JOIN c.company comp
+      WHERE (:status IS NULL OR LOWER(c.status) LIKE LOWER(CONCAT('%', :status, '%')))
+        AND (:companyName IS NULL OR LOWER(comp.companyName) LIKE LOWER(CONCAT('%', :companyName, '%')))
+        AND (c.designer.email = :designerEmail)
+      ORDER BY c.createdAt DESC
+      """)
   Page<CompanyRequest> findAllForDesigner(
       Pageable pageable,
       @Param("status") String status,
