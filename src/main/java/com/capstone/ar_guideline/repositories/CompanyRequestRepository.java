@@ -34,7 +34,7 @@ public interface CompanyRequestRepository extends JpaRepository<CompanyRequest, 
       LEFT JOIN c.company comp
       WHERE (:status IS NULL OR LOWER(c.status) LIKE LOWER(CONCAT('%', :status, '%')))
         AND (:companyName IS NULL OR LOWER(comp.companyName) LIKE LOWER(CONCAT('%', :companyName, '%')))
-        AND (c.designer.email = :designerEmail)
+        AND (c.designer.email is null OR c.designer.email = :designerEmail)
       ORDER BY c.createdAt DESC
       """)
   Page<CompanyRequest> findAllForDesigner(
