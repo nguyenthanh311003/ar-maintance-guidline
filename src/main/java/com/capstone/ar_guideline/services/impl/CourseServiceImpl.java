@@ -153,7 +153,15 @@ public class CourseServiceImpl implements ICourseService {
   public CourseResponse update(String id, CourseCreationRequest request) {
     try {
       Course courseById = findById(id);
-      courseById = CourseMapper.fromCourseCreationRequestToEntity(request);
+      Company companyById = companyService.findByIdReturnEntity(request.getCompanyId());
+      Model modelById = modelService.findById(request.getModelId());
+      ModelType machineType = machineTypeService.findById(modelById.getModelType().getId());
+      //      courseById = CourseMapper.fromCourseCreationRequestToEntity(request);
+      courseById.setTitle(request.getTitle());
+      courseById.setDescription(request.getDescription());
+      courseById.setCompany(companyById);
+      courseById.setModel(modelById);
+      courseById.setModelType(machineType);
       if (request.getImageUrl() != null) {
         courseById.setImageUrl(FileStorageService.storeFile(request.getImageUrl()));
       }

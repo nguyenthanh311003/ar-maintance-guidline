@@ -58,4 +58,28 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
           + "ORDER BY transactionCount DESC")
   List<Object[]> findTop3UsersWithPointRequestTransactions(
       Pageable pageable, @Param("companyId") String companyId);
+
+  @Query(
+      value =
+          "SELECT COALESCE(SUM(wt.amount), 0) "
+              + "FROM WalletTransaction wt "
+              + "JOIN wt.user u "
+              + "WHERE wt.type = 'CREDIT' "
+              + "AND u.company.id = :companyId "
+              + "AND FUNCTION('MONTH', wt.createdDate) = :month "
+              + "AND FUNCTION('YEAR', wt.createdDate) = FUNCTION('YEAR', CURRENT_DATE())")
+  Long findTotalCreditBalanceByMonthAndCompany(
+      @Param("month") String month, @Param("companyId") String companyId);
+
+  @Query(
+      value =
+          "SELECT COALESCE(SUM(wt.amount), 0) "
+              + "FROM WalletTransaction wt "
+              + "JOIN wt.user u "
+              + "WHERE wt.type = 'DEBIT' "
+              + "AND u.company.id = :companyId "
+              + "AND FUNCTION('MONTH', wt.createdDate) = :month "
+              + "AND FUNCTION('YEAR', wt.createdDate) = FUNCTION('YEAR', CURRENT_DATE())")
+  Long findTotalDebitBalanceByMonthAndCompany(
+      @Param("month") String month, @Param("companyId") String companyId);
 }

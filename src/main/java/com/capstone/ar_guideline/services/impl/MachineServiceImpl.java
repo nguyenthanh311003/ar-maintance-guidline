@@ -1,7 +1,5 @@
 package com.capstone.ar_guideline.services.impl;
 
-import com.capstone.ar_guideline.entities.CompanyRequest;
-import com.capstone.ar_guideline.entities.Course;
 import com.capstone.ar_guideline.entities.Machine;
 import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
@@ -57,15 +55,15 @@ public class MachineServiceImpl implements IMachineService {
     try {
       Machine machineById = findById(id);
 
-      List<Course> coursesByMachineTypeId =
-          courseRepository.findByMachineTypeId(machineById.getModelType().getId());
-
-      List<CompanyRequest> companyRequestsByMachineTypeId =
-          companyRequestRepository.findByMachineTypeId(machineById.getModelType().getId());
-
-      if (!coursesByMachineTypeId.isEmpty() || !companyRequestsByMachineTypeId.isEmpty()) {
-        throw new AppException(ErrorCode.MACHINE_IS_CURRENT_USED);
-      }
+      //      List<Course> coursesByMachineTypeId =
+      //          courseRepository.findByMachineTypeId(machineById.getModelType().getId());
+      //
+      //      List<CompanyRequest> companyRequestsByMachineTypeId =
+      //          companyRequestRepository.findByMachineTypeId(machineById.getModelType().getId());
+      //
+      //      if (!coursesByMachineTypeId.isEmpty() || !companyRequestsByMachineTypeId.isEmpty()) {
+      //        throw new AppException(ErrorCode.MACHINE_IS_CURRENT_USED);
+      //      }
 
       machineRepository.deleteById(machineById.getId());
     } catch (Exception exception) {
@@ -143,6 +141,26 @@ public class MachineServiceImpl implements IMachineService {
   @Override
   public Boolean isMachineCodeExisted(String companyId, String machineCode) {
     try {
+      List<Machine> machinesByCompanyIdAndMachineCode =
+          machineRepository.getMachineByMachineCodeAndCompanyId(machineCode, companyId);
+
+      return !machinesByCompanyIdAndMachineCode.isEmpty();
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.MACHINE_NOT_EXISTED);
+    }
+  }
+
+  @Override
+  public Boolean isMachineCodeExistedForUpdate(
+      String companyId, String machineCode, String machineCodeByMachineId) {
+    try {
+      if (machineCode.equals(machineCodeByMachineId)) {
+        return false;
+      }
+
       List<Machine> machinesByCompanyIdAndMachineCode =
           machineRepository.getMachineByMachineCodeAndCompanyId(machineCode, companyId);
 
