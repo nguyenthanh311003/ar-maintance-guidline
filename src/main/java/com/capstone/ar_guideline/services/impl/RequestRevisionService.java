@@ -117,7 +117,7 @@ public class RequestRevisionService {
             "h");
         break;
       case ConstStatus.REJECTED:
-        User user = userRepository.findUserById(request.getRejectionReason());
+        User user = userRepository.findUserById(request.getUserRejectId());
         requestRevision.setRejectionReason(request.getRejectionReason());
         requestRevision.setUserReject(user);
         requestRevision.setStatus(request.getStatus());
