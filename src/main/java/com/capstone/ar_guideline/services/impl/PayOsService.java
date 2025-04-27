@@ -157,9 +157,11 @@ public class PayOsService {
   }
 
   public RedirectView handleOrderStatus(long orderId) {
+    PaymentLinkData order = null;
+    OrderTransaction payment = null;
     try {
-      PaymentLinkData order = payOS.getPaymentLinkInformation(orderId);
-      OrderTransaction payment = paymentService.findByOrderCode(orderId);
+      order  = payOS.getPaymentLinkInformation(orderId);
+      payment   = paymentService.findByOrderCode(orderId);
       if (order.getStatus().equals(ConstStatus.PAID)
           && !payment.getStatus().equals(ConstStatus.PAID)) {
         paymentService.changeStatus(payment.getId(), ConstStatus.PAID);
@@ -178,6 +180,7 @@ public class PayOsService {
       }
       return new RedirectView(frontEndHost + "/payment/success");
     } catch (Exception e) {
+      paymentService.delete(payment.getId());
       e.printStackTrace();
       return new RedirectView(frontEndHost + "/payment/failed");
     }
