@@ -102,6 +102,33 @@ public class CompanyRequestService implements ICompanyRequestService {
   }
 
   @Override
+  public PagingModel<CompanyRequestResponse> findAllForAdmin(
+      int page, int size, String status, String companyName, String designerEmail) {
+    try {
+      PagingModel<CompanyRequestResponse> pagingModel = new PagingModel<>();
+      Pageable pageable = PageRequest.of(page - 1, size);
+
+      Page<CompanyRequest> companyRequests =
+          companyRequestRepository.findAllForAdmin(pageable, designerEmail, companyName, status);
+
+      List<CompanyRequestResponse> companyRequestResponses =
+          companyRequests.stream().map(CompanyRequestMapper::fromEntityToResponse).toList();
+
+      pagingModel.setPage(page);
+      pagingModel.setSize(size);
+      pagingModel.setTotalItems((int) companyRequests.getTotalElements());
+      pagingModel.setTotalPages(companyRequests.getTotalPages());
+      pagingModel.setObjectList(companyRequestResponses);
+      return pagingModel;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COMPANY_REQUEST_FAILED);
+    }
+  }
+
+  @Override
   public List<CompanyRequestResponse> findByDesignerId(String designerId) {
     try {
       return companyRequestRepository.findByDesigner_IdOrderByCreatedAtDesc(designerId).stream()
