@@ -229,5 +229,16 @@ public class ConstAPI {
     public static final String UNSUBSCRIBE_FROM_TOPIC = "api/v1/notifications/unsubscribe";
     public static final String SEND_TO_TOPIC = "api/v1/notifications/send/topic";
     public static final String SEND_TO_TOKEN = "api/v1/notifications/send/token";
+    public static final String UNREGISTER_DEVICE = "/api/notifications/unregister";
+    public static final String SEND_TO_USER = "/api/notifications/send/user";
   }
+
+  public static class DeviceAPI {
+    public static final String PREFIX_DEVICE = "/api/v1/devices/";
+    public static final String REGISTER_DEVICE = PREFIX_DEVICE + "register";
+    public static final String UNREGISTER_DEVICE = PREFIX_DEVICE + "unregister";
+    public static final String GET_USER_DEVICES = PREFIX_DEVICE + "user/";
+    public static final String CHECK_DEVICE = PREFIX_DEVICE + "check";
+  }
+
 }

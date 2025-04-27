@@ -46,7 +46,7 @@ public class UserServiceImpl implements IUserService {
   ICompanyService companyService;
   EmailService emailService;
   WalletServiceImpl walletService;
-
+  IDeviceManagementService deviceManagementService;
   @Override
   public AuthenticationResponse login(LoginRequest loginRequest) {
     try {
@@ -69,6 +69,12 @@ public class UserServiceImpl implements IUserService {
       UserResponse userResponse = getUserResponseByEmail(loginRequest.getEmail());
       var jwt = jwtService.generateToken(userRepository.findByEmail(loginRequest.getEmail()).get());
 
+
+      // Register device ID if provided in the login request
+      if (loginRequest.getDeviceId() != null && !loginRequest.getDeviceId().isEmpty()) {
+        updateDeviceId(userResponseByEmail.getId(), loginRequest.getDeviceId());
+      }
+
       return AuthenticationResponse.builder()
           .message("Login successfully")
           .token(jwt)
@@ -82,7 +88,22 @@ public class UserServiceImpl implements IUserService {
     }
   }
 
-  private void updateDeviceId() {}
+  private void updateDeviceId(String userId, String deviceId) {
+    try {
+      if (deviceId != null && !deviceId.isEmpty()) {
+        boolean isDeviceRegistered = deviceManagementService.isDeviceRegisteredForUser(userId, deviceId);
+        if (!isDeviceRegistered) {
+          deviceManagementService.registerDeviceForUser(userId, deviceId);
+          log.info("Device ID {} registered for user {}", deviceId, userId);
+        } else {
+          log.info("Device ID {} already registered for user {}", deviceId, userId);
+        }
+      }
+    } catch (Exception e) {
+      log.error("Error registering device ID: {}", e.getMessage());
+      // Not throwing exception here to prevent login failure due to device registration issues
+    }
+  }
 
   @Override
   public <T> AuthenticationResponse create(SignUpRequest signUpWitRoleRequest) {
