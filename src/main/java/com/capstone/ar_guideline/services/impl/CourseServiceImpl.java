@@ -167,10 +167,6 @@ public class CourseServiceImpl implements ICourseService {
       }
       courseRepository.save(courseById);
 
-      Arrays.stream(keysToRemove)
-          .map(k -> k + ConstHashKey.HASH_KEY_ALL)
-          .forEach(k -> UtilService.deleteCache(redisTemplate, redisTemplate.keys(k)));
-
       return CourseMapper.fromEntityToCourseResponse(courseById);
 
     } catch (Exception exception) {

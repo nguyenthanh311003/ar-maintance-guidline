@@ -38,6 +38,20 @@ public class CompanyRequestController {
         .build();
   }
 
+  @GetMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST + "/admin")
+  ApiResponse<PagingModel<CompanyRequestResponse>> getAllCompanyRequestsForAdmin(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "1") int size,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) String companyName,
+      @RequestParam(required = false) String designerEmail) {
+    return ApiResponse.<PagingModel<CompanyRequestResponse>>builder()
+        .message("Get all company requests")
+        .result(
+            companyRequestService.findAllForAdmin(page, size, status, companyName, designerEmail))
+        .build();
+  }
+
   @GetMapping(value = ConstAPI.CompanyRequestAPI.COMPANY_REQUEST + "/{companyId}")
   ApiResponse<PagingModel<CompanyRequestResponse>> getAllCompanyRequestsByCompanyId(
       @PathVariable String companyId,

@@ -20,6 +20,9 @@ public class AdminDashboardResponse {
   private Integer numberOfModels;
   private Integer numberOfActiveModels;
   private Integer numberOfInactiveModels;
+  private Integer numberOfDoneRequests;
+  private Integer numberOfProcessingRequests;
+  private Integer numberOfPendingRequests;
   private Long totalRevenue;
   private List<CompanyRevenue> top3Company;
   private List<MonthRevenue> monthRevenueList;

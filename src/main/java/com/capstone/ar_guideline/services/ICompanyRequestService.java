@@ -12,6 +12,9 @@ public interface ICompanyRequestService {
   PagingModel<CompanyRequestResponse> findByCompanyId(
       int page, int size, String companyId, String status);
 
+  PagingModel<CompanyRequestResponse> findAllForAdmin(
+      int page, int size, String status, String companyName, String designerEmail);
+
   List<CompanyRequestResponse> findByDesignerId(String designerId);
 
   CompanyRequestResponse findById(String id);

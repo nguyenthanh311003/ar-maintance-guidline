@@ -47,4 +47,23 @@ public interface CompanyRequestRepository extends JpaRepository<CompanyRequest, 
   List<String> findAllRequestNumbers();
 
   List<CompanyRequest> findAllByDesignerIdAndStatus(String designerId, String status);
+
+  @Query("SELECT COUNT(c) FROM CompanyRequest c WHERE LOWER(c.status) = LOWER(:status)")
+  Integer countCompanyRequestWithStatus(@Param("status") String status);
+
+  @Query(
+      """
+    SELECT c FROM CompanyRequest c
+        LEFT JOIN c.designer d
+        LEFT JOIN c.company comp
+        WHERE (:designerEmail IS NULL OR LOWER(d.email) LIKE LOWER(CONCAT('%', :designerEmail, '%')))
+          AND (:companyName IS NULL OR LOWER(comp.companyName) LIKE LOWER(CONCAT('%', :companyName, '%')))
+          AND (:status IS NULL OR LOWER(c.status) LIKE LOWER(CONCAT('%', :status, '%')))
+        ORDER BY c.createdAt DESC
+""")
+  Page<CompanyRequest> findAllForAdmin(
+      Pageable pageable,
+      @Param("designerEmail") String designerEmail,
+      @Param("companyName") String companyName,
+      @Param("status") String status);
 }

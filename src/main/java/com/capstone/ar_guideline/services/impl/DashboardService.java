@@ -35,6 +35,8 @@ public class DashboardService {
 
   @Autowired private MachineTypeRepository machineTypeRepository;
 
+  @Autowired private CompanyRequestRepository companyRequestRepository;
+
   public AdminDashboardResponse getAdminDashboard() {
     // Get active and inactive guidelines (courses)
     Integer numberOfGuidelines = courseRepository.countAllBy(null, null);
@@ -53,6 +55,15 @@ public class DashboardService {
     Integer numberOfActiveModels = modelRepository.countAllBy(null, "ACTIVE");
 
     Integer numberOfInactiveModels = modelRepository.countAllBy(null, "INACTIVE");
+
+    Integer numberOfCompanyRequestWithStatusApprove =
+        companyRequestRepository.countCompanyRequestWithStatus("APPROVED");
+
+    Integer numberOfCompanyRequestWithStatusPending =
+        companyRequestRepository.countCompanyRequestWithStatus("PENDING");
+
+    Integer numberOfCompanyRequestWithStatusProcessing =
+        companyRequestRepository.countCompanyRequestWithStatus("PROCESSING");
 
     Long totalRevenue = 0l;
 
@@ -133,6 +144,9 @@ public class DashboardService {
         .monthRevenueList(monthRevenueList)
         .totalRevenue(totalRevenue)
         .top3Company(companyRevenueList)
+        .numberOfDoneRequests(numberOfCompanyRequestWithStatusApprove)
+        .numberOfPendingRequests(numberOfCompanyRequestWithStatusPending)
+        .numberOfProcessingRequests(numberOfCompanyRequestWithStatusProcessing)
         .build();
   }
 
