@@ -6,23 +6,23 @@ import com.capstone.ar_guideline.dtos.responses.MachineTypeValue.MachineTypeValu
 import com.capstone.ar_guideline.entities.MachineTypeValue;
 
 public class MachineTypeValueMapper {
-  public static MachineTypeValue fromMachineTypeValueCreationRequestToEntity(
-      MachineTypeValueCreationRequest request) {
-    return MachineTypeValue.builder().valueAttribute(request.getValueAttribute()).build();
-  }
-
-  public static MachineTypeValue fromMachineTypeValueModifyRequestToEntity(
-      MachineTypeValueModifyRequest request) {
-    return MachineTypeValue.builder().valueAttribute(request.getValueAttribute()).build();
-  }
-
-  public static MachineTypeValueResponse fromEntityToMachineTypeValueResponse(
-      MachineTypeValue machineTypeValue) {
-    return MachineTypeValueResponse.builder()
-        .id(machineTypeValue.getId())
-        .valueAttribute(machineTypeValue.getValueAttribute())
-        .machineTypeAttributeId(machineTypeValue.getMachineTypeAttribute().getId())
-        .machineTypeAttributeName(machineTypeValue.getMachineTypeAttribute().getAttributeName())
-        .build();
-  }
+//  public static MachineTypeValue fromMachineTypeValueCreationRequestToEntity(
+//      MachineTypeValueCreationRequest request) {
+//    return MachineTypeValue.builder().valueAttribute(request.getValueAttribute()).build();
+//  }
+//
+//  public static MachineTypeValue fromMachineTypeValueModifyRequestToEntity(
+//      MachineTypeValueModifyRequest request) {
+//    return MachineTypeValue.builder().valueAttribute(request.getValueAttribute()).build();
+//  }
+//
+//  public static MachineTypeValueResponse fromEntityToMachineTypeValueResponse(
+//      MachineTypeValue machineTypeValue) {
+//    return MachineTypeValueResponse.builder()
+//        .id(machineTypeValue.getId())
+//        .valueAttribute(machineTypeValue.getValueAttribute())
+//        .machineTypeAttributeId(machineTypeValue.getMachineTypeAttribute().getId())
+//        .machineTypeAttributeName(machineTypeValue.getMachineTypeAttribute().getAttributeName())
+//        .build();
+//  }
 }

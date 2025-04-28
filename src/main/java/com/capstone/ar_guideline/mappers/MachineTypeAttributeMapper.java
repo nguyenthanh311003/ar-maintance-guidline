@@ -30,7 +30,6 @@ public class MachineTypeAttributeMapper {
         .id(machineTypeAttribute.getId())
         .modelTypeId(machineTypeAttribute.getModelType().getId())
         .attributeName(machineTypeAttribute.getAttributeName())
-        .valueAttribute(machineTypeValue.getValueAttribute())
         .build();
   }
 }

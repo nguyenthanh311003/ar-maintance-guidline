@@ -24,8 +24,8 @@ public class MachineTypeAttribute implements Serializable {
   @JoinColumn(name = "modelType_id")
   private ModelType modelType;
 
-  @OneToMany(mappedBy = "machineTypeAttribute", cascade = CascadeType.ALL)
-  private List<MachineTypeValue> machineTypeValues;
+//  @OneToMany(mappedBy = "machineTypeAttribute", cascade = CascadeType.ALL)
+//  private List<MachineTypeValue> machineTypeValues;
 
   String attributeName;
   String valueOfAttribute;
