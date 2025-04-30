@@ -651,6 +651,9 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
         throw new AppException(ErrorCode.JSON_PROCESSING_ERROR);
       }
 
+      String qrCode = machineById.getMachineCode();
+      machineById.setQrCode(UtilService.generateAndStoreQRCode(qrCode));
+
       machineById = machineService.update(machineById.getId(), machineById);
 
       return MachineMapper.fromEntityToMachineResponseForCreate(machineById);
