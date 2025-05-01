@@ -30,6 +30,8 @@ public class WalletServiceImpl {
 
   @Autowired private SimpMessagingTemplate simpMessagingTemplate;
 
+    @Autowired private ServicePricerRepository servicePriceRepository;
+
   public WalletResponse createWallet(User user, Long initialBalance, String currency) {
     Wallet wallet = Wallet.builder().user(user).balance(initialBalance).currency(currency).build();
     log.info("Creating wallet for user: {}", user.getId());
@@ -74,10 +76,19 @@ public class WalletServiceImpl {
         transaction.setBalance(wallet.getBalance() + pointOptions.getPoint());
         wallet.setBalance(wallet.getBalance() + pointOptions.getPoint());
       } else if (guidelineId != null) {
+        ServicePrice servicePrice =
+            servicePriceRepository.findById(servicePriceId).orElseThrow();
         transaction.setServicePrice(ServicePrice.builder().id(servicePriceId).build());
         transaction.setCourse(Course.builder().id(guidelineId).build());
+        wallet.setBalance(wallet.getBalance() -servicePrice.getPrice() );
+transaction.setBalance(wallet.getBalance() -servicePrice.getPrice() );
       } else {
+        ServicePrice servicePrice =
+                servicePriceRepository.findById(servicePriceId).orElseThrow();
         transaction.setServicePrice(ServicePrice.builder().id(servicePriceId).build());
+        wallet.setBalance(wallet.getBalance() + servicePrice.getPrice());
+        transaction.setBalance(wallet.getBalance() -servicePrice.getPrice() );
+
       }
       walletTransactionRepository.save(transaction);
 
