@@ -438,4 +438,30 @@ public class UserServiceImpl implements IUserService {
       throw new AppException(ErrorCode.USER_NOT_EXISTED);
     }
   }
+
+  @Override
+  public Void takePointFromUser(String userId, Integer point) {
+    try {
+
+        User userById =
+            userRepository
+                .findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        if (userById.getWallet().getBalance() < point) {
+            throw new RuntimeException("User does not have enough points");
+        }
+        User comUser = userRepository.findUserByCompanyIdAndAdminRole(userById.getCompany().getId());
+
+
+        walletService.updateBalanceBySend(
+                Long.valueOf(point), userById.getId(), comUser.getId(), null);
+        return null;
+    }catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.USER_NOT_EXISTED);
+    }
+
+  }
 }

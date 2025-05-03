@@ -42,4 +42,6 @@ public interface IUserService {
   User findCompanyAdminByCompanyId(String companyId);
 
   Integer countStaffByCompanyId(String companyId);
+
+  Void takePointFromUser(String userId, Integer point);
 }

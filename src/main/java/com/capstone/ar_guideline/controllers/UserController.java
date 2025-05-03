@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -59,6 +61,15 @@ public class UserController {
       @PathVariable String companyId) {
     return ApiResponse.<PagingModel<UserResponse>>builder()
         .result(userService.getStaffByCompanyId(page, size, companyId, phoneNumber, email, status))
+        .build();
+  }
+
+  @PostMapping(value = ConstAPI.UserAPI.PREFIX_USER)
+  public ApiResponse<Void> takePointFromUser(
+      @RequestParam String userId,
+      @RequestParam Integer amount) {
+    return ApiResponse.<Void>builder()
+        .result(userService.takePointFromUser(userId, amount))
         .build();
   }
 
