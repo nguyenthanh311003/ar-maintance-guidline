@@ -1,5 +1,6 @@
 package com.capstone.ar_guideline.services.impl;
 
+import static com.capstone.ar_guideline.constants.ConstStatus.ACTIVE_STATUS;
 import static com.capstone.ar_guideline.constants.ConstStatus.INACTIVE_STATUS;
 
 import com.capstone.ar_guideline.constants.ConstStatus;
@@ -15,6 +16,7 @@ import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.UserMapper;
 import com.capstone.ar_guideline.repositories.UserRepository;
+import com.capstone.ar_guideline.repositories.WalletRepository;
 import com.capstone.ar_guideline.services.*;
 import java.util.List;
 import java.util.Objects;
@@ -46,6 +48,7 @@ public class UserServiceImpl implements IUserService {
   ICompanyService companyService;
   EmailService emailService;
   WalletServiceImpl walletService;
+  WalletRepository walletRepository;
 
   @Override
   public AuthenticationResponse login(LoginRequest loginRequest) {
@@ -113,7 +116,7 @@ public class UserServiceImpl implements IUserService {
       user.setPhone(signUpWitRoleRequest.getPhone());
       String passwordToSend = signUpWitRoleRequest.getPassword();
       user.setRole(role);
-      user.setStatus(ConstStatus.ACTIVE_STATUS);
+      user.setStatus(ACTIVE_STATUS);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       user = userRepository.save(user);
 
@@ -151,7 +154,7 @@ public class UserServiceImpl implements IUserService {
       }
 
       User userByEmail =
-          userRepository.findByEmailAndStatus(signUpRequest.getEmail(), ConstStatus.ACTIVE_STATUS);
+          userRepository.findByEmailAndStatus(signUpRequest.getEmail(), ACTIVE_STATUS);
 
       if (Objects.nonNull(userByEmail)) {
         throw new AppException(ErrorCode.USER_EXISTED);
@@ -169,7 +172,7 @@ public class UserServiceImpl implements IUserService {
       Company newCompany = companyService.create(companyCreationRequest);
       User user = UserMapper.fromSignUpRequestToEntity(signUpRequest);
       user.setUsername(signUpRequest.getEmail());
-      user.setStatus(ConstStatus.ACTIVE_STATUS);
+      user.setStatus(ACTIVE_STATUS);
       user.setRole(role);
       user.setCompany(newCompany);
       user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -297,6 +300,8 @@ public class UserServiceImpl implements IUserService {
               .findById(userId)
               .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
+
+
       if (status.isEmpty()) {
         return false;
       }
@@ -304,7 +309,7 @@ public class UserServiceImpl implements IUserService {
       userById.setStatus(status);
       userRepository.save(userById);
 
-      if (status.equals(ConstStatus.ACTIVE_STATUS) && isPending) {
+      if (status.equals(ACTIVE_STATUS) && isPending) {
         emailService.sendAccountActivationEmail(userById.getEmail(), userById.getUsername());
       }
 
@@ -327,10 +332,17 @@ public class UserServiceImpl implements IUserService {
           userRepository
               .findById(userId)
               .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-      if (userById.getStatus().equals(ConstStatus.ACTIVE_STATUS)) {
+
+      if (userById.getStatus().equals(ACTIVE_STATUS)) {
         userById.setStatus(ConstStatus.INACTIVE_STATUS);
+        User userCompany = userRepository.findUserByCompanyIdAndAdminRole(userById.getCompany().getId());
+
+          if(userById.getWallet().getBalance() > 0){
+            walletService.updateBalanceBySend(
+                    userById.getWallet().getBalance(), userById.getId(), userCompany.getId(), null);
+        }
       } else {
-        userById.setStatus(ConstStatus.ACTIVE_STATUS);
+        userById.setStatus(ACTIVE_STATUS);
       }
       userRepository.save(userById);
 
