@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,9 +65,10 @@ public class CourseController {
       @RequestParam(defaultValue = "8") int size,
       @RequestParam(required = false) String title,
       @RequestParam(required = false) String status,
-      @RequestParam(required = false) String machineTypeId) {
+      @RequestParam(required = false) String machineTypeId,
+      @RequestParam(required = false) String staffId) {
     return ApiResponse.<PagingModel<CourseResponse>>builder()
-        .result(courseService.findByCompanyId(page, size, companyId, title, status, machineTypeId))
+        .result(courseService.findByCompanyId(page, size, companyId, title, status, machineTypeId,staffId))
         .build();
   }
 

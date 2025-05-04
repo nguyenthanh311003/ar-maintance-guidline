@@ -82,4 +82,7 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
               + "AND FUNCTION('YEAR', wt.createdDate) = FUNCTION('YEAR', CURRENT_DATE())")
   Long findTotalDebitBalanceByMonthAndCompany(
       @Param("month") String month, @Param("companyId") String companyId);
+
+
+  List<WalletTransaction> findAllByUserIdAndServicePriceId(String userId, String servicePriceId);
 }

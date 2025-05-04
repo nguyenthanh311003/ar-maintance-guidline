@@ -27,5 +27,5 @@ public interface MachineTypeRepository extends JpaRepository<ModelType, String> 
           "SELECT COUNT(m) FROM ModelType m WHERE m.company.id = :companyId GROUP BY m.company.id")
   Integer countByCompany_Id(@Param("companyId") String companyId);
 
-  ModelType findByNameAndCompanyId(String name, UUID companyId);
+  ModelType findByNameAndCompanyId(String name, String companyId);
 }

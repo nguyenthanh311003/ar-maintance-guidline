@@ -32,7 +32,7 @@ public interface ICourseService {
   CourseResponse findByTitleResponse(String title);
 
   PagingModel<CourseResponse> findByCompanyId(
-      int page, int size, String companyId, String title, String status, String machineTypeId);
+      int page, int size, String companyId, String title, String status, String machineTypeId,String staffId);
 
   PagingModel<CourseResponse> findCourseNoMandatory(int page, int size, String companyId);
 

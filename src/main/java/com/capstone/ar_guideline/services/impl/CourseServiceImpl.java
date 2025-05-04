@@ -13,10 +13,8 @@ import com.capstone.ar_guideline.mappers.CourseMapper;
 import com.capstone.ar_guideline.repositories.*;
 import com.capstone.ar_guideline.services.*;
 import com.capstone.ar_guideline.util.UtilService;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +46,7 @@ public class CourseServiceImpl implements ICourseService {
   ServicePricerRepository servicePricerRepository;
   WalletServiceImpl walletService;
   FirebaseNotificationServiceImpl firebaseNotificationService;
+
 
   private final String[] keysToRemove = {
     ConstHashKey.HASH_KEY_COURSE,
@@ -392,17 +391,37 @@ public class CourseServiceImpl implements ICourseService {
 
   @Override
   public PagingModel<CourseResponse> findByCompanyId(
-      int page, int size, String companyId, String title, String status, String machineTypeId) {
+      int page, int size, String companyId, String title, String status, String machineTypeId, String staffId) {
     try {
       PagingModel<CourseResponse> pagingModel = new PagingModel<>();
       Pageable pageable = PageRequest.of(page - 1, size);
       companyService.findByIdReturnEntity(companyId);
+
 
       Page<Course> coursesByCompanyId =
           courseRepository.findByCompanyId(pageable, companyId, title, status, machineTypeId);
 
       List<CourseResponse> courseResponses =
           coursesByCompanyId.stream().map(CourseMapper::fromEntityToCourseResponse).toList();
+
+      if(staffId != null) {
+        List<WalletTransaction> walletTransactions = walletTransactionRepository.findAllByUserIdAndServicePriceId(staffId, "51b67d6b-99fc-437a-b754-f57751504529");
+        Map<UUID, UUID> courseIdMap = walletTransactions.stream()
+                .collect(Collectors.toMap(
+                        walletTransaction -> UUID.fromString(walletTransaction.getCourse().getId()),
+                        walletTransaction -> UUID.fromString(walletTransaction.getCourse().getId()),
+                        (existing, replacement) -> existing // Keep the existing value in case of duplicate keys
+                ));
+        for (CourseResponse courseResponse : courseResponses) {
+          if(courseIdMap.containsKey(UUID.fromString(courseResponse.getId()))) {
+            courseResponse.setIsDone(true);
+          } else {
+            courseResponse.setIsDone(false);
+          }
+        }
+
+      }
+
 
       pagingModel.setPage(page);
       pagingModel.setSize(size);

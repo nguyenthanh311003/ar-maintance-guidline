@@ -672,7 +672,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
     try {
       Company companyById = companyService.findByIdReturnEntity(request.getCompanyId());
 
-      ModelType machineType = machineTypeRepository.findByNameAndCompanyId(request.getMachineTypeName(), UUID.fromString(companyById.getId()));
+      ModelType machineType = machineTypeRepository.findByNameAndCompanyId(request.getMachineTypeName(), companyById.getId());
       if (machineType != null) {
         throw new AppException(ErrorCode.MACHINE_TYPE_NAME_EXISTED);
       }
