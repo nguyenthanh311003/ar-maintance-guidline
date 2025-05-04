@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 @Repository
 public interface MachineTypeRepository extends JpaRepository<ModelType, String> {
   @Query(
@@ -24,4 +26,6 @@ public interface MachineTypeRepository extends JpaRepository<ModelType, String> 
       value =
           "SELECT COUNT(m) FROM ModelType m WHERE m.company.id = :companyId GROUP BY m.company.id")
   Integer countByCompany_Id(@Param("companyId") String companyId);
+
+  ModelType findByNameAndCompanyId(String name, UUID companyId);
 }

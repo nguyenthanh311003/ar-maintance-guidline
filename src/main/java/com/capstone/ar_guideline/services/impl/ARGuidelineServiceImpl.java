@@ -25,6 +25,7 @@ import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.*;
 import com.capstone.ar_guideline.repositories.CompanyRequestRepository;
+import com.capstone.ar_guideline.repositories.MachineTypeRepository;
 import com.capstone.ar_guideline.services.*;
 import com.capstone.ar_guideline.util.UtilService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -61,6 +62,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   CompanyRequestRepository companyRequestRepository;
   FirebaseNotificationServiceImpl firebaseNotificationService;
   ObjectMapper objectMapper = new ObjectMapper();
+  MachineTypeRepository machineTypeRepository;
 
   @Override
   public InstructionResponse createInstruction(InstructionCreationRequest request) {
@@ -670,6 +672,10 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
     try {
       Company companyById = companyService.findByIdReturnEntity(request.getCompanyId());
 
+      ModelType machineType = machineTypeRepository.findByNameAndCompanyId(request.getMachineTypeName(), UUID.fromString(companyById.getId()));
+      if (machineType != null) {
+        throw new AppException(ErrorCode.MACHINE_TYPE_NAME_EXISTED);
+      }
       ModelType newMachineType = new ModelType();
       newMachineType.setName(request.getMachineTypeName());
       newMachineType.setCompany(companyById);
