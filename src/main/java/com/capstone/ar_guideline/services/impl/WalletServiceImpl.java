@@ -111,7 +111,8 @@ transaction.setBalance(wallet.getBalance() );
     Optional<Wallet> walletOptional = walletRepository.findById(walletId);
     Optional<RequestRevision> requestRevision =
         requestRevisionRepository.findById(UUID.fromString(requestRevisionId));
-
+ServicePrice servicePrice =
+        servicePriceRepository.findByName("Model Request");
     if (walletOptional.isEmpty()) {
       throw new RuntimeException("Wallet not found");
     }
@@ -135,6 +136,7 @@ transaction.setBalance(wallet.getBalance() );
             .amount(priceProposal)
             .requestRevision(requestRevision.get())
             .balance(wallet.getBalance())
+                .servicePrice(servicePrice)
             .type("DEBIT")
             .user(User.builder().id(wallet.getUser().getId()).build())
             .build();
