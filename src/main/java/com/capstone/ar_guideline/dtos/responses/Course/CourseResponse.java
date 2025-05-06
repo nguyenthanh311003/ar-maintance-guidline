@@ -33,5 +33,5 @@ public class CourseResponse implements Serializable {
   String status;
   String type;
   String machineTypeId;
-  Boolean isDone;
+  Integer numberOfStaffScan;
 }

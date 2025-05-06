@@ -80,7 +80,7 @@ public class WalletServiceImpl {
             servicePriceRepository.findById(servicePriceId).orElseThrow();
         transaction.setServicePrice(ServicePrice.builder().id(servicePriceId).build());
         transaction.setCourse(Course.builder().id(guidelineId).build());
-        if(wallet.getBalance() - servicePrice.getPrice() <= 0) {
+        if(wallet.getBalance() - servicePrice.getPrice() < 0) {
           throw new RuntimeException("Wallet not have enough balance");
         }
         wallet.setBalance(wallet.getBalance() -servicePrice.getPrice() );
@@ -89,7 +89,7 @@ transaction.setBalance(wallet.getBalance() -servicePrice.getPrice() );
         ServicePrice servicePrice =
                 servicePriceRepository.findById(servicePriceId).orElseThrow();
         transaction.setServicePrice(ServicePrice.builder().id(servicePriceId).build());
-        if(wallet.getBalance() - servicePrice.getPrice() <= 0) {
+        if(wallet.getBalance() - servicePrice.getPrice() <  0) {
           throw new RuntimeException("Wallet not have enough balance");
         }
         wallet.setBalance(wallet.getBalance() + servicePrice.getPrice());

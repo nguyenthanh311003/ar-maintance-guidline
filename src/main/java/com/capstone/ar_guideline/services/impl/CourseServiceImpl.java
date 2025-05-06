@@ -406,18 +406,12 @@ public class CourseServiceImpl implements ICourseService {
 
       if(staffId != null) {
         List<WalletTransaction> walletTransactions = walletTransactionRepository.findAllByUserIdAndServicePriceId(staffId, "51b67d6b-99fc-437a-b754-f57751504529");
-        Map<UUID, UUID> courseIdMap = walletTransactions.stream()
-                .collect(Collectors.toMap(
-                        walletTransaction -> UUID.fromString(walletTransaction.getCourse().getId()),
-                        walletTransaction -> UUID.fromString(walletTransaction.getCourse().getId()),
-                        (existing, replacement) -> existing // Keep the existing value in case of duplicate keys
-                ));
+
         for (CourseResponse courseResponse : courseResponses) {
-          if(courseIdMap.containsKey(UUID.fromString(courseResponse.getId()))) {
-            courseResponse.setIsDone(true);
-          } else {
-            courseResponse.setIsDone(false);
-          }
+
+       courseResponse.setNumberOfStaffScan(
+            getNumberOfStaffScan(courseResponse.getId(), walletTransactions));
+
         }
 
       }
@@ -429,6 +423,23 @@ public class CourseServiceImpl implements ICourseService {
       pagingModel.setTotalPages(coursesByCompanyId.getTotalPages());
       pagingModel.setObjectList(courseResponses);
       return pagingModel;
+    } catch (Exception exception) {
+      if (exception instanceof AppException) {
+        throw exception;
+      }
+      throw new AppException(ErrorCode.COURSE_NOT_EXISTED);
+    }
+  }
+
+  private Integer getNumberOfStaffScan(String courseId, List<WalletTransaction> walletTransactions) {
+    try {
+Integer count = 0;
+   for (WalletTransaction walletTransaction : walletTransactions) {
+      if (walletTransaction.getCourse().getId().equals(courseId)) {
+        count++;
+      }
+    }
+      return count;
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;
