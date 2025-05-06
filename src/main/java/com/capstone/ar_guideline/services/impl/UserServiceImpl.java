@@ -339,7 +339,7 @@ public class UserServiceImpl implements IUserService {
 
           if(userById.getWallet().getBalance() > 0){
             walletService.updateBalanceBySend(
-                    userById.getWallet().getBalance(), userById.getId(), userCompany.getId(), null);
+                    userById.getWallet().getBalance(),  userCompany.getId(),userById.getId(), null);
         }
       } else {
         userById.setStatus(ACTIVE_STATUS);

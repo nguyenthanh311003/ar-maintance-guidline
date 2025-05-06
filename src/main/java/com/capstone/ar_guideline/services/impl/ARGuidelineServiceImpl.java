@@ -289,7 +289,6 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   @Override
   public void deleteCourseById(String courseId) {
     try {
-      modelService.updateIsUsedByCourseId(courseId);
       courseService.delete(courseId);
     } catch (Exception exception) {
       if (exception instanceof AppException) {

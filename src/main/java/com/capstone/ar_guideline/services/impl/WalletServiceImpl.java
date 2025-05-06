@@ -83,8 +83,8 @@ public class WalletServiceImpl {
         if(wallet.getBalance() - servicePrice.getPrice() < 0) {
           throw new RuntimeException("Wallet not have enough balance");
         }
-        wallet.setBalance(wallet.getBalance() -servicePrice.getPrice() );
-transaction.setBalance(wallet.getBalance() -servicePrice.getPrice() );
+        wallet.setBalance(wallet.getBalance() - amount );
+transaction.setBalance(wallet.getBalance() );
       } else {
         ServicePrice servicePrice =
                 servicePriceRepository.findById(servicePriceId).orElseThrow();
