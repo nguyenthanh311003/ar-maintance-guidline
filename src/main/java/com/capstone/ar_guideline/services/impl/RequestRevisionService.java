@@ -85,7 +85,7 @@ public class RequestRevisionService {
   @Transactional(readOnly = true)
   public List<RequestRevisionResponse> getAllByCompanyRequestId(String companyRequestId) {
     List<RequestRevision> revisions =
-        requestRevisionRepository.findAllByCompanyRequestRequestId(companyRequestId);
+        requestRevisionRepository.findAllByCompanyRequestRequestIdOrderByCreatedDateDesc(companyRequestId);
     return revisions.stream().map(this::mapToResponse).collect(Collectors.toList());
   }
 

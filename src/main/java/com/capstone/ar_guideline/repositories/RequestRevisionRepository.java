@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RequestRevisionRepository extends JpaRepository<RequestRevision, UUID> {
 
-  List<RequestRevision> findAllByCompanyRequestRequestId(String companyRequestId);
+  List<RequestRevision> findAllByCompanyRequestRequestIdOrderByCreatedDateDesc(String companyRequestId);
 }

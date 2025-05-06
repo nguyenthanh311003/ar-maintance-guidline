@@ -6,5 +6,5 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationRepository extends JpaRepository<Notification, UUID> {
-  List<Notification> findAllByUserId(String userId);
+  List<Notification> findAllByUserIdOrderByCreatedDateDesc(String userId);
 }

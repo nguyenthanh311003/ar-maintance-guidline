@@ -37,7 +37,7 @@ public class NotificationService {
   }
 
   public List<NotificationResponse> getAllByUserId(UUID userId) {
-    return notificationRepository.findAllByUserId(String.valueOf(userId)).stream()
+    return notificationRepository.findAllByUserIdOrderByCreatedDateDesc(String.valueOf(userId)).stream()
         .map(this::mapToResponse)
         .collect(Collectors.toList());
   }
