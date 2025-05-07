@@ -26,6 +26,8 @@ public class InstructionDetail implements Serializable {
   private Integer orderNumber;
   private String animationName;
   private String description;
+
+  @Column(length = 1000)
   private String meshes;
   private String status;
 
