@@ -42,7 +42,7 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
               + "AND wt.created_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH) "
               + "LEFT JOIN service_price sp ON wt.service_price_id = sp.id "
               + "LEFT JOIN user u ON wt.user_id = u.id "
-              + "WHERE sp.name = 'Point Request' AND u.company_id = :companyId "
+              + "WHERE sp.name = 'Scan AR' AND u.company_id = :companyId "
               + "GROUP BY m.month "
               + "ORDER BY m.month",
       nativeQuery = true)
