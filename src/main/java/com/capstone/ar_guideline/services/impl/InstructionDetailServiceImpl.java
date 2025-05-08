@@ -52,7 +52,7 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
       } else {
         newInstructionDetail.setOrderNumber(highestOrderNumber + 1);
       }
-      course.setStatus(ConstStatus.DRAFTED);
+      course.setStatus(ConstStatus.INACTIVE_STATUS);
       courseRepository.save(course);
       newInstructionDetail.setStatus(ConstStatus.DRAFTED);
 
@@ -90,7 +90,9 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
     try {
       InstructionDetail instructionDetailById = findById(id);
       instructionDetailRepository.deleteById(instructionDetailById.getId());
-
+      Course course = instructionDetailById.getInstruction().getCourse();
+      course.setStatus(ConstStatus.INACTIVE_STATUS);
+        courseRepository.save(course);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
         throw exception;

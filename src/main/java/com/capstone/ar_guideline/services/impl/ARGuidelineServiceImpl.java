@@ -25,6 +25,7 @@ import com.capstone.ar_guideline.exceptions.AppException;
 import com.capstone.ar_guideline.exceptions.ErrorCode;
 import com.capstone.ar_guideline.mappers.*;
 import com.capstone.ar_guideline.repositories.CompanyRequestRepository;
+import com.capstone.ar_guideline.repositories.CourseRepository;
 import com.capstone.ar_guideline.repositories.MachineTypeRepository;
 import com.capstone.ar_guideline.services.*;
 import com.capstone.ar_guideline.util.UtilService;
@@ -63,6 +64,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   FirebaseNotificationServiceImpl firebaseNotificationService;
   ObjectMapper objectMapper = new ObjectMapper();
   MachineTypeRepository machineTypeRepository;
+  CourseRepository courseRepository;
 
   @Override
   public InstructionResponse createInstruction(InstructionCreationRequest request) {
@@ -252,7 +254,12 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   public Boolean deleteInstructionById(String instructionId) {
     try {
       Boolean isInstructionDeleted = instructionService.delete(instructionId);
+      Instruction instruction  = instructionService.findById(instructionId);
+     Course courseByInstructionId =
+          courseService.findById(instruction.getCourse().getId());
 
+     courseByInstructionId.setStatus(ConstStatus.INACTIVE_STATUS);
+     courseRepository.save(courseByInstructionId);
       if (isInstructionDeleted) {
         instructionDetailService.deleteByInstructionId(instructionId);
         return true;
