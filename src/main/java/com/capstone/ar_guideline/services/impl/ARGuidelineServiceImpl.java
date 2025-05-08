@@ -253,10 +253,11 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
   @Override
   public Boolean deleteInstructionById(String instructionId) {
     try {
-      Boolean isInstructionDeleted = instructionService.delete(instructionId);
       Instruction instruction  = instructionService.findById(instructionId);
-     Course courseByInstructionId =
-          courseService.findById(instruction.getCourse().getId());
+      Course courseByInstructionId =
+              courseService.findById(instruction.getCourse().getId());
+
+      Boolean isInstructionDeleted = instructionService.delete(instructionId);
 
      courseByInstructionId.setStatus(ConstStatus.INACTIVE_STATUS);
      courseRepository.save(courseByInstructionId);

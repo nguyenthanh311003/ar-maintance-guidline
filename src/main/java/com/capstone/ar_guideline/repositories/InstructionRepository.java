@@ -25,4 +25,7 @@ public interface InstructionRepository extends JpaRepository<Instruction, String
       value =
           "SELECT i FROM Instruction i WHERE i.course.id = :courseId ORDER BY i.orderNumber ASC")
   Page<Instruction> getByCourseIdPaging(Pageable pageable, @Param("courseId") String courseId);
+
+  Instruction findByNameAndAndCourseId(String id, String courseId);
+
 }

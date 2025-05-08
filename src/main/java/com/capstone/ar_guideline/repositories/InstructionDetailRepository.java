@@ -28,4 +28,6 @@ public interface InstructionDetailRepository extends JpaRepository<InstructionDe
         ) and id.status = 'DRAFTED'
         """)
   List<InstructionDetail> countInstructionDetailByCourseId(@Param("courseId") String courseId);
+
+  InstructionDetail findByNameAndInstructionId(String name, String instructionId);
 }
