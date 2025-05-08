@@ -62,7 +62,7 @@ public class WalletTransactionService {
                                   ? transaction
                                       .getRequestRevision()
                                       .getCompanyRequest()
-                                      .getRequestId()
+                                      .getRequestNumber()
                                   : null)
                           .revisionType(
                               transaction.getRequestRevision() != null

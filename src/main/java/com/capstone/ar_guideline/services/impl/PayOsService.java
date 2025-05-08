@@ -176,6 +176,7 @@ public class PayOsService {
             payment.getPointOptions().getId());
       } else if (!order.getStatus().equals(ConstStatus.PAID)) {
         paymentService.changeStatus(payment.getId(), ConstStatus.CANCEL);
+        paymentService.delete(payment.getId());
         return new RedirectView(frontEndHost + "/payment/failed");
       }
       return new RedirectView(frontEndHost + "/payment/success");
