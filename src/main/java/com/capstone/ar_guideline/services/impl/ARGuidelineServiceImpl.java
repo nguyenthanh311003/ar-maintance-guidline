@@ -77,7 +77,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       } else {
         newInstruction.setOrderNumber(highestOrderNumber + 1);
       }
-      course.setStatus(ConstStatus.DRAFTED);
+      course.setStatus(ConstStatus.INACTIVE_STATUS);
       courseService.save(course);
       newInstruction = instructionService.create(newInstruction);
 
@@ -363,22 +363,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
       Course courseById = courseService.findById(courseId);
 
       if (courseById.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
-        ModelResponse modelByCourseId = modelService.getByCourseId(courseId);
-        Long numberOfInstructionDetail =
-            instructionDetailService.countInstructionDetailByCourseId(courseById.getId());
-        if (Objects.isNull(modelByCourseId)) {
-          throw new AppException(ErrorCode.MODEL_NOT_EXISTED);
-        }
 
-        if (Objects.isNull(numberOfInstructionDetail)) {
-          throw new AppException(ErrorCode.INSTRUCTION_DETAIL_COUNT_FAILED);
-        }
-
-        if (modelByCourseId.getStatus().equals(ConstStatus.INACTIVE_STATUS)) {
-          throw new AppException(ErrorCode.UPDATE_GUIDELINE_FAIL_MODEL_INACTIVE_STATUS);
-        } else if (numberOfInstructionDetail > 0) {
-          throw new AppException(ErrorCode.UPDATE_GUIDELINE_FAIL_INSTRUCTION_COUNT);
-        } else {
           courseById.setStatus(ConstStatus.ACTIVE_STATUS);
           // Get company ID from the course
           String companyId = courseById.getCompany().getId();
@@ -403,7 +388,7 @@ public class ARGuidelineServiceImpl implements IARGuidelineService {
             // Log but don't fail the course activation if notification fails
             log.error("Failed to send course activation notification", e);
           }
-        }
+
 
       } else {
         courseById.setStatus(ConstStatus.INACTIVE_STATUS);
