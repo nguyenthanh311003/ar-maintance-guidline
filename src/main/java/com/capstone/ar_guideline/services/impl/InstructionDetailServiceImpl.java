@@ -42,6 +42,13 @@ public class InstructionDetailServiceImpl implements IInstructionDetailService {
   public InstructionDetailResponse create(InstructionDetailCreationRequest request) {
     try {
 
+InstructionDetail instructionDetailById = instructionDetailRepository.findByNameAndInstructionId(
+          request.getName(), request.getInstructionId());
+
+        if (instructionDetailById != null) {
+            throw new AppException(ErrorCode.INSTRUCTION_DETAIL_NAME_EXISTED);
+        }
+
       Instruction instructionById = instructionService.findById(request.getInstructionId());
       Course course = instructionById.getCourse();
       InstructionDetail newInstructionDetail =

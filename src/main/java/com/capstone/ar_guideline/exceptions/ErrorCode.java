@@ -169,6 +169,8 @@ public enum ErrorCode {
   USER_PHONE_EXISTED(1128, "User Phone existed !", HttpStatus.BAD_REQUEST),
   CAN_ONLY_JOIN_ONE_COMPANY_REQUEST(
       1129, "Can only join 1 request at the same time", HttpStatus.BAD_REQUEST),
+  INSTRUCTION_NAME_EXISTED(1130, "Instruction name existed !", HttpStatus.BAD_REQUEST),
+    INSTRUCTION_DETAIL_NAME_EXISTED(1131, "Instruction detail name existed !", HttpStatus.BAD_REQUEST),
   ;
 
   private final int code;

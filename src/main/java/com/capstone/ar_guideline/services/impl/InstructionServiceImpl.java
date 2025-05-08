@@ -41,6 +41,11 @@ public class InstructionServiceImpl implements IInstructionService {
   @Override
   public Instruction create(Instruction instruction) {
     try {
+      Instruction instruction1 = instructionRepository.findByNameAndAndCourseId(
+          instruction.getName(), instruction.getCourse().getId());
+      if(instruction1 != null) {
+        throw new AppException(ErrorCode.INSTRUCTION_NAME_EXISTED);
+      }
       return instructionRepository.save(instruction);
     } catch (Exception exception) {
       if (exception instanceof AppException) {
