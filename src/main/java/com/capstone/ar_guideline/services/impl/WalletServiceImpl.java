@@ -200,6 +200,7 @@ ServicePrice servicePrice =
               .user(User.builder().id(receiverId).build())
               .servicePrice(servicePrice)
               .sender(User.builder().id(senderId).build())
+                  .receiver(User.builder().id(receiverId).build())
               .build();
       walletTransactionRepository.save(receiverTransaction);
 
