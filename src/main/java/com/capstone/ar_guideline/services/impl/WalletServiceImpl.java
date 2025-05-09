@@ -66,6 +66,7 @@ public class WalletServiceImpl {
               .amount(amount)
               //    .balance(newBalance)
               .type(isPlus ? "CREDIT" : "DEBIT")
+                  .receiver(User.builder().id(userId).build())
               .user(User.builder().id(userId).build())
               .build();
 
