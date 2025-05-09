@@ -139,6 +139,7 @@ ServicePrice servicePrice =
             .balance(wallet.getBalance())
                 .servicePrice(servicePrice)
             .type("DEBIT")
+                .sender(User.builder().id(wallet.getUser().getId()).build())
             .user(User.builder().id(wallet.getUser().getId()).build())
             .build();
 
